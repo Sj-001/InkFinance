@@ -1,0 +1,860 @@
+#+TITLE: ink v2设计
+#+OPTIONS: toc:2
+#+STARTUP: indent
+#+OPTIONS: ^:nil
+
+* 前言
+此版本为s7重构版本的架构设计, 该架构设计核心要点如下:
+- 所有合约都要求支持165协议, 并且合约间需要通过165进行验证.
+- 尽可能的社区自治, 项目方不要具有过高的权限.
+- 以DAO为主体, 构造独立, 隔离的功能.
+
+  
+- member成员关联进dao, 并且可以指定dutyID, dutyID用于各类功能性合约.
+- 创建proposal时, 可以指定topic.
+- 功能性合约可在创建时指定DutyID, 也可以在创建时动态生成.
+- Proposal包含多项agent, 每项agent决定flow流程, flow流程决定committee
+  的组成及顺序, committee通过dutyID鉴权, DAO中指定dutyID.
+- agent具有默认FlowID, 但可以被DAO所修改, 映射包含两层, flowID->flowID
+  的, 及agent->flowID的.
+- ucv创建时, 指定高低权限组dutyID.
+
+* GlobalConfig
+全局配置合约, 不可升级(保证稳定性及安全性, 因此要做到尽可能简单, 通用).
+
+
+该合约包含以下几个核心功能:
+- 带域的全局统一配置.
+- 在一个域下, 配置管理权限, 主要对谁能调整哪些功能进行鉴权.
+
+
+----------
+域: 每个地址都是一个域, 一个域中含有kv类型.
+
+
+**PS:** 平台管理一个域, 其中的管理员, 应该采用人工多签, 至少3签2, 每个人都具有相应的
+硬件钱包, 仅在必要时进行签名处理(此处可以直接使用gnosis作为多签工具).
+
+
+** 全局配置
+全局配置的核心是做如下关联:
+
+key(类型bytes32) -> type(类型bytes32), value(类型bytes)
+
+----------
+外部合约通过key来查询内容.
+
+key在合约中的存储以bytes32为键, 合约内不存储原象, 因此无法枚举, 但是会
+在抛出的事件中包含对应的原象.
+
+key的格式如下:
+
+hash(msg.sender, keyID)
+
+其中, keyID = hash(hash("<prefix>"), hash("<key name>"))
+
+
+msg.sender代表域(domain), 因此每个地址配置相同的key name, 最终的key都将不同,
+用以区分权限及隔离.
+
+
+prefix代表一些前缀, 这些前缀可以对配置进行结构划分, 并且也能依据前缀进
+行权限判定.
+
+----------
+type指代value的类型, 这里type需要统一约定.
+
+外部合约可以根据type进行必要的校验或选择不同的解析方式.
+
+
+示例:
+- hash("address")  <- 基础类型.
+- hash("schema.ipfs") <- 指定协议, 比如ipfs, 则代表value值是个ipfs地址.
+- hash("pb.<name>") <- pb的某个格式.
+- hash("json.<name>") <- json格式.
+
+----------
+value只要是bytes类型都可以.
+
+
+----------
+目前配置的应用场景包含以下几个主要部分:
+- 公共合约地址配置, 目前包含FactoryManager和IdentityRegister.
+- agent地址配置, 根据agent的id, 查找agent对应的地址.
+- 默认配置, 当合约中某个参数需要默认值, 并且该默认值可能需要进行全
+  局统一调整时使用.
+  
+** 核心接口
+#+begin_src solidity
+  // 仅能配置该地址域下的key的管理员.
+
+  // 对某些key设置管理员.
+  event SetConfigAdmin(address indexed domain, bytes32 indexed keyID, address indexed admin);
+  struct SetConfigAdminInfo{
+    bytes32 keyID;
+    address admin;
+  }
+  function batchSetConfigAdmin(SetConfigAdminInfo[] configAdmins);
+  // 对某些前缀key设置管理员.
+  // 此处的管理员可以管理所有以该key为前缀的配置.
+  // 对某些key设置管理员.
+  // 注: string类型仅用于事件, 合约本地存储用hash后的值.
+  event SetPrefixConfigAdmin(address indexed domain, string indexed keyPrefix, address indexed admin);
+  struct SetPrefixConfigAdminInfo{
+    string keyPrefix;
+    address admin;
+  }
+  function batchSetPrefixConfigAdmin(SetPrefixConfigAdminInfo[] prefixConfigAdmins);
+
+  // 仅有对应管理员可以设置该key, domain == msg.sender 时具有所有权限.
+  // 注: string类型仅用于事件, 合约本地存储用hash后的值.
+  // 先查domain == msg.sender.
+  // 再查该domain下的keyPrefix的管理员 == msg.sender.
+  // 最后查该domain下的 hash(hash("<prefix>"), hash("<key name>")) 的管理员 == msg.sender
+  event SetKV(address indexed operator, address indexed domain, bytes32 indexed key, string keyPrefix, string keyName, bytes32 typeID, bytes data);
+  struct KVInfo{
+    string keyPrefix
+    string keyName
+    bytes32 typeID;
+    bytes data;
+  }
+  function batchSetKV(address domain, KVInfo[] kvs);
+
+  function getKV(bytes32 key) returns(bytes32 typeID, bytes data);
+#+end_src
+
+
+** 其他
+理论上, 所有的合约都要在初始化时, 记录该合约地址, 作为全局字段的读取.
+
+
+因此, 应该有个通用基础库, 来完成初始化及存储操作; 并且根据需要, 可以
+实现通用的library库, 来对该合约的参数进行解析(比如地址信息/uint256格式
+的信息).
+
+
+为了对可升级合约/沙箱等的良好兼容, 应该将该配置合约通过slot的方式存储,
+而非顺序storage存储.
+
+
+另外, 每个合约应该根据需要, 仅包含自己需要的各类bytes32 hash常量值, 因
+为在完整实现下, 全局的hash值将非常多, 会影响合约大小.
+
+不过此处会有相应的链下文档来说明所有的hash值含义及原象.
+
+----------
+从流程上, 该合约地址将被初始化进FactoryManager, 通过FactoryManager扩散
+到所有合约中.
+
+
+----------
+有些合约需要感知domain和keyID, 根据相同的keyID及不同的domain来确认最终
+的key, 比如某个变量名作为keyID是不变的, 但是可以使用不同domain下的值.
+
+
+* Identity
+合约名需要再确认下.
+
+----------
+功能要点:
+- 管理所有成员的元数据.
+- 每个地址都可以针对每个用户设置kv数据, "每个地址"代表作用域, 可以由外
+  部合约指定要读取哪个作用域下的用户设置.
+
+  核心用于用户kyc时, 不同机构可以对同一个用户指定不同值, 由外部决定采
+  用哪个机构的数据.
+
+
+** 核心接口
+#+begin_src solidity
+  struct UserKV{
+    address user;
+    bytes32 key;
+    bytes32 typeID;
+    bytes data;
+  }
+
+  // 仅能设置到msg.sender地址下的作用域中.
+  function batchSetUserKVs(UserKV[] memory kvs);
+
+  function getUserKV(address zone, bytes32 key) returns(bytes32 typeID, bytes memory data);
+
+  //////////// 存储示例
+  struct Value{
+    bytes32 typeID;
+    bytes data;
+  }
+
+  struct KVZone{
+    address issue;
+    // user -> key -> value
+    mapping(address->mapping(bytes32->Value)) kvs;
+  }
+
+#+end_src
+
+
+* FactoryManager
+所有的需要派生的合约应该都从该合约产生.
+
+
+Manager本身不可升级, 如果有功能性修改, 直接更换合约即可.
+
+----------
+派生合约时, 合约调用关系如下:
+
+clone合约指向proxy合约, proxy合约通过beacon合约获取实现地址, beacon合
+约通过key从global config中获取地址.
+
+----------
+初始化流程:
+1. 传入global config合约地址.
+2. 派生proxy地址, 并记录在本地(也可以分离这个流程).
+
+
+----------
+派生流程:
+1. 外部通过factoryKey决定需要部署的合约在global config中的key, 并传入factory manager.
+2. 判断该factoryKey是否有对应的beacon合约, 如果有, 跳转第4步.
+3. 创建beacon合约, 并传入global config地址及"factoryKey, typeID", beacon
+   合约通过global config获取实现地址, 并校验实现地址是否满足接口需求以
+   及typeID是否一致.
+
+   同时记录当前实现地址和对应的version信息.
+4. 使用clone派生, clone指向proxy合约.
+5. 对proxy合约进行初始化, 设定beacon合约地址获取实现地址(从beacon合约
+   内获取).
+6. 初始化实现地址.
+
+
+----------
+升级流程:
+1. 修改 global config中的实现地址.
+2. 触发beacon合约的升级操作.
+3. beacon合约校验实现地址接口, 校验版本(必须大于之前的版本).
+4. 校验通过, 更新实现地址和版本信息.
+5. (可选) 针对已部署合约, 可在业务代码中, 记录当前版本, 并且判断当前版
+   本是否与业务代码版本一致, 如果不一致, 则进行相应的升级操作(有些升级
+   需要额外的业务逻辑).
+
+
+----------
+非信任流程, 有些DAO如果对官方的beacon合约持怀疑态度, 则可以自己实现
+beacon合约, 指向其认为安全的实现地址, 并且基于一个agent的操作来完成
+proxy的重新设定, 让proxy指向该beacon合约地址即可.
+
+
+----------
+补充:
+
+FactoryManager支持部署不可升级合约, 这里需要在登记合约时, 做标记, 符合
+不可升级的合约, 部署时直接使用Clone指向该地址, 无beacon合约生成, 无
+proxy合约指向.
+
+
+** IBaseDeploy
+#+begin_src solidity
+  interface IDeploy is ERC165{
+    // 通过常量实现.
+    function getTypeID() returns(bytes32 typeID);
+
+    // 通过常量实现, 获取该合约版本, 在进行可升级合约变更时, 通过该方法判定是否可以升级.
+    function getVersion() returns(uint256 version);
+
+    // operator代表谁操作factory合约进行部署的.
+    function initializer(address operator, address config, bytes calldata data);
+  }
+#+end_src
+
+** FactoryManager核心接口
+#+begin_src solidity
+  constructor(address globalConfig);
+  function deploy(bytes32 typeID, bytes32 factoryKey, bytes calldata initData);
+#+end_src
+
+** proxy接口
+#+begin_src solidity
+  // proxy初始化时, 直接将globalConfig的地址通过库写入slot中, 供给实现合约及proxy合约的调用.
+  function proxyInitialize(address globalConfig, address beaconAddr);
+  // OnlyMyself表示该方法仅能由自己调用, 自己调用背后的逻辑是通过基础agent的调用.
+  function proxyChangeBeacon(address beaconAddr) OnlyMyself;
+#+end_src
+
+** beacon接口
+#+begin_src solidity
+  function beaconInitialize(address globalConfig, bytes32 typeID, bytes32 factoryKey);
+  // 不需要参数, 不需要权限, 只需要读取下globalConfig合约完成刷新操作.
+  function upgradeImpl();
+#+end_src
+
+
+* DAO
+所有操作的核心主体, DAO与DAO之间完全隔离, 一个DAO具有如下的完整功能:
+- 成员管理, 包含成员地址, 每个成员的DutyID, 其中DutyID与成员是多对多关
+  系.
+  - 可以配置认证机构地址, 在做成员管理时, 可以从identity中读取kyc数据.
+- 决议流程, 包含如下:
+  - 决议的存储.
+  - 决议决策的流程.
+  - 决议结果的跨链    
+  - 决议结果的执行.
+- agent的管理, 包含如下:
+  - 全局agent管理.
+  - 本地agent管理.
+  - 两个默认agent(不执行任何操作和可执行任何操作).
+- DAO自身元数据管理, 有些agent或外部合约, 可能要通过读取DAO的元数据来
+  决定具体的流程, 这些元数据是dao本身不需要感知的, 因此做成通用化映射
+  表即可.
+
+  针对dao自身需要感知的, 并且在开发时就能明确的, 还是采用明确的变量来
+  存储.
+
+
+----------
+DAO中的所有配置, 原则上应该都要做成可修改的接口, 接口限制为只能自己访
+问自己, 通过额外的agent来完成实际修改(比如flowID对应的committee列表等).
+
+
+----------
+核心关联:
+1个proposal关联多个agent.
+
+1个agent关联一个flowID(可以具有默认flowID).
+
+flowID关联多个committee.
+
+1个committee关联多个成员.
+
+
+----------
+DAO部署时, 可以选择部署相应的committee等, 做在DAO的初始化流程中.
+
+--------
+DAO在factory中被部署.
+
+** 成员管理
+此处的成员管理略复杂, 要满足几个要求:
+- 传入地址查询dutyID.
+- 删除地址, 联动删除dutyID.
+- 可以通过dutyID进行枚举.
+- 可以枚举成员列表.
+
+
+但是实际上, 这些需求有冲突的地方, 所以简化成如下:
+1. dutyID的实现等价于openzeppelin中的role, 即 dutyID-> user集合.
+
+   实现通过dutyID+地址可以判定是否有权限.
+
+   可以通过dutyID查询user集合.
+
+   用户加入/移除dutyID时, 抛出事件, 通过外部系统捕获来感知用户具有的
+   dutyID权限, 该需求基本是链下的.
+2. 用户 -> info. info中含有具有dutyID的数量, 当一个用户需要被移除时,
+   要求其具有的dutyID为0才能被移除.
+3. 用户用链表/可枚举集合实现, 保证其可枚举.
+
+
+相关接口:
+#+begin_src solidity
+
+  function hasDuty(address account, bytes32 dutyID) returns(bool);
+
+  function getDutyNum(bytes32 dutyID) returns(uint256 num);
+  function getDutyIdx(bytes32 dutyID, uint256 idx) returns(address addr);
+
+  // ##!!!! 以下接口都要求only myself, 通过agent来进行调用.
+
+  // 要求, 如果添加时已存在或移除时不存在, 不应该报错, 不应该抛出事件, 直接跳过即可.
+  function addDuty(address account, bytes32 dutyID);
+  function delDuty(address account, bytes32 dutyID);
+
+  function addUser(address account);
+  function delUser(address account);
+#+end_src
+
+** 决议流程
+
+链下决议格式:
+#+begin_src json
+  {
+      "agents": [],
+      "topicID": "",
+      "crossChainProtocol": "", // 跨链协议, 空代表不跨链, 即本链执行.
+      "headers": [
+          {
+              "key": "key name",
+              "typeID": "typeID 原象",
+              "data": "打包前的原象",
+              "desc": "描述信息"
+          },
+          {
+              "key": "key name",
+              "typeID": "typeID 原象",
+              "data": "打包前的原象",
+              "desc": "描述信息"
+          }
+      ]
+      "contents": [
+          {
+              "key": "key name",
+              "typeID": "typeID 原象",
+              "data": "打包前的原象",
+              "desc": "描述信息"
+          },
+          {
+              "key": "key name",
+              "typeID": "typeID 原象",
+              "data": "打包前的原象",
+              "desc": "描述信息"
+          }
+      ]
+  }
+#+end_src
+
+链上决议请求格式:
+#+begin_src solidity
+  struct KVItem{
+    bytes32 key;
+    bytes32 typeID;
+    bytes data;
+  }
+
+  struct Proposal{
+    bytes32[] agents;
+    bytes32 topicID;
+    KVItem[] headers;
+    KVItem[] contents;
+  }
+#+end_src
+
+链下决议包含全部的原始信息, 推入ipfs网络或中心化系统, 来使整个操作可读
+性更强, 相当于模拟了事件, 但是不上链, 节约gas费.
+
+
+desc信息不上链, 节约gas.
+
+----------
+
+同时, 定义专属字段的key, 在链上存储链下的url, typeID根据需要填写
+ipfs/http等.
+
+----------
+agents代表该提案必须的执行代理, 长度至少为1.
+
+
+有两个默认代理:
+- 全0, 代表不进行执行, 仅作为公示决议.
+- 全F, 代表这是一个泛型执行, 不需要外部agent, 其content内部的参数满足
+  执行条件.
+
+
+----------
+topicID可以指定, 指定后, 如果不存在, 则会建到该topic下面.
+
+如果存在, 则该提案会作为该topic的补充提案.
+
+
+如果不指定topicID, 则会随机生成(必须取区块高度, 区块时间等, 保证其不可
+预测), 则小概率出现topicID冲突时, 直接失败即可.
+
+
+topicID主要作用是给外部合约提供数据读取入口, 外部合约可以通过topicID及
+指定key, 来实时读取最新的被投票出的数据.
+
+----------
+headers仅代表该决议的元数据, 该元数据不会参与topic的覆盖过程, 仅与该次
+提案的决议流程有关, 与实际内容无关, 如最小投票人数等.
+
+----------
+contents代表该决议的被投票数据, 该数据将参与topic的覆盖与合并(同key覆
+盖, 不同key合并).
+
+----------
+data可以是嵌套结构, 如果是复杂字段, 且没有上链需求, 则应该选择使用链下
+存储方案(如去中心化存储), 将最后的hash或可寻址地址上链, 作为contents的
+一项.
+
+
+链上嵌套结构需要通过typeID明确指定, 否则其他合约可能无法解析.
+
+
+*** 存储过程
+
+链上决议存储格式:
+#+begin_src solidity
+  // value的存储结构.
+  struct ItemValue{
+    bytes32 typeID;
+    bytes data;
+  }
+
+  struct StoreProposal {
+    ProposalStatus status;
+    bytes32 proposalID;
+    bytes32 topicID;
+    bytes32[] agents;
+    uint256 nextExecAgentIdx;
+    bytes32 crossChainProtocol; 
+
+    // 避免链上枚举, 消耗gas, 浪费存储.
+    mapping(bytes32 => ItemValue) metaData;
+
+    // 需要枚举.
+    LEnumerableMetadata.MetadataSet kvData;
+  }
+
+  // topic中的key落到proposal中的最新位置, 用于加速查询, 类似做索引.
+  struct TopicKey2Proposal {
+    bytes32 proposalID;
+    uint256 proposalIdx;
+  }
+
+  // topic存储结构.
+  struct StoreTopic {
+    bytes32 topicID;
+
+    // 记录所有通过的proposal.
+    bytes32[] proposalIDs;
+
+    // 缓存索引系统, proposal通过后, 需要调用索引刷新, 来针对每个key, 存储该值最终的proposalID.
+    // 获取proposalID后, 即可通过proposal获取该key对应的值.
+    // 刷新缓存时, 可能遇到proposal内的content过多, 此时需要人工介入分段刷新.
+    // keyid => latest proposal
+    mapping(bytes32 => TopicKey2Proposal) key2Proposal;
+    bytes32 lastIndexedProposalID;
+    bytes32 lastIndexedKey;
+  }
+#+end_src
+
+
+决议的存储过程如下:
+1. 某个committee发起决议, 发起决议时, 可以标记该决议是否进入下一个流程,
+   还是有后续内容继续提交(对某些决议, 可能有非常多的值, 一次性上链是无
+   法完全上链的).
+2. dao将该决议解析并存储到链上, 生成或复用topicID.
+   如果未标记继续提交, 则跳到步骤4.
+3. committee继续进行参数提交(使用另一个接口), 进行内容的补充/覆盖, 最
+   终不标记继续提交.
+
+   仅能针对contents内容进行追加.
+   
+4. 当进入下一步时, DAO检查该决议.
+   
+   同时检查所有的agent, 检查点(跨链的agent, 主dao所在链可能不存在, 此
+   时要求主dao先配置agent的flowID):
+   - 从globalconfig中获取该agentID对应的地址(确定能获取到).
+   - 确认所有的agent的flowID是兼容的.
+   - 确认所有的agent的预执行逻辑能成功.(在上链初期就做好校验, 防止投票
+     成功后, 合约执行失败), 跨链的不进行该逻辑的执行.
+   - 选出合适的flowID, 检查该committee是否属于该flowID的第一环.
+5. 如果检查失败, 标记该proposal失败即可, 否则执行下一步.
+6. 进行整个flow的投票流程/参数修改流程.
+7. 投票最终通过后, 更新topic, 并更新索引(更新索引有最大数量限制, 因此
+   可能还需要手动更新).
+
+   自动执行所有的agents, agents的执行细节参考后文.
+
+
+----------
+DAO对committee的接口:
+#+begin_src solidity
+  function newProposal(
+      Proposal calldata proposal,
+      bool commit,
+      bytes calldata data
+  ) external returns (bytes32 proposalID);
+
+  // used to append new kvData(can convert old same key)
+  function changeProposal(
+      bytes32 proposalID,
+      KVItem[] contents,
+      bool commit,
+      bytes calldata data
+7  ) external;
+
+  // if agree, apply the proposal kvdata to topic.
+  function decideProposal(
+      bytes32 proposalID,
+      bool agree,
+      bytes calldata data
+  ) external;
+
+#+end_src
+   
+
+----------
+DAO相关的Proposal接口:
+#+begin_src solidity
+  enum ProposalStatus {
+      PENDING,
+      AGREE,
+      DENY
+  }
+
+  // 接口返回格式
+  struct Topic {
+      bytes32 topicID;
+      bytes32[] proposalIDs;
+  }
+
+  struct Proposal {
+      ProposalStatus status;
+      bytes32 proposalID;
+      bytes32 topicID;
+      bytes32 agents;
+  }
+
+
+  // which proposal decide the latest key item;
+  function getTopicKeyProposal(bytes32 topicID, bytes32 key)
+      external
+      view
+      returns (bytes32 proposalID);
+
+  function getTopicMetadata(bytes32 topicID, bytes32 key)
+      external
+      view
+      returns (bytes32 typeID, bytes memory data);
+
+  function getTopicInfo(bytes32 topicID)
+      external
+      view
+      returns (Topic memory topic);
+
+  //////////////////// proposal
+
+  function getProposalSummary(bytes32 proposalID)
+      external
+      view
+      returns (Proposal memory proposal);
+
+  function getProposalMetadata(bytes32 proposalID, bytes32 key)
+      external
+      view
+      returns (bytes32 typeID, bytes memory data);
+
+  function getProposalKvData(bytes32 proposalID, bytes32 key)
+      external
+      view
+      returns (bytes32 typeID, bytes memory data);
+
+  function getProposalKvDataKeys(
+      bytes32 proposalID,
+      bytes32 startKey,
+      uint256 pageSize
+  ) external view returns (bytes32[] memory keys);
+
+
+  //////////////////// flush index
+  // dao查看该topicID上次刷新到的位置(lastIndexedProposalID, lastIndexedKey), 来继续进行, 所以权限问题.
+  function flushTopicIndex(bytes32 topicID, uint256 operateNum);
+#+end_src
+
+
+*** 决策流程
+
+一个决策流程(FlowID) 由多个committee组成, committee串行处理, 一个
+committee结束后, 如果失败, 则标记该proposal失败, 如果成功, 会自动进入
+下一个committee处理.
+
+如果没有下一个committee, 则标记上链成功, 进入后续执行或跨链流程.
+
+----------
+一个DAO中, 可以有多个flowID, flowID的新建可能有多种方式, 有些agent附带
+创建flowID.
+
+----------
+一个proposal选择具体的flowID, 核心是由该proposal中的agent决定的, 一个
+proposal中的所有的agent应该被选中同一个flowID(防止权限泄漏).
+
+
+agent对应的flowID在开发时, 会由开发人员指定一个默认的, 同时在DAO中, 可
+以覆盖某个agent对应的flowID.
+
+*** 结果的跨链
+对于一个成功proposal的跨链, 本质是对该proposal内容的传递, proposal中,
+有接口能拿到该proposal所有的决议内容(不包含元数据), 通过跨链桥的方式,
+传递到其他链, 完成proposal决议内容的上链, 并继续执行后续流程.
+
+----------
+跨链的目标链等协议, 根据不同跨链桥可以独立指定, 核心指定位置:
+- 在proposal中, 选择跨链协议.
+- 在主DAO的元数据中, 配置各个链的关联dao地址.
+- 在proposal的header中, 指定目标链协议的参数, 其中目标链也可以有多个.
+
+*** 结果的执行
+agent的执行, 数据上来说, 应该仅查询当前proposal的决策内容(不含元数据!),
+但是可以结合之前的结果进行一些内建数据的查询(详情参考agent管理).
+
+
+proposal成功被投票后, 在进行最后一次计票/跨链上链后, 将自动执行有限的
+agent操作.
+
+----------
+首先, 根据agent顺序, 串行执行agent, 但是会限制agent的执行数量, 防止gas
+超限, 对于未执行完的agent, 记录断点, 并等待下次触发.
+
+
+agent执行时, 每个agent执行完都保存一次状态, 并且对于失败的agent, 只要
+不是gas不够, 都不传递revert, 保证之前的agent能够执行成功.
+
+
+agent执行失败后, 可重新发起agent执行, 将从上次 失败/断点 处重新进行执
+行.
+
+
+agent执行可以设定超时时间, 设置在header中, 当超过超时时间后, 将不允许
+执行.
+
+
+agent执行时, 要求当前proposal是该topic的最后一条, 否则拒绝执行(防止类
+重放攻击).
+
+** agent管理
+agentID及地址的对应关系在GlobalConfig中, 每个 机构/个人 都能配置自己的
+agent, 也可以使用其他人的agent, 只要指定agentID即可.
+
+
+--------------------
+agent可以升级, 只要在globalconfig中替换实现地址即可.
+
+
+agent的核心要点:
+- agent一定是以代理模式运行的, 所以构造函数等无效, 需要实现初始化函数.
+- agent可以分DAO存储数据, 每个DAO针对每个agent, 都会进行clone派生, 所
+  以存储数据是安全的.
+- agent具有前置检查和后置执行两部分逻辑, 前置检查会在发起决议时执行,
+  后置执行即真正的执行过程.
+
+
+--------------------
+DAO对每个agent进行执行前, 需要先判断该agent是否被clone过, 没有被clone
+过, 则clone并进行相应的初始化, 并存储对应的地址, 这部操作的核心目的有
+两个:
+- 让agent可以存储数据, 并且数据间互不干扰.
+- DAO可以认证agent地址, 仅允许合法的agent进行执行操作.
+
+--------------------
+有两个默认agent, 这两个agent出现时, 必须有且仅有1个:
+- 全0, 不执行agnet.
+- 全F, 执行任意指令.
+
+
+这两个agent不去global config进行获取和检查, dao中直接处理.
+
+
+*** Agent核心接口
+#+begin_src solidity
+  // 初始化方法, 传入DAO的地址, 虽然原则上来说, msg.sender就是dao, 但考虑
+  // 其他方式的初始化设定, 可能msg.sender并发dao本身, 比如agent设定agent.
+  function initAgent(address dao);
+
+  function getDescription() return(string);
+
+  function preExec(bytes32 proposalID) return(bool succ);
+
+  function exec(bytes32 proposalID);
+
+#+end_src
+
+*** DAO的agent接口
+#+begin_src solidity
+  // 获取该DAO中, 该agentID对应的代理地址.
+  function getAgentIDAddr(bytes32 agentID) return(address addr);
+
+  // 指定proposalID, 并且最多执行多少个agent.
+  function continueExec(bytes32 proposalID, uint256 agentNum);
+
+  // 不检查agentID是否存在, 直接映射即可.
+  // 仅能自己调用自己.
+  function setAgentFlowID(bytes32 agentID, bytes32 flowID);
+
+  function getAgentFlowID(bytes32 agentID) returns(bytes32 flowID);
+
+  // 任意执行接口, 仅能agent调用, 用于代表该DAO执行任意指令.
+  // agentID=全F也是调用该接口.
+  // 允许批量调用执行, 降低gas消耗.
+  struct TxInfo{
+    address to;
+    uint256 value;
+    bytes data;
+    uint256 gasLimit;
+  }
+  function exec(TxInfo[] memory txs);
+#+end_src
+
+
+
+* 资产管理模块
+资产管理模块, 主要用于DAO的资产存储, 管理, 分发等.
+
+由以下几个部分组成:
+
+** UCV
+
+存储各类资产, UCV中涉及两个权限, 高级权限和普通权限.
+
+权限和地址是1对多的关系.
+
+- 普通权限 :: 可以转移ucv中的资产, 指定该资产打给哪个地址.
+- 高级权限 :: 高级权限具有普通权限功能, 同时高级权限可以暂停普通权限
+  的操作.
+
+
+UCV在初始化时, 指定两个权限的地址, 并且后续无法更改.
+
+--------------------
+UCV在factory中被部署.
+
+--------------------
+UCV本身可选择是否可升级.
+
+** UCV controller
+一般来说, 作为ucv的普通权限地址, 来管理ucv的出账.
+
+
+该模块可以有多种实现方式, 目前的实现需求如下:
+- 在初始化时, 指定DAO地址, 仅该DAO可以进行参数的设定.
+- 根据自身参数的设定, 完成周期性支付/一次性支付的业务逻辑(参考现在的逻
+  辑).
+- 用户通过ucv controller领取币, ucv controller鉴权后, 操作ucv进行打币
+  操作.
+
+
+** UCV controller agent
+controller配套的agent, 该agent要求 财务flowID.
+
+
+在proposal投票通过后, 调用该agent, 设定对应的controller, 被设定的
+controller地址在proposal的决议内容中.
+
+* committee模块
+各种committee的实现, 目前仅有两个.
+
+----------
+committee需要存储本次过程的内部数据, 如投票细节等, 基本与现在的逻辑保
+持一致即可, 最大的区别是不再管理member, 同时member从dao中读取, member
+需要具有的dutyID通过默认或初始化设定进来.
+
+** make proposal committee
+发起提案的committee, 该committee负责处理发起提案前的操作(目前没有), 以
+及该提案提交进DAO中的操作, 也包含提案的补充数据操作.
+
+
+在实现中, 发起提案前, 应该与stake进行交互, 锁定币.
+
+** public vote committee
+用于进行公投的committee.
+
+* agent模块
+
+agent是具体操作的逻辑, 该逻辑具有非常广泛的通用性.
+
+
+目前能想到的agent如下:
+- member的增删改.
+- dutyID的增删改.
+- agnet与flowID的映射.
+- dao本身元数据的设定.
+- flow中的committee设定.
+
