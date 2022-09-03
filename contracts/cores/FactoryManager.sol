@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
@@ -9,7 +11,7 @@ import "../bases/BaseVerify.sol";
 // import "../abstract/BaseDeployable.sol";
 
 import "../interfaces/IFactoryManager.sol";
-import "../interfaces/IDeployable.sol";
+import "../interfaces/IDeploy.sol";
 import "../interfaces/IConfig.sol";
 
 // import "../library/LChainLink.sol";
@@ -18,11 +20,14 @@ import "../proxy/InkBeacon.sol";
 import "../proxy/InkProxy.sol";
 // import "./SandBox.sol";
 
+import "hardhat/console.sol";
+
 /// @title FactoryManager
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice Factory is used to generate DAO instance
 contract FactoryManager is Context, BaseVerify, IFactoryManager {
-  // using LChainLink for LChainLink.Link;
+    // using LChainLink for LChainLink.Link;
+
     /// @dev only for test
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -43,14 +48,19 @@ contract FactoryManager is Context, BaseVerify, IFactoryManager {
     /// @dev config address
     address private _config;
 
-    function initialize(address config_) public initializer {
+
+     function supportsInterface(bytes4 interfaceId) external view override returns (bool) {
+        return true;
+     }
+
+    function initialize(address config_) public {
         console.log("initialize config:");
         console.log(config_);
         _config = config_;
-        proxy = new TanpopoProxy();
+        proxy = new InkProxy();
     }
 
-    /// @inheritdoc IDeployFactory
+    /// @inheritdoc IFactoryManager
     function addContract(bytes32 contractID, address contractImpl)
         external
         override
@@ -60,6 +70,7 @@ contract FactoryManager is Context, BaseVerify, IFactoryManager {
             //     BEACON_UPGRADER_ROLE,
             //     msg.sender
             // ),
+            true,
             "not allowed to add contract"
         );
 
@@ -67,23 +78,23 @@ contract FactoryManager is Context, BaseVerify, IFactoryManager {
             contractID
         ];
         // require(deployableContract.link._isEmpty(), "this contract is already exist");
-        deployableContract.inkBeacon = new InkBeacon(contractImpl);
-        emit AddContract(
-            contractID,
-            deployableContract.inkBeacon.implementation(),
-            contractImpl
-        );
+        // deployableContract.inkBeacon = new InkBeacon(contractImpl);
+        // emit AddContract(
+        //     contractID,
+        //     deployableContract.inkBeacon.implementation(),
+        //     contractImpl
+        // );
     }
 
-    /// @inheritdoc IDeployFactory
+    /// @inheritdoc IFactoryManager
     function delContract(bytes32 contractID) external override {
-        require(
-            IConfig(_config).hasRole(
-                TanpopoRoles.BEACON_UPGRADER_ROLE,
-                msg.sender
-            ),
-            "not allowed to del contract"
-        );
+        // require(
+        //     IConfig(_config).hasRole(
+        //         BEACON_UPGRADER_ROLE,
+        //         msg.sender
+        //     ),
+        //     "not allowed to del contract"
+        // );
         emit DelContract(contractID);
     }
 
@@ -102,7 +113,7 @@ contract FactoryManager is Context, BaseVerify, IFactoryManager {
         return generatedContract;
     }
 
-    /// @inheritdoc IDeployFactory
+    /// @inheritdoc IFactoryManager
     function deploy(bytes32 contractID, bytes calldata initData)
         external
         override
@@ -123,32 +134,35 @@ contract FactoryManager is Context, BaseVerify, IFactoryManager {
             salt
         );
 
-        // miss proxy init
-        InkProxy(payable(generatedContract)).init(
-            address(deployableContract.inkBeacon),
-            ""
-        );
+        // // miss proxy init
+        // InkProxy(payable(generatedContract)).init(
+        //     address(deployableContract.inkBeacon),
+        //     ""
+        // );
 
-        IDeploy(generatedContract).init(msg.sender, _config, initData);
+        // IDeploy(generatedContract).init(msg.sender, _config, initData);
 
-        _deployedContracts[contractID].add(generatedContract);
-        nounce++;
-        
-        console.log("new deploy:");
-        console.log(
-            "implementation deploy:",
-            deployableContract.inkBeacon.implementation()
-        );
-        console.log("generated deploy:", generatedContract);
+        // _deployedContracts[contractID].add(generatedContract);
+        // nounce++;
 
-        emit NewDeploy(
-            contractID,
-            deployableContract.inkBeacon.implementation(),
-            generatedContract,
-            initData,
-            msg.sender
-        );
-        return generatedContract;
+        // console.log("new deploy:");
+        // console.log(
+        //     "implementation deploy:",
+        //     deployableContract.inkBeacon.implementation()
+        // );
+        // console.log("generated deploy:", generatedContract);
+
+        // emit NewDeploy(
+        //     contractID,
+        //     deployableContract.inkBeacon.implementation(),
+        //     generatedContract,
+        //     initData,
+        //     msg.sender
+        // );
+        // return generatedContract;
+
+
+        return address(0);
     }
 
     function getDeployedAddress(bytes32 contractID, uint256 index)

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/proxy/beacon/IBeacon.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-import "../abstract/BaseVerify.sol";
+import "../bases/BaseVerify.sol";
 
 /// @title InkBeacon
 /// @author InkTech <tech-support@inkfinance.xyz>
@@ -21,7 +21,7 @@ contract InkBeacon is IBeacon, BaseVerify {
      * beacon.
      */
     constructor(address implementationAddr, address addrRegistry) {
-        super.init(addrRegistry);
+        // super.init(addrRegistry);
         _setImplementation(implementationAddr);
     }
 
@@ -42,7 +42,10 @@ contract InkBeacon is IBeacon, BaseVerify {
      * - msg.sender must be the owner of the contract.
      * - `newImplementation` must be a contract.
      */
-    function upgradeTo(address newImplementation) public virtual IsSysAdmin {
+    function upgradeTo(address newImplementation)
+        public
+    /**virtual IsSysAdmin */
+    {
         _setImplementation(newImplementation);
         emit Upgraded(newImplementation);
     }

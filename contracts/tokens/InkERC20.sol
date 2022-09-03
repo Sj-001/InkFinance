@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-
 /// @title InkERC20
 /// @author InkTech <tech-support@inkfinance.xyz>
 contract InkERC20 is ERC20 {
@@ -26,4 +25,3 @@ contract InkERC20 is ERC20 {
         _mint(account, amount);
     }
 }
-

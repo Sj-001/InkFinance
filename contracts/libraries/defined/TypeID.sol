@@ -9,10 +9,12 @@ library TypeID {
         0x0ca6d1ca587690485d6a434c34e5e1a8c625f87d47b2073438e0da9b8cd5e7a4;
 
     // keccak256("type.UINT256")
-    bytes32 internal constant UINT256 = 0x1a330eb57eeaeece41f22ce789ccc758bd5ebd0c144eee7d5a1e93a884c80c12;
+    bytes32 internal constant UINT256 =
+        0x1a330eb57eeaeece41f22ce789ccc758bd5ebd0c144eee7d5a1e93a884c80c12;
 
     /* keccak256("type.ADDRESS[]"); */
-    bytes32 internal constant ADDRESS_SLICE = 0x100736460f1973acb7722a13b56f289c66801ac691257810b6b8c1236aa0dd27;
+    bytes32 internal constant ADDRESS_SLICE =
+        0x100736460f1973acb7722a13b56f289c66801ac691257810b6b8c1236aa0dd27;
 
     /* keccak256("type.BOOL"); */
     /* keccak256("type.STRING"); */
