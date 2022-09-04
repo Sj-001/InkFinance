@@ -13,6 +13,7 @@ import * as MasterDAOABI from "../../artifacts/contracts/daos/MasterDAO.sol/Mast
 
 const {loadFixture, deployContract} = waffle;
 
+// dutyID(Role)
 
 
 //factoryID = keccak256("EvolveDAO_V1") = 0x60eec8b3f99438edc77c51d2b840d1f89c11392cdfc43d32a97863378359cbba;

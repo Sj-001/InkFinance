@@ -7,13 +7,10 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
-import "../bases/BaseVerify.sol";
+
 // import "../abstract/BaseDeployable.sol";
 
 import "../interfaces/IFactoryManager.sol";
-import "../interfaces/IDeploy.sol";
-import "../interfaces/IConfig.sol";
-
 // import "../library/LChainLink.sol";
 
 import "../proxy/InkBeacon.sol";
@@ -25,7 +22,7 @@ import "hardhat/console.sol";
 /// @title FactoryManager
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice Factory is used to generate DAO instance
-contract FactoryManager is Context, BaseVerify, IFactoryManager {
+contract FactoryManager is BaseVerify, IFactoryManager {
     // using LChainLink for LChainLink.Link;
 
     /// @dev only for test
@@ -53,12 +50,16 @@ contract FactoryManager is Context, BaseVerify, IFactoryManager {
         return true;
      }
 
-    function initialize(address config_) public {
+
+    constructor(address config_) {
+        super.init(config_);
+
         console.log("initialize config:");
         console.log(config_);
         _config = config_;
         proxy = new InkProxy();
     }
+
 
     /// @inheritdoc IFactoryManager
     function addContract(bytes32 contractID, address contractImpl)
