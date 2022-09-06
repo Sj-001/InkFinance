@@ -46,17 +46,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "addrRegistry",
+        "name": "config_",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "beacon",
+        "name": "beacon_",
         "type": "address"
       },
       {
         "internalType": "bytes",
-        "name": "data",
+        "name": "data_",
         "type": "bytes"
       }
     ],

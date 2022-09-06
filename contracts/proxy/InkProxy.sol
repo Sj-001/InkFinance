@@ -30,14 +30,14 @@ contract InkProxy is Proxy {
 
     //////////////////// init once
     function init(
-        address addrRegistry,
-        address beacon,
-        bytes memory data
+        address config_,
+        address beacon_,
+        bytes memory data_
     ) public payable {
         if (_getAddrRegistry() != address(0x0)) {
             _fallback();
         } else {
-            _selfInit(addrRegistry, beacon, data);
+            _selfInit(config_, beacon_, data_);
         }
     }
 

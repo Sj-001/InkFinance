@@ -19,4 +19,15 @@ interface IDAO is IERC165 {
         bytes32 flowID;
         // ProposalCommitteeInfo[] committees;
     }
+
+
+
+    // function addDutyID() external;
+
+
+    // function addCommitteeDutyID() external;
+
+
+
+
 }

@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "../bases/BaseDAO.sol";
-import "../bases/BaseVerify.sol";
 
 
 
 
-contract MasterDAO is BaseDAO, BaseVerify {
+
+contract MasterDAO is BaseDAO {
     /// libs ////////////////////////////////////////////////////////////////////////
     using Address for address;
 
@@ -35,6 +35,7 @@ contract MasterDAO is BaseDAO, BaseVerify {
         FlowInfo[] flows;
         string badgeName;
         uint256 badgeTotal;
+        string daoLogo;
     }
 
 
@@ -48,15 +49,15 @@ contract MasterDAO is BaseDAO, BaseVerify {
         address admin_,
         address config_,
         bytes calldata data
-    ) public virtual override initializer returns (bytes memory callbackEvent) {
+    ) public virtual override returns (bytes memory callbackEvent) {
         super.init(config_);
-        
+
         ownerAddress = admin_;
         // _metadata._init();
-        MasterDAOInitData memory initData = abi.decode(data, (MasterDAOInitData));
-        name = initData.name;
-        describe = initData.describe;
-        govToken = initData.govTokenAddr;
+        // MasterDAOInitData memory initData = abi.decode(data, (MasterDAOInitData));
+        // name = initData.name;
+        // describe = initData.describe;
+        // govToken = initData.govTokenAddr;
         
         // _metadata._setBytesSlice(initData.mds);
         // govTokenAmountRequirement = initData.govTokenAmountRequirement;
@@ -80,6 +81,7 @@ contract MasterDAO is BaseDAO, BaseVerify {
         callbackData.name = name;
 
         return abi.encode(callbackData);
+
     }
 
 }

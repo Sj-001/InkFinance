@@ -16,10 +16,24 @@ const {loadFixture, deployContract} = waffle;
 // dutyID(Role)
 
 
-//factoryID = keccak256("EvolveDAO_V1") = 0x60eec8b3f99438edc77c51d2b840d1f89c11392cdfc43d32a97863378359cbba;
-const factoryID = "0x60eec8b3f99438edc77c51d2b840d1f89c11392cdfc43d32a97863378359cbba";
 
-export async function DeployerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
+/**
+ * Contract IDs
+ */
+//masterDAO_ID = keccak256("MasterDAO_V2") = 0xaddf9e5a9a5a510452bc962afc0081e28cbdbefa6e1dea786693b83532ed9ac5;
+//console.log("masterDAO_ID=", keccak256(toUtf8Bytes("MasterDAO_V2")));
+const masterDAO_ContractID = "0xaddf9e5a9a5a510452bc962afc0081e28cbdbefa6e1dea786693b83532ed9ac5";
+
+/**
+ * Ink Default DutyIDs
+ */
+//console.log("defaultProposer_DutyID=", keccak256(toUtf8Bytes("defaultProposer_DutyID")));
+const defaultProposer_DutyID = "0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e";
+
+
+
+
+export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
     const signers = await ethers.getSigners();
 
 
@@ -29,13 +43,17 @@ export async function DeployerFixture(_wallets: Wallet[], _mockProvider: MockPro
 
     // await config.grantRole(BEACON_UPGRADER_ROLE, signers[0].address);
     // const config_addr =  await config.address;
-    const factoryManager = await deployContract(signers[0], FactoryManagerABI);
+    const factoryManager = await deployContract(signers[0], FactoryManagerABI, [globalConfig.address]);
     await factoryManager.deployed();
 
     // init project implementation
     let masterDAOImpl: Contract = await deployContract(signers[0], MasterDAOABI);
-    await factoryManager.addContract(factoryID, masterDAOImpl.address);
+    await factoryManager.addContract(masterDAO_ContractID, masterDAOImpl.address);
 
 
     return {factoryManager};
 }
+
+
+export {masterDAO_ContractID}
+export {defaultProposer_DutyID}

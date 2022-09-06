@@ -8,7 +8,7 @@
       },
       {
         "internalType": "address",
-        "name": "addrRegistry",
+        "name": "config_",
         "type": "address"
       }
     ],

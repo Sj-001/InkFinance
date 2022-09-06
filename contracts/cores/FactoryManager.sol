@@ -11,6 +11,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 // import "../abstract/BaseDeployable.sol";
 
 import "../interfaces/IFactoryManager.sol";
+import "../interfaces/IDeploy.sol";
 // import "../library/LChainLink.sol";
 
 import "../proxy/InkBeacon.sol";
@@ -79,12 +80,12 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             contractID
         ];
         // require(deployableContract.link._isEmpty(), "this contract is already exist");
-        // deployableContract.inkBeacon = new InkBeacon(contractImpl);
-        // emit AddContract(
-        //     contractID,
-        //     deployableContract.inkBeacon.implementation(),
-        //     contractImpl
-        // );
+        deployableContract.inkBeacon = new InkBeacon(contractImpl, _config);
+        emit AddContract(
+            contractID,
+            deployableContract.inkBeacon.implementation(),
+            contractImpl
+        );
     }
 
     /// @inheritdoc IFactoryManager
@@ -135,23 +136,24 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             salt
         );
 
-        // // miss proxy init
-        // InkProxy(payable(generatedContract)).init(
-        //     address(deployableContract.inkBeacon),
-        //     ""
-        // );
+        // miss proxy init
+        InkProxy(payable(generatedContract)).init(
+            _config,
+            address(deployableContract.inkBeacon),
+            ""
+        );
 
-        // IDeploy(generatedContract).init(msg.sender, _config, initData);
+        IDeploy(generatedContract).init(msg.sender, _config, initData);
 
-        // _deployedContracts[contractID].add(generatedContract);
-        // nounce++;
-
-        // console.log("new deploy:");
-        // console.log(
-        //     "implementation deploy:",
-        //     deployableContract.inkBeacon.implementation()
-        // );
-        // console.log("generated deploy:", generatedContract);
+        _deployedContracts[contractID].add(generatedContract);
+        nounce++;
+        /*
+        console.log("new deploy:");
+        console.log(
+            "implementation deploy:",
+            deployableContract.inkBeacon.implementation()
+        );
+        console.log("generated deploy:", generatedContract);
 
         // emit NewDeploy(
         //     contractID,
@@ -160,10 +162,10 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         //     initData,
         //     msg.sender
         // );
-        // return generatedContract;
+        */
+        return generatedContract;
+    
 
-
-        return address(0);
     }
 
     function getDeployedAddress(bytes32 contractID, uint256 index)

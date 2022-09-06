@@ -20,8 +20,8 @@ contract InkBeacon is IBeacon, BaseVerify {
      * @dev Sets the address of the initial implementation, and the deployer account as the owner who can upgrade the
      * beacon.
      */
-    constructor(address implementationAddr, address addrRegistry) {
-        // super.init(addrRegistry);
+    constructor(address implementationAddr, address config_) {
+        super.init(config_);
         _setImplementation(implementationAddr);
     }
 
