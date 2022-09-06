@@ -10,6 +10,7 @@ import { GlobalConfig } from '../../typechain/GlobalConfig'
 import * as GlobalConfigABI from "../../artifacts/contracts/cores/GlobalConfig.sol/GlobalConfig.json";
 import * as FactoryManagerABI from "../../artifacts/contracts/cores/FactoryManager.sol/FactoryManager.json";
 import * as MasterDAOABI from "../../artifacts/contracts/daos/MasterDAO.sol/MasterDAO.json";
+import * as InkERC20ABI from "../../artifacts/contracts/tokens/InkERC20.sol/InkERC20.json";
 
 const {loadFixture, deployContract} = waffle;
 
@@ -36,7 +37,7 @@ const defaultProposer_DutyID = "0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2c
 export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
     const signers = await ethers.getSigners();
 
-
+    
     const globalConfig = await deployContract(signers[0], GlobalConfigABI);
     await globalConfig.deployed();
     console.log("config address:", globalConfig.address);
@@ -52,6 +53,17 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
 
 
     return {factoryManager};
+}
+
+
+export async function InkERC20Fixture(_wallets: Wallet[], _mockProvider: MockProvider) {
+
+    const signers = await ethers.getSigners();
+
+    const inkERC20 = await deployContract(signers[0], InkERC20ABI, ["InkERC20", ""]);
+    await inkERC20.deployed();
+
+    return {inkERC20};
 }
 
 

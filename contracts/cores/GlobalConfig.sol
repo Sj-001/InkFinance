@@ -35,4 +35,5 @@ contract GlobalConfig is IConfig {
         override
         returns (bytes32 typeID, bytes memory data)
     {}
+    
 }

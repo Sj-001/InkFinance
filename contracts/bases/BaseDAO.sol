@@ -21,7 +21,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify  {
     string name;
     string describe;
     IERC20 govToken;
-
+    uint256 govTokenAmountRequirement;
+    address stakingAddr;
 
     /// @dev key is dutyID 
     /// find duty members according to dutyID,

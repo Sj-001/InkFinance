@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
@@ -143,6 +142,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             ""
         );
 
+    
         IDeploy(generatedContract).init(msg.sender, _config, initData);
 
         _deployedContracts[contractID].add(generatedContract);
@@ -183,4 +183,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     {
         return _deployedContracts[contractID].length();
     }
+
+
+
 }

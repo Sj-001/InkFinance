@@ -13,6 +13,57 @@
     "type": "event"
   },
   {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "describe",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "mds",
+            "type": "bytes[]"
+          },
+          {
+            "internalType": "contract IERC20",
+            "name": "govTokenAddr",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "govTokenAmountRequirement",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "stakingAddr",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct MasterDAO.MasterDAOInitData",
+        "name": "initData",
+        "type": "tuple"
+      }
+    ],
+    "name": "buildInitData",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "globalConfig",
     "outputs": [
@@ -84,6 +135,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "testDecode",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

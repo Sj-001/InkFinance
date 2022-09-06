@@ -33,11 +33,13 @@ module.exports = {
             // },
             gasPrice: 10000000070,
 
-        },
-        rinkeby: {
-            url: process.env.API_URL_RINKEBY,
-            accounts: [process.env.PRIVATE_KEY_RINKEBY]
         }
+        
+        // ,
+        // rinkeby: {
+        //     url: process.env.API_URL_RINKEBY,
+        //     accounts: [process.env.PRIVATE_KEY_RINKEBY]
+        // }
       
     },
 
