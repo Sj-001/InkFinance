@@ -13,6 +13,32 @@
     "type": "event"
   },
   {
+    "inputs": [],
+    "name": "MAX_STEP_NUM",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "NORMAL_CATEGORY",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "components": [
@@ -45,6 +71,36 @@
             "internalType": "address",
             "name": "stakingAddr",
             "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "badgeName",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "badgeTotal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "daoLogo",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minPledgeRequired",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minEffectiveVotes",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minEffectiveVoteWallets",
+            "type": "uint256"
           }
         ],
         "internalType": "struct MasterDAO.MasterDAOInitData",
@@ -61,6 +117,182 @@
       }
     ],
     "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getDAOProcessInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "proposalID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "processCategory",
+            "type": "bytes32"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "step",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "address",
+                "name": "committee",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "sensitive",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct IProposalHandler.CommitteeInfo",
+            "name": "nextCommittee",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastOperationTimestamp",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "step",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "address",
+                "name": "committee",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "sensitive",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct IProposalHandler.CommitteeInfo[]",
+            "name": "committees",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct IProposalHandler.DAOProcessInfo",
+        "name": "info",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getLastOperationTimestamp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getNextCommittee",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "committee",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sensitive",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IProposalHandler.CommitteeInfo",
+        "name": "nextInfo",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "stepIdx",
+        "type": "uint256"
+      }
+    ],
+    "name": "getProposalStep",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "committee",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sensitive",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IProposalHandler.CommitteeInfo",
+        "name": "stepInfo",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -121,6 +353,42 @@
   {
     "inputs": [
       {
+        "components": [
+          {
+            "internalType": "bytes[]",
+            "name": "items",
+            "type": "bytes[]"
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "headers",
+            "type": "bytes[]"
+          }
+        ],
+        "internalType": "struct IProposalInfo.ProposalApplyInfo",
+        "name": "proposal",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "newProposal",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes4",
         "name": "interfaceId",
         "type": "bytes4"
@@ -135,19 +403,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "testDecode",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

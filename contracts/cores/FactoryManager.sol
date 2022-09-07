@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
-
 // import "../abstract/BaseDeployable.sol";
 
 import "../interfaces/IFactoryManager.sol";
@@ -45,11 +44,14 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     /// @dev config address
     address private _config;
 
-
-     function supportsInterface(bytes4 interfaceId) external view override returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        external
+        view
+        override
+        returns (bool)
+    {
         return true;
-     }
-
+    }
 
     constructor(address config_) {
         super.init(config_);
@@ -59,7 +61,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         _config = config_;
         proxy = new InkProxy();
     }
-
 
     /// @inheritdoc IFactoryManager
     function addContract(bytes32 contractID, address contractImpl)
@@ -142,7 +143,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             ""
         );
 
-    
         IDeploy(generatedContract).init(msg.sender, _config, initData);
 
         _deployedContracts[contractID].add(generatedContract);
@@ -164,8 +164,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         // );
         */
         return generatedContract;
-    
-
     }
 
     function getDeployedAddress(bytes32 contractID, uint256 index)
@@ -183,7 +181,4 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     {
         return _deployedContracts[contractID].length();
     }
-
-
-
 }

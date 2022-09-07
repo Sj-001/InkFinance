@@ -2,6 +2,4 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-interface IUCVController is IERC165 {
-
-}
+interface IUCVController is IERC165 {}

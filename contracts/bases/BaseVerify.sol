@@ -11,7 +11,6 @@ import "../interfaces/IConfig.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice base verify is context and initializable (initialize just once)
 abstract contract BaseVerify is Context, Initializable {
-    
     IConfig public globalConfig;
 
     function init(address _config) public initializer {

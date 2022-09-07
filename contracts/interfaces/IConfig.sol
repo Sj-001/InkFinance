@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 interface IConfig is IERC165 {
-    
     // 对某些key设置管理员.
     event SetConfigAdmin(
         address indexed domain,

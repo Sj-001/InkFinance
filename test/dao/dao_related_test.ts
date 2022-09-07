@@ -70,10 +70,17 @@ describe("contract dao test", function () {
         // var masterDAOInitialData =
         //      web3.eth.abi.encodeParameters(["string","string"], ["daoName","daoDescribe"]);
 
-        
+        var badgeName = "badgeName1";
+        var badgeTotal = 100;
+        var daoLogo = "daoDefaultLogo";
+        var minPledgeRequired = 10;
+        var minEffectiveVotes = 100;
+        var minEffectiveVoteWallets = 1;
 
 
-        var masterDAOInitialData = defaultAbiCoder.encode(['tuple(string, string, bytes[], address, uint256, address)'], [["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address]]);
+
+        var masterDAOInitialData = defaultAbiCoder.encode(['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256)'],
+             [["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets]]);
         await factoryManager.deploy(masterDAO_ContractID, masterDAOInitialData);
 
 

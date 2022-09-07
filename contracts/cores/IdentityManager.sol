@@ -11,9 +11,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice IdenetityManager is used to verify the account.
 contract IdentityManager {
-
-
-    struct UserKV{
+    struct UserKV {
         address user;
         bytes32 key;
         bytes32 typeID;
@@ -21,13 +19,12 @@ contract IdentityManager {
     }
 
     // 仅能设置到msg.sender地址下的作用域中.
-    function batchSetUserKVs(UserKV[] memory kvs) external {
+    function batchSetUserKVs(UserKV[] memory kvs) external {}
 
-    }
-
-    function getUserKV(address zone, bytes32 key) external returns(bytes32 typeID, bytes memory data) {
-        
-    }
+    function getUserKV(address zone, bytes32 key)
+        external
+        returns (bytes32 typeID, bytes memory data)
+    {}
 
     //////////// 存储示例
     struct Value {
@@ -36,10 +33,8 @@ contract IdentityManager {
     }
 
     struct KVZone {
-
         address issue;
         // user -> key -> value
-        mapping(address=>mapping(bytes32=>Value)) kvs;
+        mapping(address => mapping(bytes32 => Value)) kvs;
     }
-
 }
