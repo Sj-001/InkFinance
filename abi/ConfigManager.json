@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -113,7 +118,7 @@
             "type": "address"
           }
         ],
-        "internalType": "struct IConfig.AdminKeyInfo[]",
+        "internalType": "struct ConfigHelper.AdminKeyInfo[]",
         "name": "adminKeyInfos",
         "type": "tuple[]"
       }
@@ -153,8 +158,8 @@
             "type": "bytes"
           }
         ],
-        "internalType": "struct IConfig.KVInfo[]",
-        "name": "kvs",
+        "internalType": "struct ConfigHelper.KVInfo[]",
+        "name": "keyValueInfos",
         "type": "tuple[]"
       }
     ],
@@ -178,7 +183,7 @@
             "type": "address"
           }
         ],
-        "internalType": "struct IConfig.AdminKeyPrefixInfo[]",
+        "internalType": "struct ConfigHelper.AdminKeyPrefixInfo[]",
         "name": "prefixKeyInfo",
         "type": "tuple[]"
       }
@@ -209,7 +214,7 @@
         "type": "bytes"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {

@@ -3,10 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-
-
 interface IDutyControl {
-
     /// Duty Related
     /// @dev add user-defined DutyID, !!! Agent call only
     /// @param dutyID user-defined dutyID, formed by keccak256

@@ -5,7 +5,7 @@ import {keccak256, toUtf8Bytes } from 'ethers/lib/utils';
 import { Fixture } from 'ethereum-waffle'
 import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
-import { GlobalConfig } from '../../typechain/GlobalConfig'
+import { ConfigManager } from '../../typechain/ConfigManager'
 
 import * as ConfigManagerABI from "../../artifacts/contracts/cores/ConfigManager.sol/ConfigManager.json";
 import * as FactoryManagerABI from "../../artifacts/contracts/cores/FactoryManager.sol/FactoryManager.json";
@@ -83,6 +83,15 @@ export async function InkERC20Fixture(_wallets: Wallet[], _mockProvider: MockPro
     return {inkERC20};
 }
 
+
+export async function ConfigManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
+
+    const signers = await ethers.getSigners();
+    const configManager = await deployContract(signers[0], ConfigManagerABI, []);
+    await configManager.deployed();
+
+    return {configManager};
+}
 
 export {masterDAO_ContractID, theBoard_ContractID, thePublic_ContractID, treasuryCommittee_ContractID}
 export {defaultProposer_DutyID}

@@ -8,7 +8,6 @@ import "../interfaces/IIdentity.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice IdenetityManager is used to verify the account.
 contract IdentityManager is IIdentity {
-    
     function supportsInterface(bytes4 interfaceId)
         public
         view

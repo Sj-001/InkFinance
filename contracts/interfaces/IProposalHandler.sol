@@ -7,7 +7,6 @@ import "./IProposalInfo.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice inteface which defined how to deal with the vote process
 interface IProposalHandler is IProposalInfo {
-    
     struct CommitteeInfo {
         bytes32 step;
         string committeeContractID;

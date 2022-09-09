@@ -8,21 +8,15 @@ import { ConfigManagerFixture } from '../shared/fixtures';
 describe("utils generate hash", function () {
 
 
-    it("ink finance roles", async function () {
-        console.log("inkfinance.xyz:ADMIN", keccak256(toUtf8Bytes("inkfinance.xyz:ADMIN")))
 
 
-
-    });
-
-    it("ink finance duty ids", async function () {
-        console.log("INK_FINANCE_UCV_MANAGER: ", keccak256(toUtf8Bytes("INK_FINANCE_UCV_MANAGER")))
-
-
+    it("config settings ", async function () {
+        const {configManager} = await loadFixture(ConfigManagerFixture);
+        // console.log(await configManager.getKV(toUtf8Bytes("keys")));
 
     });
-
-
     
+
+
 
 })

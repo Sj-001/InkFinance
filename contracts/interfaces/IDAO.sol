@@ -20,5 +20,4 @@ interface IDAO is IDAOAgent, ICommittee, IProposalHandler, IDutyControl {
         address govTokenAddr;
         string name;
     }
-
 }

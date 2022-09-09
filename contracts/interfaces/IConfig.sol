@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
+import "../libraries/ConfigHelper.sol";
+
 interface IConfig is IERC165 {
     /// @dev when set admin of some domain key, this event will be sent
     /// @param domain domain of the key
@@ -24,40 +26,6 @@ interface IConfig is IERC165 {
         address indexed admin
     );
 
-    /// @dev Admin's keyID info
-    /// @param keyID the keyID
-    /// @param admin the admin's address
-    struct AdminKeyInfo {
-        bytes32 keyID;
-        address admin;
-    }
-
-    struct AdminKeyPrefixInfo {
-        string keyPrefix;
-        address admin;
-    }
-
-    /// @dev KV item
-    /// @param keyPrefix prefix of the key
-    /// @param keyName key name
-    /// @param typeID the key's type
-    /// @param data the data of the key
-    struct KVInfo {
-        string keyPrefix;
-        string keyName;
-        bytes32 typeID;
-        bytes data;
-    }
-
-    /// @dev batch setting the admin key
-    /// @param adminKeys admin's key
-    function batchSetAdminKeys(AdminKeyInfo[] memory adminKeys) external;
-
-    /// @dev batch setting prefix
-    /// @param prefixKeyInfo prefix key infos
-    function batchSetPrefixKeyAdmin(AdminKeyPrefixInfo[] memory prefixKeyInfo)
-        external;
-
     // 仅有对应管理员可以设置该key, domain == msg.sender 时具有所有权限.
     // 注: string类型仅用于事件, 合约本地存储用hash后的值.
     // 先查domain == msg.sender.
@@ -73,10 +41,22 @@ interface IConfig is IERC165 {
         bytes data
     );
 
+    /// @dev batch setting the admin key
+    /// @param adminKeys admin's key
+    function batchSetAdminKeys(ConfigHelper.AdminKeyInfo[] memory adminKeys)
+        external;
+
+    /// @dev batch setting prefix
+    /// @param prefixKeyInfo prefix key infos
+    function batchSetPrefixKeyAdmin(
+        ConfigHelper.AdminKeyPrefixInfo[] memory prefixKeyInfo
+    ) external;
+
     /// @dev batch set key and values
     /// @param domain target domain
     /// @param kvs array, referal to KVInfo structs
-    function batchSetKV(address domain, KVInfo[] memory kvs) external;
+    function batchSetKV(address domain, ConfigHelper.KVInfo[] memory kvs)
+        external;
 
     /// @dev get typeID and data of the key
     /// @param key the key of data
@@ -84,5 +64,6 @@ interface IConfig is IERC165 {
     /// @return data key's data
     function getKV(bytes32 key)
         external
+        view
         returns (bytes32 typeID, bytes memory data);
 }

@@ -5,7 +5,7 @@ import {keccak256, toUtf8Bytes } from 'ethers/lib/utils';
 import { Fixture } from 'ethereum-waffle'
 import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
-import { GlobalConfig } from '../../typechain/GlobalConfig'
+import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
 
 import { masterDAO_ContractID, theBoard_ContractID, thePublic_ContractID, treasuryCommittee_ContractID} from './fixtures'; 

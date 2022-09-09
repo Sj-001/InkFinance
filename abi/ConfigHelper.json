@@ -1,0 +1,74 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
+    "name": "getAddressHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "addressHash",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "domain",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "prefix",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "keyName",
+        "type": "string"
+      }
+    ],
+    "name": "packKey",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "prefix",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "keyName",
+        "type": "string"
+      }
+    ],
+    "name": "packKeyID",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "keyID",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  }
+]
