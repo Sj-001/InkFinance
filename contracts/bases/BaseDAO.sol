@@ -45,33 +45,33 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes calldata data
     ) public virtual override returns (bytes memory callbackEvent) {}
 
-    /// @inheritdoc IDAO
+    /// @inheritdoc IDutyControl
     function addDuty(bytes32 dutyID) external override {}
 
-    /// @inheritdoc IDAO
+    /// @inheritdoc IDutyControl
     function remmoveDuty(bytes32 dutyID) external override {}
 
-    /// @inheritdoc IDAO
+    /// @inheritdoc IDutyControl
     function addUser(address account) external override {}
 
-    /// @inheritdoc IDAO
+    /// @inheritdoc IDutyControl
     function removeUser(address account) external override {}
 
-    /// @inheritdoc IDAO
+    /// @inheritdoc IDutyControl
     function hasDuty(address account, bytes32 dutyID)
         external
         override
         returns (bool exist)
     {}
 
-    /// @inheritdoc IDAO
+    /// @inheritdoc IDutyControl
     function getDutyOwners(bytes32 dutyID)
         external
         override
         returns (uint256 owners)
     {}
 
-    /// @inheritdoc IDAO
+    /// @inheritdoc IDutyControl
     function getDutyOwnerByIndex(bytes32 dutyID, uint256 index)
         external
         override
