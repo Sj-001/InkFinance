@@ -16,12 +16,12 @@ interface IFactoryManager is IERC165 {
     event DelContract(bytes32 indexed contractID);
 
     /// @dev when new contract was deployed, the event will be emit.
-    /// @param contractID each kind of contract have different contractID, reference to the IDeployFactory comment
+    /// @param contractID each kind of contract have different contractID
     /// @param contractImpl implementation of the newAddres
     /// @param newAddr genereated new address
     /// @param initData init data
     /// @param msgSender each kind of contract have different contractID, reference to the IDeployFactory comme
-    event NewDeploy(
+    event NewContractDeployed(
         bytes32 indexed contractID,
         address indexed contractImpl,
         address indexed newAddr,

@@ -147,22 +147,15 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         _deployedContracts[contractID].add(generatedContract);
         nounce++;
-        /*
-        console.log("new deploy:");
-        console.log(
-            "implementation deploy:",
-            deployableContract.inkBeacon.implementation()
-        );
-        console.log("generated deploy:", generatedContract);
 
-        // emit NewDeploy(
-        //     contractID,
-        //     deployableContract.inkBeacon.implementation(),
-        //     generatedContract,
-        //     initData,
-        //     msg.sender
-        // );
-        */
+        emit NewContractDeployed(
+            contractID,
+            deployableContract.inkBeacon.implementation(),
+            generatedContract,
+            initData,
+            msg.sender
+        );
+
         return generatedContract;
     }
 

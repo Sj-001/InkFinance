@@ -9,4 +9,13 @@ interface IDeploy is IERC165 {
         address config,
         bytes calldata data
     ) external returns (bytes memory callbackEvent);
+
+    /// @dev get the type of the contract, it's constant
+    ///
+    /// @param typeID type of the deployed contract
+    function getTypeID() external returns (bytes32 typeID);
+
+    /// @dev 通过常量实现, 获取该合约版本, 在进行可升级合约变更时, 通过该方法判定是否可以升级.
+    /// @return version the version number
+    function getVersion() external returns (uint256 version);
 }

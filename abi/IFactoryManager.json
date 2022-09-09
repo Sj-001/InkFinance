@@ -71,7 +71,7 @@
         "type": "address"
       }
     ],
-    "name": "NewDeploy",
+    "name": "NewContractDeployed",
     "type": "event"
   },
   {

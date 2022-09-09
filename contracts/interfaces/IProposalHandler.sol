@@ -9,42 +9,90 @@ import "./IProposalInfo.sol";
 interface IProposalHandler is IProposalInfo {
     struct CommitteeInfo {
         bytes32 step;
-        address committee;
+        string committeeContractID;
         uint256 sensitive;
     }
 
-    struct DAOProcessInfo {
-        bytes32 proposalID;
-        // processCategory is used to distinguish different processes in dao.
-        bytes32 processCategory;
-        // now decide committee;
-        CommitteeInfo nextCommittee;
-        // last committee operation time.
-        uint256 lastOperationTimestamp;
-        // According to the processCategory, order to participate committee.
-        // first committee is the launcher committee.
+    // struct DAOProcessInfo {
+    //     bytes32 proposalID;
+    //     // processCategory is used to distinguish different processes in dao.
+    //     bytes32 processCategory;
+    //     // now decide committee;
+    //     CommitteeInfo nextCommittee;
+    //     // last committee operation time.
+    //     uint256 lastOperationTimestamp;
+    //     // According to the processCategory, order to participate committee.
+    //     // first committee is the launcher committee.
+    //     CommitteeInfo[] committees;
+    // }
+
+    // //////////////////// proposal info
+
+    // function getDAOProcessInfo(bytes32 proposalID)
+    //     external
+    //     view
+    //     returns (DAOProcessInfo memory info);
+
+    // function getNextCommittee(bytes32 proposalID)
+    //     external
+    //     view
+    //     returns (CommitteeInfo memory nextInfo);
+
+    // function getLastOperationTimestamp(bytes32 proposalID)
+    //     external
+    //     view
+    //     returns (uint256 timestamp);
+
+    // function getProposalStep(bytes32 proposalID, uint256 stepIdx)
+    //     external
+    //     view
+    //     returns (CommitteeInfo memory stepInfo);
+
+    struct FlowInfo {
+        bytes32 flowID;
         CommitteeInfo[] committees;
     }
 
-    //////////////////// proposal info
-
-    function getDAOProcessInfo(bytes32 proposalID)
+    // which proposal decide the latest key item;
+    function getTopicKeyProposal(bytes32 topicID, bytes32 key)
         external
         view
-        returns (DAOProcessInfo memory info);
+        returns (bytes32 proposalID);
 
-    function getNextCommittee(bytes32 proposalID)
+    function getTopicMetadata(bytes32 topicID, bytes32 key)
         external
         view
-        returns (CommitteeInfo memory nextInfo);
+        returns (bytes32 typeID, bytes memory data);
 
-    function getLastOperationTimestamp(bytes32 proposalID)
+    function getTopicInfo(bytes32 topicID)
         external
         view
-        returns (uint256 timestamp);
+        returns (Topic memory topic);
 
-    function getProposalStep(bytes32 proposalID, uint256 stepIdx)
+    //////////////////// proposal
+
+    function getProposalSummary(bytes32 proposalID)
         external
         view
-        returns (CommitteeInfo memory stepInfo);
+        returns (Proposal memory proposal);
+
+    function getProposalMetadata(bytes32 proposalID, bytes32 key)
+        external
+        view
+        returns (bytes32 typeID, bytes memory data);
+
+    function getProposalKvData(bytes32 proposalID, bytes32 key)
+        external
+        view
+        returns (bytes32 typeID, bytes memory data);
+
+    function getProposalKvDataKeys(
+        bytes32 proposalID,
+        bytes32 startKey,
+        uint256 pageSize
+    ) external view returns (bytes32[] memory keys);
+
+    //////////////////// flush index
+    // dao查看该topicID上次刷新到的位置(lastIndexedProposalID, lastIndexedKey), 来继续进行, 所以权限问题.
+    function flushTopicIndex(bytes32 topicID, uint256 operateNum) external;
 }

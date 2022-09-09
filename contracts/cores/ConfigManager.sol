@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IConfig.sol";
 
-contract GlobalConfig is IConfig {
+contract ConfigManager is IConfig {
     // 仅能配置该地址域下的key的管理员.
 
     function supportsInterface(bytes4 interfaceId)
@@ -15,14 +15,15 @@ contract GlobalConfig is IConfig {
         return true;
     }
 
-    function batchSetConfigAdmin(SetConfigAdminInfo[] memory configAdmins)
+    function batchSetAdminKeys(AdminKeyInfo[] memory adminKeyInfos)
         external
         override
     {}
 
-    function batchSetPrefixConfigAdmin(
-        SetPrefixConfigAdminInfo[] memory prefixConfigAdmins
-    ) external override {}
+    function batchSetPrefixKeyAdmin(AdminKeyPrefixInfo[] memory prefixKeyInfo)
+        external
+        override
+    {}
 
     function batchSetKV(address domain, KVInfo[] memory kvs)
         external

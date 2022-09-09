@@ -113,12 +113,12 @@
             "type": "address"
           }
         ],
-        "internalType": "struct IConfig.SetConfigAdminInfo[]",
-        "name": "configAdmins",
+        "internalType": "struct IConfig.AdminKeyInfo[]",
+        "name": "adminKeyInfos",
         "type": "tuple[]"
       }
     ],
-    "name": "batchSetConfigAdmin",
+    "name": "batchSetAdminKeys",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -178,12 +178,12 @@
             "type": "address"
           }
         ],
-        "internalType": "struct IConfig.SetPrefixConfigAdminInfo[]",
-        "name": "prefixConfigAdmins",
+        "internalType": "struct IConfig.AdminKeyPrefixInfo[]",
+        "name": "prefixKeyInfo",
         "type": "tuple[]"
       }
     ],
-    "name": "batchSetPrefixConfigAdmin",
+    "name": "batchSetPrefixKeyAdmin",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

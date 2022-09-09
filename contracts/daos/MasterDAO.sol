@@ -38,14 +38,13 @@ contract MasterDAO is BaseDAO {
         uint256 minPledgeRequired;
         uint256 minEffectiveVotes;
         uint256 minEffectiveVoteWallets;
-        // FlowInfo[] flows;
+        FlowInfo[] flows;
     }
-
 
     /// @dev dao inforamtion
     MasterDAOInitData private _daoInitData;
 
-    /// @dev 
+    /// @dev
     // keccak256("dao.category.NORMAL_CATEGORY")
     bytes32 public constant NORMAL_CATEGORY =
         0xe74eb57e65d8bc05567c1f87e30b997b8d307f4263f0ff5b4b3a4a7f3a49fd90;
@@ -68,7 +67,11 @@ contract MasterDAO is BaseDAO {
         super.init(config_);
         ownerAddress = admin_;
         // _metadata._init();
-        _daoInitData = abi.decode(data, (MasterDAOInitData));
+
+        MasterDAOInitData memory initData = abi.decode(
+            data,
+            (MasterDAOInitData)
+        );
 
         // name = initData.name;
         // describe = initData.describe;
@@ -101,7 +104,8 @@ contract MasterDAO is BaseDAO {
     /// @param data related content
     /// @return proposalID
     function newProposal(
-        ProposalApplyInfo calldata proposal,
+        Proposal calldata proposal,
+        bool commit,
         bytes calldata data
     ) public override EnsureGovEnough returns (bytes32 proposalID) {
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[
@@ -128,7 +132,6 @@ contract MasterDAO is BaseDAO {
         // _decideProposal(proposalID, _msgSender(), true);
     }
 
-
     /*
         // flows := make([]MasterDAO.IDAOFlowInfo, 1)
         // flows[0] = MasterDAO.IDAOFlowInfo{
@@ -151,7 +154,6 @@ contract MasterDAO is BaseDAO {
 
         // FlowID: common.HexToHash("0xe74eb57e65d8bc05567c1f87e30b997b8d307f4263f0ff5b4b3a4a7f3a49fd90"),
     */
-
 
     //////////////////// internal
     function _setFlowStep(FlowInfo memory flow) internal {
@@ -180,8 +182,8 @@ contract MasterDAO is BaseDAO {
             //     "committee addr not support ICommittee"
             // );
 
-            steps[committeeInfo.step].committee = committeeInfo.committee;
-            steps[committeeInfo.step].sensitive = committeeInfo.sensitive;
+            // steps[committeeInfo.step].committee = committeeInfo.committee;
+            // steps[committeeInfo.step].sensitive = committeeInfo.sensitive;
 
             // link next committee
             if (j < flow.committees.length - 1) {
@@ -194,31 +196,23 @@ contract MasterDAO is BaseDAO {
         }
     }
 
-    function getDAOProcessInfo(bytes32 proposalID)
-        external
-        view
-        override
-        returns (DAOProcessInfo memory info)
-    {}
+    function changeProposal(
+        bytes32 proposalID,
+        KVItem[] memory contents,
+        bool commit,
+        bytes calldata data
+    ) external override {}
 
-    function getNextCommittee(bytes32 proposalID)
-        external
-        view
-        override
-        returns (CommitteeInfo memory nextInfo)
-    {}
+    // if agree, apply the proposal kvdata to topic.
+    function decideProposal(
+        bytes32 proposalID,
+        bool agree,
+        bytes calldata data
+    ) external override {}
 
-    function getLastOperationTimestamp(bytes32 proposalID)
-        external
-        view
-        override
-        returns (uint256 timestamp)
-    {}
+    /// @inheritdoc IDeploy
+    function getTypeID() external override returns (bytes32 typeID) {}
 
-    function getProposalStep(bytes32 proposalID, uint256 stepIdx)
-        external
-        view
-        override
-        returns (CommitteeInfo memory stepInfo)
-    {}
+    /// @inheritdoc IDeploy
+    function getVersion() external override returns (uint256 version) {}
 }
