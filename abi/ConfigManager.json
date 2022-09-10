@@ -196,6 +196,35 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "domain",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "prefix",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "keyName",
+        "type": "string"
+      }
+    ],
+    "name": "buildConfigKey",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "key",
         "type": "bytes32"

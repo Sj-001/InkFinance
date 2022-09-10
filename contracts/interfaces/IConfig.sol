@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-import "../libraries/ConfigHelper.sol";
+import "../utils/ConfigHelper.sol";
 
 interface IConfig is IERC165 {
     /// @dev when set admin of some domain key, this event will be sent
@@ -66,4 +66,14 @@ interface IConfig is IERC165 {
         external
         view
         returns (bytes32 typeID, bytes memory data);
+
+    /// @dev help frontend to build key consistantly
+    /// @param domain wallet public key
+    /// @param prefix prefix, could be empty
+    /// @param keyName key name
+    function buildConfigKey(    
+        address domain,
+        string memory prefix,
+        string memory keyName
+    ) external pure returns (bytes32 key);
 }

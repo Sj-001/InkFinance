@@ -47,7 +47,7 @@ library ConfigHelper {
         address domain,
         string memory prefix,
         string memory keyName
-    ) public pure returns (bytes32 key) {
+    ) internal pure returns (bytes32 key) {
         string memory actualPrefix = getPrefix(prefix);
         bytes32 keyID = packKeyID(actualPrefix, keyName);
         key = keccak256(abi.encodePacked(domain, keyID));
@@ -55,7 +55,7 @@ library ConfigHelper {
 
     /// @dev used to pack keyID
     function packKeyID(string memory prefix, string memory keyName)
-        public
+        internal
         pure
         returns (bytes32 keyID)
     {
@@ -69,7 +69,7 @@ library ConfigHelper {
     }
 
     function getAddressHash(address addr)
-        public
+        internal
         pure
         returns (bytes32 addressHash)
     {

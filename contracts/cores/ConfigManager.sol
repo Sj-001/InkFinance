@@ -11,7 +11,7 @@ import "hardhat/console.sol";
 /// 1. domain = wallet public key
 /// 2. key = keccak256(domain + keyID)
 /// 3. keyID = keccak256(keccak256(<prefix>) + keccak256(keyName))
-
+/// todo INk admin area, multi-sign management
 contract ConfigManager is IConfig {
     /// libs
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -43,7 +43,14 @@ contract ConfigManager is IConfig {
 
     constructor() {}
 
-    // function buildConfigKey
+    /// @inheritdoc IConfig
+    function buildConfigKey(
+        address domain,
+        string memory prefix,
+        string memory keyName
+    ) external override pure returns (bytes32 key) {
+        key = ConfigHelper.packKey(domain, prefix, keyName);
+    }
 
     /// @inheritdoc IConfig
     function batchSetAdminKeys(ConfigHelper.AdminKeyInfo[] memory adminKeyInfos)
@@ -52,6 +59,12 @@ contract ConfigManager is IConfig {
     {
         for (uint256 i = 0; i < adminKeyInfos.length; i++) {
             _domainKeyAdmins.addAdminManageableKey(adminKeyInfos[i]);
+            // event SetConfigAdmin(
+            //     address indexed domain,
+            //     bytes32 indexed keyID,
+            //     address indexed admin
+            // );
+            
         }
     }
 
@@ -61,6 +74,11 @@ contract ConfigManager is IConfig {
     ) external override {
         for (uint256 i = 0; i < prefixKeyInfo.length; i++) {
             _domainPrefixAdmins.addAdminManageableKeyPrefix(prefixKeyInfo[i]);
+            // event SetPrefixConfigAdmin(
+            //     address indexed domain,
+            //     string indexed keyPrefix,
+            //     address indexed admin
+            // );
         }
     }
 
@@ -78,6 +96,17 @@ contract ConfigManager is IConfig {
                 )
             ) {
                 _domainKeyValues.addKeyValue(domain, keyValueInfos[i]);
+
+                // event SetKV(
+                //     address indexed operator,
+                //     address indexed domain,
+                //     bytes32 indexed key,
+                //     string keyPrefix,
+                //     string keyName,
+                //     bytes32 typeID,
+                //     bytes data
+                // );
+
             } else {
                 console.log("no right to set key's value");
             }
@@ -96,6 +125,7 @@ contract ConfigManager is IConfig {
         data = info.data;
     }
 
+    /// @notice verify the msgSender has the right to update the value under that domain
     function hasRightToSet(
         address domain,
         string memory prefix,
@@ -104,14 +134,20 @@ contract ConfigManager is IConfig {
         if (domain == msg.sender) {
             return true;
         }
-        // 
-        // bytes32 domainHash = ConfigHelper.getAddressHash(domain);
-        // if (_domainPrefixAdmins[domainHash][prefix].contains(msg.sender)) {
-        //     return true;
-        // }
-        // if (_domainKeyAdmins[domainHash][ConfigHelper.packKeyID(prefix, keyName)].contains(msg.sender)) {
-        //     return true;
-        // }
+
+        bytes32 domainHash = ConfigHelper.getAddressHash(domain);
+
+        if (_domainPrefixAdmins[domainHash][prefix].contains(msg.sender)) {
+            return true;
+        }
+
+        if (
+            _domainKeyAdmins[domainHash][
+                ConfigHelper.packKeyID(prefix, keyName)
+            ].contains(msg.sender)
+        ) {
+            return true;
+        }
 
         return false;
     }
