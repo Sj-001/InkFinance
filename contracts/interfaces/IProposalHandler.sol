@@ -11,7 +11,9 @@ interface IProposalHandler is IProposalInfo {
         bytes32 step;
         string committeeContractID;
         uint256 sensitive;
+        bytes dutyIDs;
     }
+
 
     // struct DAOProcessInfo {
     //     bytes32 proposalID;
@@ -53,6 +55,28 @@ interface IProposalHandler is IProposalInfo {
         CommitteeInfo[] committees;
     }
 
+
+    function newProposal(
+        NewProposalInfo calldata proposal,
+        bool commit,
+        bytes calldata data
+    ) external returns (bytes32 proposalID);
+
+    // used to append new kvData(can convert old same key)
+    function changeProposal(
+        bytes32 proposalID,
+        KVItem[] memory contents,
+        bool commit,
+        bytes calldata data
+    ) external;
+
+    // if agree, apply the proposal kvdata to topic.
+    function decideProposal(
+        bytes32 proposalID,
+        bool agree,
+        bytes calldata data
+    ) external;
+
     // which proposal decide the latest key item;
     function getTopicKeyProposal(bytes32 topicID, bytes32 key)
         external
@@ -74,7 +98,7 @@ interface IProposalHandler is IProposalInfo {
     function getProposalSummary(bytes32 proposalID)
         external
         view
-        returns (Proposal memory proposal);
+        returns (ProposalSummary memory proposal);
 
     function getProposalMetadata(bytes32 proposalID, bytes32 key)
         external

@@ -11,11 +11,18 @@ import "./BaseVerify.sol";
 abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     // libs
     using EnumerableSet for EnumerableSet.AddressSet;
+    using EnumerableSet for EnumerableSet.Bytes32Set;
 
-    // variables;
 
-    /// @dev belongt to which DAO
+    // variables
+    /// @dev belong to which DAO
     address private _DAO;
+
+    /// @dev configManager contract
+    address private _config;
+
+    /// @dev all committee's duties stored here
+    EnumerableSet.Bytes32Set committeeDuties;
 
     function supportsInterface(bytes4 interfaceId)
         public
@@ -30,29 +37,20 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     }
 
     function init(
-        address admin,
-        address config,
+        address dao_,
+        address config_,
         bytes calldata data
-    ) external override returns (bytes memory callbackEvent) {}
+    ) external override returns (bytes memory callbackEvent) {
+        _DAO = dao_;
+        // committeeDuties.add(keccak256(data));
+    }
 
-    function newProposal(
-        Proposal calldata proposal,
-        bool commit,
-        bytes calldata data
-    ) external override returns (bytes32 proposalID) {}
 
-    // used to append new kvData(can convert old same key)
-    function changeProposal(
-        bytes32 proposalID,
-        KVItem[] memory contents,
-        bool commit,
-        bytes calldata data
-    ) external override {}
 
-    // if agree, apply the proposal kvdata to topic.
-    function decideProposal(
-        bytes32 proposalID,
-        bool agree,
-        bytes calldata data
-    ) external override {}
+    /// @inheritdoc ICommittee
+    function getCommitteeDuties() external view override returns (bytes32[] memory duties) {
+
+    }
+
+    
 }

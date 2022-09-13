@@ -1,118 +1,12 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
-      },
-      {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "key",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "typeID",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          }
-        ],
-        "internalType": "struct ICommittee.KVItem[]",
-        "name": "contents",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "bool",
-        "name": "commit",
-        "type": "bool"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "changeProposal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bool",
-        "name": "agree",
-        "type": "bool"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "decideProposal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "enum IProposalInfo.ProposalStatus",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "proposalID",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "topicID",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "agents",
-            "type": "bytes32"
-          }
-        ],
-        "internalType": "struct IProposalInfo.Proposal",
-        "name": "proposal",
-        "type": "tuple"
-      },
-      {
-        "internalType": "bool",
-        "name": "commit",
-        "type": "bool"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "newProposal",
+    "inputs": [],
+    "name": "getCommitteeDuties",
     "outputs": [
       {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
+        "internalType": "bytes32[]",
+        "name": "duties",
+        "type": "bytes32[]"
       }
     ],
     "stateMutability": "nonpayable",

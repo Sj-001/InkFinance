@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "../bases/BaseCommittee.sol";
 
 contract TreasuryCommittee is BaseCommittee {
+    
     /// @inheritdoc IDeploy
     function getTypeID() external override returns (bytes32 typeID) {}
 

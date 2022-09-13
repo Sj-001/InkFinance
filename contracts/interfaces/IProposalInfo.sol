@@ -7,19 +7,39 @@ import "../libraries/LEnumerableMetadata.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice inteface which defined how to deal with the vote process
 interface IProposalInfo {
-    // one bytes[] item is encode(string key, bytes32 typeID, bytes value, string describe)
-    // describe field just used in event log, not stored in the slot.
-    struct ProposalApplyInfo {
-        bytes[] items;
-        bytes[] headers;
+
+
+    /// @dev sub item of NewProposal
+    struct KVItem {
+        bytes32 key;
+        bytes32 typeID;
+        bytes data;
+        bytes desc;
     }
+
+    /// @dev data structure of submiting a new proposal
+    /// @param agents agents of the proposal
+    /// @param topicID topic of the proposal
+    /// @param crossChainProtocal if it's empty, means work on local chain
+    /// @param contents proposal contents
+    /// @param headers proposal headers  
+    struct NewProposalInfo {
+        bytes32[] agents;
+        bytes32 topicID;
+        bytes crossChainProtocal;
+        KVItem[] headers;
+        KVItem[] contents;
+
+    }
+
+
     // 接口返回格式
     struct Topic {
         bytes32 topicID;
         bytes32[] proposalIDs;
     }
 
-    struct Proposal {
+    struct ProposalSummary {
         ProposalStatus status;
         bytes32 proposalID;
         bytes32 topicID;
@@ -38,7 +58,7 @@ interface IProposalInfo {
         bytes data;
     }
 
-    struct StoreProposal {
+    struct Proposal {
         ProposalStatus status;
         bytes32 proposalID;
         bytes32 topicID;
@@ -46,9 +66,9 @@ interface IProposalInfo {
         uint256 nextExecAgentIdx;
         bytes32 crossChainProtocol;
         // 避免链上枚举, 消耗gas, 浪费存储.
-        mapping(bytes32 => ItemValue) metaData;
+        mapping(bytes32 => ItemValue) headers;
         // 需要枚举.
-        LEnumerableMetadata.MetadataSet kvData;
+        LEnumerableMetadata.MetadataSet contents;
     }
 
     // topic中的key落到proposal中的最新位置, 用于加速查询, 类似做索引.

@@ -5,10 +5,14 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "../interfaces/IDAO.sol";
 import "../interfaces/IDeploy.sol";
+import "../interfaces/IFactoryManager.sol";
 
 import "./BaseVerify.sol";
 
 abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
+    
+
+
     // libs
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -18,23 +22,31 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         uint256 sensitive;
     }
 
-    // @dev the one who created the DAO
-    address ownerAddress;
-
-    string name;
-    string describe;
-    IERC20 govToken;
-    uint256 govTokenAmountRequirement;
-    address stakingAddr;
-
+    // variables
+    // constant
     uint256 public constant MAX_STEP_NUM = 10;
 
     bytes32 internal constant _SENTINEL_ID =
         0x0000000000000000000000000000000000000000000000000000000000000001;
 
+    // @dev the one who created the DAO
+    address private ownerAddress;
+    string private name;
+    string private describe;
+    IERC20 private govToken;
+    uint256 private govTokenAmountRequirement;
+    address private stakingAddr;
+
+
+
     /// @dev key is dutyID
     /// find duty members according to dutyID,
-    mapping(uint256 => EnumerableSet.AddressSet) private _dutyMembers;
+    mapping(bytes32 => EnumerableSet.AddressSet) private _dutyMembers;
+
+    /// @notice how many dutyIDs the EOA address have in the DAO
+    /// @dev once the _dutyCounts become 0, it should be removed from the DAO
+    mapping(address=>uint256) private _dutyCounts;
+
 
     // process category flow ID => (stepID => step info)
     mapping(bytes32 => mapping(bytes32 => StepLinkInfo)) internal _flowSteps;
@@ -43,7 +55,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         address admin,
         address addrRegistry,
         bytes calldata data
-    ) public virtual override returns (bytes memory callbackEvent) {}
+    ) public virtual override returns (bytes memory callbackEvent) {
+
+
+
+    }
 
     /// @inheritdoc IDutyControl
     function addDuty(bytes32 dutyID) external override {}
@@ -62,7 +78,16 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         external
         override
         returns (bool exist)
-    {}
+    {
+        exist = _hasDuty(account, dutyID);
+    }
+
+    function _hasDuty(address account, bytes32 dutyID)
+        internal
+        returns (bool exist)
+    {
+        
+    }
 
     /// @inheritdoc IDutyControl
     function getDutyOwners(bytes32 dutyID)
@@ -78,34 +103,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         returns (address addr)
     {}
 
-    /// Agent Related
-    // 获取该DAO中, 该agentID对应的代理地址.
-    function getAgentIDAddr(bytes32 agentID)
-        external
-        override
-        returns (address addr)
-    {}
-
-    // 指定proposalID, 并且最多执行多少个agent.
-    function continueExec(bytes32 proposalID, uint256 agentNum)
-        external
-        override
-    {}
-
-    // 不检查agentID是否存在, 直接映射即可.
-    // 仅能自己调用自己.
-    function setAgentFlowID(bytes32 agentID, bytes32 flowID)
-        external
-        override
-    {}
-
-    function getAgentFlowID(bytes32 agentID)
-        external
-        override
-        returns (bytes32 flowID)
-    {}
-
-    function execTx(TxInfo[] memory txs) external override {}
 
     // which proposal decide the latest key item;
     function getTopicKeyProposal(bytes32 topicID, bytes32 key)
@@ -135,7 +132,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         external
         view
         override
-        returns (Proposal memory proposal)
+        returns (ProposalSummary memory proposal)
     {}
 
     function getProposalMetadata(bytes32 proposalID, bytes32 key)

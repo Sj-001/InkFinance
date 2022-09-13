@@ -38,6 +38,7 @@ interface IFactoryManager is IERC165 {
     /// @param contractID referal to IDeployFactory comment
     function delContract(bytes32 contractID) external;
 
+
     /// @dev add new contract template or replace the previous contract, only admin can execute this method
     /// @param contractID each kind of contract have different contractID, reference to the IDeployFactory comment
     /// @param initData the initData of the contract
@@ -45,6 +46,10 @@ interface IFactoryManager is IERC165 {
     function deploy(bytes32 contractID, bytes calldata initData)
         external
         returns (address newAddr);
+
+    function deployV2(bytes32 typeID, bytes32 factoryKey, bytes calldata initData) external     
+        returns (address newAddr);
+
 
     function getPredictAddress(bytes32 contractID)
         external

@@ -1,7 +1,7 @@
 [
   {
     "inputs": [],
-    "name": "CommitteeIsNotExist",
+    "name": "SystemError",
     "type": "error"
   },
   {
@@ -19,12 +19,12 @@
   },
   {
     "inputs": [],
-    "name": "MAX_STEP_NUM",
+    "name": "DEFAULT_FLOW_ID",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes32",
         "name": "",
-        "type": "uint256"
+        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -32,12 +32,12 @@
   },
   {
     "inputs": [],
-    "name": "NORMAL_CATEGORY",
+    "name": "MAX_STEP_NUM",
     "outputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "uint256",
         "name": "",
-        "type": "bytes32"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -156,6 +156,11 @@
                     "internalType": "uint256",
                     "name": "sensitive",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bytes",
+                    "name": "dutyIDs",
+                    "type": "bytes"
                   }
                 ],
                 "internalType": "struct IProposalHandler.CommitteeInfo[]",
@@ -207,9 +212,14 @@
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
+          },
+          {
+            "internalType": "bytes",
+            "name": "desc",
+            "type": "bytes"
           }
         ],
-        "internalType": "struct ICommittee.KVItem[]",
+        "internalType": "struct IProposalInfo.KVItem[]",
         "name": "contents",
         "type": "tuple[]"
       },
@@ -225,24 +235,6 @@
       }
     ],
     "name": "changeProposal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "agentNum",
-        "type": "uint256"
-      }
-    ],
-    "name": "continueExec",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -273,41 +265,6 @@
   {
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "to",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "value",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          },
-          {
-            "internalType": "uint256",
-            "name": "gasLimit",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct IDAOAgent.TxInfo[]",
-        "name": "txs",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "execTx",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "topicID",
         "type": "bytes32"
@@ -320,44 +277,6 @@
     ],
     "name": "flushTopicIndex",
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "agentID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getAgentFlowID",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "flowID",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "agentID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getAgentIDAddr",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
-    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -524,7 +443,7 @@
             "type": "bytes32"
           }
         ],
-        "internalType": "struct IProposalInfo.Proposal",
+        "internalType": "struct IProposalInfo.ProposalSummary",
         "name": "proposal",
         "type": "tuple"
       }
@@ -726,14 +645,9 @@
       {
         "components": [
           {
-            "internalType": "enum IProposalInfo.ProposalStatus",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "proposalID",
-            "type": "bytes32"
+            "internalType": "bytes32[]",
+            "name": "agents",
+            "type": "bytes32[]"
           },
           {
             "internalType": "bytes32",
@@ -741,12 +655,66 @@
             "type": "bytes32"
           },
           {
-            "internalType": "bytes32",
-            "name": "agents",
-            "type": "bytes32"
+            "internalType": "bytes",
+            "name": "crossChainProtocal",
+            "type": "bytes"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "typeID",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              },
+              {
+                "internalType": "bytes",
+                "name": "desc",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct IProposalInfo.KVItem[]",
+            "name": "headers",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "typeID",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              },
+              {
+                "internalType": "bytes",
+                "name": "desc",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct IProposalInfo.KVItem[]",
+            "name": "contents",
+            "type": "tuple[]"
           }
         ],
-        "internalType": "struct IProposalInfo.Proposal",
+        "internalType": "struct IProposalInfo.NewProposalInfo",
         "name": "proposal",
         "type": "tuple"
       },
@@ -794,24 +762,6 @@
       }
     ],
     "name": "removeUser",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "agentID",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "flowID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "setAgentFlowID",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

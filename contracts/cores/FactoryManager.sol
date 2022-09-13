@@ -158,7 +158,51 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         return generatedContract;
     }
+    function deployV2(bytes32 typeID, bytes32 factoryKey, bytes calldata initData)
+        external
+        override
+        returns (address _newContract)
+    {
 
+        /*
+        DeployableContract storage deployableContract = _deployableContracts[
+            contractID
+        ];
+        // require(!deployableContract.link._isEmpty(), "this contract is already exist");
+        require(
+            deployableContract.disable == 0,
+            "this contractID can't be deployed anymore"
+        );
+
+        bytes32 salt = keccak256(abi.encode(contractID, nounce));
+        address generatedContract = Clones.cloneDeterministic(
+            address(proxy),
+            salt
+        );
+
+        // miss proxy init
+        InkProxy(payable(generatedContract)).init(
+            _config,
+            address(deployableContract.inkBeacon),
+            ""
+        );
+
+        IDeploy(generatedContract).init(msg.sender, _config, initData);
+
+        _deployedContracts[contractID].add(generatedContract);
+        nounce++;
+
+        emit NewContractDeployed(
+            contractID,
+            deployableContract.inkBeacon.implementation(),
+            generatedContract,
+            initData,
+            msg.sender
+        );
+
+        return generatedContract;
+        */
+    }
     function getDeployedAddress(bytes32 contractID, uint256 index)
         public
         view

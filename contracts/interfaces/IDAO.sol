@@ -4,15 +4,18 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./IProposalHandler.sol";
-import "./IDAOAgent.sol";
+// import "./IDAOAgent.sol";
 import "./ICommittee.sol";
 import "./IDutyControl.sol";
 
 error DAO_error1();
-
-interface IDAO is IDAOAgent, ICommittee, IProposalHandler, IDutyControl {
     /// @dev when operate the committee which does not exist in the DAO, this error will be reported
-    error CommitteeIsNotExist();
+error CommitteeIsNotExist();
+error SystemError();
+error NotAllowedToOperate();
+
+interface IDAO is IProposalHandler, IDutyControl {
+
 
     struct CallbackData {
         address addr;

@@ -5,38 +5,12 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./IProposalInfo.sol";
 
 interface ICommittee is IProposalInfo, IERC165 {
-    struct KVItem {
-        bytes32 key;
-        bytes32 typeID;
-        bytes data;
-    }
 
-    function newProposal(
-        Proposal calldata proposal,
-        bool commit,
-        bytes calldata data
-    ) external returns (bytes32 proposalID);
 
-    // used to append new kvData(can convert old same key)
-    function changeProposal(
-        bytes32 proposalID,
-        KVItem[] memory contents,
-        bool commit,
-        bytes calldata data
-    ) external;
-
-    // if agree, apply the proposal kvdata to topic.
-    function decideProposal(
-        bytes32 proposalID,
-        bool agree,
-        bytes calldata data
-    ) external;
-
-    // function addDutyID() external;
-
-    // function getDuties() external;
-
-    // function addDuties() external;
+    /// @notice return committee's duties
+    /// @return duties committee's duties
+    function getCommitteeDuties() external returns (bytes32[] memory duties);
+    
 
     // /// @dev release special vote process locked pledge votes.
     // function releaseGovernancePledge(VoteIdentity memory identity) external;

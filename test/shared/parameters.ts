@@ -7,7 +7,7 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-
+import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
 import { masterDAO_ContractID, theBoard_ContractID, thePublic_ContractID, treasuryCommittee_ContractID} from './fixtures'; 
 const {loadFixture, deployContract} = waffle;
 
@@ -40,17 +40,25 @@ export function buildMasterDAOInitData(erc20Address:string) {
             string name;
         }
         */
-        var proposalCommittees = [];
-        var proposalTuple = 'tuple(bytes32, string, uint256)';
-        // proposalCommittees[0] = defaultAbiCoder.encode([proposalTuple], [[keccak256(toUtf8Bytes("generate proposal")), theBoard_ContractID, 1, "The Board"]]); 
-        // proposalCommittees[1] = defaultAbiCoder.encode([proposalTuple], [[keccak256(toUtf8Bytes("public vote")), thePublic_ContractID, 1, "The Public"]]);
-        proposalCommittees[0] = [keccak256(toUtf8Bytes("generate proposal")), theBoard_ContractID, 1]; 
-        proposalCommittees[1] = [keccak256(toUtf8Bytes("public vote")), thePublic_ContractID, 1];
+        var committees = [];
+
+        var theBoardCommitteeDutyIDsBytesArrary = [];
+        theBoardCommitteeDutyIDsBytesArrary[0] = PROPOSER_DUTYID;
+        var theBoardCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", theBoardCommitteeDutyIDsBytesArrary);
+        console.log("board duty bytes----:   ", theBoardCommitteeDutyIDs)
+        var thePublicCommitteeDutyIDsByteArray = [];
+        thePublicCommitteeDutyIDsByteArray[0] = VOTER_DUTYID;
+        var thePublicCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", thePublicCommitteeDutyIDsByteArray);
+
+
+        var proposalTuple = 'tuple(bytes32, string, uint256, bytes)';
+        committees[0] = [keccak256(toUtf8Bytes("generate proposal")), theBoard_ContractID, 1, theBoardCommitteeDutyIDs]; 
+        committees[1] = [keccak256(toUtf8Bytes("public vote")), thePublic_ContractID, 0, thePublicCommitteeDutyIDs];
 
         var flows = [];
         var flowTuple = 'tuple(bytes32, ' + proposalTuple +'[])';
-        // flows[0] = defaultAbiCoder.encode(['tuple(bytes32, ' + proposalTuple +'[])'], [[theBoard_ContractID, proposalCommittees]]);
-        flows[0] = [theBoard_ContractID, proposalCommittees];
+        // flows[0] = defaultAbiCoder.encode(['tuple(bytes32, ' + proposalTuple +'[])'], [[flowID, committees]]);
+        flows[0] = [keccak256(toUtf8Bytes("0")), committees];
 
         var mds = [];
         mds[0] = web3.eth.abi.encodeParameter("bytes", toUtf8Bytes("content1"));

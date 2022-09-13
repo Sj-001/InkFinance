@@ -4,16 +4,8 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import "./IAgent.sol";
 
-interface IDAOAgent is IERC165 {
-    // 任意执行接口, 仅能agent调用, 用于代表该DAO执行任意指令.
-    // agentID=全F也是调用该接口.
-    // 允许批量调用执行, 降低gas消耗.
-    struct TxInfo {
-        address to;
-        uint256 value;
-        bytes data;
-        uint256 gasLimit;
-    }
+interface IDAOAgent is IAgent {
+
 
     /// Agent Related
     // 获取该DAO中, 该agentID对应的代理地址.
@@ -29,4 +21,5 @@ interface IDAOAgent is IERC165 {
     function getAgentFlowID(bytes32 agentID) external returns (bytes32 flowID);
 
     function execTx(TxInfo[] memory txs) external;
+
 }
