@@ -158,51 +158,59 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         return generatedContract;
     }
-    function deployV2(bytes32 typeID, bytes32 factoryKey, bytes calldata initData)
-        external
-        override
-        returns (address _newContract)
-    {
 
-        /*
-        DeployableContract storage deployableContract = _deployableContracts[
-            contractID
-        ];
-        // require(!deployableContract.link._isEmpty(), "this contract is already exist");
-        require(
-            deployableContract.disable == 0,
-            "this contractID can't be deployed anymore"
+    function turnBytesToAddress(bytes memory byteAddress)
+        internal
+        pure
+        returns (address addr)
+    {
+        assembly {
+            addr := mload(add(byteAddress, 20))
+        }
+    }
+
+    function deployV2(
+        bytes32 typeID,
+        bytes32 factoryKey,
+        bytes calldata initData
+    ) external override returns (address _newContract) {
+        (bytes32 _typeID, bytes memory addressBytes) = IConfig(_config).getKV(
+            factoryKey
         );
 
-        bytes32 salt = keccak256(abi.encode(contractID, nounce));
+        // valid typeID
+        address implementAddress = turnBytesToAddress(addressBytes);
+        console.log("implement address:", implementAddress);
+
+        bytes32 salt = keccak256(abi.encode(implementAddress, nounce));
         address generatedContract = Clones.cloneDeterministic(
             address(proxy),
             salt
         );
 
+        InkBeacon inkBeacon = new InkBeacon(implementAddress, _config);
         // miss proxy init
         InkProxy(payable(generatedContract)).init(
             _config,
-            address(deployableContract.inkBeacon),
+            address(inkBeacon),
             ""
         );
 
         IDeploy(generatedContract).init(msg.sender, _config, initData);
 
-        _deployedContracts[contractID].add(generatedContract);
         nounce++;
 
-        emit NewContractDeployed(
-            contractID,
-            deployableContract.inkBeacon.implementation(),
-            generatedContract,
-            initData,
-            msg.sender
-        );
+        // emit NewContractDeployed(
+        //     contractID,
+        //     deployableContract.inkBeacon.implementation(),
+        //     generatedContract,
+        //     initData,
+        //     msg.sender
+        // );
 
         return generatedContract;
-        */
     }
+
     function getDeployedAddress(bytes32 contractID, uint256 index)
         public
         view

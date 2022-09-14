@@ -27,7 +27,7 @@ const {loadFixture, deployContract} = waffle;
 
 describe("contract dao test", function () {
 
-    it("test create master dao", async function () {
+    // it("test create master dao", async function () {
 
         // const {factoryManager} = await loadFixture(FactoryManagerFixture);
         // const {inkERC20} = await loadFixture(InkERC20Fixture);        
@@ -73,7 +73,7 @@ describe("contract dao test", function () {
         // console.log("first dao address:", contract.address);
         
 
-    });
+    // });
 
     it("test create proposal", async function () {
 
@@ -98,7 +98,8 @@ describe("contract dao test", function () {
             bytes calldata data
         */
         var agents = []
-        agents[0] = keccak256(toUtf8Bytes("1234"));
+        agents[0] = 0x0;
+        
         // agents[1] = toUtf8Bytes("");
         var headers = [];
         headers[0] = {
@@ -124,10 +125,9 @@ describe("contract dao test", function () {
         }
         // await masterDAO.newProposal(proposal, true, toUtf8Bytes(""));
         
-
-
         // create a new flow
-        // 全0 / 全F
+        // 全0 / 全F  
+
 
 
 

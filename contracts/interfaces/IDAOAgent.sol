@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./IAgent.sol";
 
 interface IDAOAgent is IAgent {
-
-
     /// Agent Related
     // 获取该DAO中, 该agentID对应的代理地址.
     function getAgentIDAddr(bytes32 agentID) external returns (address addr);
@@ -21,5 +19,4 @@ interface IDAOAgent is IAgent {
     function getAgentFlowID(bytes32 agentID) external returns (bytes32 flowID);
 
     function execTx(TxInfo[] memory txs) external;
-
 }

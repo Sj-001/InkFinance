@@ -71,7 +71,7 @@ interface IConfig is IERC165 {
     /// @param domain wallet public key
     /// @param prefix prefix, could be empty
     /// @param keyName key name
-    function buildConfigKey(    
+    function buildConfigKey(
         address domain,
         string memory prefix,
         string memory keyName

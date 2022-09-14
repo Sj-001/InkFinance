@@ -5,12 +5,10 @@ import "../bases/BaseDAO.sol";
 import "hardhat/console.sol";
 
 contract MasterDAO is BaseDAO {
-
     /// libs ////////////////////////////////////////////////////////////////////////
     using Address for address;
     using LEnumerableMetadata for LEnumerableMetadata.MetadataSet;
     /// structs ////////////////////////////////////////////////////////////////////////
-
 
     /// @notice MasterDAO initial data, when create dao,
     /// these data is necessary for creating the DAO instance.
@@ -49,11 +47,13 @@ contract MasterDAO is BaseDAO {
     address private _config;
 
     /// @dev keccak256("FactoryManagerKey");
-    bytes32 factoryManagerKey = 0x29a58c4b14b851a1ca88e20517c48eb2adf261a841e5e285d3954bb98c265734;
-    
+    bytes32 public constant factoryManagerKey =
+        0x618e90bb05c847d0be7158fb3420e6f74c0a99195db496d41aec554825d43862;
 
     /// @dev NORMAL CATEGORY means the highest priority
     bytes32 public constant DEFAULT_FLOW_ID = 0x0;
+
+    address private _factoryAddress;
 
     /// variables ////////////////////////////////////////////////////////////////////////
     /// @dev frontend tools to build init data
@@ -75,12 +75,31 @@ contract MasterDAO is BaseDAO {
         // _metadata._init();
         _config = config_;
 
+        /// test
+        (bytes32 typeID, bytes memory factoryAddressBytes) = IConfig(_config)
+            .getKV(factoryManagerKey);
+        console.log("config address:");
+        console.log(_config);
+        console.log("factory key:");
+        console.logBytes32(factoryManagerKey);
+
+        address factoryAddr;
+        assembly {
+            factoryAddr := mload(add(factoryAddressBytes, 20))
+        }
+        _factoryAddress = factoryAddr;
+        console.log("Factory address:");
+        console.log(_factoryAddress);
+        console.log("###");
         // init data
         MasterDAOInitData memory initData = abi.decode(
             data,
             (MasterDAOInitData)
         );
+        console.logBytes32(DEFAULT_FLOW_ID);
+        console.logBytes32(initData.flows[0].flowID);
 
+        /// test end;
 
         // init committee(Proposer | The Public)
 
@@ -111,15 +130,12 @@ contract MasterDAO is BaseDAO {
         return bytes("");
     }
 
-
-
     /// proposals
 
     /// @dev how many propsoals in the DAO
     ///      also used to generated proposalID;
     uint256 private totalProposal;
-    
-    
+
     /// @dev proposal storage
     /// proposalID=>Store
     mapping(bytes32 => Proposal) private _proposals;
@@ -129,28 +145,30 @@ contract MasterDAO is BaseDAO {
         proposalID = keccak256(abi.encode(_msgSender(), totalProposal));
     }
 
-
     /// @notice makeing a new proposal
     /// @dev once making a new proposal
     /// @param proposal content
-    /// @param data related content 
+    /// @param data related content
     /// @return proposalID
     function newProposal(
         NewProposalInfo calldata proposal,
         bool commit,
         bytes calldata data
-    ) public override  returns (bytes32 proposalID) {
+    ) public override returns (bytes32 proposalID) {
         /* EnsureGovEnough */
 
-        proposalID = generateProposalID();
+        bytes32[] memory agents = proposal.agents;
+        if (agents.length == 0) {
+            // error
+        }
 
+        proposalID = generateProposalID();
         Proposal storage p = _proposals[proposalID];
 
         p.status = ProposalStatus.PENDING;
         p.proposalID = proposalID;
         p.topicID = proposal.topicID;
-
-        for (uint256 i=0; i<proposal.headers.length; i++) {
+        for (uint256 i = 0; i < proposal.headers.length; i++) {
             ItemValue memory itemValue;
             itemValue.typeID = proposal.headers[i].typeID;
             itemValue.data = proposal.headers[i].data;
@@ -171,11 +189,12 @@ contract MasterDAO is BaseDAO {
             revert SystemError();
         }
 
-        // bytes32[] memory proposer_duties = ICommittee(steps[firstStep].committee).getCommitteeDuties();
-        // if (!_hasDuty(_msgSender(), proposer_duties[0])) {
-        //     revert NotAllowedToOperate();
-        // }
-
+        bytes32[] memory proposer_duties = ICommittee(
+            steps[firstStep].committee
+        ).getCommitteeDuties();
+        if (!_hasDuty(_msgSender(), proposer_duties[0])) {
+            revert NotAllowedToOperate();
+        }
 
         // require(firstStep != bytes32(0x0), "sys err");
         // require(_msgSender() == steps[firstStep].committee, "no right");
@@ -195,32 +214,19 @@ contract MasterDAO is BaseDAO {
         // _decideProposal(proposalID, _msgSender(), true);
     }
 
-    /*
-        // flows := make([]MasterDAO.IDAOFlowInfo, 1)
-        // flows[0] = MasterDAO.IDAOFlowInfo{
-        // Committees: []MasterDAO.IDAOHandleProposalProposalCommitteeInfo{
-        // 	{
-        // 		Step:      crypto.Keccak256Hash([]byte("generate proposal")),
-        // 		Committee: addrMap[cfg.App.ProposalCommitteeFactoryID],
-        // 		Sensitive: big.NewInt(1),
-        // 	},
-        // 	{
-        // 		Step:      crypto.Keccak256Hash([]byte("public vote")),
-        // 		Committee: addrMap[cfg.App.PublicVoteCommitteeFactoryID],
-        // 		Sensitive: big.NewInt(0),
-        // 	},
-        // 	// {
-        // 	// 	Step:      crypto.Keccak256Hash([]byte("member vote")),
-        // 	// 	Committee: addrMap[cfg.App.MemberVoteCommitteeFactoryID],
-        // 	// },
-        // },
-
-        // FlowID: common.HexToHash("0xe74eb57e65d8bc05567c1f87e30b997b8d307f4263f0ff5b4b3a4a7f3a49fd90"),
-    */
+    function turnBytesToAddress(bytes memory byteAddress)
+        internal
+        pure
+        returns (address addr)
+    {
+        assembly {
+            addr := mload(add(byteAddress, 20))
+        }
+    }
 
     //////////////////// internal
     function _setFlowStep(FlowInfo memory flow) internal {
-
+        // _factoryAddress;
         require(flow.committees.length < MAX_STEP_NUM, "too many steps");
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[
             flow.flowID
@@ -231,11 +237,20 @@ contract MasterDAO is BaseDAO {
 
         for (uint256 j = 0; j < flow.committees.length; j++) {
             CommitteeInfo memory committeeInfo = flow.committees[j];
-            console.log("test duties ");
-            (bytes32[] memory duties) = abi.decode(committeeInfo.dutyIDs, (bytes32[]));
-            console.logBytes(committeeInfo.dutyIDs);
-            console.log("length:::", duties.length);
-            // console.log(committeeInfo.)
+
+            bytes32[] memory duties = abi.decode(
+                committeeInfo.dutyIDs,
+                (bytes32[])
+            );
+            // console.logBytes(committeeInfo.dutyIDs);
+            // console.log("duty length:::", duties.length);
+            // console.logBytes32(committeeInfo.addressConfigKey);
+            // (bytes32 typeID, bytes memory committeeAddressBytes) = IConfig(_config).getKV(committeeInfo.addressConfigKey);
+
+            // // valid typeID
+            // address committeeAddress = turnBytesToAddress(committeeAddressBytes);
+            // console.log("committee address:", committeeAddress);
+
             require(
                 committeeInfo.step != bytes32(0x0) &&
                     committeeInfo.step != _SENTINEL_ID,
@@ -243,25 +258,35 @@ contract MasterDAO is BaseDAO {
             );
 
             // Deploy committee
-            // IConfig(_config).getKV(key);
-
             // require(
-            //     BaseCommittee(committeeInfo.committee).supportsInterface(
+            //     ICommittee(committeeAddress).supportsInterface(
             //         type(ICommittee).interfaceId
             //     ),
             //     "committee addr not support ICommittee"
             // );
-            // steps[committeeInfo.step].committee = committeeInfo.committee;
-            // steps[committeeInfo.step].sensitive = committeeInfo.sensitive;
+
+            bytes memory initData = abi.encode("1", "2");
+            // keccak256(toUtf8Bytes("CommitteeTypeID"))
+            address committeeAddress2 = IFactoryManager(_factoryAddress)
+                .deployV2(
+                    0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
+                    committeeInfo.addressConfigKey,
+                    initData
+                );
+
+            console.log("deployed address:", committeeAddress2);
+
+            steps[committeeInfo.step].committee = committeeAddress2;
+            steps[committeeInfo.step].sensitive = committeeInfo.sensitive;
 
             // link next committee
-            // if (j < flow.committees.length - 1) {
-            //     steps[committeeInfo.step].nextStep = flow
-            //         .committees[j + 1]
-            //         .step;
-            // } else {
-            //     steps[committeeInfo.step].nextStep = bytes32(0x0);
-            // }
+            if (j < flow.committees.length - 1) {
+                steps[committeeInfo.step].nextStep = flow
+                    .committees[j + 1]
+                    .step;
+            } else {
+                steps[committeeInfo.step].nextStep = bytes32(0x0);
+            }
         }
     }
 

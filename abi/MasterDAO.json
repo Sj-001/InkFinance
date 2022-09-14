@@ -1,6 +1,11 @@
 [
   {
     "inputs": [],
+    "name": "NotAllowedToOperate",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "SystemError",
     "type": "error"
   },
@@ -148,9 +153,9 @@
                     "type": "bytes32"
                   },
                   {
-                    "internalType": "string",
-                    "name": "committeeContractID",
-                    "type": "string"
+                    "internalType": "bytes32",
+                    "name": "addressConfigKey",
+                    "type": "bytes32"
                   },
                   {
                     "internalType": "uint256",
@@ -260,6 +265,19 @@
     "name": "decideProposal",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "factoryManagerKey",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

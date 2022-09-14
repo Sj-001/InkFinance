@@ -9,14 +9,12 @@ import "./ICommittee.sol";
 import "./IDutyControl.sol";
 
 error DAO_error1();
-    /// @dev when operate the committee which does not exist in the DAO, this error will be reported
+/// @dev when operate the committee which does not exist in the DAO, this error will be reported
 error CommitteeIsNotExist();
 error SystemError();
 error NotAllowedToOperate();
 
 interface IDAO is IProposalHandler, IDutyControl {
-
-
     struct CallbackData {
         address addr;
         address admin;

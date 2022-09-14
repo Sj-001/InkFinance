@@ -7,7 +7,7 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
+import { PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { masterDAO_ContractID, theBoard_ContractID, thePublic_ContractID, treasuryCommittee_ContractID} from './fixtures'; 
 const {loadFixture, deployContract} = waffle;
 
@@ -40,6 +40,8 @@ export function buildMasterDAOInitData(erc20Address:string) {
             string name;
         }
         */
+
+
         var committees = [];
 
         var theBoardCommitteeDutyIDsBytesArrary = [];
@@ -51,14 +53,15 @@ export function buildMasterDAOInitData(erc20Address:string) {
         var thePublicCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", thePublicCommitteeDutyIDsByteArray);
 
 
-        var proposalTuple = 'tuple(bytes32, string, uint256, bytes)';
-        committees[0] = [keccak256(toUtf8Bytes("generate proposal")), theBoard_ContractID, 1, theBoardCommitteeDutyIDs]; 
-        committees[1] = [keccak256(toUtf8Bytes("public vote")), thePublic_ContractID, 0, thePublicCommitteeDutyIDs];
+        var proposalTuple = 'tuple(bytes32, bytes32, uint256, bytes)';
+        committees[0] = [keccak256(toUtf8Bytes("generate proposal")), THE_BOARD_COMMITTEE_KEY, 1, theBoardCommitteeDutyIDs]; 
+        committees[1] = [keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, 0, thePublicCommitteeDutyIDs];
 
         var flows = [];
         var flowTuple = 'tuple(bytes32, ' + proposalTuple +'[])';
         // flows[0] = defaultAbiCoder.encode(['tuple(bytes32, ' + proposalTuple +'[])'], [[flowID, committees]]);
-        flows[0] = [keccak256(toUtf8Bytes("0")), committees];
+        // flows[0] = [keccak256(toUtf8Bytes("0")), committees];
+        flows[0] = ["0x0000000000000000000000000000000000000000000000000000000000000000", committees];
 
         var mds = [];
         mds[0] = web3.eth.abi.encodeParameter("bytes", toUtf8Bytes("content1"));

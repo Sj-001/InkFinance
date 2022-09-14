@@ -5,12 +5,9 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./IProposalInfo.sol";
 
 interface ICommittee is IProposalInfo, IERC165 {
-
-
     /// @notice return committee's duties
     /// @return duties committee's duties
     function getCommitteeDuties() external returns (bytes32[] memory duties);
-    
 
     // /// @dev release special vote process locked pledge votes.
     // function releaseGovernancePledge(VoteIdentity memory identity) external;

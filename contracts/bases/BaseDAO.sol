@@ -10,9 +10,6 @@ import "../interfaces/IFactoryManager.sol";
 import "./BaseVerify.sol";
 
 abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
-    
-
-
     // libs
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -37,16 +34,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     uint256 private govTokenAmountRequirement;
     address private stakingAddr;
 
-
-
     /// @dev key is dutyID
     /// find duty members according to dutyID,
     mapping(bytes32 => EnumerableSet.AddressSet) private _dutyMembers;
 
     /// @notice how many dutyIDs the EOA address have in the DAO
     /// @dev once the _dutyCounts become 0, it should be removed from the DAO
-    mapping(address=>uint256) private _dutyCounts;
-
+    mapping(address => uint256) private _dutyCounts;
 
     // process category flow ID => (stepID => step info)
     mapping(bytes32 => mapping(bytes32 => StepLinkInfo)) internal _flowSteps;
@@ -55,11 +49,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         address admin,
         address addrRegistry,
         bytes calldata data
-    ) public virtual override returns (bytes memory callbackEvent) {
-
-
-
-    }
+    ) public virtual override returns (bytes memory callbackEvent) {}
 
     /// @inheritdoc IDutyControl
     function addDuty(bytes32 dutyID) external override {}
@@ -85,9 +75,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     function _hasDuty(address account, bytes32 dutyID)
         internal
         returns (bool exist)
-    {
-        
-    }
+    {}
 
     /// @inheritdoc IDutyControl
     function getDutyOwners(bytes32 dutyID)
@@ -102,7 +90,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         override
         returns (address addr)
     {}
-
 
     // which proposal decide the latest key item;
     function getTopicKeyProposal(bytes32 topicID, bytes32 key)

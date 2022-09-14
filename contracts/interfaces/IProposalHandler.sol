@@ -7,26 +7,38 @@ import "./IProposalInfo.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice inteface which defined how to deal with the vote process
 interface IProposalHandler is IProposalInfo {
+    /// @dev committee infomation
+    /// @param step the step identity of that committee in the workflow
+    /// @param addressConfigKey the committee address key in the ConfigManager
+    /// @param sensitive priority of the committee
+    /// @param dutyIDs the dutyIDs of the committee
     struct CommitteeInfo {
         bytes32 step;
-        string committeeContractID;
+        bytes32 addressConfigKey;
         uint256 sensitive;
         bytes dutyIDs;
     }
 
+    /// @dev when generate a DAO, the workflow of the DAO proposal should be defined here
+    /// @param flowID the workflow ID
+    /// @param committees related committees in that workflow
+    struct FlowInfo {
+        bytes32 flowID;
+        CommitteeInfo[] committees;
+    }
 
-    // struct DAOProcessInfo {
-    //     bytes32 proposalID;
-    //     // processCategory is used to distinguish different processes in dao.
-    //     bytes32 processCategory;
-    //     // now decide committee;
-    //     CommitteeInfo nextCommittee;
-    //     // last committee operation time.
-    //     uint256 lastOperationTimestamp;
-    //     // According to the processCategory, order to participate committee.
-    //     // first committee is the launcher committee.
-    //     CommitteeInfo[] committees;
-    // }
+    struct ProposalVoteingProgress {
+        bytes32 proposalID;
+        // flowID is used to distinguish different processes in dao.
+        bytes32 flowID;
+        // now decide committee;
+        CommitteeInfo nextCommittee;
+        // last committee operation time.
+        uint256 lastOperationTimestamp;
+        // According to the flowID, order to participate committee.
+        // first committee is the launcher committee.
+        CommitteeInfo[] committees;
+    }
 
     // //////////////////// proposal info
 
@@ -49,12 +61,6 @@ interface IProposalHandler is IProposalInfo {
     //     external
     //     view
     //     returns (CommitteeInfo memory stepInfo);
-
-    struct FlowInfo {
-        bytes32 flowID;
-        CommitteeInfo[] committees;
-    }
-
 
     function newProposal(
         NewProposalInfo calldata proposal,

@@ -48,7 +48,7 @@ contract ConfigManager is IConfig {
         address domain,
         string memory prefix,
         string memory keyName
-    ) external override pure returns (bytes32 key) {
+    ) external pure override returns (bytes32 key) {
         key = ConfigHelper.packKey(domain, prefix, keyName);
     }
 
@@ -64,7 +64,6 @@ contract ConfigManager is IConfig {
             //     bytes32 indexed keyID,
             //     address indexed admin
             // );
-            
         }
     }
 
@@ -106,7 +105,6 @@ contract ConfigManager is IConfig {
                 //     bytes32 typeID,
                 //     bytes data
                 // );
-
             } else {
                 console.log("no right to set key's value");
             }

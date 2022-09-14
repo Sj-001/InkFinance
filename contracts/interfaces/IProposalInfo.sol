@@ -7,8 +7,6 @@ import "../libraries/LEnumerableMetadata.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice inteface which defined how to deal with the vote process
 interface IProposalInfo {
-
-
     /// @dev sub item of NewProposal
     struct KVItem {
         bytes32 key;
@@ -22,16 +20,14 @@ interface IProposalInfo {
     /// @param topicID topic of the proposal
     /// @param crossChainProtocal if it's empty, means work on local chain
     /// @param contents proposal contents
-    /// @param headers proposal headers  
+    /// @param headers proposal headers
     struct NewProposalInfo {
         bytes32[] agents;
         bytes32 topicID;
         bytes crossChainProtocal;
         KVItem[] headers;
         KVItem[] contents;
-
     }
-
 
     // 接口返回格式
     struct Topic {

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "../bases/BaseCommittee.sol";
+import "hardhat/console.sol";
 
 contract TheBoard is BaseCommittee {
     /// @inheritdoc IDeploy
@@ -20,18 +21,19 @@ contract TheBoard is BaseCommittee {
     //     bytes baseInitData;
     // }
 
-    // function init(
-    //     address admin,
-    //     address addrRegistry,
-    //     bytes calldata data
-    // ) external override initializer returns (bytes memory callbackEvent) {
+    function init(
+        address dao_,
+        address config_,
+        bytes calldata data_
+    ) external override initializer returns (bytes memory callbackEvent) {
+        console.log("deploying.......TheBoard");
 
-    //     InitData memory initData = abi.decode(data, (InitData));
-    //     makeProposalLockVotes = initData.makeProposalLockVotes;
+        // InitData memory initData = abi.decode(data_, (InitData));
+        // makeProposalLockVotes = initData.makeProposalLockVotes;
 
-    //     _init(admin, addrRegistry, initData.baseInitData);
-    //     _memberSetting(admin, 1);
+        // _init(admin, addrRegistry, initData.baseInitData);
+        // _memberSetting(admin, 1);
 
-    //     return callbackEvent;
-    // }
+        return callbackEvent;
+    }
 }

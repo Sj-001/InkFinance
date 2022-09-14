@@ -3,13 +3,11 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IAgent.sol";
 
-
 abstract contract BaseAgent is IAgent {
-
     /// @notice the description of the agent;
     string private _description;
-    
-    /// @dev 
+
+    /// @dev
     address private _parentDAO;
 
     /// @inheritdoc IAgent
@@ -18,12 +16,16 @@ abstract contract BaseAgent is IAgent {
     }
 
     /// @inheritdoc IAgent
-    function getDescription() external view override returns (string memory description) {
+    function getDescription()
+        external
+        view
+        override
+        returns (string memory description)
+    {
         description = _description;
     }
 
     function getAgentDAO() internal view virtual returns (address parentDAO) {
         parentDAO = _parentDAO;
     }
-
 }

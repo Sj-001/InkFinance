@@ -58,7 +58,7 @@ describe("utils generate hash", function () {
 
         // var key = await configManager.buildConfigKey(signers[0].address, "", "TestKeyName");
         var key = await configManager.buildConfigKey(signers[0].address, "ADMIN", "TestKeyName");
-        console.log(await configManager.getKV(key));
+        console.log("key value:", await configManager.getKV(key));
 
     });
     

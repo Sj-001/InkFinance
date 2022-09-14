@@ -13,7 +13,6 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
-
     // variables
     /// @dev belong to which DAO
     address private _DAO;
@@ -40,17 +39,16 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         address dao_,
         address config_,
         bytes calldata data
-    ) external override returns (bytes memory callbackEvent) {
+    ) external virtual override returns (bytes memory callbackEvent) {
         _DAO = dao_;
         // committeeDuties.add(keccak256(data));
     }
 
-
-
     /// @inheritdoc ICommittee
-    function getCommitteeDuties() external view override returns (bytes32[] memory duties) {
-
-    }
-
-    
+    function getCommitteeDuties()
+        external
+        view
+        override
+        returns (bytes32[] memory duties)
+    {}
 }
