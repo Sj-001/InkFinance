@@ -48,6 +48,10 @@ contract MasterDAO is BaseDAO {
 
     address private _config;
 
+    /// @dev keccak256("FactoryManagerKey");
+    bytes32 factoryManagerKey = 0x29a58c4b14b851a1ca88e20517c48eb2adf261a841e5e285d3954bb98c265734;
+    
+
     /// @dev NORMAL CATEGORY means the highest priority
     bytes32 public constant DEFAULT_FLOW_ID = 0x0;
 

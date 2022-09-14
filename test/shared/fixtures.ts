@@ -37,6 +37,15 @@ const thePublic_ContractID = "0xe08417244a758bb2b225a536c66324251783cd4813c248ab
 const treasuryCommittee_ContractID = "0xa6c8d1a18e7f6ee65bf32a9844e0c6ac70c6235969a004f5a59b886f34d3563c";
 
 
+
+console.log("FactoryManagerKey=", keccak256(toUtf8Bytes("FactoryManagerKey")));
+const FactoryManagerKey = "0x216dc60adf329dc51c00676102a620031f920d44ca7d5535663230bf7fbc9b74";
+
+
+
+console.log("FactoryTypeID=", keccak256(toUtf8Bytes("FactoryTypeID")));
+const FactoryType = "0x216dc60adf329dc51c00676102a620031f920d44ca7d5535663230bf7fbc9b74";
+
 console.log("DAOTypeID=", keccak256(toUtf8Bytes("DAOTypeID")));
 const DAOTypeID = "0xdeb63a88d4573ec3359155ef44dd570a22acdf5208f7256d196e6bb7483d1b85";
 
@@ -64,6 +73,12 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     const configManager = await deployContract(signers[0], ConfigManagerABI);
     await configManager.deployed();
     console.log("config address:", configManager.address);
+    console.log("init keys:");
+
+    // await configManager.
+
+
+
 
 
     // await config.grantRole(BEACON_UPGRADER_ROLE, signers[0].address);
