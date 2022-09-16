@@ -14,10 +14,10 @@
   },
   {
     "inputs": [],
-    "name": "globalConfig",
+    "name": "configManager",
     "outputs": [
       {
-        "internalType": "contract IConfig",
+        "internalType": "contract IConfigManager",
         "name": "",
         "type": "address"
       }

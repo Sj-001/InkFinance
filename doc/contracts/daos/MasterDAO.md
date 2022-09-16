@@ -10,71 +10,22 @@
 
 ## 2.Globals
 
-> Note this contains internal vars as well due to a bug in the docgen procedure
-
-| Var | Type |
-| --- | --- |
-| factoryManagerKey | bytes32 |
-| DEFAULT_FLOW_ID | bytes32 |
-
 ## 3.Modifiers
 
 ## 4.Functions
 
-### buildInitData
-variables ////////////////////////////////////////////////////////////////////////
-
-> frontend tools to build init data
-
-*Declaration:*
-```solidity
-function buildInitData(
-) public returns
-(bytes data)
-```
-
-
-
-
-### init
-
-
-
-*Declaration:*
-```solidity
-function init(
-) public returns
-(bytes callbackEvent)
-```
-
-
-
-
-### generateProposalID
-
-
-
-*Declaration:*
-```solidity
-function generateProposalID(
-) internal returns
-(bytes32 proposalID)
-```
-
-
-
-
 ### newProposal
 makeing a new proposal
 
-> once making a new proposal
+> making a new proposal and generate proposal records in the DAO
 
 
 *Declaration:*
 ```solidity
 function newProposal(
 struct IProposalInfo.NewProposalInfo proposal,
-bool data
+bool commit,
+bytes data
 ) public returns
 (bytes32 proposalID)
 ```
@@ -82,10 +33,14 @@ bool data
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`proposal` | struct IProposalInfo.NewProposalInfo | content
-|`data` | bool | related content
+|`proposal` | struct IProposalInfo.NewProposalInfo | content of the proposal
+|`commit` | bool | if proposal content is huge, the frontend could set commit as False, and submit multiple times
+|`data` | bytes | support data, decide by case
 
-
+*Returns:*
+| Arg | Description |
+| --- | --- |
+|`proposalID` | generated proposal id
 
 ### _decideProposal
 
@@ -95,112 +50,6 @@ bool data
 ```solidity
 function _decideProposal(
 ) internal
-```
-
-
-
-
-### _isNextCommittee
-
-> verify if the committee is the next committee
-
-*Declaration:*
-```solidity
-function _isNextCommittee(
-) internal returns
-(bool)
-```
-
-
-
-
-### _appendFinishStep
-
-
-
-*Declaration:*
-```solidity
-function _appendFinishStep(
-) internal
-```
-
-
-
-
-### _execFinish
-
-
-
-*Declaration:*
-```solidity
-function _execFinish(
-) internal
-```
-
-
-
-
-### decideProposal
-
-
-
-*Declaration:*
-```solidity
-function decideProposal(
-) public
-```
-
-
-
-
-### _setNextStep
-
-
-
-*Declaration:*
-```solidity
-function _setNextStep(
-) internal
-```
-
-
-
-
-### turnBytesToAddress
-
-
-
-*Declaration:*
-```solidity
-function turnBytesToAddress(
-) internal returns
-(address addr)
-```
-
-
-
-
-### _setFlowStep
-
-
-
-*Declaration:*
-```solidity
-function _setFlowStep(
-) internal
-```
-
-
-
-
-### changeProposal
-
-
-
-*Declaration:*
-```solidity
-function changeProposal(
-) external
 ```
 
 

@@ -13,12 +13,17 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
+    /// structs ////////////////////////////////////////////////////////////////////////////////
+    struct BaseCommitteeInitData {
+        string name;
+        string describe;
+        bytes[] mds;
+        address daoAddress;
+    }
+
     // variables
     /// @dev belong to which DAO
-    address private _DAO;
-
-    /// @dev configManager contract
-    address private _config;
+    address internal _parentDAO;
 
     /// @dev all committee's duties stored here
     EnumerableSet.Bytes32Set committeeDuties;
@@ -40,8 +45,13 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         address config_,
         bytes calldata data
     ) external virtual override returns (bytes memory callbackEvent) {
-        _DAO = dao_;
+        super.init(config_);
+        _parentDAO = dao_;
         // committeeDuties.add(keccak256(data));
+    }
+
+    function getParentDAO() internal pure returns (address parentDAO) {
+        parentDAO = parentDAO;
     }
 
     /// @inheritdoc ICommittee

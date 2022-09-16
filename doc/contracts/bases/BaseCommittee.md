@@ -14,6 +14,7 @@
 
 | Var | Type |
 | --- | --- |
+| _parentDAO | address |
 | committeeDuties | struct EnumerableSet.Bytes32Set |
 
 ## 3.Modifiers
@@ -43,6 +44,20 @@ function supportsInterface(
 function init(
 ) external returns
 (bytes callbackEvent)
+```
+
+
+
+
+### getParentDAO
+
+
+
+*Declaration:*
+```solidity
+function getParentDAO(
+) internal returns
+(address parentDAO)
 ```
 
 

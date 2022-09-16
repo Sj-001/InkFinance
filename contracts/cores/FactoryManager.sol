@@ -137,7 +137,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         bytes32 factoryKey,
         bytes calldata initData
     ) external override returns (address _newContract) {
-        (bytes32 _typeID, bytes memory addressBytes) = IConfig(_config).getKV(
+        (bytes32 _typeID, bytes memory addressBytes) = configManager.getKV(
             factoryKey
         );
 

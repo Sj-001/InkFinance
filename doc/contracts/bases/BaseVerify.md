@@ -14,7 +14,7 @@ base verify is context and initializable (initialize just once)
 
 | Var | Type |
 | --- | --- |
-| globalConfig | contract IConfig |
+| configManager | contract IConfigManager |
 
 ## 3.Modifiers
 

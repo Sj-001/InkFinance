@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../interfaces/IConfig.sol";
+import "../interfaces/IConfigManager.sol";
 import "hardhat/console.sol";
 
 /// @dev ConfigManager is a Key/Value management contract based on domain.
@@ -12,7 +12,7 @@ import "hardhat/console.sol";
 /// 2. key = keccak256(domain + keyID)
 /// 3. keyID = keccak256(keccak256(<prefix>) + keccak256(keyName))
 /// todo INk admin area, multi-sign management
-contract ConfigManager is IConfig {
+contract ConfigManager is IConfigManager {
     /// libs
     using EnumerableSet for EnumerableSet.AddressSet;
     using ConfigHelper for mapping(bytes32 => ConfigHelper.KVInfo);
@@ -38,12 +38,12 @@ contract ConfigManager is IConfig {
         override
         returns (bool)
     {
-        return interfaceId == type(IConfig).interfaceId;
+        return interfaceId == type(IConfigManager).interfaceId;
     }
 
     constructor() {}
 
-    /// @inheritdoc IConfig
+    /// @inheritdoc IConfigManager
     function buildConfigKey(
         address domain,
         string memory prefix,
@@ -52,7 +52,7 @@ contract ConfigManager is IConfig {
         key = ConfigHelper.packKey(domain, prefix, keyName);
     }
 
-    /// @inheritdoc IConfig
+    /// @inheritdoc IConfigManager
     function batchSetAdminKeys(ConfigHelper.AdminKeyInfo[] memory adminKeyInfos)
         external
         override
@@ -67,7 +67,7 @@ contract ConfigManager is IConfig {
         }
     }
 
-    /// @inheritdoc IConfig
+    /// @inheritdoc IConfigManager
     function batchSetPrefixKeyAdmin(
         ConfigHelper.AdminKeyPrefixInfo[] memory prefixKeyInfo
     ) external override {
@@ -81,7 +81,7 @@ contract ConfigManager is IConfig {
         }
     }
 
-    /// @inheritdoc IConfig
+    /// @inheritdoc IConfigManager
     function batchSetKV(
         address domain,
         ConfigHelper.KVInfo[] memory keyValueInfos
@@ -111,7 +111,7 @@ contract ConfigManager is IConfig {
         }
     }
 
-    /// @inheritdoc IConfig
+    /// @inheritdoc IConfigManager
     function getKV(bytes32 key)
         external
         view

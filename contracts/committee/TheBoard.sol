@@ -2,14 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "../bases/BaseCommittee.sol";
+import "../interfaces/IProposalHandler.sol";
+
 import "hardhat/console.sol";
 
 /// @notice the board committee has the highest priority of the DAO
 contract TheBoard is BaseCommittee {
-    /// variables
-    address private _parentDAO;
-    address private _configManager;
-
     /// @notice when create proposal, how many staked tokens need to be locked.
     // uint256 public makeProposalLockVotes;
 
@@ -22,10 +20,10 @@ contract TheBoard is BaseCommittee {
         address dao_,
         address config_,
         bytes calldata data_
-    ) external override initializer returns (bytes memory callbackEvent) {
-        console.log("deploying.......TheBoard");
+    ) external override returns (bytes memory callbackEvent) {
+        super.init(config_);
         _parentDAO = dao_;
-        _configManager = config_;
+
         // InitData memory initData = abi.decode(data_, (InitData));
         // makeProposalLockVotes = initData.makeProposalLockVotes;
         // _init(admin, addrRegistry, initData.baseInitData);
@@ -35,11 +33,18 @@ contract TheBoard is BaseCommittee {
     }
 
     /// @inheritdoc ICommittee
-    function newProposal(NewProposalInfo calldata proposal, bytes calldata data)
-        external
-        override
-        returns (bytes32 proposalID)
-    {}
+    function newProposal(
+        NewProposalInfo calldata proposal,
+        bool commit,
+        bytes calldata data
+    ) external override returns (bytes32 proposalID) {
+        console.log("parent dao:", getParentDAO());
+        // verify duty
+        // IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+        // proposalHandler.newProposal(proposal, commit, data);
+
+        console.log("making proposal");
+    }
 
     /// @inheritdoc IDeploy
     function getTypeID() external pure override returns (bytes32 typeID) {

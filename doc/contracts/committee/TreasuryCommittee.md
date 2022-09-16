@@ -15,20 +15,32 @@
 ## 4.Functions
 
 ### newProposal
-for
+makeing a new proposal
 
-> create proposal start point, and the committee
-will call DAO's new proposals and actually create the proposal
+> Committee doesn't create propsal, DAO is the contract creating proposal, the committee just maintain the relationship between the propsal and committee and creator.
+
 
 *Declaration:*
 ```solidity
 function newProposal(
+struct IProposalInfo.NewProposalInfo proposal,
+bool commit,
+bytes data
 ) external returns
 (bytes32)
 ```
 
+*Args:*
+| Arg | Type | Description |
+| --- | --- | --- |
+|`proposal` | struct IProposalInfo.NewProposalInfo | content of the proposal
+|`commit` | bool | if proposal content is huge, the frontend could set commit as False, and submit multiple times
+|`data` | bytes | support data, decide by case
 
-
+*Returns:*
+| Arg | Description |
+| --- | --- |
+|`proposalID` | generated proposal id
 
 ### getTypeID
 get the type of the contract, it's constant

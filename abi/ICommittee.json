@@ -91,6 +91,11 @@
         "type": "tuple"
       },
       {
+        "internalType": "bool",
+        "name": "commit",
+        "type": "bool"
+      },
+      {
         "internalType": "bytes",
         "name": "data",
         "type": "bytes"

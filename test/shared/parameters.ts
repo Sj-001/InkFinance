@@ -7,7 +7,7 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-import { PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY } from '../shared/fixtures';  
+import {FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY } from '../shared/fixtures';  
 const {loadFixture, deployContract} = waffle;
 
 
@@ -52,9 +52,9 @@ export function buildMasterDAOInitData(erc20Address:string) {
         var thePublicCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", thePublicCommitteeDutyIDsByteArray);
 
 
-        var proposalTuple = 'tuple(bytes32, bytes32, uint256, bytes)';
-        committees[0] = [keccak256(toUtf8Bytes("generate proposal")), THE_BOARD_COMMITTEE_KEY, 1, theBoardCommitteeDutyIDs]; 
-        committees[1] = [keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, 0, thePublicCommitteeDutyIDs];
+        var proposalTuple = 'tuple(bytes32, bytes32, bytes)';
+        committees[0] = [keccak256(toUtf8Bytes("generate proposal")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs]; 
+        committees[1] = [keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs];
 
         var flows = [];
         var flowTuple = 'tuple(bytes32, ' + proposalTuple +'[])';
@@ -74,8 +74,8 @@ export function buildMasterDAOInitData(erc20Address:string) {
         var minEffectiveVotes = 100;
         var minEffectiveVoteWallets = 1;
 
-        var masterDAOInitialData = defaultAbiCoder.encode(['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, ' + flowTuple +'[])'],
-             [["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, flows]]);
+        var masterDAOInitialData = defaultAbiCoder.encode(['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, ' + flowTuple +'[])'],
+             [["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, flows]]);
 
         return masterDAOInitialData;
         

@@ -22,12 +22,11 @@ contract ThePublic is BaseCommittee {
     }
 
     /// @inheritdoc ICommittee
-    function newProposal(NewProposalInfo calldata, bytes calldata)
-        external
-        pure
-        override
-        returns (bytes32)
-    {
+    function newProposal(
+        NewProposalInfo calldata proposal,
+        bool commit,
+        bytes calldata data
+    ) external pure override returns (bytes32) {
         revert ThisCommitteeCannotMakeProposal();
     }
 

@@ -31,12 +31,17 @@ interface ICommittee is IProposalInfo, IERC165 {
     //     bytes calldata data
     // ) external;
 
-    /// @notice for
-    /// @dev create proposal start point, and the committee
-    /// will call DAO's new proposals and actually create the proposal
-    function newProposal(NewProposalInfo calldata proposal, bytes calldata data)
-        external
-        returns (bytes32 proposalID);
+    /// @notice makeing a new proposal
+    /// @dev Committee doesn't create propsal, DAO is the contract creating proposal, the committee just maintain the relationship between the propsal and committee and creator.
+    /// @param proposal content of the proposal
+    /// @param commit if proposal content is huge, the frontend could set commit as False, and submit multiple times
+    /// @param data support data, decide by case
+    /// @return proposalID generated proposal id
+    function newProposal(
+        NewProposalInfo calldata proposal,
+        bool commit,
+        bytes calldata data
+    ) external returns (bytes32 proposalID);
 
     // // kvData item is encode(string key, bytes32 typeID, bytes value, string describe)
     // function changeProposal(

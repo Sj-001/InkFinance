@@ -29,7 +29,7 @@ const {loadFixture, deployContract} = waffle;
 describe("proposal related test", function () {
 
 
-    it("test create proposal", async function () {
+    it("test create off-chain proposal", async function () {
 
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
         const {inkERC20} = await loadFixture(InkERC20Fixture);        
@@ -78,11 +78,20 @@ describe("proposal related test", function () {
             "contents" : contents
         }
 
-        await masterDAO.newProposal(proposal, true, "0x0000000000000000000000000000000000000000000000000000000000000000");
+        var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
+
+        console.log("first proposal committee:", flowSteps[0].committee);
+        var theBoardFactory = await ethers.getContractFactory("TheBoard");
+        var theBoard = theBoardFactory.attach(flowSteps[0].committee);
+        await theBoard.newProposal(proposal, true, "0x00");
         
-        // create a new flow
-        // 全0 / 全F 
-    
+
+
+        // await masterDAO.newProposal(proposal, true, "0x0000000000000000000000000000000000000000000000000000000000000000");
+
     });
+
+
+
 
 })

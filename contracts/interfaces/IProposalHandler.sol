@@ -11,24 +11,21 @@ interface IProposalHandler is IProposalInfo {
     /// @param step the step identity of that committee in the workflow
     /// @param addressConfigKey the committee address key in the ConfigManager
     /// @param committeeAddress contract address of the committee
-    /// @param sensitive priority of the committee
     /// @param dutyIDs the dutyIDs of the committee
     struct CommitteeCreateInfo {
         bytes32 step;
         bytes32 addressConfigKey;
-        uint256 sensitive;
         bytes dutyIDs;
     }
 
     /// @dev committee info stored for the progress control
     /// @param step the step identity of that committee in the workflow
     /// @param committee contract address of the committee
-    /// @param sensitive priority of the committee
     /// @param dutyIDs the dutyIDs of the committee
     struct CommitteeInfo {
         bytes32 step;
         address committee;
-        uint256 sensitive;
+        string name;
         bytes dutyIDs;
     }
 
@@ -81,6 +78,12 @@ interface IProposalHandler is IProposalInfo {
     //     view
     //     returns (CommitteeInfo memory stepInfo);
 
+    /// @notice makeing a new proposal
+    /// @dev making a new proposal and generate proposal records in the DAO
+    /// @param proposal content of the proposal
+    /// @param commit if proposal content is huge, the frontend could set commit as False, and submit multiple times
+    /// @param data support data, decide by case
+    /// @return proposalID generated proposal id
     function newProposal(
         NewProposalInfo calldata proposal,
         bool commit,

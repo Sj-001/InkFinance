@@ -14,6 +14,19 @@
   },
   {
     "inputs": [],
+    "name": "configManager",
+    "outputs": [
+      {
+        "internalType": "contract IConfigManager",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getCommitteeDuties",
     "outputs": [
       {
@@ -49,19 +62,6 @@
       }
     ],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "globalConfig",
-    "outputs": [
-      {
-        "internalType": "contract IConfig",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -183,6 +183,11 @@
         "internalType": "struct IProposalInfo.NewProposalInfo",
         "name": "proposal",
         "type": "tuple"
+      },
+      {
+        "internalType": "bool",
+        "name": "commit",
+        "type": "bool"
       },
       {
         "internalType": "bytes",

@@ -5,18 +5,18 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 
-import "../interfaces/IConfig.sol";
+import "../interfaces/IConfigManager.sol";
 
 /// @title Abstract contract BaseVerify
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice base verify is context and initializable (initialize just once)
 abstract contract BaseVerify is Context, Initializable {
-    IConfig public globalConfig;
+    IConfigManager public configManager;
 
     function init(address _config) public initializer {
-        globalConfig = IConfig(_config);
+        configManager = IConfigManager(_config);
         require(
-            globalConfig.supportsInterface(type(IConfig).interfaceId),
+            configManager.supportsInterface(type(IConfigManager).interfaceId),
             "not implement IConfig"
         );
     }

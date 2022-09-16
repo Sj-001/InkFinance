@@ -16,8 +16,10 @@
 | --- | --- |
 | MAX_STEP_NUM | uint256 |
 | _SENTINEL_ID | bytes32 |
+| DEFAULT_FLOW_ID | bytes32 |
 | _flowSteps | mapping(bytes32 => mapping(bytes32 => struct BaseDAO.StepLinkInfo)) |
 | _proposalInfo | mapping(bytes32 => struct IProposalHandler.ProposalProgress) |
+| _proposals | mapping(bytes32 => struct IProposalInfo.Proposal) |
 
 ## 3.Modifiers
 ### EnsureGovEnough
@@ -32,6 +34,34 @@ modifier EnsureGovEnough
 
 
 ## 4.Functions
+
+### generateProposalID
+
+
+
+*Declaration:*
+```solidity
+function generateProposalID(
+) internal returns
+(bytes32 proposalID)
+```
+
+
+
+
+### turnBytesToAddress
+
+
+
+*Declaration:*
+```solidity
+function turnBytesToAddress(
+) internal returns
+(address addr)
+```
+
+
+
 
 ### init
 
@@ -316,6 +346,99 @@ function flushTopicIndex(
 
 
 
+### decideProposal
+
+
+
+*Declaration:*
+```solidity
+function decideProposal(
+) public
+```
+
+
+
+
+### getFlowSteps
+
+
+
+*Declaration:*
+```solidity
+function getFlowSteps(
+) external returns
+(struct IProposalHandler.CommitteeInfo[] infos)
+```
+
+
+
+
+### _isNextCommittee
+
+> verify if the committee is the next committee
+
+*Declaration:*
+```solidity
+function _isNextCommittee(
+) internal returns
+(bool)
+```
+
+
+
+
+### _appendFinishStep
+
+
+
+*Declaration:*
+```solidity
+function _appendFinishStep(
+) internal
+```
+
+
+
+
+### _execFinish
+
+
+
+*Declaration:*
+```solidity
+function _execFinish(
+) internal
+```
+
+
+
+
+### _setNextStep
+
+
+
+*Declaration:*
+```solidity
+function _setNextStep(
+) internal
+```
+
+
+
+
+### _setFlowStep
+
+
+
+*Declaration:*
+```solidity
+function _setFlowStep(
+) internal
+```
+
+
+
+
 ### supportsInterface
 
 > Returns true if this contract implements the interface defined by
@@ -329,6 +452,19 @@ This function call must use less than 30 000 gas.
 function supportsInterface(
 ) public returns
 (bool)
+```
+
+
+
+
+### changeProposal
+
+
+
+*Declaration:*
+```solidity
+function changeProposal(
+) external
 ```
 
 

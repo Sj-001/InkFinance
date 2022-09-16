@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import "../utils/ConfigHelper.sol";
 
-interface IConfig is IERC165 {
+interface IConfigManager is IERC165 {
     /// @dev when set admin of some domain key, this event will be sent
     /// @param domain domain of the key
     /// @param keyID user defined key

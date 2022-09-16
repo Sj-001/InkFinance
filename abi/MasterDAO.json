@@ -72,126 +72,6 @@
   {
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "describe",
-            "type": "string"
-          },
-          {
-            "internalType": "bytes[]",
-            "name": "mds",
-            "type": "bytes[]"
-          },
-          {
-            "internalType": "contract IERC20",
-            "name": "govTokenAddr",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "govTokenAmountRequirement",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "stakingAddr",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "badgeName",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "badgeTotal",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "daoLogo",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minPledgeRequired",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minEffectiveVotes",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minEffectiveVoteWallets",
-            "type": "uint256"
-          },
-          {
-            "components": [
-              {
-                "internalType": "bytes32",
-                "name": "flowID",
-                "type": "bytes32"
-              },
-              {
-                "components": [
-                  {
-                    "internalType": "bytes32",
-                    "name": "step",
-                    "type": "bytes32"
-                  },
-                  {
-                    "internalType": "bytes32",
-                    "name": "addressConfigKey",
-                    "type": "bytes32"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "sensitive",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "bytes",
-                    "name": "dutyIDs",
-                    "type": "bytes"
-                  }
-                ],
-                "internalType": "struct IProposalHandler.CommitteeCreateInfo[]",
-                "name": "committees",
-                "type": "tuple[]"
-              }
-            ],
-            "internalType": "struct IProposalHandler.FlowInfo[]",
-            "name": "flows",
-            "type": "tuple[]"
-          }
-        ],
-        "internalType": "struct MasterDAO.MasterDAOInitData",
-        "name": "initData",
-        "type": "tuple"
-      }
-    ],
-    "name": "buildInitData",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "proposalID",
         "type": "bytes32"
@@ -240,6 +120,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "configManager",
+    "outputs": [
+      {
+        "internalType": "contract IConfigManager",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -260,19 +153,6 @@
     "name": "decideProposal",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "factoryManagerKey",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -334,6 +214,47 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "flowID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getFlowSteps",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "committee",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes",
+            "name": "dutyIDs",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct IProposalHandler.CommitteeInfo[]",
+        "name": "infos",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -572,19 +493,6 @@
       }
     ],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "globalConfig",
-    "outputs": [
-      {
-        "internalType": "contract IConfig",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {

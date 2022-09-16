@@ -38,7 +38,6 @@ console.log("CommitteeTypeID=", CommitteeTypeID);
 
 export {FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID}
 
-
 // signer[0].address
 const INK_CONFIG_DOMAIN = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
 // domain + prefix + keyName
@@ -117,7 +116,6 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     var treasuryCommitteeKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "TreasuryCommittee");
     console.log("treasuryCommitteeKey=", treasuryCommitteeKey);
 
-
     var keyValues = [];
     keyValues[0] = {"keyPrefix":"ADMIN", "keyName":"FactoryManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await factoryManager.address)}
     keyValues[1] = {"keyPrefix":"ADMIN", "keyName":"TheBoardCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theBoardCommitteeImpl.address)}
@@ -137,7 +135,6 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
 export async function InkERC20Fixture(_wallets: Wallet[], _mockProvider: MockProvider) {
 
     const signers = await ethers.getSigners();
-
     const inkERC20 = await deployContract(signers[0], InkERC20ABI, ["InkERC20", ""]);
     await inkERC20.deployed();
 

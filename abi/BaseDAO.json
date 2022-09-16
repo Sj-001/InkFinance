@@ -14,6 +14,19 @@
   },
   {
     "inputs": [],
+    "name": "DEFAULT_FLOW_ID",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "MAX_STEP_NUM",
     "outputs": [
       {
@@ -102,6 +115,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "configManager",
+    "outputs": [
+      {
+        "internalType": "contract IConfigManager",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -115,7 +141,7 @@
       },
       {
         "internalType": "bytes",
-        "name": "data",
+        "name": "",
         "type": "bytes"
       }
     ],
@@ -183,6 +209,47 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "flowID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getFlowSteps",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "committee",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes",
+            "name": "dutyIDs",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct IProposalHandler.CommitteeInfo[]",
+        "name": "infos",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -424,19 +491,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "globalConfig",
-    "outputs": [
-      {
-        "internalType": "contract IConfig",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -477,12 +531,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "admin",
+        "name": "admin_",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "addrRegistry",
+        "name": "config_",
         "type": "address"
       },
       {

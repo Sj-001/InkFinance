@@ -67,6 +67,19 @@
     "type": "event"
   },
   {
+    "inputs": [],
+    "name": "configManager",
+    "outputs": [
+      {
+        "internalType": "contract IConfigManager",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -151,19 +164,6 @@
       {
         "internalType": "address",
         "name": "_calculatedAddress",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "globalConfig",
-    "outputs": [
-      {
-        "internalType": "contract IConfig",
-        "name": "",
         "type": "address"
       }
     ],

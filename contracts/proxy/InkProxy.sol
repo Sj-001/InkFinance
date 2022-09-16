@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/proxy/Proxy.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/StorageSlot.sol";
 
-import "../interfaces/IConfig.sol";
+import "../interfaces/IConfigManager.sol";
 
 /// @title InkProxy
 /// @author InkTech <tech-support@inkfinance.xyz>
@@ -68,7 +68,9 @@ contract InkProxy is Proxy {
 
     function _setAddrRegistry(address addrRegistry) private {
         require(
-            IConfig(addrRegistry).supportsInterface(type(IConfig).interfaceId),
+            IConfigManager(addrRegistry).supportsInterface(
+                type(IConfigManager).interfaceId
+            ),
             "error set addr"
         );
 

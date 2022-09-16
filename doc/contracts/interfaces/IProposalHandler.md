@@ -15,18 +15,32 @@ inteface which defined how to deal with the vote process
 ## 4.Functions
 
 ### newProposal
+makeing a new proposal
 
+> making a new proposal and generate proposal records in the DAO
 
 
 *Declaration:*
 ```solidity
 function newProposal(
+struct IProposalInfo.NewProposalInfo proposal,
+bool commit,
+bytes data
 ) external returns
 (bytes32 proposalID)
 ```
 
+*Args:*
+| Arg | Type | Description |
+| --- | --- | --- |
+|`proposal` | struct IProposalInfo.NewProposalInfo | content of the proposal
+|`commit` | bool | if proposal content is huge, the frontend could set commit as False, and submit multiple times
+|`data` | bytes | support data, decide by case
 
-
+*Returns:*
+| Arg | Description |
+| --- | --- |
+|`proposalID` | generated proposal id
 
 ### changeProposal
 
