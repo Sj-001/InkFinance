@@ -185,33 +185,153 @@ contract MasterDAO is BaseDAO {
         ];
 
         bytes32 firstStep = steps[_SENTINEL_ID].nextStep;
-        if (firstStep != bytes32(0x0)) {
+        if (firstStep == bytes32(0x0)) {
             revert SystemError();
         }
 
-        bytes32[] memory proposer_duties = ICommittee(
-            steps[firstStep].committee
-        ).getCommitteeDuties();
-        if (!_hasDuty(_msgSender(), proposer_duties[0])) {
-            revert NotAllowedToOperate();
-        }
+        // bytes32[] memory proposer_duties = ICommittee(
+        //     steps[firstStep].committee
+        // ).getCommitteeDuties();
 
-        // require(firstStep != bytes32(0x0), "sys err");
+        // if (!_hasDuty(_msgSender(), proposer_duties[0])) {
+        //     revert NotAllowedToOperate();
+        // }
+
         // require(_msgSender() == steps[firstStep].committee, "no right");
 
         // IProposalRegistry proposalRegistry = _getProposalRegistry();
         // proposalID = proposalRegistry.newProposal(proposal, data);
 
-        // // initial process of the progress
-        // DAOProcessInfo storage info = _proposalInfo[proposalID];
-        // info.proposalID = proposalID;
-        // info.processCategory = NORMAL_CATEGORY;
+        // initial process of the progress
+        ProposalProgress storage info = _proposalInfo[proposalID];
+        info.proposalID = proposalID;
+        info.flowID = DEFAULT_FLOW_ID;
 
-        // // decicde next step and which commit is handle the process
-        // info.nextCommittee.step = firstStep;
-        // info.nextCommittee.committee = _msgSender();
+        // decicde next step and which commit is handle the process
+        info.nextCommittee.step = firstStep;
+        info.nextCommittee.committee = steps[firstStep].committee;
 
-        // _decideProposal(proposalID, _msgSender(), true);
+        _decideProposal(proposalID, info.nextCommittee.committee, true);
+    }
+
+    function _decideProposal(
+        bytes32 proposalID,
+        address committee,
+        bool agree
+    ) internal {
+        ProposalProgress storage info = _proposalInfo[proposalID];
+        require(info.proposalID == proposalID, "proposal err");
+        require(_isNextCommittee(proposalID, committee), "committee err");
+
+        _appendFinishStep(info);
+        _setNextStep(info, !agree);
+
+        if (info.nextCommittee.committee == address(0x0)) {
+            _execFinish(info, agree);
+        }
+    }
+
+    /// @dev verify if the committee is the next committee
+    function _isNextCommittee(bytes32 proposalID, address committee)
+        internal
+        view
+        returns (bool)
+    {
+        address nextCommittee = _proposalInfo[proposalID]
+            .nextCommittee
+            .committee;
+
+        if (nextCommittee == address(0x0)) {
+            return false;
+        }
+
+        return nextCommittee == committee;
+    }
+
+    function _appendFinishStep(ProposalProgress storage info) internal {
+        CommitteeInfo storage committeeInfo = info.committees.push();
+        committeeInfo.committee = info.nextCommittee.committee;
+        committeeInfo.step = info.nextCommittee.step;
+        info.lastOperationTimestamp = block.timestamp;
+    }
+
+    function _execFinish(ProposalProgress storage info, bool agree) internal {
+        require(info.nextCommittee.committee == address(0x0), "can't finish");
+        decideProposal(info.proposalID, agree, "");
+        // emit EDecideProposal(info.proposalID, agree);
+    }
+
+    // if agree, apply the proposal kvdata to topic.
+    function decideProposal(
+        bytes32 proposalID,
+        bool agree,
+        bytes memory
+    ) public override {
+        Proposal storage p = _proposals[proposalID];
+        // require(p.dao == _msgSender(), "dao error");
+        require(p.status == ProposalStatus.PENDING, "proposal status err");
+
+        if (!agree) {
+            p.status = ProposalStatus.DENY;
+            // emit EProposalDecide(_msgSender(), proposalID, agree, bytes32(0x0));
+            return;
+        }
+
+        p.status = ProposalStatus.AGREE;
+
+        bytes32 topicID;
+        if (p.topicID == bytes32(0x0)) {
+            topicID = keccak256(abi.encode(proposalID));
+        } else {
+            topicID = p.topicID;
+        }
+
+        // StoreTopic storage t = _topics[topicID];
+        // if (p.topicID == bytes32(0x0)) {
+        //     // new
+        //     p.topicID = topicID;
+
+        //     t.topicID = topicID;
+        //     t.dao = _msgSender();
+        //     // emit ETopicCreate(_msgSender(), topicID, proposalID);
+        // } else {
+        //     // emit ETopicFix(_msgSender(), topicID, proposalID);
+        // }
+
+        // t.proposalIDs.push();
+        // uint256 newIdx = t.proposalIDs.length - 1;
+        // t.proposalIDs[newIdx] = proposalID;
+
+        // string[] memory keys = getProposalKvDataKeys(
+        //     proposalID,
+        //     "",
+        //     p.kvData.size
+        // );
+        // for (uint256 i = 0; i < keys.length; i++) {
+        //     bytes32 keyID = LEnumerableMetadata._getKeyID(keys[i]);
+        //     TopicKey2Proposal storage keymap = t.key2Proposal[keyID];
+        //     keymap.proposalID = proposalID;
+        //     keymap.proposalIdx = newIdx;
+        // }
+
+        // emit EProposalDecide(_msgSender(), proposalID, agree, topicID);
+    }
+
+    function _setNextStep(ProposalProgress storage info, bool breakFlow)
+        internal
+    {
+        if (!breakFlow) {
+            bytes32 flowID = info.flowID;
+            StepLinkInfo storage nowStep = _flowSteps[flowID][
+                info.nextCommittee.step
+            ];
+            info.nextCommittee.step = nowStep.nextStep;
+            info.nextCommittee.committee = _flowSteps[flowID][nowStep.nextStep]
+                .committee;
+        } else {
+            info.nextCommittee.step = bytes32(0x0);
+            info.nextCommittee.committee = address(0x0);
+        }
     }
 
     function turnBytesToAddress(bytes memory byteAddress)
@@ -236,7 +356,7 @@ contract MasterDAO is BaseDAO {
         steps[_SENTINEL_ID].nextStep = flow.committees[0].step;
 
         for (uint256 j = 0; j < flow.committees.length; j++) {
-            CommitteeInfo memory committeeInfo = flow.committees[j];
+            CommitteeCreateInfo memory committeeInfo = flow.committees[j];
 
             bytes32[] memory duties = abi.decode(
                 committeeInfo.dutyIDs,
@@ -267,12 +387,11 @@ contract MasterDAO is BaseDAO {
 
             bytes memory initData = abi.encode("1", "2");
             // keccak256(toUtf8Bytes("CommitteeTypeID"))
-            address committeeAddress2 = IFactoryManager(_factoryAddress)
-                .deployV2(
-                    0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
-                    committeeInfo.addressConfigKey,
-                    initData
-                );
+            address committeeAddress2 = IFactoryManager(_factoryAddress).deploy(
+                0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
+                committeeInfo.addressConfigKey,
+                initData
+            );
 
             console.log("deployed address:", committeeAddress2);
 
@@ -294,13 +413,6 @@ contract MasterDAO is BaseDAO {
         bytes32 proposalID,
         KVItem[] memory contents,
         bool commit,
-        bytes calldata data
-    ) external override {}
-
-    // if agree, apply the proposal kvdata to topic.
-    function decideProposal(
-        bytes32 proposalID,
-        bool agree,
         bytes calldata data
     ) external override {}
 

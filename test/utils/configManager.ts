@@ -5,7 +5,7 @@ import { loadFixture } from 'ethereum-waffle';
 import {keccak256, toUtf8Bytes } from 'ethers/lib/utils';
 import { ConfigManagerFixture } from '../shared/fixtures'; 
 import { waffle, ethers, web3, upgrades } from 'hardhat'
-
+    
 describe("utils generate hash", function () {
 
 

@@ -5,52 +5,14 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "contractID",
+        "name": "typeID",
         "type": "bytes32"
       },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "beacon",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "contractImpl",
-        "type": "address"
-      }
-    ],
-    "name": "AddContract",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "contractID",
+        "name": "factoryKey",
         "type": "bytes32"
-      }
-    ],
-    "name": "DelContract",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "contractID",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "contractImpl",
-        "type": "address"
       },
       {
         "indexed": true,
@@ -69,65 +31,16 @@
         "internalType": "address",
         "name": "msgSender",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
       }
     ],
     "name": "NewContractDeployed",
     "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "contractID",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "contractImpl",
-        "type": "address"
-      }
-    ],
-    "name": "addContract",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "contractID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "delContract",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "contractID",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "initData",
-        "type": "bytes"
-      }
-    ],
-    "name": "deploy",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "newAddr",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
   },
   {
     "inputs": [
@@ -147,11 +60,11 @@
         "type": "bytes"
       }
     ],
-    "name": "deployV2",
+    "name": "deploy",
     "outputs": [
       {
         "internalType": "address",
-        "name": "newAddr",
+        "name": "contractAddr",
         "type": "address"
       }
     ],

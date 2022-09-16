@@ -45,6 +45,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     // process category flow ID => (stepID => step info)
     mapping(bytes32 => mapping(bytes32 => StepLinkInfo)) internal _flowSteps;
 
+    /// @dev stored proposal
+    /// proposalID=>ProposalProgress
+    mapping(bytes32 => ProposalProgress) internal _proposalInfo;
+
     function init(
         address admin,
         address addrRegistry,

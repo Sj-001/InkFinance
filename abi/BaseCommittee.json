@@ -109,6 +109,101 @@
   {
     "inputs": [
       {
+        "components": [
+          {
+            "internalType": "bytes32[]",
+            "name": "agents",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "topicID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes",
+            "name": "crossChainProtocal",
+            "type": "bytes"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "typeID",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              },
+              {
+                "internalType": "bytes",
+                "name": "desc",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct IProposalInfo.KVItem[]",
+            "name": "headers",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "typeID",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              },
+              {
+                "internalType": "bytes",
+                "name": "desc",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct IProposalInfo.KVItem[]",
+            "name": "contents",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct IProposalInfo.NewProposalInfo",
+        "name": "proposal",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "newProposal",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes4",
         "name": "interfaceId",
         "type": "bytes4"

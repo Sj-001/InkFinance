@@ -36,9 +36,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
     InkProxy proxy;
 
-    /// @dev contractID=>DeployableContract
-    mapping(bytes32 => DeployableContract) private _deployableContracts;
-
+    /// @dev only for test
     mapping(bytes32 => EnumerableSet.AddressSet) private _deployedContracts;
 
     /// @dev config address
@@ -62,44 +60,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         proxy = new InkProxy();
     }
 
-    /// @inheritdoc IFactoryManager
-    function addContract(bytes32 contractID, address contractImpl)
-        external
-        override
-    {
-        require(
-            // IConfig(_config).hasRole(
-            //     BEACON_UPGRADER_ROLE,
-            //     msg.sender
-            // ),
-            true,
-            "not allowed to add contract"
-        );
-
-        DeployableContract storage deployableContract = _deployableContracts[
-            contractID
-        ];
-        // require(deployableContract.link._isEmpty(), "this contract is already exist");
-        deployableContract.inkBeacon = new InkBeacon(contractImpl, _config);
-        emit AddContract(
-            contractID,
-            deployableContract.inkBeacon.implementation(),
-            contractImpl
-        );
-    }
-
-    /// @inheritdoc IFactoryManager
-    function delContract(bytes32 contractID) external override {
-        // require(
-        //     IConfig(_config).hasRole(
-        //         BEACON_UPGRADER_ROLE,
-        //         msg.sender
-        //     ),
-        //     "not allowed to del contract"
-        // );
-        emit DelContract(contractID);
-    }
-
     function getPredictAddress(bytes32 contractID)
         external
         view
@@ -115,6 +75,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         return generatedContract;
     }
 
+    /*
     /// @inheritdoc IFactoryManager
     function deploy(bytes32 contractID, bytes calldata initData)
         external
@@ -158,6 +119,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         return generatedContract;
     }
+    */
 
     function turnBytesToAddress(bytes memory byteAddress)
         internal
@@ -169,7 +131,8 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         }
     }
 
-    function deployV2(
+    /// @inheritdoc IFactoryManager
+    function deploy(
         bytes32 typeID,
         bytes32 factoryKey,
         bytes calldata initData
@@ -200,14 +163,16 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         nounce++;
 
-        // emit NewContractDeployed(
-        //     contractID,
-        //     deployableContract.inkBeacon.implementation(),
-        //     generatedContract,
-        //     initData,
-        //     msg.sender
-        // );
+        emit NewContractDeployed(
+            typeID,
+            factoryKey,
+            generatedContract,
+            initData,
+            msg.sender,
+            block.timestamp
+        );
 
+        _deployedContracts[factoryKey].add(generatedContract);
         return generatedContract;
     }
 

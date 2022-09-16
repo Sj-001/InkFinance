@@ -10,12 +10,16 @@ interface IDeploy is IERC165 {
         bytes calldata data
     ) external returns (bytes memory callbackEvent);
 
-    /// @dev get the type of the contract, it's constant
-    ///
+    /// @notice get the type of the contract, it's constant
     /// @param typeID type of the deployed contract
+    /// @dev the most used type list here
+    /// DAO: keccak256(DAOTypeID) = 0xdeb63a88d4573ec3359155ef44dd570a22acdf5208f7256d196e6bb7483d1b85;
+    /// Committee: keccak256(CommitteeTypeID) = 0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f;
+    /// Agent: keccak256(AgentTypeID) = 0x7d842b1d0bd0bab5012e5d26d716987eab6183361c63f15501d815f133f49845;
     function getTypeID() external returns (bytes32 typeID);
 
-    /// @dev 通过常量实现, 获取该合约版本, 在进行可升级合约变更时, 通过该方法判定是否可以升级.
-    /// @return version the version number
+    /// @dev get the version of the deployed contract, it's a constant, the system could
+    /// decide if we should upgrade the deployed contract according to the version.
+    /// @return version the version number of the deployed contract
     function getVersion() external returns (uint256 version);
 }

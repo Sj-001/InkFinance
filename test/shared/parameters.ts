@@ -7,8 +7,7 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-import { PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY } from '../shared/fixtures'; 
-import { masterDAO_ContractID, theBoard_ContractID, thePublic_ContractID, treasuryCommittee_ContractID} from './fixtures'; 
+import { PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY } from '../shared/fixtures';  
 const {loadFixture, deployContract} = waffle;
 
 

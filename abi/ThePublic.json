@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "name": "ThisCommitteeCannotMakeProposal",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -35,7 +40,7 @@
         "type": "bytes32"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -48,7 +53,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -104,6 +109,101 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32[]",
+            "name": "agents",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "topicID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes",
+            "name": "crossChainProtocal",
+            "type": "bytes"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "typeID",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              },
+              {
+                "internalType": "bytes",
+                "name": "desc",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct IProposalInfo.KVItem[]",
+            "name": "headers",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "key",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "typeID",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              },
+              {
+                "internalType": "bytes",
+                "name": "desc",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct IProposalInfo.KVItem[]",
+            "name": "contents",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct IProposalInfo.NewProposalInfo",
+        "name": "",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "newProposal",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {

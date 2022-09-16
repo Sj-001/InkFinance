@@ -7,14 +7,27 @@ import "./IProposalInfo.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice inteface which defined how to deal with the vote process
 interface IProposalHandler is IProposalInfo {
-    /// @dev committee infomation
+    /// @dev when proposal create, the submited data structure
     /// @param step the step identity of that committee in the workflow
     /// @param addressConfigKey the committee address key in the ConfigManager
+    /// @param committeeAddress contract address of the committee
+    /// @param sensitive priority of the committee
+    /// @param dutyIDs the dutyIDs of the committee
+    struct CommitteeCreateInfo {
+        bytes32 step;
+        bytes32 addressConfigKey;
+        uint256 sensitive;
+        bytes dutyIDs;
+    }
+
+    /// @dev committee info stored for the progress control
+    /// @param step the step identity of that committee in the workflow
+    /// @param committee contract address of the committee
     /// @param sensitive priority of the committee
     /// @param dutyIDs the dutyIDs of the committee
     struct CommitteeInfo {
         bytes32 step;
-        bytes32 addressConfigKey;
+        address committee;
         uint256 sensitive;
         bytes dutyIDs;
     }
@@ -24,10 +37,16 @@ interface IProposalHandler is IProposalInfo {
     /// @param committees related committees in that workflow
     struct FlowInfo {
         bytes32 flowID;
-        CommitteeInfo[] committees;
+        CommitteeCreateInfo[] committees;
     }
 
-    struct ProposalVoteingProgress {
+    /// @dev data structure stored the progress of the proposal
+    /// @param proposalID the target proposal
+    /// @param flowID the flowID (vote order between all the committees)
+    /// @param nextCommittee next committee
+    /// @param lastOperationTimestamp last committee operate time
+    /// @param committees all the committees in the flow
+    struct ProposalProgress {
         bytes32 proposalID;
         // flowID is used to distinguish different processes in dao.
         bytes32 flowID;

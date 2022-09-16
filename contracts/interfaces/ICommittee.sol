@@ -4,6 +4,9 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import "./IProposalInfo.sol";
 
+error ThisCommitteeDoesNotSupportThisAction();
+error ThisCommitteeCannotMakeProposal();
+
 interface ICommittee is IProposalInfo, IERC165 {
     /// @notice return committee's duties
     /// @return duties committee's duties
@@ -28,11 +31,12 @@ interface ICommittee is IProposalInfo, IERC165 {
     //     bytes calldata data
     // ) external;
 
-    // function newProposal(
-    //     address dao,
-    //     ProposalApplyInfo calldata proposal,
-    //     bytes calldata data
-    // ) external returns (bytes32 proposalID);
+    /// @notice for
+    /// @dev create proposal start point, and the committee
+    /// will call DAO's new proposals and actually create the proposal
+    function newProposal(NewProposalInfo calldata proposal, bytes calldata data)
+        external
+        returns (bytes32 proposalID);
 
     // // kvData item is encode(string key, bytes32 typeID, bytes value, string describe)
     // function changeProposal(
