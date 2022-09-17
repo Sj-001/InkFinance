@@ -5,13 +5,23 @@ import "../bases/BaseCommittee.sol";
 import "hardhat/console.sol";
 
 contract ThePublic is BaseCommittee {
+    uint256 public minAgreeRatio;
+    uint256 public minEffectiveVotes;
+    uint256 public minEffectiveWallets;
+
+    struct InitData {
+        uint256 minAgreeRatio;
+        uint256 minEffectiveVotes;
+        uint256 minEffectiveWallets;
+        bytes baseInitData;
+    }
+
     function init(
         address dao_,
         address config_,
         bytes calldata data_
     ) external override initializer returns (bytes memory callbackEvent) {
-        console.log("deploying.......the public");
-
+        _init(dao_, config_, data_);
         // InitData memory initData = abi.decode(data_, (InitData));
         // makeProposalLockVotes = initData.makeProposalLockVotes;
 

@@ -4,6 +4,21 @@ pragma solidity ^0.8.0;
 import "../bases/BaseCommittee.sol";
 
 contract TreasuryCommittee is BaseCommittee {
+    function init(
+        address dao_,
+        address config_,
+        bytes calldata data_
+    ) external override initializer returns (bytes memory callbackEvent) {
+        _init(dao_, config_, data_);
+        // InitData memory initData = abi.decode(data_, (InitData));
+        // makeProposalLockVotes = initData.makeProposalLockVotes;
+
+        // _init(admin, addrRegistry, initData.baseInitData);
+        // _memberSetting(admin, 1);
+
+        return callbackEvent;
+    }
+
     /// @inheritdoc ICommittee
     function newProposal(
         NewProposalInfo calldata proposal,

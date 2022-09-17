@@ -14,6 +14,24 @@
 
 ## 4.Functions
 
+### init
+
+
+
+*Declaration:*
+```solidity
+function init(
+) external initializer returns
+(bytes callbackEvent)
+```
+*Modifiers:*
+| Modifier |
+| --- |
+| initializer |
+
+
+
+
 ### newProposal
 makeing a new proposal
 

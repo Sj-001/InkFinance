@@ -9,7 +9,7 @@ import "hardhat/console.sol";
 /// @notice the board committee has the highest priority of the DAO
 contract TheBoard is BaseCommittee {
     /// @notice when create proposal, how many staked tokens need to be locked.
-    // uint256 public makeProposalLockVotes;
+    uint256 public minPledgeRequired;
 
     // struct InitData {
     //     uint256 makeProposalLockVotes;
@@ -21,8 +21,7 @@ contract TheBoard is BaseCommittee {
         address config_,
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
-        super.init(config_);
-        _parentDAO = dao_;
+        _init(dao_, config_, data_);
 
         // InitData memory initData = abi.decode(data_, (InitData));
         // makeProposalLockVotes = initData.makeProposalLockVotes;
@@ -40,8 +39,8 @@ contract TheBoard is BaseCommittee {
     ) external override returns (bytes32 proposalID) {
         console.log("parent dao:", getParentDAO());
         // verify duty
-        // IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
-        // proposalHandler.newProposal(proposal, commit, data);
+        IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+        proposalHandler.newProposal(proposal, commit, data);
 
         console.log("making proposal");
     }

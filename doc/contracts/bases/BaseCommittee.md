@@ -35,15 +35,14 @@ function supportsInterface(
 
 
 
-### init
+### _init
 
 
 
 *Declaration:*
 ```solidity
-function init(
-) external returns
-(bytes callbackEvent)
+function _init(
+) internal
 ```
 
 

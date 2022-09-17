@@ -98,6 +98,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// proposalID=>Store
     mapping(bytes32 => Proposal) internal _proposals;
 
+    /// @notice all the same topic proposal stored here
+    /// @dev topicID=>TopicProposal
+    mapping(bytes32 => TopicProposal) private _topics;
+
     // functions ////////////////////////////////////////////////////////////////////////
     function generateProposalID() internal returns (bytes32 proposalID) {
         totalProposal++;
@@ -229,7 +233,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         view
         override
         returns (ProposalSummary memory proposal)
-    {}
+    {
+        Proposal storage p = _proposals[proposalID];
+        proposal.status = p.status;
+        proposal.proposalID = p.proposalID;
+        proposal.topicID = p.topicID;
+        // proposal.dao = p.dao;
+        return proposal;
+    }
 
     function getProposalMetadata(bytes32 proposalID, bytes32 key)
         external
@@ -283,17 +294,15 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             topicID = p.topicID;
         }
 
-        // StoreTopic storage t = _topics[topicID];
-        // if (p.topicID == bytes32(0x0)) {
-        //     // new
-        //     p.topicID = topicID;
-
-        //     t.topicID = topicID;
-        //     t.dao = _msgSender();
-        //     // emit ETopicCreate(_msgSender(), topicID, proposalID);
-        // } else {
-        //     // emit ETopicFix(_msgSender(), topicID, proposalID);
-        // }
+        TopicProposal storage t = _topics[topicID];
+        if (p.topicID == bytes32(0x0)) {
+            // new
+            p.topicID = topicID;
+            t.topicID = topicID;
+            emit TopicCreate(topicID, proposalID);
+        } else {
+            emit TopicFix(topicID, proposalID);
+        }
 
         // t.proposalIDs.push();
         // uint256 newIdx = t.proposalIDs.length - 1;
@@ -311,7 +320,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         //     keymap.proposalIdx = newIdx;
         // }
 
-        // emit EProposalDecide(_msgSender(), proposalID, agree, topicID);
+        emit ProposalResult(proposalID, agree, topicID);
     }
 
     function getFlowSteps(bytes32 flowID)
@@ -359,6 +368,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         if (nextCommittee == address(0x0)) {
             return false;
         }
+
         return nextCommittee == committee;
     }
 
@@ -432,17 +442,24 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             //     "committee addr not support ICommittee"
             // );
 
-            bytes memory initData = abi.encode("1", "2");
-            // keccak256(toUtf8Bytes("CommitteeTypeID"))
-            address committeeAddress2 = IFactoryManager(_factoryAddress).deploy(
+            bytes memory initData = abi.encode(duties);
+            bytes memory deployCall = abi.encodeWithSignature(
+                "deploy(bytes32,bytes32,bytes)",
                 0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
                 committeeInfo.addressConfigKey,
                 initData
             );
-
-            console.log("deployed address:", committeeAddress2);
-
-            steps[committeeInfo.step].committee = committeeAddress2;
+            // address committeeAddress2 = IFactoryManager(_factoryAddress).deploy(
+            //     0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
+            //     committeeInfo.addressConfigKey,
+            //     initData
+            // );
+            (bool success, bytes memory returnedBytes) = address(
+                _factoryAddress
+            ).call(deployCall);
+            steps[committeeInfo.step].committee = turnBytesToAddress(
+                returnedBytes
+            );
 
             // link next committee
             if (j < flow.committees.length - 1) {

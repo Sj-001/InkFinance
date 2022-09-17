@@ -10,6 +10,14 @@
 
 ## 2.Globals
 
+> Note this contains internal vars as well due to a bug in the docgen procedure
+
+| Var | Type |
+| --- | --- |
+| minAgreeRatio | uint256 |
+| minEffectiveVotes | uint256 |
+| minEffectiveWallets | uint256 |
+
 ## 3.Modifiers
 
 ## 4.Functions

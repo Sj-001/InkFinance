@@ -40,13 +40,12 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             interfaceId == type(IDeploy).interfaceId;
     }
 
-    function init(
+    function _init(
         address dao_,
         address config_,
         bytes calldata data
-    ) external virtual override returns (bytes memory callbackEvent) {
+    ) internal {
         super.init(config_);
-        _parentDAO = dao_;
         // committeeDuties.add(keccak256(data));
     }
 

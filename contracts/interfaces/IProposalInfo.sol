@@ -5,8 +5,29 @@ import "../libraries/LEnumerableMetadata.sol";
 
 /// @title IDAOHandleProposal
 /// @author InkTech <tech-support@inkfinance.xyz>
-/// @notice inteface which defined how to deal with the vote process
+/// @notice struct and events definations related to proposal
 interface IProposalInfo {
+    /// @notice when new proposal generated, this event will be emit
+    event NewProposal(
+        bytes32 indexed proposalID,
+        bytes[] metadata,
+        bytes[] kvData
+    );
+
+    /// @notice when kvData has been add to the proposal this event will be emit
+    /// @dev kvData if the key is the same, the value will be override
+    event ProposalAppend(bytes32 indexed proposalID, bytes[] kvData);
+
+    event ProposalResult(
+        bytes32 indexed proposalID,
+        bool indexed agree,
+        bytes32 topicID
+    );
+
+    event TopicCreate(bytes32 indexed topicID, bytes32 indexed proposalID);
+
+    event TopicFix(bytes32 indexed topicID, bytes32 indexed proposalID);
+
     /// @dev sub item of NewProposal
     struct KVItem {
         bytes32 key;
@@ -74,7 +95,7 @@ interface IProposalInfo {
     }
 
     // topic存储结构.
-    struct StoreTopic {
+    struct TopicProposal {
         bytes32 topicID;
         // 记录所有通过的proposal.
         bytes32[] proposalIDs;
