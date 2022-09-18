@@ -79,19 +79,62 @@ describe("proposal related test", function () {
         }
 
         var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
-
+        console.log(flowSteps);
         console.log("first proposal committee:", flowSteps[0].committee);
+
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
         var theBoard = theBoardFactory.attach(flowSteps[0].committee);
         await theBoard.newProposal(proposal, true, "0x00");
+        var proposalID = await masterDAO.getProposalIDByIndex(0);
+        console.log("first proposal id: ", proposalID);
         
+        await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
+        await voteDetail(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
-        // await masterDAO.newProposal(proposal, true, "0x0000000000000000000000000000000000000000000000000000000000000000");
+        await voteAccountInfo(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
     });
 
 
+
+    async function voteProposal (proposalID:string, step:string, committeeAddress:string ) {
+        
+        console.log("proposalID", proposalID);
+        console.log("committeeAddress", committeeAddress);
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var thePublicCommitteeFactory = await ethers.getContractFactory("ThePublic");
+        var thePublicCommittee = await thePublicCommitteeFactory.attach(committeeAddress);
+        var voteIdentity = {"proposalID":proposalID, "step":step};
+        
+        await thePublicCommittee.vote(voteIdentity, true, 10, "", "0x00");
+    }
+
+
+    async function voteDetail (proposalID:string, step:string, committeeAddress:string ) {
+        
+        console.log("proposalID", proposalID);
+        console.log("committeeAddress", committeeAddress);
+        var thePublicCommitteeFactory = await ethers.getContractFactory("ThePublic");
+        var thePublicCommittee = await thePublicCommitteeFactory.attach(committeeAddress);
+        var voteIdentity = {"proposalID":proposalID, "step":step};
+
+
+        console.log("vote detail info:", await thePublicCommittee.getVoteDetail(voteIdentity, true, "0x0000000000000000000000000000000000000000", 10));
+    }
+
+
+    async function voteAccountInfo (proposalID:string, step:string, committeeAddress:string ) {
+        
+        console.log("proposalID", proposalID);
+        console.log("committeeAddress", committeeAddress);
+
+        var thePublicCommitteeFactory = await ethers.getContractFactory("ThePublic");
+        var thePublicCommittee = await thePublicCommitteeFactory.attach(committeeAddress);
+        var voteIdentity = {"proposalID":proposalID, "step":step};
+        const signers = await ethers.getSigners();
+        console.log("getVoteDetailByAccount:", await thePublicCommittee.getVoteDetailByAccount(voteIdentity, await signers[0].address));
+    }
 
 
 })

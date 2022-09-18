@@ -29,13 +29,9 @@
 *Declaration:*
 ```solidity
 function init(
-) external initializer returns
+) external returns
 (bytes callbackEvent)
 ```
-*Modifiers:*
-| Modifier |
-| --- |
-| initializer |
 
 
 

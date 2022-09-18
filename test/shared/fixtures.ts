@@ -88,9 +88,11 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
 
     const theBoardCommitteeImpl = await deployContract(signers[0], TheBoardABI, []);
     await theBoardCommitteeImpl.deployed();
+    console.log("TheBoardCommittee Address=", theBoardCommitteeImpl.address);
 
     const thePublicCommitteeImpl = await deployContract(signers[0], ThePublicABI, []);
     await thePublicCommitteeImpl.deployed();
+    console.log("PublicCommittee Address=", thePublicCommitteeImpl.address);
 
     const theTreasuryCommitteeImpl = await deployContract(signers[0], TreasuryCommitteeABI, []);
     await theTreasuryCommitteeImpl.deployed();

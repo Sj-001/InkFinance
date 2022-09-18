@@ -3,11 +3,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import "./IProposalInfo.sol";
+import "./IVoteHandler.sol";
 
 error ThisCommitteeDoesNotSupportThisAction();
 error ThisCommitteeCannotMakeProposal();
 
-interface ICommittee is IProposalInfo, IERC165 {
+interface ICommittee is IProposalInfo, IVoteHandler, IERC165 {
     /// @notice return committee's duties
     /// @return duties committee's duties
     function getCommitteeDuties() external returns (bytes32[] memory duties);
@@ -23,14 +24,6 @@ interface ICommittee is IProposalInfo, IERC165 {
 
     //////////////////// exec proposal
 
-    // function vote(
-    //     VoteIdentity calldata identity,
-    //     bool agree,
-    //     uint256 count,
-    //     string calldata feedback,
-    //     bytes calldata data
-    // ) external;
-
     /// @notice makeing a new proposal
     /// @dev Committee doesn't create propsal, DAO is the contract creating proposal, the committee just maintain the relationship between the propsal and committee and creator.
     /// @param proposal content of the proposal
@@ -43,6 +36,12 @@ interface ICommittee is IProposalInfo, IERC165 {
         bytes calldata data
     ) external returns (bytes32 proposalID);
 
+    /// @dev verify the user has the permission to vote
+    function allowOperate(VoteIdentity calldata identity, address user)
+        external
+        view
+        returns (bool isAllow);
+
     // // kvData item is encode(string key, bytes32 typeID, bytes value, string describe)
     // function changeProposal(
     //     VoteIdentity calldata identity,
@@ -52,8 +51,6 @@ interface ICommittee is IProposalInfo, IERC165 {
 
     // function decideProposal(VoteIdentity calldata identity, bytes calldata data)
     //     external;
-
-    //////////////////// exec member
 
     // voteCount == 0: delete
     // > 0: add or resetting

@@ -141,6 +141,11 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             factoryKey
         );
 
+        console.log("KEY IS:");
+        console.logBytes32(factoryKey);
+        console.log("DATA IS:");
+        console.logBytes(addressBytes);
+
         // valid typeID
         address implementAddress = turnBytesToAddress(addressBytes);
         console.log("implement address:", implementAddress);
@@ -150,7 +155,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             address(proxy),
             salt
         );
-
+        console.log("generated address:", generatedContract);
         InkBeacon inkBeacon = new InkBeacon(implementAddress, _config);
         // miss proxy init
         InkProxy(payable(generatedContract)).init(
@@ -163,16 +168,17 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         nounce++;
 
-        emit NewContractDeployed(
-            typeID,
-            factoryKey,
-            generatedContract,
-            initData,
-            msg.sender,
-            block.timestamp
-        );
+        // emit NewContractDeployed(
+        //     typeID,
+        //     factoryKey,
+        //     generatedContract,
+        //     initData,
+        //     msg.sender,
+        //     block.timestamp
+        // );
 
         _deployedContracts[factoryKey].add(generatedContract);
+
         return generatedContract;
     }
 

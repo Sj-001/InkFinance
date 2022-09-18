@@ -20,14 +20,14 @@ contract ThePublic is BaseCommittee {
         address dao_,
         address config_,
         bytes calldata data_
-    ) external override initializer returns (bytes memory callbackEvent) {
+    ) external override returns (bytes memory callbackEvent) {
+        console.log("init in the Public:", dao_);
         _init(dao_, config_, data_);
         // InitData memory initData = abi.decode(data_, (InitData));
         // makeProposalLockVotes = initData.makeProposalLockVotes;
 
         // _init(admin, addrRegistry, initData.baseInitData);
         // _memberSetting(admin, 1);
-
         return callbackEvent;
     }
 

@@ -15,6 +15,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     using Address for address;
     using LEnumerableMetadata for LEnumerableMetadata.MetadataSet;
     using EnumerableSet for EnumerableSet.AddressSet;
+    using EnumerableSet for EnumerableSet.Bytes32Set;
 
     /// structs ////////////////////////////////////////////////////////////////////////
     struct StepLinkInfo {
@@ -98,14 +99,31 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// proposalID=>Store
     mapping(bytes32 => Proposal) internal _proposals;
 
+    /// for test
+    EnumerableSet.Bytes32Set internal _proposalsArray;
+
     /// @notice all the same topic proposal stored here
     /// @dev topicID=>TopicProposal
     mapping(bytes32 => TopicProposal) private _topics;
+
+    // test functins
+    function getProposalIDByIndex(uint256 index)
+        external
+        view
+        returns (bytes32 _proposalID)
+    {
+        _proposalID = _proposalsArray.at(index);
+    }
 
     // functions ////////////////////////////////////////////////////////////////////////
     function generateProposalID() internal returns (bytes32 proposalID) {
         totalProposal++;
         proposalID = keccak256(abi.encode(_msgSender(), totalProposal));
+        console.log(
+            "generated ################################################"
+        );
+        /// for test
+        _proposalsArray.add(proposalID);
     }
 
     function turnBytesToAddress(bytes memory byteAddress)
@@ -114,7 +132,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         returns (address addr)
     {
         assembly {
-            addr := mload(add(byteAddress, 20))
+            addr := mload(add(byteAddress, 32))
         }
     }
 
@@ -433,7 +451,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     committeeInfo.step != _SENTINEL_ID,
                 "step empty"
             );
-
+            console.log("");
+            console.log(
+                "START TO GENRATE ############################################################################################################"
+            );
             // Deploy committee
             // require(
             //     ICommittee(committeeAddress).supportsInterface(
@@ -457,6 +478,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             (bool success, bytes memory returnedBytes) = address(
                 _factoryAddress
             ).call(deployCall);
+
+            console.log("returned bytes");
+            console.logBytes(returnedBytes);
+            console.log(success);
+            console.log("turned address", turnBytesToAddress(returnedBytes));
+
             steps[committeeInfo.step].committee = turnBytesToAddress(
                 returnedBytes
             );
@@ -469,6 +496,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             } else {
                 steps[committeeInfo.step].nextStep = bytes32(0x0);
             }
+
+            console.log(
+                "DEPLOY END ############################################################################################################"
+            );
+            console.log("");
         }
     }
 

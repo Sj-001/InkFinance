@@ -60,4 +60,18 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
+### allowOperate
+
+> verify the user has the permission to vote
+
+*Declaration:*
+```solidity
+function allowOperate(
+) external returns
+(bool isAllow)
+```
+
+
+
+
 ## 5.Events

@@ -20,6 +20,7 @@
 | _flowSteps | mapping(bytes32 => mapping(bytes32 => struct BaseDAO.StepLinkInfo)) |
 | _proposalInfo | mapping(bytes32 => struct IProposalHandler.ProposalProgress) |
 | _proposals | mapping(bytes32 => struct IProposalInfo.Proposal) |
+| _proposalsArray | struct EnumerableSet.Bytes32Set |
 
 ## 3.Modifiers
 ### EnsureGovEnough
@@ -34,6 +35,20 @@ modifier EnsureGovEnough
 
 
 ## 4.Functions
+
+### getProposalIDByIndex
+
+
+
+*Declaration:*
+```solidity
+function getProposalIDByIndex(
+) external returns
+(bytes32 _proposalID)
+```
+
+
+
 
 ### generateProposalID
 
