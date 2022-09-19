@@ -64,6 +64,33 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
+### decideProposal
+
+> calculate votes and find out if the proposal is passed
+
+*Declaration:*
+```solidity
+function decideProposal(
+) public
+```
+
+
+
+
+### _calculateVoteResults
+
+
+
+*Declaration:*
+```solidity
+function _calculateVoteResults(
+) internal returns
+(bool _passedOrNot)
+```
+
+
+
+
 ### getTypeID
 get the type of the contract, it's constant
 

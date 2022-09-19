@@ -76,6 +76,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     address private _configManager;
     address private _factoryAddress;
 
+    uint256 private _minPledgeRequired;
+    uint256 private _minEffectiveVotes;
+    uint256 private _minEffectiveVoteWallets;
+    ///@dev BoardOnly=1, PublicAndBoard=10, Public Only=100
+    uint256 private _voteMode;
+
     /// @dev how many propsoals in the DAO
     ///      also used to generated proposalID;
     uint256 private totalProposal;
@@ -261,7 +267,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     function getProposalMetadata(bytes32 proposalID, bytes32 key)
-        external
+        public
         view
         override
         returns (bytes32 typeID, bytes memory data)
@@ -287,6 +293,35 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         override
     {}
 
+    // function getProposalVoteLimit(bytes32 proposalID) public view returns(uint256 minVotes, uint256 minWallets, uint256 minAgreeRatio){
+
+    //   // DAO default setting
+    //   minVotes = _minEffectiveVotes;
+    //   minWallets = _minEffectiveVoteWallets;
+    //   minAgreeRatio = _minEffectiveVoteWallets;
+
+    // reading from the proposal metadata, which has the higer priority.
+
+    //   (bytes32 typeID, bytes memory minVoteData) = getProposalMetadata(proposalID, MIN_VOTES);
+    //   if(typeID == TypeID.UINT256){
+    //     uint256 value = abi.decode(minVoteData, (uint256));
+    //     if(value > 0){
+    //       minVotes = value;
+    //     }
+    //   }
+
+    //   bytes memory minWalletData;
+    //   (typeID, minWalletData) = proposalRegistry.getProposalMetadata(proposal.proposalID, MIN_WALLETS);
+    //   if(typeID == TypeID.UINT256){
+    //     uint256 value = abi.decode(minWalletData, (uint256));
+    //     if(value > 0){
+    //       minWallets = value;
+    //     }
+    //   }
+
+    //   return (minVotes, minWallets, );
+    // }
+
     // if agree, apply the proposal kvdata to topic.
     function decideProposal(
         bytes32 proposalID,
@@ -294,12 +329,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes memory
     ) public override {
         Proposal storage p = _proposals[proposalID];
+        // make sure caller is the committee
         // require(p.dao == _msgSender(), "dao error");
         require(p.status == ProposalStatus.PENDING, "proposal status err");
 
         if (!agree) {
             p.status = ProposalStatus.DENY;
-            // emit EProposalDecide(_msgSender(), proposalID, agree, bytes32(0x0));
+            emit ProposalResult(proposalID, agree, bytes32(0x0));
             return;
         }
 

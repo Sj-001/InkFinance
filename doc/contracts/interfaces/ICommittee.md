@@ -74,4 +74,17 @@ function allowOperate(
 
 
 
+### decideProposal
+
+> calculate votes and find out if the proposal is passed
+
+*Declaration:*
+```solidity
+function decideProposal(
+) external
+```
+
+
+
+
 ## 5.Events

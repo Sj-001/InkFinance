@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "../interfaces/ICommittee.sol";
 import "../interfaces/IDeploy.sol";
+import "../interfaces/IProposalHandler.sol";
 
 import "../libraries/LVoteIdentityHelper.sol";
 import "../libraries/LEnumerableMetadata.sol";

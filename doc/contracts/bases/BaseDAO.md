@@ -313,7 +313,7 @@ function getProposalSummary(
 *Declaration:*
 ```solidity
 function getProposalMetadata(
-) external returns
+) public returns
 (bytes32 typeID, bytes data)
 ```
 

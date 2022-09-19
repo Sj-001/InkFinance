@@ -15,6 +15,8 @@ import * as TheBoardABI from "../../artifacts/contracts/committee/TheBoard.sol/T
 import * as ThePublicABI from "../../artifacts/contracts/committee/ThePUblic.sol/ThePublic.json";
 import * as TreasuryCommitteeABI from "../../artifacts/contracts/committee/TreasuryCommittee.sol/TreasuryCommittee.json";
 import * as DefaultAgentABI from "../../artifacts/contracts/agents/DefaultAgent.sol/DefaultAgent.json";
+import * as TreasuryManagerAgentABI from "../../artifacts/contracts/agents/TreasuryManagerAgent.sol/TreasuryManagerAgent.json";
+
 
 const {loadFixture, deployContract} = waffle;
 
@@ -57,7 +59,10 @@ console.log("MASTER_DAO_KEY=", MASTER_DAO_KEY);
 const THE_TREASURY_COMMITTEE_KEY = "0xb3ad0198e4ec4a0db963333524464a188289da1a5691c67d47c2364c09817df0";
 console.log("THE_TREASURY_COMMITTEE_KEY=", THE_TREASURY_COMMITTEE_KEY);
 
-export {INK_CONFIG_DOMAIN, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
+const THE_TREASURY_MANAGER_AGENT_KEY = "0x01daab39d6af5b8f8de2237107ebffcbfba7ecbcac254fd429eb4543f0a2bf4a";
+console.log("THE_TREASURY_MANAGER_AGENT_KEY=", THE_TREASURY_MANAGER_AGENT_KEY);
+
+export {INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
 
 /**
  * Ink Default DutyIDs
@@ -96,11 +101,15 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
 
     const theTreasuryCommitteeImpl = await deployContract(signers[0], TreasuryCommitteeABI, []);
     await theTreasuryCommitteeImpl.deployed();
+    console.log("TreasuryCommittee Address=", theTreasuryCommitteeImpl.address);
+
+    const theTreasuryManagerAgentImpl = await deployContract(signers[0], TreasuryManagerAgentABI, []);
+    await theTreasuryManagerAgentImpl.deployed();
+    console.log("TreasuryManagerAgent Address=", theTreasuryManagerAgentImpl.address);
 
     // init project implementation
     let masterDAOImpl: Contract = await deployContract(signers[0], MasterDAOABI);
     await masterDAOImpl.deployed();
-
 
     console.log("init keys:");
     var factoryManagerFactoryKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "FactoryManager");
@@ -118,13 +127,19 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     var treasuryCommitteeKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "TreasuryCommittee");
     console.log("treasuryCommitteeKey=", treasuryCommitteeKey);
 
+    var treasuryManagerAgentKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "TreasuryManagerAgent");
+    console.log("treasuryManagerAgentKey=", treasuryManagerAgentKey);
+
+
     var keyValues = [];
     keyValues[0] = {"keyPrefix":"ADMIN", "keyName":"FactoryManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await factoryManager.address)}
     keyValues[1] = {"keyPrefix":"ADMIN", "keyName":"TheBoardCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theBoardCommitteeImpl.address)}
     keyValues[2] = {"keyPrefix":"ADMIN", "keyName":"ThePublicCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await thePublicCommitteeImpl.address)}
     keyValues[3] = {"keyPrefix":"ADMIN", "keyName":"TreasuryCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theTreasuryCommitteeImpl.address)}
     keyValues[4] = {"keyPrefix":"ADMIN", "keyName":"MasterDAO", "typeID":keccak256(toUtf8Bytes("address")), "data": (await masterDAOImpl.address)}
+    keyValues[5] = {"keyPrefix":"ADMIN", "keyName":"TreasuryManagerAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theTreasuryManagerAgentImpl.address)}
  
+
     await configManager.batchSetKV(INK_CONFIG_DOMAIN, keyValues);
 
     console.log("config address and key:", await configManager.address, "|", FACTORY_MANAGER_KEY);    

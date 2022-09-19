@@ -21,11 +21,19 @@ contract TreasuryCommittee is BaseCommittee {
 
     /// @inheritdoc ICommittee
     function newProposal(
-        NewProposalInfo calldata proposal,
-        bool commit,
-        bytes calldata data
+        NewProposalInfo calldata,
+        bool,
+        bytes calldata
     ) external pure override returns (bytes32) {
         revert ThisCommitteeCannotMakeProposal();
+    }
+
+    /// @inheritdoc ICommittee
+    function decideProposal(VoteIdentity calldata, bytes memory)
+        external
+        override
+    {
+        revert ThisCommitteeDoesNotSupportThisAction();
     }
 
     /// @inheritdoc IDeploy

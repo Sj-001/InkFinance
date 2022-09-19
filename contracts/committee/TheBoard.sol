@@ -45,6 +45,14 @@ contract TheBoard is BaseCommittee {
         console.log("making proposal");
     }
 
+    /// @inheritdoc ICommittee
+    function decideProposal(VoteIdentity calldata, bytes memory)
+        external
+        override
+    {
+        revert ThisCommitteeDoesNotSupportThisAction();
+    }
+
     /// @inheritdoc IDeploy
     function getTypeID() external pure override returns (bytes32 typeID) {
         typeID = 0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f;

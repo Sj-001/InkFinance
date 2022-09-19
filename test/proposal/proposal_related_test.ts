@@ -9,7 +9,7 @@ import { ConfigManager } from '../../typechain/ConfigManager'
 import { FactoryManagerFixture, InkERC20Fixture } from '../shared/fixtures'; 
 
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
-import { INK_CONFIG_DOMAIN, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
+import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
 import { buildMasterDAOInitData } from '../shared/parameters'; 
 
@@ -27,6 +27,59 @@ import {defaultAbiCoder} from '@ethersproject/abi';
 const {loadFixture, deployContract} = waffle;
 
 describe("proposal related test", function () {
+
+    it("test create treasury-setup proposal", async function () {
+        const {factoryManager} = await loadFixture(FactoryManagerFixture);
+        const {inkERC20} = await loadFixture(InkERC20Fixture);        
+        var erc20Address = inkERC20.address;
+
+        // // select/create a DAO
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address);
+        await factoryManager.deploy(DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
+
+        var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = masterDAOFactory.attach(firstDAOAddress);
+        console.log("dao address:", masterDAO.address);
+        // // select one flow of the DAO
+
+        var agents = []
+        agents[0] = THE_TREASURY_MANAGER_AGENT_KEY;
+        
+        // agents[1] = toUtf8Bytes("");
+        var headers = [];
+        headers[0] = {
+            "key":  keccak256(toUtf8Bytes("key name")),
+            "typeID": keccak256(toUtf8Bytes("typeID")),
+            "data": "0x0001",
+            "desc": "0x0002",
+        };
+
+        var contents = [];
+        contents[0] = {
+            "key":  keccak256(toUtf8Bytes("key name")),
+            "typeID": keccak256(toUtf8Bytes("typeID")),
+            "data": "0x0001",
+            "desc": "0x0002",
+        };
+        var proposal = {
+            "agents" : agents,
+            "topicID" : keccak256(toUtf8Bytes("topic")),
+            "crossChainProtocal":toUtf8Bytes(""),
+            "headers" : headers,
+            "contents" : contents
+        }
+
+        // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
+        var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
+        var theBoardFactory = await ethers.getContractFactory("TheBoard");
+        var theBoard = theBoardFactory.attach(flowSteps[0].committee);
+        await theBoard.newProposal(proposal, true, "0x00");
+        
+        
+
+
+    });
 
 
     it("test create off-chain proposal", async function () {
@@ -94,6 +147,8 @@ describe("proposal related test", function () {
 
         await voteAccountInfo(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
+        await decideProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
+
     });
 
 
@@ -134,6 +189,19 @@ describe("proposal related test", function () {
         var voteIdentity = {"proposalID":proposalID, "step":step};
         const signers = await ethers.getSigners();
         console.log("getVoteDetailByAccount:", await thePublicCommittee.getVoteDetailByAccount(voteIdentity, await signers[0].address));
+    }
+
+
+    async function decideProposal (proposalID:string, step:string, committeeAddress:string ) {
+        
+        console.log("proposalID", proposalID);
+        console.log("committeeAddress", committeeAddress);
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var thePublicCommitteeFactory = await ethers.getContractFactory("ThePublic");
+        var thePublicCommittee = await thePublicCommitteeFactory.attach(committeeAddress);
+        var voteIdentity = {"proposalID":proposalID, "step":step};
+        
+        await thePublicCommittee.decideProposal(voteIdentity, "0x00");
     }
 
 

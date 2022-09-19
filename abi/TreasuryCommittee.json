@@ -5,6 +5,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "ThisCommitteeDoesNotSupportThisAction",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -208,6 +213,36 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "proposalID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct IVoteHandler.VoteIdentity",
+        "name": "",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "decideProposal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -545,17 +580,17 @@
           }
         ],
         "internalType": "struct IProposalInfo.NewProposalInfo",
-        "name": "proposal",
+        "name": "",
         "type": "tuple"
       },
       {
         "internalType": "bool",
-        "name": "commit",
+        "name": "",
         "type": "bool"
       },
       {
         "internalType": "bytes",
-        "name": "data",
+        "name": "",
         "type": "bytes"
       }
     ],

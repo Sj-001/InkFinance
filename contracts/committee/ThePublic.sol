@@ -1,10 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "../interfaces/IProposalHandler.sol";
 import "../bases/BaseCommittee.sol";
 import "hardhat/console.sol";
 
 contract ThePublic is BaseCommittee {
+    using LVoteIdentityHelper for VoteIdentity;
+
     uint256 public minAgreeRatio;
     uint256 public minEffectiveVotes;
     uint256 public minEffectiveWallets;
@@ -28,6 +31,7 @@ contract ThePublic is BaseCommittee {
 
         // _init(admin, addrRegistry, initData.baseInitData);
         // _memberSetting(admin, 1);
+
         return callbackEvent;
     }
 
@@ -38,6 +42,51 @@ contract ThePublic is BaseCommittee {
         bytes calldata data
     ) external pure override returns (bytes32) {
         revert ThisCommitteeCannotMakeProposal();
+    }
+
+    /// @inheritdoc ICommittee
+    function decideProposal(VoteIdentity calldata identity, bytes memory data)
+        public
+        override
+    {
+        console.log("parent dao:", getParentDAO());
+        // @todo verify duty
+        IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+        // @todo verify if it's expired.
+        bool passOrNot = _calculateVoteResults(identity);
+
+        proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
+    }
+
+    function _calculateVoteResults(VoteIdentity calldata identity)
+        internal
+        returns (bool _passedOrNot)
+    {
+        // require(_getVoteExpiration(proposal) < block.timestamp, "vote not end");
+        // require(_checkProposalStatus(proposal, identity), "no right proposal");
+        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
+
+        bool agree;
+
+        if (
+            voteInfo.totalVotes >= minEffectiveVotes &&
+            voteInfo.agreeVoterNum + voteInfo.denyVoterNum >=
+            minEffectiveWallets
+        ) {
+            agree =
+                (voteInfo.agreeVotes * 1e18) / (voteInfo.totalVotes) >
+                minAgreeRatio;
+        } else {
+            agree = false;
+        }
+
+        if (agree) {
+            voteInfo.status = VoteStatus.AGREE;
+        } else {
+            voteInfo.status = VoteStatus.DENY;
+        }
+        _passedOrNot = agree;
+        // IDAO(proposal.dao).decideProposal(proposal.proposalID, agree, "");
     }
 
     /// @inheritdoc IDeploy
