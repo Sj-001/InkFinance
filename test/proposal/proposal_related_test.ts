@@ -82,8 +82,6 @@ describe("proposal related test", function () {
         // console.log("first proposal id: ", proposalID);
         await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
-
-        
         await decideProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
 

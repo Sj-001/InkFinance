@@ -65,7 +65,7 @@
         "type": "bytes32"
       }
     ],
-    "name": "ProposalResult",
+    "name": "ProposalTopicSynced",
     "type": "event"
   },
   {

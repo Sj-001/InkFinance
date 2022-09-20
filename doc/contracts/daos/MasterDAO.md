@@ -42,14 +42,14 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
-### _decideProposal
+### decideProposal
 
 
 
 *Declaration:*
 ```solidity
-function _decideProposal(
-) internal
+function decideProposal(
+) external
 ```
 
 

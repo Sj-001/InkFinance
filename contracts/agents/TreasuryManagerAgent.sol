@@ -2,20 +2,16 @@
 pragma solidity ^0.8.0;
 
 import "../bases/BaseAgent.sol";
+import "hardhat/console.sol";
 
 contract TreasuryManagerAgent is BaseAgent {
-
-
     bytes32 public FLOW_ID = "";
 
     function init(
         address admin_,
         address config_,
         bytes calldata data
-    ) public virtual override returns (bytes memory callbackEvent) {
-
-
-    }
+    ) public virtual override returns (bytes memory callbackEvent) {}
 
     /// @inheritdoc IAgent
     function preExec(bytes32 proposalID)
@@ -24,6 +20,9 @@ contract TreasuryManagerAgent is BaseAgent {
         returns (bool success)
     {
         // valid, if it's proposl, etc.
+        console.log(
+            "pre exec --------------------------------------------------------------------------------- "
+        );
     }
 
     /// @inheritdoc IAgent
@@ -34,13 +33,16 @@ contract TreasuryManagerAgent is BaseAgent {
             bytes data;
             uint256 gasLimit;
         */
-        TxInfo[] memory txs;
-        txs[0] = TxInfo(address(0), 1, bytes(""), 1);
+        // TxInfo[] memory txs;
+        // txs[0] = TxInfo(address(0), 1, bytes(""), 1);
 
+        console.log(
+            "exec --------------------------------------------------------------------------------- "
+        );
 
         //////////////////// get platform addr
         // IAddressRegistry addrRegistry = BaseVerify(address(this)).addrRegistry();
-        
+
         // IProposalRegistry proposalRegistry = IProposalRegistry(
         //     addrRegistry.getAddress(AddressID.PROPOSAL_REGISTRY)
         // );
@@ -89,19 +91,11 @@ contract TreasuryManagerAgent is BaseAgent {
         DAO(address(this)).setFlowStep(flowInfo);
         DAO(address(this)).setUCV(address(new InkPayManager(address(this))));
         */
-
     }
 
+    function getTypeID() external view override returns (bytes32 typeID) {}
 
-    function getTypeID() external view override returns (bytes32 typeID) {
-
-    }
-
-
-    function getVersion() external view override returns (uint256 version) {
-
-    }
-
+    function getVersion() external view override returns (uint256 version) {}
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)

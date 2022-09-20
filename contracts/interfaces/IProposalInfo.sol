@@ -18,20 +18,16 @@ interface IProposalInfo {
     /// @dev kvData if the key is the same, the value will be override
     event ProposalAppend(bytes32 indexed proposalID, bytes[] kvData);
 
-    /// @dev once call decideProposal successfully, no matter agree the propsal or not, this event will be emit
-    /// and only DAO contract could emit this event
-    event ProposalResult(
+    /// @dev once propsal decided this event will be emit
+    event ProposalTopicSynced(
         bytes32 indexed proposalID,
         bool indexed agree,
         bytes32 topicID
     );
 
-
     event TopicCreate(bytes32 indexed topicID, bytes32 indexed proposalID);
 
-
     event TopicFix(bytes32 indexed topicID, bytes32 indexed proposalID);
-
 
     /// @dev sub item of NewProposal
     struct KVItem {

@@ -361,14 +361,14 @@ function flushTopicIndex(
 
 
 
-### decideProposal
+### syncProposalKvDataToTopic
 
 
 
 *Declaration:*
 ```solidity
-function decideProposal(
-) public
+function syncProposalKvDataToTopic(
+) internal
 ```
 
 
@@ -448,6 +448,19 @@ function _setNextStep(
 *Declaration:*
 ```solidity
 function _setFlowStep(
+) internal
+```
+
+
+
+
+### _decideProposal
+
+
+
+*Declaration:*
+```solidity
+function _decideProposal(
 ) internal
 ```
 

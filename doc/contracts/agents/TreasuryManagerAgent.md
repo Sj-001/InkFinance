@@ -20,6 +20,20 @@
 
 ## 4.Functions
 
+### init
+
+
+
+*Declaration:*
+```solidity
+function init(
+) public returns
+(bytes callbackEvent)
+```
+
+
+
+
 ### preExec
 
 > pre exec mean check the execute process and see if any problems.
@@ -59,6 +73,34 @@ bytes32 proposalID
 | Arg | Type | Description |
 | --- | --- | --- |
 |`proposalID` | bytes32 | target proposal
+
+
+### getTypeID
+
+
+
+*Declaration:*
+```solidity
+function getTypeID(
+) external returns
+(bytes32 typeID)
+```
+
+
+
+
+### getVersion
+
+
+
+*Declaration:*
+```solidity
+function getVersion(
+) external returns
+(uint256 version)
+```
+
+
 
 
 ### supportsInterface

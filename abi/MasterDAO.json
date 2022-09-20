@@ -83,7 +83,7 @@
         "type": "bytes32"
       }
     ],
-    "name": "ProposalResult",
+    "name": "ProposalTopicSynced",
     "type": "event"
   },
   {
@@ -253,7 +253,7 @@
       },
       {
         "internalType": "bytes",
-        "name": "",
+        "name": "data",
         "type": "bytes"
       }
     ],

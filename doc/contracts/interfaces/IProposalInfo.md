@@ -28,10 +28,9 @@ when kvData has been add to the proposal this event will be emit
 
 
 
-### ProposalResult
+### ProposalTopicSynced
 
-> once call decideProposal successfully, no matter agree the propsal or not, this event will be emit
-and only DAO contract could emit this event
+> once propsal decided this event will be emit
 
 
 

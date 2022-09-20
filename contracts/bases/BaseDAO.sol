@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../interfaces/IDAO.sol";
 import "../interfaces/IDeploy.sol";
 import "../interfaces/IFactoryManager.sol";
+import "../interfaces/IAgent.sol";
 
 import "./BaseVerify.sol";
 import "hardhat/console.sol";
@@ -323,11 +324,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     // }
 
     // if agree, apply the proposal kvdata to topic.
-    function decideProposal(
+    function syncProposalKvDataToTopic(
         bytes32 proposalID,
         bool agree,
         bytes memory
-    ) public override {
+    ) internal {
         Proposal storage p = _proposals[proposalID];
         // make sure caller is the committee
         // require(p.dao == _msgSender(), "dao error");
@@ -335,7 +336,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         if (!agree) {
             p.status = ProposalStatus.DENY;
-            emit ProposalResult(proposalID, agree, bytes32(0x0));
+            emit ProposalTopicSynced(proposalID, agree, bytes32(0x0));
             return;
         }
 
@@ -374,7 +375,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         //     keymap.proposalIdx = newIdx;
         // }
 
-        emit ProposalResult(proposalID, agree, topicID);
+        emit ProposalTopicSynced(proposalID, agree, topicID);
     }
 
     function getFlowSteps(bytes32 flowID)
@@ -435,41 +436,52 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     function _execFinish(ProposalProgress storage info, bool agree) internal {
         require(info.nextCommittee.committee == address(0x0), "can't finish");
-        decideProposal(info.proposalID, agree, "");
+
+        syncProposalKvDataToTopic(info.proposalID, agree, "");
         // emit EDecideProposal(info.proposalID, agree);
         console.log("exec finished");
 
-            if (agree == true) {
-                Proposal storage p = _proposals[info.proposalID];
+        if (agree == true) {
+            Proposal storage p = _proposals[info.proposalID];
 
-                for (uint256 i=0;i<p.agents.length; i++) {
-                    if (p.agents[i] != 0x0000000000000000000000000000000000000000000000000000000000000000) {
-                        
-                        console.log("");
-                        console.log(
-                            "START TO GENRATE AGENT ############################################################################################################"
+            for (uint256 i = 0; i < p.agents.length; i++) {
+                if (
+                    p.agents[i] !=
+                    0x0000000000000000000000000000000000000000000000000000000000000000
+                ) {
+                    console.log("");
+                    console.log(
+                        "START TO GENRATE AGENT ############################################################################################################"
+                    );
+
+                    bytes memory initData = abi.encode("");
+                    bytes memory deployCall = abi.encodeWithSignature(
+                        "deploy(bytes32,bytes32,bytes)",
+                        0x7d842b1d0bd0bab5012e5d26d716987eab6183361c63f15501d815f133f49845,
+                        p.agents[i],
+                        initData
+                    );
+                    (bool success, bytes memory returnedBytes) = address(
+                        _factoryAddress
+                    ).call(deployCall);
+
+                    console.log(
+                        "DEPLOY END ############################################################################################################"
+                    );
+                    console.log("");
+
+                    if (success) {
+                        // execute the Proposal
+                        address agentAddress = turnBytesToAddress(
+                            returnedBytes
                         );
-
-
-                        bytes memory initData = abi.encode("");
-                        bytes memory deployCall = abi.encodeWithSignature(
-                            "deploy(bytes32,bytes32,bytes)",
-                            0x7d842b1d0bd0bab5012e5d26d716987eab6183361c63f15501d815f133f49845,
-                            p.agents[i],
-                            initData
-                        );
-                        (bool success, bytes memory returnedBytes) = address(
-                            _factoryAddress
-                        ).call(deployCall);
-
-                        console.log(
-                            "DEPLOY END ############################################################################################################"
-                        );
-                        console.log("");
+                        IAgent(agentAddress).initAgent(address(this));
+                        IAgent(agentAddress).preExec(info.proposalID);
+                        IAgent(agentAddress).exec(info.proposalID);
                     }
                 }
-
-            }        
+            }
+        }
     }
 
     function _setNextStep(ProposalProgress storage info, bool breakFlow)
@@ -570,6 +582,23 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                 "DEPLOY END ############################################################################################################"
             );
             console.log("");
+        }
+    }
+
+    function _decideProposal(
+        bytes32 proposalID,
+        address committee,
+        bool agree
+    ) internal {
+        ProposalProgress storage info = _proposalInfo[proposalID];
+        require(info.proposalID == proposalID, "proposal err");
+        require(_isNextCommittee(proposalID, committee), "committee err");
+
+        _appendFinishStep(info);
+        _setNextStep(info, !agree);
+
+        if (info.nextCommittee.committee == address(0x0)) {
+            _execFinish(info, agree);
         }
     }
 

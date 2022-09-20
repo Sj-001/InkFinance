@@ -5,7 +5,6 @@ import "../bases/BaseDAO.sol";
 import "hardhat/console.sol";
 
 contract MasterDAO is BaseDAO {
-
     /// @inheritdoc IProposalHandler
     function newProposal(
         NewProposalInfo calldata proposal,
@@ -71,21 +70,12 @@ contract MasterDAO is BaseDAO {
         _decideProposal(proposalID, info.nextCommittee.committee, true);
     }
 
-    function _decideProposal(
+    function decideProposal(
         bytes32 proposalID,
-        address committee,
-        bool agree
-    ) internal {
-        ProposalProgress storage info = _proposalInfo[proposalID];
-        require(info.proposalID == proposalID, "proposal err");
-        require(_isNextCommittee(proposalID, committee), "committee err");
-
-        _appendFinishStep(info);
-        _setNextStep(info, !agree);
-
-        if (info.nextCommittee.committee == address(0x0)) {
-            _execFinish(info, agree);
-        }
+        bool agree,
+        bytes calldata data
+    ) external override {
+        _decideProposal(proposalID, msg.sender, true);
     }
 
     /// @inheritdoc IDeploy

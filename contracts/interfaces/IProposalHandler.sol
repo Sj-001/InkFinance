@@ -47,7 +47,6 @@ interface IProposalHandler is IProposalInfo {
         bytes32 proposalID;
         // flowID is used to distinguish different processes in dao.
         bytes32 flowID;
-
         bytes32[] agents;
         // now decide committee;
         CommitteeInfo nextCommittee;
