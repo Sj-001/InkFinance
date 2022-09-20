@@ -71,12 +71,20 @@ describe("proposal related test", function () {
         }
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
+        
         var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
         var theBoard = theBoardFactory.attach(flowSteps[0].committee);
+        
         await theBoard.newProposal(proposal, true, "0x00");
+
+        var proposalID = await masterDAO.getProposalIDByIndex(0);
+        // console.log("first proposal id: ", proposalID);
+        await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
+
+
         
-        
+        await decideProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
 
     });
@@ -202,6 +210,7 @@ describe("proposal related test", function () {
         var voteIdentity = {"proposalID":proposalID, "step":step};
         
         await thePublicCommittee.decideProposal(voteIdentity, "0x00");
+        
     }
 
 

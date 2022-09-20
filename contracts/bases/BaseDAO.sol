@@ -437,6 +437,39 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         require(info.nextCommittee.committee == address(0x0), "can't finish");
         decideProposal(info.proposalID, agree, "");
         // emit EDecideProposal(info.proposalID, agree);
+        console.log("exec finished");
+
+            if (agree == true) {
+                Proposal storage p = _proposals[info.proposalID];
+
+                for (uint256 i=0;i<p.agents.length; i++) {
+                    if (p.agents[i] != 0x0000000000000000000000000000000000000000000000000000000000000000) {
+                        
+                        console.log("");
+                        console.log(
+                            "START TO GENRATE AGENT ############################################################################################################"
+                        );
+
+
+                        bytes memory initData = abi.encode("");
+                        bytes memory deployCall = abi.encodeWithSignature(
+                            "deploy(bytes32,bytes32,bytes)",
+                            0x7d842b1d0bd0bab5012e5d26d716987eab6183361c63f15501d815f133f49845,
+                            p.agents[i],
+                            initData
+                        );
+                        (bool success, bytes memory returnedBytes) = address(
+                            _factoryAddress
+                        ).call(deployCall);
+
+                        console.log(
+                            "DEPLOY END ############################################################################################################"
+                        );
+                        console.log("");
+                    }
+                }
+
+            }        
     }
 
     function _setNextStep(ProposalProgress storage info, bool breakFlow)

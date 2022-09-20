@@ -5,6 +5,7 @@ import "../bases/BaseDAO.sol";
 import "hardhat/console.sol";
 
 contract MasterDAO is BaseDAO {
+
     /// @inheritdoc IProposalHandler
     function newProposal(
         NewProposalInfo calldata proposal,
@@ -20,7 +21,7 @@ contract MasterDAO is BaseDAO {
 
         proposalID = generateProposalID();
         Proposal storage p = _proposals[proposalID];
-
+        p.agents = proposal.agents;
         p.status = ProposalStatus.PENDING;
         p.proposalID = proposalID;
         p.topicID = proposal.topicID;

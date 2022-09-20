@@ -26,9 +26,12 @@ interface IProposalInfo {
         bytes32 topicID
     );
 
+
     event TopicCreate(bytes32 indexed topicID, bytes32 indexed proposalID);
 
+
     event TopicFix(bytes32 indexed topicID, bytes32 indexed proposalID);
+
 
     /// @dev sub item of NewProposal
     struct KVItem {

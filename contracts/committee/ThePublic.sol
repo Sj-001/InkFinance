@@ -54,7 +54,8 @@ contract ThePublic is BaseCommittee {
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
         // @todo verify if it's expired.
         bool passOrNot = _calculateVoteResults(identity);
-
+        console.log("pass or not", passOrNot);
+        
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
 

@@ -190,6 +190,8 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         return _deployedContracts[contractID].at(index);
     }
 
+    
+
     function getDeployedAddressCount(bytes32 contractID)
         public
         view

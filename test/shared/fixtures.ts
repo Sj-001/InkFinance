@@ -14,7 +14,6 @@ import * as InkERC20ABI from "../../artifacts/contracts/tokens/InkERC20.sol/InkE
 import * as TheBoardABI from "../../artifacts/contracts/committee/TheBoard.sol/TheBoard.json";
 import * as ThePublicABI from "../../artifacts/contracts/committee/ThePUblic.sol/ThePublic.json";
 import * as TreasuryCommitteeABI from "../../artifacts/contracts/committee/TreasuryCommittee.sol/TreasuryCommittee.json";
-import * as DefaultAgentABI from "../../artifacts/contracts/agents/DefaultAgent.sol/DefaultAgent.json";
 import * as TreasuryManagerAgentABI from "../../artifacts/contracts/agents/TreasuryManagerAgent.sol/TreasuryManagerAgent.json";
 
 
@@ -88,8 +87,6 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
 
     console.log("factory address:", await factoryManager.address);
 
-    const defaultAgentImpl = await deployContract(signers[0], DefaultAgentABI, []);
-    await defaultAgentImpl.deployed();
 
     const theBoardCommitteeImpl = await deployContract(signers[0], TheBoardABI, []);
     await theBoardCommitteeImpl.deployed();
