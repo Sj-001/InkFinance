@@ -5,6 +5,8 @@ import "../bases/BaseDAO.sol";
 import "hardhat/console.sol";
 
 contract MasterDAO is BaseDAO {
+    using LEnumerableMetadata for LEnumerableMetadata.MetadataSet;
+
     /// @inheritdoc IProposalHandler
     function newProposal(
         NewProposalInfo calldata proposal,
@@ -24,11 +26,13 @@ contract MasterDAO is BaseDAO {
         p.status = ProposalStatus.PENDING;
         p.proposalID = proposalID;
         p.topicID = proposal.topicID;
+        p.headers._init();
+
         for (uint256 i = 0; i < proposal.headers.length; i++) {
             ItemValue memory itemValue;
             itemValue.typeID = proposal.headers[i].typeID;
             itemValue.data = proposal.headers[i].data;
-            p.headers[proposal.headers[i].key] = itemValue;
+            // p.headers[proposal.headers[i].key] = itemValue;
         }
 
         // p.contents._init();

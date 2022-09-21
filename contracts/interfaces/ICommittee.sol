@@ -43,7 +43,7 @@ interface ICommittee is IProposalInfo, IVoteHandler, IERC165 {
         returns (bool isAllow);
 
     /// @dev calculate votes and find out if the proposal is passed
-    function decideProposal(VoteIdentity calldata identity, bytes calldata data)
+    function tallyVotes(VoteIdentity calldata identity, bytes calldata data)
         external;
 
     // // kvData item is encode(string key, bytes32 typeID, bytes value, string describe)

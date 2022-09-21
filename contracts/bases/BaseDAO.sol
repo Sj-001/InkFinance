@@ -122,6 +122,16 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _proposalID = _proposalsArray.at(index);
     }
 
+    /// @dev very import to verify the caller
+    function callFromDAO(
+        address contractAddress,
+        bytes memory functionSignature
+    ) external returns (bool success, bytes memory returnedBytes) {
+        (success, returnedBytes) = address(contractAddress).call(
+            functionSignature
+        );
+    }
+
     // functions ////////////////////////////////////////////////////////////////////////
     function generateProposalID() internal returns (bytes32 proposalID) {
         totalProposal++;
@@ -230,14 +240,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     {}
 
     // which proposal decide the latest key item;
-    function getTopicKeyProposal(bytes32 topicID, bytes32 key)
+    function getTopicKeyProposal(bytes32 topicID, string memory key)
         external
         view
         override
         returns (bytes32 proposalID)
     {}
 
-    function getTopicMetadata(bytes32 topicID, bytes32 key)
+    function getTopicMetadata(bytes32 topicID, string memory key)
         external
         view
         override
@@ -267,14 +277,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         return proposal;
     }
 
-    function getProposalMetadata(bytes32 proposalID, bytes32 key)
+    function getProposalMetadata(bytes32 proposalID, string memory key)
         public
         view
         override
         returns (bytes32 typeID, bytes memory data)
     {}
 
-    function getProposalKvData(bytes32 proposalID, bytes32 key)
+    function getProposalKvData(bytes32 proposalID, string memory key)
         external
         view
         override
@@ -283,9 +293,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     function getProposalKvDataKeys(
         bytes32 proposalID,
-        bytes32 startKey,
+        string memory startKey,
         uint256 pageSize
-    ) external view override returns (bytes32[] memory keys) {}
+    ) external view override returns (string[] memory keys) {
+        Proposal storage proposal = _proposals[proposalID];
+        return proposal.contents._getAllKeys(startKey, pageSize);
+    }
 
     //////////////////// flush index
     // dao查看该topicID上次刷新到的位置(lastIndexedProposalID, lastIndexedKey), 来继续进行, 所以权限问题.
@@ -293,6 +306,35 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         external
         override
     {}
+
+    /// @inheritdoc IAgentHandler
+    function getAgentIDAddr(bytes32 agentID)
+        external
+        override
+        returns (address agentAddr)
+    {}
+
+    /// @inheritdoc IAgentHandler
+    function continueExec(bytes32 proposalID, uint256 agentNum)
+        external
+        override
+    {}
+
+    /// @inheritdoc IAgentHandler
+    function setAgentFlowID(bytes32 agentID, bytes32 flowID)
+        external
+        override
+    {}
+
+    /// @inheritdoc IAgentHandler
+    function getAgentFlowID(bytes32 agentID)
+        external
+        override
+        returns (bytes32 flowID)
+    {}
+
+    /// @inheritdoc IAgentHandler
+    function execTx(TxInfo[] memory txs) external override {}
 
     // function getProposalVoteLimit(bytes32 proposalID) public view returns(uint256 minVotes, uint256 minWallets, uint256 minAgreeRatio){
 
@@ -443,6 +485,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         if (agree == true) {
             Proposal storage p = _proposals[info.proposalID];
+            console.log("agent length:", p.agents.length);
 
             for (uint256 i = 0; i < p.agents.length; i++) {
                 if (

@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "../committee/TreasuryCommittee.sol";
 import "../bases/BaseAgent.sol";
 import "hardhat/console.sol";
 
@@ -8,10 +9,12 @@ contract TreasuryManagerAgent is BaseAgent {
     bytes32 public FLOW_ID = "";
 
     function init(
-        address admin_,
+        address dao_,
         address config_,
         bytes calldata data
-    ) public virtual override returns (bytes memory callbackEvent) {}
+    ) public virtual override returns (bytes memory callbackEvent) {
+        super.init(config_);
+    }
 
     /// @inheritdoc IAgent
     function preExec(bytes32 proposalID)
@@ -49,22 +52,21 @@ contract TreasuryManagerAgent is BaseAgent {
 
         //////////////////// create treasury
 
+        // TreasuryCommittee.InitData memory tInitData;
+
+        // Committee.BaseInitData memory bInitData;
+        // bInitData.name = "treasury-committee";
+        // bInitData.describe = "";
+        // tInitData.baseInitData = abi.encode(bInitData);
+
+        // TreasuryCommittee tAddr = new TreasuryCommittee();
+        // tAddr.init(address(this), address(addrRegistry), abi.encode(tInitData));
+
+        // //////////////////// treasury init member
+        // bytes32 typeID;
+        // bytes memory data;
+
         /*
-        TreasuryCommittee.InitData memory tInitData;
-
-        Committee.BaseInitData memory bInitData;
-        bInitData.name = "treasury-committee";
-        bInitData.describe = "";
-
-        tInitData.baseInitData = abi.encode(bInitData);
-
-        TreasuryCommittee tAddr = new TreasuryCommittee();
-        tAddr.init(address(this), address(addrRegistry), abi.encode(tInitData));
-
-        //////////////////// treasury init member
-        bytes32 typeID;
-        bytes memory data;
-
         ////////// signers
         (typeID, data) = proposalRegistry.getProposalKvData(proposalID, _MD_SIGNERS);
         require(typeID == TypeID.ADDRESS_SLICE, "signers not addr[]");

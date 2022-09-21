@@ -1,5 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-interface IUCVManager is IERC165 {}
+import "./IUCVController.sol";
+
+interface IUCVManager is IUCVController {}

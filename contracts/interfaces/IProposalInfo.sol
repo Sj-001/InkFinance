@@ -31,7 +31,7 @@ interface IProposalInfo {
 
     /// @dev sub item of NewProposal
     struct KVItem {
-        bytes32 key;
+        string key;
         bytes32 typeID;
         bytes data;
         bytes desc;
@@ -84,7 +84,7 @@ interface IProposalInfo {
         uint256 nextExecAgentIdx;
         bytes32 crossChainProtocol;
         // 避免链上枚举, 消耗gas, 浪费存储.
-        mapping(bytes32 => ItemValue) headers;
+        LEnumerableMetadata.MetadataSet headers;
         // 需要枚举.
         LEnumerableMetadata.MetadataSet contents;
     }

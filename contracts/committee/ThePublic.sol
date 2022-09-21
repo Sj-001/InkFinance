@@ -45,7 +45,7 @@ contract ThePublic is BaseCommittee {
     }
 
     /// @inheritdoc ICommittee
-    function decideProposal(VoteIdentity calldata identity, bytes memory data)
+    function tallyVotes(VoteIdentity calldata identity, bytes memory data)
         public
         override
     {

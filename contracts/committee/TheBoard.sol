@@ -46,10 +46,7 @@ contract TheBoard is BaseCommittee {
     }
 
     /// @inheritdoc ICommittee
-    function decideProposal(VoteIdentity calldata, bytes memory)
-        external
-        override
-    {
+    function tallyVotes(VoteIdentity calldata, bytes memory) external override {
         revert ThisCommitteeDoesNotSupportThisAction();
     }
 

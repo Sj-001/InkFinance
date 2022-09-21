@@ -216,36 +216,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "proposalID",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "step",
-            "type": "bytes32"
-          }
-        ],
-        "internalType": "struct IVoteHandler.VoteIdentity",
-        "name": "",
-        "type": "tuple"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "decideProposal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getCommitteeDuties",
     "outputs": [
@@ -527,9 +497,9 @@
           {
             "components": [
               {
-                "internalType": "bytes32",
+                "internalType": "string",
                 "name": "key",
-                "type": "bytes32"
+                "type": "string"
               },
               {
                 "internalType": "bytes32",
@@ -554,9 +524,9 @@
           {
             "components": [
               {
-                "internalType": "bytes32",
+                "internalType": "string",
                 "name": "key",
-                "type": "bytes32"
+                "type": "string"
               },
               {
                 "internalType": "bytes32",
@@ -622,6 +592,36 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "proposalID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct IVoteHandler.VoteIdentity",
+        "name": "",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "tallyVotes",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

@@ -49,15 +49,22 @@ describe("proposal related test", function () {
         // agents[1] = toUtf8Bytes("");
         var headers = [];
         headers[0] = {
-            "key":  keccak256(toUtf8Bytes("key name")),
+            "key":  "committeeKey",
             "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": "0x0001",
+            "data": CommitteeTypeID,
+            "desc": "0x0002",
+        };
+        headers[1] = {
+            "key":  "controllerAddress",
+            "typeID": keccak256(toUtf8Bytes("typeID")),
+            "data": "0x00",
             "desc": "0x0002",
         };
 
+
         var contents = [];
         contents[0] = {
-            "key":  keccak256(toUtf8Bytes("key name")),
+            "key":  "key",
             "typeID": keccak256(toUtf8Bytes("typeID")),
             "data": "0x0001",
             "desc": "0x0002",
@@ -82,12 +89,13 @@ describe("proposal related test", function () {
         // console.log("first proposal id: ", proposalID);
         await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
-        await decideProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
+        // once decide, 
+        await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
 
     });
 
-
+    /*
     it("test create off-chain proposal", async function () {
 
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
@@ -104,12 +112,7 @@ describe("proposal related test", function () {
         console.log("dao address:", masterDAO.address);
         // select one flow of the DAO
         
-        // create two agent first, the DAO agent
-        /*
-            Proposal calldata proposal,
-            bool commit,
-            bytes calldata data
-        */
+        // create agent
         var agents = []
         agents[0] = "0x0000000000000000000000000000000000000000000000000000000000000000";
         
@@ -145,6 +148,7 @@ describe("proposal related test", function () {
         var theBoard = theBoardFactory.attach(flowSteps[0].committee);
         await theBoard.newProposal(proposal, true, "0x00");
         var proposalID = await masterDAO.getProposalIDByIndex(0);
+
         console.log("first proposal id: ", proposalID);
         
         await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
@@ -153,9 +157,10 @@ describe("proposal related test", function () {
 
         await voteAccountInfo(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
-        await decideProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
+        await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
     });
+    */
 
 
 
@@ -198,7 +203,7 @@ describe("proposal related test", function () {
     }
 
 
-    async function decideProposal (proposalID:string, step:string, committeeAddress:string ) {
+    async function tallyVotes (proposalID:string, step:string, committeeAddress:string ) {
         
         console.log("proposalID", proposalID);
         console.log("committeeAddress", committeeAddress);
@@ -207,7 +212,7 @@ describe("proposal related test", function () {
         var thePublicCommittee = await thePublicCommitteeFactory.attach(committeeAddress);
         var voteIdentity = {"proposalID":proposalID, "step":step};
         
-        await thePublicCommittee.decideProposal(voteIdentity, "0x00");
+        await thePublicCommittee.tallyVotes(voteIdentity, "0x00");
         
     }
 

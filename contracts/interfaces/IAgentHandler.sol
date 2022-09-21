@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-import "./IAgent.sol";
+import "./IAgentInfo.sol";
 
-interface IDAOAgent is IAgent {
+interface IAgentHandler is IAgentInfo {
     /// Agent Related
     // 获取该DAO中, 该agentID对应的代理地址.
     function getAgentIDAddr(bytes32 agentID) external returns (address addr);

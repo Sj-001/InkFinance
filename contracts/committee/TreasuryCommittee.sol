@@ -4,6 +4,11 @@ pragma solidity ^0.8.0;
 import "../bases/BaseCommittee.sol";
 
 contract TreasuryCommittee is BaseCommittee {
+    struct InitData {
+        address[] members;
+        bytes baseInitData;
+    }
+
     function init(
         address dao_,
         address config_,
@@ -29,10 +34,7 @@ contract TreasuryCommittee is BaseCommittee {
     }
 
     /// @inheritdoc ICommittee
-    function decideProposal(VoteIdentity calldata, bytes memory)
-        external
-        override
-    {
+    function tallyVotes(VoteIdentity calldata, bytes memory) external override {
         revert ThisCommitteeDoesNotSupportThisAction();
     }
 

@@ -181,9 +181,9 @@
       {
         "components": [
           {
-            "internalType": "bytes32",
+            "internalType": "string",
             "name": "key",
-            "type": "bytes32"
+            "type": "string"
           },
           {
             "internalType": "bytes32",
@@ -386,9 +386,9 @@
         "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
+        "internalType": "string",
         "name": "key",
-        "type": "bytes32"
+        "type": "string"
       }
     ],
     "name": "getProposalKvData",
@@ -415,9 +415,9 @@
         "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
+        "internalType": "string",
         "name": "startKey",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "internalType": "uint256",
@@ -428,9 +428,9 @@
     "name": "getProposalKvDataKeys",
     "outputs": [
       {
-        "internalType": "bytes32[]",
+        "internalType": "string[]",
         "name": "keys",
-        "type": "bytes32[]"
+        "type": "string[]"
       }
     ],
     "stateMutability": "view",
@@ -444,9 +444,9 @@
         "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
+        "internalType": "string",
         "name": "key",
-        "type": "bytes32"
+        "type": "string"
       }
     ],
     "name": "getProposalMetadata",
@@ -545,9 +545,9 @@
         "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
+        "internalType": "string",
         "name": "key",
-        "type": "bytes32"
+        "type": "string"
       }
     ],
     "name": "getTopicKeyProposal",
@@ -569,9 +569,9 @@
         "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
+        "internalType": "string",
         "name": "key",
-        "type": "bytes32"
+        "type": "string"
       }
     ],
     "name": "getTopicMetadata",
@@ -704,9 +704,9 @@
           {
             "components": [
               {
-                "internalType": "bytes32",
+                "internalType": "string",
                 "name": "key",
-                "type": "bytes32"
+                "type": "string"
               },
               {
                 "internalType": "bytes32",
@@ -731,9 +731,9 @@
           {
             "components": [
               {
-                "internalType": "bytes32",
+                "internalType": "string",
                 "name": "key",
-                "type": "bytes32"
+                "type": "string"
               },
               {
                 "internalType": "bytes32",

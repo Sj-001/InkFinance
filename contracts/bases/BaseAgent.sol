@@ -1,10 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./BaseVerify.sol";
+
 import "../interfaces/IAgent.sol";
 import "../interfaces/IDeploy.sol";
+import "../interfaces/IProposalInfo.sol";
 
-abstract contract BaseAgent is IDeploy, IAgent {
+abstract contract BaseAgent is IDeploy, IAgent, IProposalInfo, BaseVerify {
     /// @notice the description of the agent;
     string private _description;
 

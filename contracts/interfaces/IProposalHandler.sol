@@ -107,12 +107,12 @@ interface IProposalHandler is IProposalInfo {
     ) external;
 
     // which proposal decide the latest key item;
-    function getTopicKeyProposal(bytes32 topicID, bytes32 key)
+    function getTopicKeyProposal(bytes32 topicID, string memory key)
         external
         view
         returns (bytes32 proposalID);
 
-    function getTopicMetadata(bytes32 topicID, bytes32 key)
+    function getTopicMetadata(bytes32 topicID, string memory key)
         external
         view
         returns (bytes32 typeID, bytes memory data);
@@ -129,21 +129,21 @@ interface IProposalHandler is IProposalInfo {
         view
         returns (ProposalSummary memory proposal);
 
-    function getProposalMetadata(bytes32 proposalID, bytes32 key)
+    function getProposalMetadata(bytes32 proposalID, string memory key)
         external
         view
         returns (bytes32 typeID, bytes memory data);
 
-    function getProposalKvData(bytes32 proposalID, bytes32 key)
+    function getProposalKvData(bytes32 proposalID, string memory key)
         external
         view
         returns (bytes32 typeID, bytes memory data);
 
     function getProposalKvDataKeys(
         bytes32 proposalID,
-        bytes32 startKey,
+        string memory startKey,
         uint256 pageSize
-    ) external view returns (bytes32[] memory keys);
+    ) external view returns (string[] memory keys);
 
     //////////////////// flush index
     // dao查看该topicID上次刷新到的位置(lastIndexedProposalID, lastIndexedKey), 来继续进行, 所以权限问题.

@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./IProposalHandler.sol";
-// import "./IDAOAgent.sol";
+import "./IAgentHandler.sol";
 import "./ICommittee.sol";
 import "./IDutyControl.sol";
 
@@ -14,7 +14,7 @@ error CommitteeIsNotExist();
 error SystemError();
 error NotAllowedToOperate();
 
-interface IDAO is IProposalHandler, IDutyControl {
+interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
     struct CallbackData {
         address addr;
         address admin;
