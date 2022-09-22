@@ -48,7 +48,7 @@ interface IProposalInfo {
         bytes32 topicID;
         bytes crossChainProtocal;
         KVItem[] metadata;
-        KVItem[] kvData;
+        bytes[] kvData;
     }
 
     // 接口返回格式

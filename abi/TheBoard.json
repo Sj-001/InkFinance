@@ -530,31 +530,9 @@
             "type": "tuple[]"
           },
           {
-            "components": [
-              {
-                "internalType": "string",
-                "name": "key",
-                "type": "string"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "typeID",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes",
-                "name": "data",
-                "type": "bytes"
-              },
-              {
-                "internalType": "bytes",
-                "name": "desc",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct IProposalInfo.KVItem[]",
+            "internalType": "bytes[]",
             "name": "kvData",
-            "type": "tuple[]"
+            "type": "bytes[]"
           }
         ],
         "internalType": "struct IProposalInfo.NewProposalInfo",

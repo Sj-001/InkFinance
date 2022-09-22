@@ -15,6 +15,7 @@ error SystemError();
 error NotAllowedToOperate();
 
 interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
+    
     struct CallbackData {
         address addr;
         address admin;

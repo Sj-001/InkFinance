@@ -62,19 +62,23 @@ describe("proposal related test", function () {
             "desc": "0x0002",
         };
 
-        var contents = [];
-        contents[0] = {
-            "key":  "key",
-            "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": "0x0001",
-            "desc": "0x0002",
-        };
+        var kvData = [];
+        kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+
+        // kvData[0] = {
+        //     "key":  "key",
+        //     "typeID": keccak256(toUtf8Bytes("typeID")),
+        //     "data": "0x0001",
+        //     "desc": "0x0002",
+        // };
+
+
         var proposal = {
             "agents" : agents,
             "topicID" : keccak256(toUtf8Bytes("topic")),
             "crossChainProtocal":toUtf8Bytes(""),
             "metadata" : headers,
-            "kvData" : contents
+            "kvData" : kvData
         }
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
@@ -85,12 +89,12 @@ describe("proposal related test", function () {
         
         await theBoard.newProposal(proposal, true, "0x00");
 
-        var proposalID = await masterDAO.getProposalIDByIndex(0);
-        // console.log("first proposal id: ", proposalID);
-        await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
+        // var proposalID = await masterDAO.getProposalIDByIndex(0);
+        // // console.log("first proposal id: ", proposalID);
+        // await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
-        // once decide, 
-        await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
+        // // once decide, 
+        // await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
 
     });

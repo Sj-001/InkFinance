@@ -40,7 +40,8 @@ contract MasterDAO is BaseDAO {
         }
 
         p.kvData._init();
-        // p.kvData._setKVData(proposal.kvData);
+        p.kvData._setBytesSlice(proposal.kvData);
+
 
         // 0x 全0 DAO 内部Offchain
         // 0x 全FFF 任意执行，

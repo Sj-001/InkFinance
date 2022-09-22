@@ -63,9 +63,8 @@ export function buildMasterDAOInitData(erc20Address:string) {
         flows[0] = ["0x0000000000000000000000000000000000000000000000000000000000000000", committees];
 
         var mds = [];
-        mds[0] = web3.eth.abi.encodeParameter("bytes", toUtf8Bytes("content1"));
-        mds[1] = web3.eth.abi.encodeParameter("bytes", toUtf8Bytes("content2"));
-        mds[2] = web3.eth.abi.encodeParameter("bytes", toUtf8Bytes("content3"));
+        mds[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+
 
         var badgeName = "badgeName1";
         var badgeTotal = 100;
