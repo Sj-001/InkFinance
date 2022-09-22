@@ -160,7 +160,7 @@ function getProposalKvData(
 ```solidity
 function getProposalKvDataKeys(
 ) external returns
-(bytes32[] keys)
+(string[] keys)
 ```
 
 

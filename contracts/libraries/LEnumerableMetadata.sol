@@ -78,6 +78,22 @@ library LEnumerableMetadata {
         }
     }
 
+    function _setKvData(MetadataSet storage m, bytes[] memory mds) internal {
+        for (uint256 i = 0; i < mds.length; i++) {
+            (
+                string memory key,
+                bytes32 typeID,
+                bytes memory data
+            ) = _parseKvData(mds[i]);
+
+            if (data.length == 0) {
+                _del(m, key);
+            } else {
+                _addOrChange(m, key, typeID, data);
+            }
+        }
+    }
+
     function _addOrChange(
         MetadataSet storage m,
         string memory key,

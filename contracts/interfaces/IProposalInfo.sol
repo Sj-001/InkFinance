@@ -41,14 +41,14 @@ interface IProposalInfo {
     /// @param agents agents of the proposal
     /// @param topicID topic of the proposal
     /// @param crossChainProtocal if it's empty, means work on local chain
-    /// @param contents proposal contents
-    /// @param headers proposal headers
+    /// @param kvData proposal contents
+    /// @param metadata proposal metadata
     struct NewProposalInfo {
         bytes32[] agents;
         bytes32 topicID;
         bytes crossChainProtocal;
-        KVItem[] headers;
-        KVItem[] contents;
+        KVItem[] metadata;
+        KVItem[] kvData;
     }
 
     // 接口返回格式
@@ -84,9 +84,10 @@ interface IProposalInfo {
         uint256 nextExecAgentIdx;
         bytes32 crossChainProtocol;
         // 避免链上枚举, 消耗gas, 浪费存储.
-        LEnumerableMetadata.MetadataSet headers;
+        // LEnumerableMetadata.MetadataSet headers;
+        mapping(string => ItemValue) metadata;
         // 需要枚举.
-        LEnumerableMetadata.MetadataSet contents;
+        LEnumerableMetadata.MetadataSet kvData;
     }
 
     // topic中的key落到proposal中的最新位置, 用于加速查询, 类似做索引.

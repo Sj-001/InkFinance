@@ -21,13 +21,9 @@
 *Declaration:*
 ```solidity
 function init(
-) external initializer returns
+) external returns
 (bytes callbackEvent)
 ```
-*Modifiers:*
-| Modifier |
-| --- |
-| initializer |
 
 
 
@@ -60,13 +56,13 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
-### decideProposal
+### tallyVotes
 
 > calculate votes and find out if the proposal is passed
 
 *Declaration:*
 ```solidity
-function decideProposal(
+function tallyVotes(
 ) external
 ```
 

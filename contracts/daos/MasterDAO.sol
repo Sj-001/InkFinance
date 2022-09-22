@@ -26,17 +26,21 @@ contract MasterDAO is BaseDAO {
         p.status = ProposalStatus.PENDING;
         p.proposalID = proposalID;
         p.topicID = proposal.topicID;
-        p.headers._init();
+        // p.headers._init();
+        console.log("show init data");
+        console.log(proposal.metadata[0].key);
 
-        for (uint256 i = 0; i < proposal.headers.length; i++) {
+        // p.headers._setBytesSlice(proposal.headers);
+
+        for (uint256 i = 0; i < proposal.metadata.length; i++) {
             ItemValue memory itemValue;
-            itemValue.typeID = proposal.headers[i].typeID;
-            itemValue.data = proposal.headers[i].data;
-            // p.headers[proposal.headers[i].key] = itemValue;
+            itemValue.typeID = proposal.metadata[i].typeID;
+            itemValue.data = proposal.metadata[i].data;
+            p.metadata[proposal.metadata[i].key] = itemValue;
         }
 
-        // p.contents._init();
-        // p.contents._setKVDatas(proposal.contents);
+        p.kvData._init();
+        // p.kvData._setKVData(proposal.kvData);
 
         // 0x 全0 DAO 内部Offchain
         // 0x 全FFF 任意执行，

@@ -13,14 +13,14 @@ contract TreasuryCommittee is BaseCommittee {
         address dao_,
         address config_,
         bytes calldata data_
-    ) external override initializer returns (bytes memory callbackEvent) {
+    ) external override returns (bytes memory callbackEvent) {
         _init(dao_, config_, data_);
         // InitData memory initData = abi.decode(data_, (InitData));
         // makeProposalLockVotes = initData.makeProposalLockVotes;
 
         // _init(admin, addrRegistry, initData.baseInitData);
         // _memberSetting(admin, 1);
-
+        console.log("TreasuryCommittee. called initial ");
         return callbackEvent;
     }
 
@@ -29,14 +29,13 @@ contract TreasuryCommittee is BaseCommittee {
         NewProposalInfo calldata,
         bool,
         bytes calldata
-    ) external pure override returns (bytes32) {
-        revert ThisCommitteeCannotMakeProposal();
-    }
+    ) external pure override returns (bytes32) {}
 
     /// @inheritdoc ICommittee
-    function tallyVotes(VoteIdentity calldata, bytes memory) external override {
-        revert ThisCommitteeDoesNotSupportThisAction();
-    }
+    function tallyVotes(VoteIdentity calldata, bytes memory)
+        external
+        override
+    {}
 
     /// @inheritdoc IDeploy
     function getTypeID() external pure override returns (bytes32 typeID) {

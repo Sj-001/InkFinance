@@ -50,6 +50,45 @@ function getProposalIDByIndex(
 
 
 
+### setFlowStep
+
+
+
+*Declaration:*
+```solidity
+function setFlowStep(
+) public
+```
+
+
+
+
+### callFromDAO
+
+> let agent call any DAO method
+
+
+*Declaration:*
+```solidity
+function callFromDAO(
+address contractAddress,
+bytes functionSignature
+) external returns
+(bool success, bytes returnedBytes)
+```
+
+*Args:*
+| Arg | Type | Description |
+| --- | --- | --- |
+|`contractAddress` | address | ask DAO to call the contractAddress
+|`functionSignature` | bytes | the function signatures
+
+*Returns:*
+| Arg | Description |
+| --- | --- |
+|`success` | if the call succeed
+|`returnedBytes` | the returned bytes from the contract function call
+
 ### generateProposalID
 
 
@@ -342,7 +381,7 @@ function getProposalKvData(
 ```solidity
 function getProposalKvDataKeys(
 ) external returns
-(bytes32[] keys)
+(string[] keys)
 ```
 
 
@@ -355,6 +394,73 @@ function getProposalKvDataKeys(
 *Declaration:*
 ```solidity
 function flushTopicIndex(
+) external
+```
+
+
+
+
+### getAgentIDAddr
+Agent Related
+
+
+*Declaration:*
+```solidity
+function getAgentIDAddr(
+) external returns
+(address agentAddr)
+```
+
+
+
+
+### continueExec
+
+
+
+*Declaration:*
+```solidity
+function continueExec(
+) external
+```
+
+
+
+
+### setAgentFlowID
+
+
+
+*Declaration:*
+```solidity
+function setAgentFlowID(
+) external
+```
+
+
+
+
+### getAgentFlowID
+
+
+
+*Declaration:*
+```solidity
+function getAgentFlowID(
+) external returns
+(bytes32 flowID)
+```
+
+
+
+
+### execTx
+
+
+
+*Declaration:*
+```solidity
+function execTx(
 ) external
 ```
 
@@ -415,6 +521,20 @@ function _appendFinishStep(
 
 
 
+### deployByKey
+
+
+
+*Declaration:*
+```solidity
+function deployByKey(
+) external returns
+(address deployedAddress)
+```
+
+
+
+
 ### _execFinish
 
 
@@ -436,6 +556,19 @@ function _execFinish(
 ```solidity
 function _setNextStep(
 ) internal
+```
+
+
+
+
+### setupFlowInfo
+
+
+
+*Declaration:*
+```solidity
+function setupFlowInfo(
+) external
 ```
 
 

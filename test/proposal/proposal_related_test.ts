@@ -50,17 +50,17 @@ describe("proposal related test", function () {
         var headers = [];
         headers[0] = {
             "key":  "committeeKey",
-            "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": CommitteeTypeID,
+            "typeID": THE_TREASURY_COMMITTEE_KEY,
+            // "typeID": keccak256(toUtf8Bytes("typeID")),
+            "data": THE_TREASURY_COMMITTEE_KEY,
             "desc": "0x0002",
         };
         headers[1] = {
             "key":  "controllerAddress",
             "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": "0x00",
+            "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
             "desc": "0x0002",
         };
-
 
         var contents = [];
         contents[0] = {
@@ -73,8 +73,8 @@ describe("proposal related test", function () {
             "agents" : agents,
             "topicID" : keccak256(toUtf8Bytes("topic")),
             "crossChainProtocal":toUtf8Bytes(""),
-            "headers" : headers,
-            "contents" : contents
+            "metadata" : headers,
+            "kvData" : contents
         }
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");

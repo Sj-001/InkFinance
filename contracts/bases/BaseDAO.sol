@@ -122,11 +122,17 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _proposalID = _proposalsArray.at(index);
     }
 
-    /// @dev very import to verify the caller
+    function setFlowStep(FlowInfo memory flow) public {
+        // require(msg.sender == address(this), "not myself");
+        _setFlowStep(flow);
+    }
+
+    /// @inheritdoc IDAO
     function callFromDAO(
         address contractAddress,
         bytes memory functionSignature
-    ) external returns (bool success, bytes memory returnedBytes) {
+    ) external override returns (bool success, bytes memory returnedBytes) {
+        /// very import to verify the caller
         (success, returnedBytes) = address(contractAddress).call(
             functionSignature
         );
@@ -282,7 +288,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         view
         override
         returns (bytes32 typeID, bytes memory data)
-    {}
+    {
+        Proposal storage proposal = _proposals[proposalID];
+        return (proposal.metadata[key].typeID, proposal.metadata[key].data);
+    }
 
     function getProposalKvData(bytes32 proposalID, string memory key)
         external
@@ -297,7 +306,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         uint256 pageSize
     ) external view override returns (string[] memory keys) {
         Proposal storage proposal = _proposals[proposalID];
-        return proposal.contents._getAllKeys(startKey, pageSize);
+        return proposal.kvData._getAllKeys(startKey, pageSize);
     }
 
     //////////////////// flush index
@@ -476,6 +485,34 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         info.lastOperationTimestamp = block.timestamp;
     }
 
+    function deployByKey(
+        bytes32 typeID,
+        bytes32 contractKey,
+        bytes memory initData
+    ) external returns (address deployedAddress) {
+        bytes memory deployCall = abi.encodeWithSignature(
+            "deploy(bytes32,bytes32,bytes)",
+            typeID,
+            contractKey,
+            initData
+        );
+        console.log("before call:");
+        console.logBytes32(typeID);
+        console.logBytes32(contractKey);
+        // console.logBytes(contractKey);
+
+        (bool _success, bytes memory _returnedBytes) = address(_factoryAddress)
+            .call(deployCall);
+
+        console.log("deploy by key:");
+        console.log(_success);
+        console.logBytes(_returnedBytes);
+
+        if (_success) {
+            deployedAddress = turnBytesToAddress(_returnedBytes);
+        }
+    }
+
     function _execFinish(ProposalProgress storage info, bool agree) internal {
         require(info.nextCommittee.committee == address(0x0), "can't finish");
 
@@ -542,6 +579,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             info.nextCommittee.step = bytes32(0x0);
             info.nextCommittee.committee = address(0x0);
         }
+    }
+
+    function setupFlowInfo(FlowInfo memory flow) external override {
+        _setFlowStep(flow);
     }
 
     function _setFlowStep(FlowInfo memory flow) internal {

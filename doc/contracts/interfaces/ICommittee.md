@@ -74,13 +74,13 @@ function allowOperate(
 
 
 
-### decideProposal
+### tallyVotes
 
 > calculate votes and find out if the proposal is passed
 
 *Declaration:*
 ```solidity
-function decideProposal(
+function tallyVotes(
 ) external
 ```
 

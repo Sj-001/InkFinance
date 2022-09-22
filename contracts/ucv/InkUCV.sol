@@ -13,11 +13,16 @@ contract InkUCV is IUCV, BaseVerify {
     bool private _ucvManagerEnable;
 
     /// @dev make sure msgSender is controller or manager, and manager has to be allow to do all the operation
-    modifier EnableToExecute() {
+    modifier enableToExecute() {
         if (
             _msgSender() != _ucvController &&
             (_msgSender() == _ucvManager && _ucvManagerEnable == true)
         ) revert OperateIsNowAllowed();
+        _;
+    }
+
+    modifier onlyController() {
+        if (_msgSender() != _ucvController) revert OperateIsNowAllowed();
         _;
     }
 
@@ -33,10 +38,10 @@ contract InkUCV is IUCV, BaseVerify {
         uint256 value,
         bytes memory data,
         uint256 txGas
-    ) external override EnableToExecute returns (bool success) {}
+    ) external override enableToExecute returns (bool success) {}
 
     /// @inheritdoc IUCV
-    function enableUCVManager(bool enable_) external override {
+    function enableUCVManager(bool enable_) external override onlyController {
         _ucvManagerEnable = enable_;
     }
 

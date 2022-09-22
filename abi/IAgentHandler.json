@@ -20,19 +20,6 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "exec",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "components": [
           {
             "internalType": "address",
@@ -55,7 +42,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct IAgent.TxInfo[]",
+        "internalType": "struct IAgentInfo.TxInfo[]",
         "name": "txs",
         "type": "tuple[]"
       }
@@ -98,51 +85,6 @@
         "internalType": "address",
         "name": "addr",
         "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getDescription",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "description",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "dao",
-        "type": "address"
-      }
-    ],
-    "name": "initAgent",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "preExec",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "success",
-        "type": "bool"
       }
     ],
     "stateMutability": "nonpayable",

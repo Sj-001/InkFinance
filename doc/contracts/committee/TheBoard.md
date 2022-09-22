@@ -62,13 +62,13 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
-### decideProposal
+### tallyVotes
 
 > calculate votes and find out if the proposal is passed
 
 *Declaration:*
 ```solidity
-function decideProposal(
+function tallyVotes(
 ) external
 ```
 

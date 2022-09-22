@@ -552,7 +552,7 @@
               }
             ],
             "internalType": "struct IProposalInfo.KVItem[]",
-            "name": "headers",
+            "name": "metadata",
             "type": "tuple[]"
           },
           {
@@ -579,7 +579,7 @@
               }
             ],
             "internalType": "struct IProposalInfo.KVItem[]",
-            "name": "contents",
+            "name": "kvData",
             "type": "tuple[]"
           }
         ],

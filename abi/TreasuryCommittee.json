@@ -1,15 +1,5 @@
 [
   {
-    "inputs": [],
-    "name": "ThisCommitteeCannotMakeProposal",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ThisCommitteeDoesNotSupportThisAction",
-    "type": "error"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -518,7 +508,7 @@
               }
             ],
             "internalType": "struct IProposalInfo.KVItem[]",
-            "name": "headers",
+            "name": "metadata",
             "type": "tuple[]"
           },
           {
@@ -545,7 +535,7 @@
               }
             ],
             "internalType": "struct IProposalInfo.KVItem[]",
-            "name": "contents",
+            "name": "kvData",
             "type": "tuple[]"
           }
         ],

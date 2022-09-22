@@ -14,6 +14,10 @@
 
 | Var | Type |
 | --- | --- |
+| _MD_SIGNERS | string |
+| _MD_OPERATORS | string |
+| _MD_INCOME_AUDITORS | string |
+| _MD_EXP_AUDITORS | string |
 | FLOW_ID | bytes32 |
 
 ## 3.Modifiers
@@ -116,6 +120,20 @@ This function call must use less than 30 000 gas.
 function supportsInterface(
 ) public returns
 (bool)
+```
+
+
+
+
+### turnBytesToBytes32
+
+
+
+*Declaration:*
+```solidity
+function turnBytesToBytes32(
+) internal returns
+(bytes32)
 ```
 
 

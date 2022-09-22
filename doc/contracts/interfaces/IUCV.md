@@ -28,13 +28,13 @@ function transfer(
 
 
 
-### disableUCVManager
+### enableUCVManager
 
 
 
 *Declaration:*
 ```solidity
-function disableUCVManager(
+function enableUCVManager(
 ) external
 ```
 
