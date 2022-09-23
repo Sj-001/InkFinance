@@ -27,18 +27,37 @@ contract InkUCV is IUCV, BaseVerify {
     }
 
     function init(
-        address admin,
-        address config,
-        bytes calldata data
-    ) external override returns (bytes memory callbackEvent) {}
+        address dao_,
+        address config_,
+        bytes calldata data_
+    ) external override returns (bytes memory callbackEvent) {
+
+    }
 
     /// @inheritdoc IUCV
-    function transfer(
+    function execute(
         address to,
         uint256 value,
         bytes memory data,
         uint256 txGas
-    ) external override enableToExecute returns (bool success) {}
+    ) external override enableToExecute returns (bool success) {
+        
+        if(txGas == 0){
+          // 5000 is not exact, in dev, is random.
+          // TODO: fix 5000
+          require(gasleft() > 5000, "gas not enough");
+          txGas = gasleft() - 5000;
+        }
+
+        emit Execute(to, value, data, txGas);
+        
+        // solhint-disable-next-line no-inline-assembly
+        assembly {
+            success := call(txGas, to, value, add(data, 0x20), mload(data), 0, 0)
+        }
+
+        return success;
+    }
 
     /// @inheritdoc IUCV
     function enableUCVManager(bool enable_) external override onlyController {

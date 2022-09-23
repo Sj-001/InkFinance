@@ -485,6 +485,35 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         info.lastOperationTimestamp = block.timestamp;
     }
 
+
+    function _deployByFactoryKey(bytes32 typeID,
+        bytes32 contractKey,
+        bytes memory initData) internal returns (address deployedAddress) {
+
+        bytes memory deployCall = abi.encodeWithSignature(
+            "deploy(bytes32,bytes32,bytes)",
+            typeID,
+            contractKey,
+            initData
+        );
+        console.log("before call:");
+        console.logBytes32(typeID);
+        console.logBytes32(contractKey);
+
+        (bool _success, bytes memory _returnedBytes) = address(_factoryAddress)
+            .call(deployCall);
+
+        console.log("deploy by key:");
+        console.log(_success);
+        console.logBytes(_returnedBytes);
+
+        if (_success) {
+            deployedAddress = turnBytesToAddress(_returnedBytes);
+        }
+
+    }
+
+
     function deployByKey(
         bytes32 typeID,
         bytes32 contractKey,
@@ -585,6 +614,17 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
+
+    /// @inheritdoc IDAO
+    function setupUCV(address controller, bytes32 contractKey) external override {
+        console.log("setup ucv ---------------- ");
+
+        bytes memory initData = abi.encode(controller);
+        address deployedUCV = _deployByFactoryKey(0x7f16b5baf10ee29b9e7468e87c742159d5575c73984a100d194e812750cad820, contractKey, initData);
+
+        console.log("ucv:", deployedUCV);
+    }
+
     function _setFlowStep(FlowInfo memory flow) internal {
         // _factoryAddress;
         require(flow.committees.length < MAX_STEP_NUM, "too many steps");
@@ -629,29 +669,28 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             // );
 
             bytes memory initData = abi.encode(duties);
-            bytes memory deployCall = abi.encodeWithSignature(
-                "deploy(bytes32,bytes32,bytes)",
-                0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
-                committeeInfo.addressConfigKey,
-                initData
-            );
+            address committeeAddress = _deployByFactoryKey(0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f, committeeInfo.addressConfigKey,
+                initData);
+            // bytes memory deployCall = abi.encodeWithSignature(
+            //     "deploy(bytes32,bytes32,bytes)",
+            //     0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
+            //     committeeInfo.addressConfigKey,
+            //     initData
+            // );
             // address committeeAddress2 = IFactoryManager(_factoryAddress).deploy(
             //     0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
             //     committeeInfo.addressConfigKey,
             //     initData
             // );
-            (bool success, bytes memory returnedBytes) = address(
-                _factoryAddress
-            ).call(deployCall);
+            // (bool success, bytes memory returnedBytes) = address(
+            //     _factoryAddress
+            // ).call(deployCall);
+            // console.log("returned bytes");
+            // console.logBytes(returnedBytes);
+            // console.log(success);
+            // console.log("turned address", turnBytesToAddress(returnedBytes));
 
-            console.log("returned bytes");
-            console.logBytes(returnedBytes);
-            console.log(success);
-            console.log("turned address", turnBytesToAddress(returnedBytes));
-
-            steps[committeeInfo.step].committee = turnBytesToAddress(
-                returnedBytes
-            );
+            steps[committeeInfo.step].committee = committeeAddress;
 
             // link next committee
             if (j < flow.committees.length - 1) {

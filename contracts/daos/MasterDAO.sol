@@ -5,6 +5,7 @@ import "../bases/BaseDAO.sol";
 import "hardhat/console.sol";
 
 contract MasterDAO is BaseDAO {
+
     using LEnumerableMetadata for LEnumerableMetadata.MetadataSet;
 
     /// @inheritdoc IProposalHandler
@@ -86,6 +87,7 @@ contract MasterDAO is BaseDAO {
     ) external override {
         _decideProposal(proposalID, msg.sender, true);
     }
+
 
     /// @inheritdoc IDeploy
     function getTypeID() external override returns (bytes32 typeID) {}

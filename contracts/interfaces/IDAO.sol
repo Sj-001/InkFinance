@@ -35,4 +35,9 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
 
     /// @dev add a new workflow, noramll call by agent
     function setupFlowInfo(FlowInfo memory flow) external;
+
+
+    /// @dev setup a new UCV
+    function setupUCV(address controller, bytes32 contractKey) external;
+    
 }

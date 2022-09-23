@@ -76,39 +76,22 @@ contract TreasuryManagerAgent is BaseAgent {
         console.log("check in agent");
 
         IProposalHandler proposalHandler = IProposalHandler(getAgentDAO());
-
         (typeID, committeeKey) = proposalHandler.getProposalMetadata(
             proposalID,
             "committeeKey"
         );
         // console.logBytes(committeeKey);
         bytes32 committeeKeyBytes32 = turnBytesToBytes32(committeeKey);
-        // console.logBytes32(committeeKeyBytes32);
+        _setupFlowInfo(committeeKeyBytes32);
 
-        // // console.logBytes32(committeeKeyBytes32);
-        // bytes memory initData = abi.encode("");
-        // bytes memory deployCall = abi.encodeWithSignature(
-        //     "deployByKey(bytes32,bytes32,bytes)",
-        //     0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
-        //     committeeKeyBytes32,
-        //     initData
-        // );
-
-        // (bool success, bytes memory returnedBytes) = address(
-        //     getAgentDAO()
-        // ).call(deployCall);
-
-        // console.log("deploy committee :");
-        // console.log(success);
-        // console.logBytes(returnedBytes);
 
         (typeID, controllerAddressBytes) = proposalHandler.getProposalMetadata(
             proposalID,
             "controllerAddress"
         );
         console.logBytes(controllerAddressBytes);
+        address controllerAddress = turnBytesToAddress(controllerAddressBytes);
 
-        //
         // ////////// signers
         // (typeID, data) = proposalRegistry.getProposalKvData(proposalID, _MD_SIGNERS);
         // require(typeID == TypeID.ADDRESS_SLICE, "signers not addr[]");
@@ -126,7 +109,17 @@ contract TreasuryManagerAgent is BaseAgent {
         setMemberList(tAddr, data, DutyID.INCOME_AUDITOR);
         */
 
-        ////////// set dao
+        _setupUCV(controllerAddress);
+    }
+
+
+    function _setupUCV(address controller_) internal {
+        IDAO(getAgentDAO()).setupUCV(controller_, 0x01daab39d6af5b8f8de2237107ebffcbfba7ecbcac254fd429eb4543f0a2bf4a);
+    }
+
+
+    function _setupFlowInfo(bytes32 committeeKey) internal {
+
         IProposalHandler.FlowInfo memory flowInfo;
         flowInfo.flowID = keccak256(abi.encode("financial"));
 
@@ -144,7 +137,7 @@ contract TreasuryManagerAgent is BaseAgent {
         theTreasuryCommittee.step = keccak256(
             abi.encode("treasury proposal vote")
         );
-        theTreasuryCommittee.addressConfigKey = committeeKeyBytes32;
+        theTreasuryCommittee.addressConfigKey = committeeKey;
         bytes32[] memory duty2 = new bytes32[](1);
         duty2[
             0
@@ -156,13 +149,9 @@ contract TreasuryManagerAgent is BaseAgent {
         flowInfo.committees[1] = theTreasuryCommittee;
 
         IDAO(getAgentDAO()).setupFlowInfo(flowInfo);
-
-        // flowInfo.committees[0].step = flowInfo.flowID;
-        // flowInfo.committees[0].committee = address(tAddr);
-
-        // DAO(address(this)).setFlowStep(flowInfo);
-        // DAO(address(this)).setUCV(address(new InkPayManager(address(this))));
     }
+
+
 
     function getTypeID() external view override returns (bytes32 typeID) {}
 
@@ -191,5 +180,16 @@ contract TreasuryManagerAgent is BaseAgent {
         }
 
         return targetBytes32;
+    }
+
+
+    function turnBytesToAddress(bytes memory byteAddress)
+        internal
+        pure
+        returns (address addr)
+    {
+        assembly {
+            addr := mload(add(byteAddress, 32))
+        }
     }
 }
