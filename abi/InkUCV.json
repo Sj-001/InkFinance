@@ -123,6 +123,19 @@
   },
   {
     "inputs": [],
+    "name": "getManager",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "ucvManager",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getTypeID",
     "outputs": [
       {

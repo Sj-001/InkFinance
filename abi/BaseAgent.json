@@ -147,6 +147,19 @@
   },
   {
     "inputs": [],
+    "name": "getAgentFlow",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "flowID",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getDescription",
     "outputs": [
       {

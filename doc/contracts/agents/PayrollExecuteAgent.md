@@ -1,4 +1,4 @@
-# TreasuryManagerAgent
+# PayrollExecuteAgent
 
 
 
@@ -14,10 +14,7 @@
 
 | Var | Type |
 | --- | --- |
-| _MD_SIGNERS | string |
-| _MD_OPERATORS | string |
-| _MD_INCOME_AUDITORS | string |
-| _MD_EXP_AUDITORS | string |
+| FLOW_ID | bytes32 |
 
 ## 3.Modifiers
 
@@ -60,20 +57,6 @@ bytes32 proposalID
 | --- | --- |
 |`success` | true means works
 
-### getAgentFlow
-
-
-
-*Declaration:*
-```solidity
-function getAgentFlow(
-) external returns
-(bytes32 flowID)
-```
-
-
-
-
 ### exec
 
 > do run the proposal decision
@@ -90,46 +73,6 @@ bytes32 proposalID
 | Arg | Type | Description |
 | --- | --- | --- |
 |`proposalID` | bytes32 | target proposal
-
-
-### _setupUCV
-
-
-
-*Declaration:*
-```solidity
-function _setupUCV(
-) internal
-```
-
-
-
-
-### _setupFlowInfo
-
-
-
-*Declaration:*
-```solidity
-function _setupFlowInfo(
-) internal
-```
-
-
-
-
-### _buildPayrollSetupFlow
-
-
-
-*Declaration:*
-```solidity
-function _buildPayrollSetupFlow(
-) internal returns
-(struct IProposalHandler.FlowInfo flowInfo)
-```
-
-
 
 
 ### getTypeID

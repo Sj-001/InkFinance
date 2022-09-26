@@ -6,10 +6,8 @@ import "../bases/BaseAgent.sol";
 import "../interfaces/IDAO.sol";
 import "hardhat/console.sol";
 
-
 /// @title set up a payroll schedule
 contract PayrollSetupAgent is BaseAgent {
-
     bytes32 public FLOW_ID = "";
 
     function init(
@@ -30,24 +28,24 @@ contract PayrollSetupAgent is BaseAgent {
         console.log(
             "pre exec --------------------------------------------------------------------------------- "
         );
+    }
 
+    function _setupUCV(address controller_) internal {
+        /// PayrollSetupAgent Key is 0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1
+        IDAO(getAgentDAO()).setupUCV(
+            controller_,
+            0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1
+        );
     }
 
     /// @inheritdoc IAgent
     function exec(bytes32 proposalID) external override {
-
+        console.log("execute pay manager here");
     }
 
+    function getTypeID() external view override returns (bytes32 typeID) {}
 
-    function getTypeID() external view override returns (bytes32 typeID) {
-
-    }
-
-
-    function getVersion() external view override returns (uint256 version) {
-        
-    }
-
+    function getVersion() external view override returns (uint256 version) {}
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)
@@ -58,30 +56,5 @@ contract PayrollSetupAgent is BaseAgent {
         returns (bool)
     {
         return interfaceId == type(IAgent).interfaceId;
-    }
-
-    function turnBytesToBytes32(bytes memory originBytes)
-        internal
-        pure
-        returns (bytes32)
-    {
-        bytes32 targetBytes32;
-
-        assembly {
-            targetBytes32 := mload(add(originBytes, 32))
-        }
-
-        return targetBytes32;
-    }
-
-
-    function turnBytesToAddress(bytes memory byteAddress)
-        internal
-        pure
-        returns (address addr)
-    {
-        assembly {
-            addr := mload(add(byteAddress, 32))
-        }
     }
 }

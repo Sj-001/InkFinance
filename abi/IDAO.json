@@ -390,6 +390,47 @@
     "inputs": [
       {
         "internalType": "bytes32",
+        "name": "flowID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getFlowSteps",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "committee",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes",
+            "name": "dutyIDs",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct IProposalHandler.CommitteeInfo[]",
+        "name": "infos",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
         "name": "proposalID",
         "type": "bytes32"
       },

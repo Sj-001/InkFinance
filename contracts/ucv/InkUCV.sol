@@ -30,9 +30,7 @@ contract InkUCV is IUCV, BaseVerify {
         address dao_,
         address config_,
         bytes calldata data_
-    ) external override returns (bytes memory callbackEvent) {
-
-    }
+    ) external override returns (bytes memory callbackEvent) {}
 
     /// @inheritdoc IUCV
     function execute(
@@ -41,19 +39,26 @@ contract InkUCV is IUCV, BaseVerify {
         bytes memory data,
         uint256 txGas
     ) external override enableToExecute returns (bool success) {
-        
-        if(txGas == 0){
-          // 5000 is not exact, in dev, is random.
-          // TODO: fix 5000
-          require(gasleft() > 5000, "gas not enough");
-          txGas = gasleft() - 5000;
+        if (txGas == 0) {
+            // 5000 is not exact, in dev, is random.
+            // TODO: fix 5000
+            require(gasleft() > 5000, "gas not enough");
+            txGas = gasleft() - 5000;
         }
 
         emit Execute(to, value, data, txGas);
-        
+
         // solhint-disable-next-line no-inline-assembly
         assembly {
-            success := call(txGas, to, value, add(data, 0x20), mload(data), 0, 0)
+            success := call(
+                txGas,
+                to,
+                value,
+                add(data, 0x20),
+                mload(data),
+                0,
+                0
+            )
         }
 
         return success;
@@ -62,6 +67,11 @@ contract InkUCV is IUCV, BaseVerify {
     /// @inheritdoc IUCV
     function enableUCVManager(bool enable_) external override onlyController {
         _ucvManagerEnable = enable_;
+    }
+
+    /// @inheritdoc IUCV
+    function getManager() external view override returns (address ucvManager) {
+        ucvManager = _ucvManager;
     }
 
     /// @inheritdoc IDeploy

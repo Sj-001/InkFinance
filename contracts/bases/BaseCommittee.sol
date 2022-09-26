@@ -106,14 +106,15 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         // return _checkAllowOperate(proposal, identity, user);
     }
 
-    /// @inheritdoc IVoteHandler
-    function vote(
-        VoteIdentity calldata identity,
+    /// @dev by default, vote require pledge
+    function _vote(
+        VoteIdentity memory identity,
         bool agree,
         uint256 count,
-        string calldata feedback,
-        bytes calldata data
-    ) external override {
+        bool requestPledge,
+        string memory feedback,
+        bytes memory data
+    ) internal {
         // Proposal memory proposal = _getProposalInfo(
         //     identity.proposalID
         // );
@@ -167,10 +168,20 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             }
         }
         voteInfo.totalVotes = voteInfo.denyVotes + voteInfo.agreeVotes;
-
+        // if (requestPledge)
         // _requestGovernancePledging(proposal, voteID, _msgSender(), count);
-
         emit Vote(voteID, _msgSender(), agree, count, feedback);
+    }
+
+    /// @inheritdoc IVoteHandler
+    function vote(
+        VoteIdentity calldata identity,
+        bool agree,
+        uint256 count,
+        string calldata feedback,
+        bytes calldata data
+    ) external override {
+        _vote(identity, agree, count, true, feedback, data);
     }
 
     /// @inheritdoc IVoteHandler

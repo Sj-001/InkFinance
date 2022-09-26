@@ -15,7 +15,6 @@ error SystemError();
 error NotAllowedToOperate();
 
 interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
-    
     struct CallbackData {
         address addr;
         address admin;
@@ -36,8 +35,12 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
     /// @dev add a new workflow, noramll call by agent
     function setupFlowInfo(FlowInfo memory flow) external;
 
+    /// @dev ge flow steps
+    function getFlowSteps(bytes32 flowID)
+        external
+        view
+        returns (CommitteeInfo[] memory infos);
 
     /// @dev setup a new UCV
     function setupUCV(address controller, bytes32 contractKey) external;
-    
 }

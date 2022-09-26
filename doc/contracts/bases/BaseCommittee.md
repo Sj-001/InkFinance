@@ -131,6 +131,19 @@ function allowOperate(
 
 
 
+### _vote
+
+> by default, vote require pledge
+
+*Declaration:*
+```solidity
+function _vote(
+) internal
+```
+
+
+
+
 ### vote
 the voter vote proposal
 

@@ -518,17 +518,17 @@
           }
         ],
         "internalType": "struct IProposalInfo.NewProposalInfo",
-        "name": "",
+        "name": "proposal",
         "type": "tuple"
       },
       {
         "internalType": "bool",
-        "name": "",
+        "name": "commit",
         "type": "bool"
       },
       {
         "internalType": "bytes",
-        "name": "",
+        "name": "data",
         "type": "bytes"
       }
     ],
@@ -536,11 +536,11 @@
     "outputs": [
       {
         "internalType": "bytes32",
-        "name": "",
+        "name": "proposalID",
         "type": "bytes32"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

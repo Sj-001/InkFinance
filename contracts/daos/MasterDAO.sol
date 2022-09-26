@@ -5,44 +5,14 @@ import "../bases/BaseDAO.sol";
 import "hardhat/console.sol";
 
 contract MasterDAO is BaseDAO {
-
     using LEnumerableMetadata for LEnumerableMetadata.MetadataSet;
 
-    /// @inheritdoc IProposalHandler
-    function newProposal(
+    function newBoardProposal(
         NewProposalInfo calldata proposal,
         bool commit,
         bytes calldata data
-    ) public override returns (bytes32 proposalID) {
-        /* EnsureGovEnough */
-
-        bytes32[] memory agents = proposal.agents;
-        if (agents.length == 0) {
-            // error
-        }
-
-        proposalID = generateProposalID();
-        Proposal storage p = _proposals[proposalID];
-        p.agents = proposal.agents;
-        p.status = ProposalStatus.PENDING;
-        p.proposalID = proposalID;
-        p.topicID = proposal.topicID;
-        // p.headers._init();
-        console.log("show init data");
-        console.log(proposal.metadata[0].key);
-
-        // p.headers._setBytesSlice(proposal.headers);
-
-        for (uint256 i = 0; i < proposal.metadata.length; i++) {
-            ItemValue memory itemValue;
-            itemValue.typeID = proposal.metadata[i].typeID;
-            itemValue.data = proposal.metadata[i].data;
-            p.metadata[proposal.metadata[i].key] = itemValue;
-        }
-
-        p.kvData._init();
-        p.kvData._setBytesSlice(proposal.kvData);
-
+    ) public returns (bytes32 proposalID) {
+        proposalID = _newProposal(proposal, commit, data);
 
         // 0x 全0 DAO 内部Offchain
         // 0x 全FFF 任意执行，
@@ -71,7 +41,6 @@ contract MasterDAO is BaseDAO {
         // initial process of the progress
         ProposalProgress storage info = _proposalInfo[proposalID];
         info.proposalID = proposalID;
-        info.flowID = DEFAULT_FLOW_ID;
 
         // decicde next step and which commit is handle the process
         info.nextCommittee.step = firstStep;
@@ -85,9 +54,10 @@ contract MasterDAO is BaseDAO {
         bool agree,
         bytes calldata data
     ) external override {
+        console.log("call from", msg.sender);
+
         _decideProposal(proposalID, msg.sender, true);
     }
-
 
     /// @inheritdoc IDeploy
     function getTypeID() external override returns (bytes32 typeID) {}

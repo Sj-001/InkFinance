@@ -2,6 +2,10 @@
 pragma solidity ^0.8.0;
 
 import "../bases/BaseCommittee.sol";
+import "../interfaces/IAgentHandler.sol";
+import "../interfaces/IDAO.sol";
+
+import "hardhat/console.sol";
 
 contract TreasuryCommittee is BaseCommittee {
     struct InitData {
@@ -26,16 +30,66 @@ contract TreasuryCommittee is BaseCommittee {
 
     /// @inheritdoc ICommittee
     function newProposal(
-        NewProposalInfo calldata,
-        bool,
-        bytes calldata
-    ) external pure override returns (bytes32) {}
+        NewProposalInfo calldata proposal,
+        bool commit,
+        bytes calldata data
+    ) external override returns (bytes32 proposalID) {
+        // make sure it's operator
+
+        console.log("parent dao:", getParentDAO());
+        // verify duty
+        IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+        proposalID = proposalHandler.newProposal(proposal, commit, data);
+
+        bytes32 flowID = IAgentHandler(getParentDAO()).getAgentFlowID(
+            proposal.agents[0]
+        );
+        IProposalHandler.CommitteeInfo[] memory infos = IDAO(getParentDAO())
+            .getFlowSteps(flowID);
+        // valid committee
+        // require(stepInfo.committee == address(this), "sys err");
+        VoteIdentity memory identity;
+        identity.proposalID = proposalID;
+        identity.step = infos[0].step;
+        // identity.
+        _vote(identity, true, 1, false, "", "");
+
+        // //// deal vote process info
+        // VoteInfo storage voteInfo = _voteInfos[voteID];
+        // voteInfo.status = VoteStatus.AGREE;
+        // voteInfo.identity.proposalID = proposalID;
+        // voteInfo.identity.step = stepInfo.step;
+        // // just one votes
+        // voteInfo.totalVotes = 1;
+        // voteInfo.agreeVotes = 1;
+        // voteInfo.agreeVoterNum = 1;
+
+        // //// deal vote detail info
+        // //default agree
+        // mapping(address => PersonVoteDetail)
+        //     storage detail = _proposalVoteDetail[voteID][true];
+        // PersonVoteDetail storage sentinel = detail[LChainLink.SENTINEL_ADDR];
+        // sentinel.link._init();
+        // PersonVoteDetail storage voteDetail = detail[_msgSender()];
+
+        // voteDetail.link._addItemLink(
+        //     sentinel.link,
+        //     detail[sentinel.link._getNextAddr()].link,
+        //     _msgSender()
+        // );
+        // voteDetail.voteCount = 1;
+        // console.log("making proposal");
+        // IDAO(getParentDAO()).tallyVotes
+        console.log("I'm treasury committee:", address(this));
+
+        bool passOrNot = true;
+        proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
+    }
 
     /// @inheritdoc ICommittee
-    function tallyVotes(VoteIdentity calldata, bytes memory)
-        external
-        override
-    {}
+    function tallyVotes(VoteIdentity calldata, bytes memory) external override {
+        //
+    }
 
     /// @inheritdoc IDeploy
     function getTypeID() external pure override returns (bytes32 typeID) {

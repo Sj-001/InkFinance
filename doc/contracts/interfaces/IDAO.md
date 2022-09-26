@@ -53,4 +53,31 @@ function setupFlowInfo(
 
 
 
+### getFlowSteps
+
+> ge flow steps
+
+*Declaration:*
+```solidity
+function getFlowSteps(
+) external returns
+(struct IProposalHandler.CommitteeInfo[] infos)
+```
+
+
+
+
+### setupUCV
+
+> setup a new UCV
+
+*Declaration:*
+```solidity
+function setupUCV(
+) external
+```
+
+
+
+
 ## 5.Events

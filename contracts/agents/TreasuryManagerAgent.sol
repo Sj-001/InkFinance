@@ -12,7 +12,7 @@ contract TreasuryManagerAgent is BaseAgent {
     string internal constant _MD_INCOME_AUDITORS = "IncomeAuditors";
     string internal constant _MD_EXP_AUDITORS = "ExpAuditors";
 
-    bytes32 public FLOW_ID = "";
+    bytes32 private FLOW_ID = "";
 
     function init(
         address dao_,
@@ -32,6 +32,10 @@ contract TreasuryManagerAgent is BaseAgent {
         console.log(
             "pre exec --------------------------------------------------------------------------------- "
         );
+    }
+
+    function getAgentFlow() external override returns (bytes32 flowID) {
+        return FLOW_ID;
     }
 
     /// @inheritdoc IAgent
@@ -84,11 +88,11 @@ contract TreasuryManagerAgent is BaseAgent {
         bytes32 committeeKeyBytes32 = turnBytesToBytes32(committeeKey);
         _setupFlowInfo(committeeKeyBytes32);
 
-
         (typeID, controllerAddressBytes) = proposalHandler.getProposalMetadata(
             proposalID,
             "controllerAddress"
         );
+
         console.logBytes(controllerAddressBytes);
         address controllerAddress = turnBytesToAddress(controllerAddressBytes);
 
@@ -112,46 +116,49 @@ contract TreasuryManagerAgent is BaseAgent {
         _setupUCV(controllerAddress);
     }
 
-
     function _setupUCV(address controller_) internal {
-        IDAO(getAgentDAO()).setupUCV(controller_, 0x01daab39d6af5b8f8de2237107ebffcbfba7ecbcac254fd429eb4543f0a2bf4a);
+        IDAO(getAgentDAO()).setupUCV(
+            controller_,
+            0x01daab39d6af5b8f8de2237107ebffcbfba7ecbcac254fd429eb4543f0a2bf4a
+        );
     }
 
-
     function _setupFlowInfo(bytes32 committeeKey) internal {
-
-        IProposalHandler.FlowInfo memory flowInfo;
-        flowInfo.flowID = keccak256(abi.encode("financial"));
-
-        IProposalHandler.CommitteeCreateInfo memory theBoard;
-        theBoard.step = keccak256(abi.encode("generate proposal"));
-        theBoard.addressConfigKey = keccak256(abi.encode("generate proposal"));
-        bytes32[] memory duty1 = new bytes32[](1);
-
-        duty1[
-            0
-        ] = 0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e;
-        theBoard.dutyIDs = abi.encode(duty1);
-
-        IProposalHandler.CommitteeCreateInfo memory theTreasuryCommittee;
-        theTreasuryCommittee.step = keccak256(
-            abi.encode("treasury proposal vote")
+        IProposalHandler.FlowInfo memory flowInfo = _buildPayrollSetupFlow(
+            committeeKey
         );
-        theTreasuryCommittee.addressConfigKey = committeeKey;
-        bytes32[] memory duty2 = new bytes32[](1);
-        duty2[
-            0
-        ] = 0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e;
-        theTreasuryCommittee.dutyIDs = abi.encode(duty2);
-
-        flowInfo.committees = new IProposalHandler.CommitteeCreateInfo[](2);
-        flowInfo.committees[0] = theBoard;
-        flowInfo.committees[1] = theTreasuryCommittee;
-
+        console.log(
+            "start to generate payroll flow ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+        );
         IDAO(getAgentDAO()).setupFlowInfo(flowInfo);
     }
 
+    function _buildPayrollSetupFlow(bytes32 committeeKey)
+        internal
+        returns (IProposalHandler.FlowInfo memory flowInfo)
+    {
+        flowInfo.flowID = keccak256("financial-payroll-setup");
+        console.log("financial-payroll-setup:");
+        console.logBytes32(flowInfo.flowID);
+        // Flow[0] generate payroll, Operator could create that kind of proposal.
+        IProposalHandler.CommitteeCreateInfo memory theTreasuryCommittee;
+        // create agent - after passed, should set up
+        theTreasuryCommittee.step = keccak256(
+            abi.encode("generate payroll setup")
+        );
+        // treasury committee
+        theTreasuryCommittee.addressConfigKey = committeeKey;
+        bytes32[] memory duty1 = new bytes32[](1);
+        // make financial proposl(create payroll)
+        duty1[
+            0
+        ] = 0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e;
 
+        theTreasuryCommittee.dutyIDs = abi.encode(duty1);
+
+        flowInfo.committees = new IProposalHandler.CommitteeCreateInfo[](1);
+        flowInfo.committees[0] = theTreasuryCommittee;
+    }
 
     function getTypeID() external view override returns (bytes32 typeID) {}
 
@@ -181,7 +188,6 @@ contract TreasuryManagerAgent is BaseAgent {
 
         return targetBytes32;
     }
-
 
     function turnBytesToAddress(bytes memory byteAddress)
         internal

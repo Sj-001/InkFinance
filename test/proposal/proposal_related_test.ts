@@ -11,7 +11,7 @@ import { FactoryManagerFixture, InkERC20Fixture } from '../shared/fixtures';
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
 import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
-import { buildMasterDAOInitData } from '../shared/parameters'; 
+import { buildMasterDAOInitData, buildOffchainProposal, buildPayrollSetupProposal, buildTreasurySetupProposal } from '../shared/parameters'; 
 
 
 import {defaultAbiCoder} from '@ethersproject/abi';
@@ -29,6 +29,10 @@ const {loadFixture, deployContract} = waffle;
 describe("proposal related test", function () {
 
     it("test create treasury-setup proposal", async function () {
+
+        const signers = await ethers.getSigners();
+        console.log("########################current signer:", signers[0].address);
+        
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
         const {inkERC20} = await loadFixture(InkERC20Fixture);        
         var erc20Address = inkERC20.address;
@@ -43,42 +47,7 @@ describe("proposal related test", function () {
         console.log("dao address:", masterDAO.address);
         // // select one flow of the DAO
 
-        var agents = []
-        agents[0] = THE_TREASURY_MANAGER_AGENT_KEY;
-        
-        // agents[1] = toUtf8Bytes("");
-        var headers = [];
-        headers[0] = {
-            "key":  "committeeKey",
-            "typeID": THE_TREASURY_COMMITTEE_KEY,
-            // "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": THE_TREASURY_COMMITTEE_KEY,
-            "desc": "0x0002",
-        };
-        headers[1] = {
-            "key":  "controllerAddress",
-            "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
-            "desc": "0x0002",
-        };
-
-        var kvData = [];
-        kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
-        // kvData[0] = {
-        //     "key":  "key",
-        //     "typeID": keccak256(toUtf8Bytes("typeID")),
-        //     "data": "0x0001",
-        //     "desc": "0x0002",
-        // };
-
-
-        var proposal = {
-            "agents" : agents,
-            "topicID" : keccak256(toUtf8Bytes("topic")),
-            "crossChainProtocal":toUtf8Bytes(""),
-            "metadata" : headers,
-            "kvData" : kvData
-        }
+        var proposal = buildTreasurySetupProposal();
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
         
@@ -94,18 +63,26 @@ describe("proposal related test", function () {
 
         // once decide, 
         await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
-
-
-        // create payroll setup proposal;
-
-
-
+        
+        // treasury committee has been setup.
+        // now prepare to setup payroll
+        console.log("financial-payroll-setup: ", keccak256(toUtf8Bytes("financial-payroll-setup")))
+        
+        var setupPayrollProposal = buildPayrollSetupProposal();
+        var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
+        console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
+        console.log("treasury committee address:", await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0));
+        
+        var treasuryCommittee = treasuryCommitteeFactory.attach(await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0));
+        
+        await treasuryCommittee.newProposal(setupPayrollProposal, true, toUtf8Bytes(""));
 
 
 
 
     });
 
+    
     /*
     it("test create off-chain proposal", async function () {
 
@@ -123,33 +100,7 @@ describe("proposal related test", function () {
         console.log("dao address:", masterDAO.address);
         // select one flow of the DAO
         
-        // create agent
-        var agents = []
-        agents[0] = "0x0000000000000000000000000000000000000000000000000000000000000000";
-        
-        // agents[1] = toUtf8Bytes("");
-        var headers = [];
-        headers[0] = {
-            "key":  keccak256(toUtf8Bytes("key name")),
-            "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": "0x0001",
-            "desc": "0x0002",
-        };
-
-        var contents = [];
-        contents[0] = {
-            "key":  keccak256(toUtf8Bytes("key name")),
-            "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": "0x0001",
-            "desc": "0x0002",
-        };
-        var proposal = {
-            "agents" : agents,
-            "topicID" : keccak256(toUtf8Bytes("topic")),
-            "crossChainProtocal":toUtf8Bytes(""),
-            "headers" : headers,
-            "contents" : contents
-        }
+        var offchainProposal = buildOffchainProposal();
 
         var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
         console.log(flowSteps);
@@ -157,7 +108,11 @@ describe("proposal related test", function () {
 
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
         var theBoard = theBoardFactory.attach(flowSteps[0].committee);
-        await theBoard.newProposal(proposal, true, "0x00");
+
+
+
+
+        await theBoard.newProposal(offchainProposal, true, "0x00");
         var proposalID = await masterDAO.getProposalIDByIndex(0);
 
         console.log("first proposal id: ", proposalID);
@@ -171,9 +126,9 @@ describe("proposal related test", function () {
         await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
     });
+    
+
     */
-
-
 
     async function voteProposal (proposalID:string, step:string, committeeAddress:string ) {
         

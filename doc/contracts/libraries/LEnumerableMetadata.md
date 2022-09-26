@@ -95,19 +95,6 @@ function _setBytesSlice(
 
 
 
-### _setKvData
-
-
-
-*Declaration:*
-```solidity
-function _setKvData(
-) internal
-```
-
-
-
-
 ### _addOrChange
 
 

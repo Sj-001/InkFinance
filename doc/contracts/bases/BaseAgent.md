@@ -59,4 +59,18 @@ function getAgentDAO(
 
 
 
+### getAgentFlow
+
+
+
+*Declaration:*
+```solidity
+function getAgentFlow(
+) external returns
+(bytes32 flowID)
+```
+
+
+
+
 ## 5.Events

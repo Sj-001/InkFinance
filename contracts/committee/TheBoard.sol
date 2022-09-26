@@ -38,11 +38,13 @@ contract TheBoard is BaseCommittee {
         bytes calldata data
     ) external override returns (bytes32 proposalID) {
         console.log("parent dao:", getParentDAO());
-        // verify duty
-        IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
-        proposalHandler.newProposal(proposal, commit, data);
 
-        console.log("making proposal");
+        IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+        proposalID = proposalHandler.newProposal(proposal, commit, data);
+        console.log("making proposal:");
+        console.logBytes32(proposalID);
+
+        proposalHandler.decideProposal(proposalID, true, data);
     }
 
     /// @inheritdoc ICommittee

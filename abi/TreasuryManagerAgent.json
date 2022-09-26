@@ -121,19 +121,6 @@
   },
   {
     "inputs": [],
-    "name": "FLOW_ID",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "configManager",
     "outputs": [
       {
@@ -155,6 +142,19 @@
     ],
     "name": "exec",
     "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAgentFlow",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "flowID",
+        "type": "bytes32"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },

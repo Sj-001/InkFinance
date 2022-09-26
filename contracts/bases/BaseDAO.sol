@@ -9,11 +9,14 @@ import "../interfaces/IFactoryManager.sol";
 import "../interfaces/IAgent.sol";
 
 import "./BaseVerify.sol";
+import "../utils/BytesUtils.sol";
+
 import "hardhat/console.sol";
 
 abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// libs ////////////////////////////////////////////////////////////////////////
     using Address for address;
+    using BytesUtils for bytes;
     using LEnumerableMetadata for LEnumerableMetadata.MetadataSet;
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.Bytes32Set;
@@ -125,6 +128,103 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     function setFlowStep(FlowInfo memory flow) public {
         // require(msg.sender == address(this), "not myself");
         _setFlowStep(flow);
+    }
+
+    function _newProposal(
+        NewProposalInfo memory proposal,
+        bool commit,
+        bytes memory data
+    ) internal returns (bytes32 proposalID) {
+        bytes32[] memory agents = proposal.agents;
+        if (agents.length == 0) {
+            // error
+        }
+
+        proposalID = generateProposalID();
+        Proposal storage p = _proposals[proposalID];
+
+        p.agents = proposal.agents;
+
+        console.log("proposal is:");
+        console.logBytes32(proposalID);
+        console.log("agents is:");
+        console.logBytes32(p.agents[0]);
+
+        p.status = ProposalStatus.PENDING;
+        p.proposalID = proposalID;
+        p.topicID = proposal.topicID;
+        // p.headers._init();
+        console.log("show init data");
+        console.log(proposal.metadata[0].key);
+
+        // p.headers._setBytesSlice(proposal.headers);
+
+        for (uint256 i = 0; i < proposal.metadata.length; i++) {
+            ItemValue memory itemValue;
+            itemValue.typeID = proposal.metadata[i].typeID;
+            itemValue.data = proposal.metadata[i].data;
+            p.metadata[proposal.metadata[i].key] = itemValue;
+        }
+
+        p.kvData._init();
+        p.kvData._setBytesSlice(proposal.kvData);
+
+        bytes32 flowID = _getAgentFlowID(agents[0]);
+
+        // 0x 全0 DAO 内部Offchain
+        // 0x 全FFF 任意执行，
+        mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[flowID];
+
+        bytes32 firstStep = steps[_SENTINEL_ID].nextStep;
+        if (firstStep == bytes32(0x0)) {
+            revert SystemError();
+        }
+
+        ProposalProgress storage info = _proposalInfo[proposalID];
+        info.proposalID = proposalID;
+        // decicde next step and which commit is handle the process
+        info.nextCommittee.step = firstStep;
+        info.nextCommittee.committee = steps[firstStep].committee;
+    }
+
+    /// @inheritdoc IProposalHandler
+    function newProposal(
+        NewProposalInfo calldata proposal,
+        bool commit,
+        bytes calldata data
+    ) public override returns (bytes32 proposalID) {
+        /* EnsureGovEnough */
+
+        proposalID = _newProposal(proposal, commit, data);
+
+        // bytes32[] memory proposer_duties = ICommittee(
+        //     steps[firstStep].committee
+        // ).getCommitteeDuties();
+
+        // if (!_hasDuty(_msgSender(), proposer_duties[0])) {
+        //     revert NotAllowedToOperate();
+        // }
+
+        // require(_msgSender() == steps[firstStep].committee, "no right");
+
+        // IProposalRegistry proposalRegistry = _getProposalRegistry();
+        // proposalID = proposalRegistry.newProposal(proposal, data);
+
+        // initial process of the progress
+        // ProposalProgress storage info = _proposalInfo[proposalID];
+        // info.proposalID = proposalID;
+
+        // info.flowID = _getAgentFlowID(agents[0]);
+        // console.log("agent is::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        // console.logBytes32(agents[0]);
+        // console.log("agent flow id is::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        // console.logBytes32(info.flowID);
+
+        // // decicde next step and which commit is handle the process
+        // info.nextCommittee.step = firstStep;
+        // info.nextCommittee.committee = steps[firstStep].committee;
+
+        // _decideProposal(proposalID, info.nextCommittee.committee, true);
     }
 
     /// @inheritdoc IDAO
@@ -340,7 +440,22 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         external
         override
         returns (bytes32 flowID)
-    {}
+    {
+        flowID = _getAgentFlowID(agentID);
+    }
+
+    function _getAgentFlowID(bytes32 agentID)
+        internal
+        returns (bytes32 flowID)
+    {
+        if (
+            agentID ==
+            0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1
+        ) {
+            return keccak256("financial-payroll-setup");
+        }
+        return DEFAULT_FLOW_ID;
+    }
 
     /// @inheritdoc IAgentHandler
     function execTx(TxInfo[] memory txs) external override {}
@@ -432,6 +547,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     function getFlowSteps(bytes32 flowID)
         external
         view
+        override
         returns (CommitteeInfo[] memory infos)
     {
         infos = new CommitteeInfo[](MAX_STEP_NUM);
@@ -470,6 +586,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         address nextCommittee = _proposalInfo[proposalID]
             .nextCommittee
             .committee;
+        console.log("next committee:", nextCommittee);
 
         if (nextCommittee == address(0x0)) {
             return false;
@@ -485,11 +602,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         info.lastOperationTimestamp = block.timestamp;
     }
 
-
-    function _deployByFactoryKey(bytes32 typeID,
+    function _deployByFactoryKey(
+        bytes32 typeID,
         bytes32 contractKey,
-        bytes memory initData) internal returns (address deployedAddress) {
-
+        bytes memory initData
+    ) internal returns (address deployedAddress) {
         bytes memory deployCall = abi.encodeWithSignature(
             "deploy(bytes32,bytes32,bytes)",
             typeID,
@@ -510,9 +627,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         if (_success) {
             deployedAddress = turnBytesToAddress(_returnedBytes);
         }
-
     }
-
 
     function deployByKey(
         bytes32 typeID,
@@ -550,8 +665,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         console.log("exec finished");
 
         if (agree == true) {
+            console.log("info proposal is:");
+            console.logBytes32(info.proposalID);
+
             Proposal storage p = _proposals[info.proposalID];
             console.log("agent length:", p.agents.length);
+            console.log("proposal is:");
+            console.logBytes32(p.proposalID);
 
             for (uint256 i = 0; i < p.agents.length; i++) {
                 if (
@@ -614,13 +734,19 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
-
     /// @inheritdoc IDAO
-    function setupUCV(address controller, bytes32 contractKey) external override {
+    function setupUCV(address controller, bytes32 contractKey)
+        external
+        override
+    {
         console.log("setup ucv ---------------- ");
 
         bytes memory initData = abi.encode(controller);
-        address deployedUCV = _deployByFactoryKey(0x7f16b5baf10ee29b9e7468e87c742159d5575c73984a100d194e812750cad820, contractKey, initData);
+        address deployedUCV = _deployByFactoryKey(
+            0x7f16b5baf10ee29b9e7468e87c742159d5575c73984a100d194e812750cad820,
+            contractKey,
+            initData
+        );
 
         console.log("ucv:", deployedUCV);
     }
@@ -642,6 +768,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                 committeeInfo.dutyIDs,
                 (bytes32[])
             );
+            // bytes32[] memory duties;
+
             // console.logBytes(committeeInfo.dutyIDs);
             // console.log("duty length:::", duties.length);
             // console.logBytes32(committeeInfo.addressConfigKey);
@@ -669,8 +797,16 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             // );
 
             bytes memory initData = abi.encode(duties);
-            address committeeAddress = _deployByFactoryKey(0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f, committeeInfo.addressConfigKey,
-                initData);
+            address committeeAddress = _deployByFactoryKey(
+                0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
+                committeeInfo.addressConfigKey,
+                initData
+            );
+
+            console.log("deploy committee address by key:", committeeAddress);
+            console.logBytes32(committeeInfo.addressConfigKey);
+            console.log("deployed committee address:", committeeAddress);
+
             // bytes memory deployCall = abi.encodeWithSignature(
             //     "deploy(bytes32,bytes32,bytes)",
             //     0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
@@ -689,6 +825,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             // console.logBytes(returnedBytes);
             // console.log(success);
             // console.log("turned address", turnBytesToAddress(returnedBytes));
+            console.log("set step's committee is:", committeeAddress);
+            console.log("step is:");
+            console.logBytes32(committeeInfo.step);
 
             steps[committeeInfo.step].committee = committeeAddress;
 
@@ -714,8 +853,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bool agree
     ) internal {
         ProposalProgress storage info = _proposalInfo[proposalID];
+
         require(info.proposalID == proposalID, "proposal err");
-        require(_isNextCommittee(proposalID, committee), "committee err");
+
+        // why need to verify the next committee...
+        // require(_isNextCommittee (proposalID, committee), "committee err");
 
         _appendFinishStep(info);
         _setNextStep(info, !agree);

@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "./LChainLink.sol";
 
 library LEnumerableMetadata {
-    
     using LChainLink for LChainLink.Link;
 
     // chain.
@@ -15,7 +14,6 @@ library LEnumerableMetadata {
         bytes data;
         LChainLink.Link link;
     }
-
 
     struct MetadataSet {
         mapping(bytes32 => Metadata) kvData;
@@ -79,7 +77,6 @@ library LEnumerableMetadata {
             }
         }
     }
-
 
     function _addOrChange(
         MetadataSet storage m,

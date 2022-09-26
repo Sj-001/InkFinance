@@ -32,4 +32,8 @@ abstract contract BaseAgent is IDeploy, IAgent, IProposalInfo, BaseVerify {
     function getAgentDAO() internal view virtual returns (address parentDAO) {
         parentDAO = _parentDAO;
     }
+
+    function getAgentFlow() external virtual override returns (bytes32 flowID) {
+        return 0x0;
+    }
 }

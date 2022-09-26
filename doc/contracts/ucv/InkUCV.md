@@ -48,13 +48,13 @@ function init(
 
 
 
-### transfer
+### execute
 
 
 
 *Declaration:*
 ```solidity
-function transfer(
+function execute(
 ) external enableToExecute returns
 (bool success)
 ```
@@ -79,6 +79,20 @@ function enableUCVManager(
 | Modifier |
 | --- |
 | onlyController |
+
+
+
+
+### getManager
+
+> get the UCV manager address
+
+*Declaration:*
+```solidity
+function getManager(
+) external returns
+(address ucvManager)
+```
 
 
 

@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "name": "SystemError",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {

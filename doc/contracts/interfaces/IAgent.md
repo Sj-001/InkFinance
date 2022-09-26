@@ -86,4 +86,22 @@ bytes32 proposalID
 |`proposalID` | bytes32 | target proposal
 
 
+### getAgentFlow
+
+> return the flow of the agent
+
+
+*Declaration:*
+```solidity
+function getAgentFlow(
+) external returns
+(bytes32 flowID)
+```
+
+
+*Returns:*
+| Arg | Description |
+| --- | --- |
+|`flowID` | the flow of the agent
+
 ## 5.Events

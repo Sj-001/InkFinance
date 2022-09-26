@@ -7,13 +7,12 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-import {FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY } from '../shared/fixtures';  
+import {PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY } from '../shared/fixtures';  
 const {loadFixture, deployContract} = waffle;
 
 
 
 export function buildMasterDAOInitData(erc20Address:string) {
-
         /* 
         MasterDAOInitData
         string name;
@@ -78,4 +77,136 @@ export function buildMasterDAOInitData(erc20Address:string) {
 
         return masterDAOInitialData;
         
+}
+
+
+
+
+export function buildOffchainProposal() {
+        // create agent
+        var agents = []
+        agents[0] = "0x0000000000000000000000000000000000000000000000000000000000000000";
+        
+        var headers = [];
+        headers[0] = {
+            "key":  "key0",
+            "typeID": keccak256(toUtf8Bytes("typeID")),
+            "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+            "desc": "0x0002",
+        };
+
+        headers[1] = {
+            "key":  "key1",
+            "typeID": keccak256(toUtf8Bytes("typeID")),
+            "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+            "desc": "0x0002",
+        };
+
+        var kvData = [];
+        kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+        // kvData[0] = {
+        //     "key":  "key",
+        //     "typeID": keccak256(toUtf8Bytes("typeID")),
+        //     "data": "0x0001",
+        //     "desc": "0x0002",
+        // };
+        var proposal = {
+            "agents" : agents,
+            "topicID" : keccak256(toUtf8Bytes("topic")),
+            "crossChainProtocal":toUtf8Bytes(""),
+            "metadata" : headers,
+            "kvData" : kvData
+        }
+
+        return proposal;
+}
+
+export function buildTreasurySetupProposal() {
+
+    var agents = []
+    agents[0] = THE_TREASURY_MANAGER_AGENT_KEY;
+    
+    // agents[1] = toUtf8Bytes("");
+    var headers = [];
+    headers[0] = {
+        "key":  "committeeKey",
+        "typeID": THE_TREASURY_COMMITTEE_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": THE_TREASURY_COMMITTEE_KEY,
+        "desc": "0x0002",
+    };
+    
+    headers[1] = {
+        "key":  "controllerAddress",
+        "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+        "desc": "0x0002",
+    };
+
+    var kvData = [];
+    kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+    // kvData[0] = {
+    //     "key":  "key",
+    //     "typeID": keccak256(toUtf8Bytes("typeID")),
+    //     "data": "0x0001",
+    //     "desc": "0x0002",
+    // };
+
+
+    var proposal = {
+        "agents" : agents,
+        "topicID" : keccak256(toUtf8Bytes("topic")),
+        "crossChainProtocal":toUtf8Bytes(""),
+        "metadata" : headers,
+        "kvData" : kvData
+    }
+
+    return proposal;
+}
+
+
+export function buildPayrollSetupProposal() {
+
+    var agents = []
+    agents[0] = PAYROLL_SETUP_AGENT_KEY;
+    
+    // agents[1] = toUtf8Bytes("");
+    var headers = [];
+
+    // setup member and schedule and payments.
+
+    headers[0] = {
+        "key":  "committeeKey",
+        "typeID": THE_TREASURY_COMMITTEE_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": THE_TREASURY_COMMITTEE_KEY,
+        "desc": "0x0002",
+    };
+    
+    headers[1] = {
+        "key":  "controllerAddress",
+        "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+        "desc": "0x0002",
+    };
+
+    var kvData = [];
+    kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+    // kvData[0] = {
+    //     "key":  "key",
+    //     "typeID": keccak256(toUtf8Bytes("typeID")),
+    //     "data": "0x0001",
+    //     "desc": "0x0002",
+    // };
+
+
+    var proposal = {
+        "agents" : agents,
+        "topicID" : keccak256(toUtf8Bytes("topic")),
+        "crossChainProtocal":toUtf8Bytes(""),
+        "metadata" : headers,
+        "kvData" : kvData
+    }
+
+    return proposal;
 }

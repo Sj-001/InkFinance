@@ -20,4 +20,8 @@ interface IAgent is IAgentInfo {
     /// @dev do run the proposal decision
     /// @param proposalID target proposal
     function exec(bytes32 proposalID) external;
+
+    /// @dev return the flow of the agent
+    /// @return flowID the flow of the agent
+    function getAgentFlow() external returns (bytes32 flowID);
 }

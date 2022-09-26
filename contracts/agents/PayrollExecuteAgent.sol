@@ -6,10 +6,8 @@ import "../bases/BaseAgent.sol";
 import "../interfaces/IDAO.sol";
 import "hardhat/console.sol";
 
-
 /// @title execute a payroll schedule, like make a proposal about a payroll, once the proposal has been passed, everyone could claim the token under that payroll
 contract PayrollExecuteAgent is BaseAgent {
-
     bytes32 public FLOW_ID = "";
 
     function init(
@@ -30,24 +28,14 @@ contract PayrollExecuteAgent is BaseAgent {
         console.log(
             "pre exec --------------------------------------------------------------------------------- "
         );
-
     }
 
     /// @inheritdoc IAgent
-    function exec(bytes32 proposalID) external override {
-        
-    }
+    function exec(bytes32 proposalID) external override {}
 
+    function getTypeID() external view override returns (bytes32 typeID) {}
 
-    function getTypeID() external view override returns (bytes32 typeID) {
-
-    }
-
-
-    function getVersion() external view override returns (uint256 version) {
-        
-    }
-
+    function getVersion() external view override returns (uint256 version) {}
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)
@@ -70,10 +58,8 @@ contract PayrollExecuteAgent is BaseAgent {
         assembly {
             targetBytes32 := mload(add(originBytes, 32))
         }
-
         return targetBytes32;
     }
-
 
     function turnBytesToAddress(bytes memory byteAddress)
         internal

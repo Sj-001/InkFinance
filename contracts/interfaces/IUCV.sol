@@ -17,7 +17,6 @@ with each record containing one metadata string that is supplied by the deposito
 
 */
 interface IUCV is IDeploy {
-
     event Execute(address to, uint256 value, bytes data, uint256 txGas);
 
     event UCVManagerDisabled(bool disabled);
@@ -30,4 +29,7 @@ interface IUCV is IDeploy {
     ) external returns (bool success);
 
     function enableUCVManager(bool enable_) external;
+
+    /// @dev get the UCV manager address
+    function getManager() external view returns (address ucvManager);
 }

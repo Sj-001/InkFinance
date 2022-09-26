@@ -41,7 +41,7 @@ struct IProposalInfo.NewProposalInfo proposal,
 bool commit,
 bytes data
 ) external returns
-(bytes32)
+(bytes32 proposalID)
 ```
 
 *Args:*
