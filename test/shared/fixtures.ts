@@ -135,6 +135,7 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     let masterDAOImpl: Contract = await deployContract(signers[0], MasterDAOABI);
     await masterDAOImpl.deployed();
 
+    
     const payrollSetupAgentImpl = await deployContract(signers[0], PayrollSetupAgentABI, []);
     await payrollSetupAgentImpl.deployed();
     console.log("PayrollSetupAgent Address=", payrollSetupAgentImpl.address);

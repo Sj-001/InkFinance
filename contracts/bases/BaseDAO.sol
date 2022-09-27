@@ -167,6 +167,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
 
         p.kvData._init();
+        console.log("kv data bytes");
+        console.logBytes(proposal.kvData[0]);
         p.kvData._setBytesSlice(proposal.kvData);
 
         bytes32 flowID = _getAgentFlowID(agents[0]);
@@ -397,7 +399,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         view
         override
         returns (bytes32 typeID, bytes memory data)
-    {}
+    {
+                
+        return _proposals[proposalID].kvData._getByKey(key);
+    }
 
     function getProposalKvDataKeys(
         bytes32 proposalID,
@@ -736,20 +741,21 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
-    /// @inheritdoc IDAO
-    function setupUCV(address controller, bytes32 contractKey)
+
+        /// @inheritdoc IDAO
+    function setupUCV(bytes32 contractKey, bytes memory initData)
         external
         override
     {
         console.log("setup ucv ---------------- ");
 
-        bytes memory initData = abi.encode(controller);
         address deployedUCV = _deployByFactoryKey(
             0x7f16b5baf10ee29b9e7468e87c742159d5575c73984a100d194e812750cad820,
             contractKey,
             initData
         );
 
+        // require deploy succeed
         console.log("ucv:", deployedUCV);
     }
 

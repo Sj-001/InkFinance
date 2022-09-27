@@ -112,17 +112,9 @@ contract TreasuryManagerAgent is BaseAgent {
         setMemberList(tAddr, data, DutyID.INCOME_AUDITOR);
         */
 
-        _setupUCV(controllerAddress);
     }
 
-    function _setupUCV(address controller_) internal {
 
-        IDAO(getAgentDAO()).setupUCV(
-            controller_,
-            0x01daab39d6af5b8f8de2237107ebffcbfba7ecbcac254fd429eb4543f0a2bf4a
-        );
-
-    }
 
     function _setupFlowInfo(bytes32 committeeKey) internal {
         IProposalHandler.FlowInfo memory flowInfo = _buildPayrollSetupFlow(

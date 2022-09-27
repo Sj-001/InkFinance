@@ -2,11 +2,13 @@
 pragma solidity ^0.8.0;
 
 import "../bases/BaseUCVManager.sol";
+import "../interfaces/IPayrollManager.sol";
+import "hardhat/console.sol";
 
 
-contract PayrollUCVManager is BaseUCVManager{
+contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
-    
+
     struct ScheduleMember {
         address coin;
         uint256 oncePay;
@@ -37,12 +39,19 @@ contract PayrollUCVManager is BaseUCVManager{
 
 
     function init(
-        address admin,
+        address dao,
         address config,
         bytes calldata data
     ) external override returns (bytes memory callbackEvent) {
 
     }
+
+    function setupPayroll(bytes32 proposalID) external override {
+        console.log("set up payroll ------------------------------------------------------------------------------------------------------------------------------------------------------------------ ");
+        Schedule storage schedule = _schedules[proposalID];
+
+    }
+
 
 
     function getTypeID() external override returns (bytes32 typeID) {

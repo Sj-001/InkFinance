@@ -7,7 +7,7 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-import {PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY } from '../shared/fixtures';  
+import {PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, PAYROLL_EXECUTE_AGENT_KEY } from '../shared/fixtures';  
 const {loadFixture, deployContract} = waffle;
 
 
@@ -165,7 +165,7 @@ export function buildTreasurySetupProposal() {
 }
 
 
-export function buildPayrollSetupProposal() {
+export function buildPayrollSetupProposal(erc20Address:string) {
 
     var agents = []
     agents[0] = PAYROLL_SETUP_AGENT_KEY;
@@ -190,8 +190,27 @@ export function buildPayrollSetupProposal() {
         "desc": "0x0002",
     };
 
+    
+    // var memberItem = {
+    //     addr:  "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+    //     coin: erc20Address,
+    //     oncePay:  10000000,
+    //     desc: "payroll",
+    // };
+
+
+    var memberList = [];
+    memberList[0] = ["0xf46B1E93aF2Bf497b07726108A539B478B31e64C", erc20Address, 10000000, "payroll"]; ;
+
+    console.log("start member bytes encode:");
+    var memberItemTuple = 'tuple(address, address, uint256, string)[]';
+    var memberListBytes = defaultAbiCoder.encode([memberItemTuple],[memberList]);
+    console.log("member bytes:", memberListBytes);
+
     var kvData = [];
-    kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+    kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["members", keccak256(toUtf8Bytes("list")), memberListBytes]) ;
+
+
     // kvData[0] = {
     //     "key":  "key",
     //     "typeID": keccak256(toUtf8Bytes("typeID")),
@@ -199,10 +218,75 @@ export function buildPayrollSetupProposal() {
     //     "desc": "0x0002",
     // };
 
-
     var proposal = {
         "agents" : agents,
         "topicID" : keccak256(toUtf8Bytes("topic")),
+        "crossChainProtocal":toUtf8Bytes(""),
+        "metadata" : headers,
+        "kvData" : kvData
+    }
+
+    return proposal;
+}
+
+
+
+export function buildPayrollPayProposal(proposalID:string) {
+
+    var agents = []
+    agents[0] = PAYROLL_EXECUTE_AGENT_KEY;
+    
+    // agents[1] = toUtf8Bytes("");
+    var headers = [];
+
+    // setup member and schedule and payments.
+
+    headers[0] = {
+        "key":  "committeeKey",
+        "typeID": THE_TREASURY_COMMITTEE_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": THE_TREASURY_COMMITTEE_KEY,
+        "desc": "0x0002",
+    };
+    
+    headers[1] = {
+        "key":  "controllerAddress",
+        "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+        "desc": "0x0002",
+    };
+
+    
+    // var memberItem = {
+    //     addr:  "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+    //     coin: erc20Address,
+    //     oncePay:  10000000,
+    //     desc: "payroll",
+    // };
+
+
+    // var memberList = [];
+    // memberList[0] = ["0xf46B1E93aF2Bf497b07726108A539B478B31e64C", erc20Address, 10000000, "payroll"]; ;
+
+    // console.log("start member bytes encode:");
+    // var memberItemTuple = 'tuple(address, address, uint256, string)[]';
+    // var memberListBytes = defaultAbiCoder.encode([memberItemTuple],[memberList]);
+    // console.log("member bytes:", memberListBytes);
+
+    var kvData = [];
+    // kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["members", keccak256(toUtf8Bytes("list")), memberListBytes]) ;
+
+
+    kvData[0] = {
+        "key":  "key",
+        "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": "0x0001",
+        "desc": "0x0002",
+    };
+
+    var proposal = {
+        "agents" : agents,
+        "topicID" : proposalID,
         "crossChainProtocal":toUtf8Bytes(""),
         "metadata" : headers,
         "kvData" : kvData

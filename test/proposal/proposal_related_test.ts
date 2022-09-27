@@ -11,7 +11,7 @@ import { FactoryManagerFixture, InkERC20Fixture } from '../shared/fixtures';
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
 import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
-import { buildMasterDAOInitData, buildOffchainProposal, buildPayrollSetupProposal, buildTreasurySetupProposal } from '../shared/parameters'; 
+import { buildMasterDAOInitData, buildOffchainProposal, buildPayrollPayProposal, buildPayrollSetupProposal, buildTreasurySetupProposal } from '../shared/parameters'; 
 
 
 import {defaultAbiCoder} from '@ethersproject/abi';
@@ -64,23 +64,51 @@ describe("proposal related test", function () {
         // once decide, 
         await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
         
+        var committeeAddress = await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0);
+
+        console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
+        console.log("treasury committee address:", committeeAddress);
+        
+        // proposal category = payroll?
+        await makeSetupPayrollProposal(committeeAddress, erc20Address);
+
+
+        await makePayrollPayProposal(committeeAddress);
+
+
+    });
+
+    async function makeSetupPayrollProposal (committeeAddress:string, erc20Address:string ) {
         // treasury committee has been setup.
         // now prepare to setup payroll
         console.log("financial-payroll-setup: ", keccak256(toUtf8Bytes("financial-payroll-setup")))
         
-        var setupPayrollProposal = buildPayrollSetupProposal();
+        var setupPayrollProposal = buildPayrollSetupProposal(erc20Address);
+
         var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
-        console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
-        console.log("treasury committee address:", await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0));
+
+        var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
         
-        var treasuryCommittee = treasuryCommitteeFactory.attach(await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0));
-        
+        // pass direct
         await treasuryCommittee.newProposal(setupPayrollProposal, true, toUtf8Bytes(""));
 
+    }
 
+    async function makePayrollPayProposal (committeeAddress:string ) {
+        // treasury committee has been setup.
+        // now prepare to setup payroll
+        console.log("financial-payroll-setup: ", keccak256(toUtf8Bytes("financial-payroll-setup")))
+        
+        var payrollPayProposal = buildPayrollPayProposal();
 
+        var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
 
-    });
+        var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
+        
+        // pass direct
+        await treasuryCommittee.newProposal(payrollPayProposal, true, toUtf8Bytes(""));
+
+    }
 
     
     /*

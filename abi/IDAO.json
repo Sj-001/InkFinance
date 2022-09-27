@@ -830,14 +830,14 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "controller",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "ucvContractKey",
+        "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
-        "name": "contractKey",
-        "type": "bytes32"
+        "internalType": "bytes",
+        "name": "initData",
+        "type": "bytes"
       }
     ],
     "name": "setupUCV",

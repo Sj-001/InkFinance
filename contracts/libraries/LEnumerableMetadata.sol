@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./LChainLink.sol";
-
+import "hardhat/console.sol";
 library LEnumerableMetadata {
     using LChainLink for LChainLink.Link;
 
@@ -73,6 +73,7 @@ library LEnumerableMetadata {
             if (data.length == 0) {
                 _del(m, key);
             } else {
+                console.log("add key", key);
                 _addOrChange(m, key, typeID, data);
             }
         }
