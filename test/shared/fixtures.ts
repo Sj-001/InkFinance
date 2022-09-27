@@ -17,6 +17,8 @@ import * as TreasuryCommitteeABI from "../../artifacts/contracts/committee/Treas
 import * as TreasuryManagerAgentABI from "../../artifacts/contracts/agents/TreasuryManagerAgent.sol/TreasuryManagerAgent.json";
 import * as PayrollExecuteAgentABI from "../../artifacts/contracts/agents/PayrollExecuteAgent.sol/PayrollExecuteAgent.json";
 import * as PayrollSetupAgentABI from "../../artifacts/contracts/agents/PayrollSetupAgent.sol/PayrollSetupAgent.json";
+import * as PayrollUCVManagerABI from "../../artifacts/contracts/ucv/PayrollUCVManager.sol/PayrollUCVManager.json";
+
 import * as InkUCVABI from "../../artifacts/contracts/ucv/InkUCV.sol/InkUCV.json";
 
 
@@ -44,6 +46,9 @@ console.log("UCVTypeID=", keccak256(toUtf8Bytes("UCVTypeID")));
 const UCVTypeID = "0x7f16b5baf10ee29b9e7468e87c742159d5575c73984a100d194e812750cad820";
 console.log("UCVTypeID=", UCVTypeID);
 
+console.log("UCVManagerTypeID=", keccak256(toUtf8Bytes("UCVManagerTypeID")));
+const UCVManagerTypeID = "0x9dbd9f87f8d58402d143fb49ec60ec5b8c4fa567e418b41a6249fd125a267101";
+console.log("UCVManagerTypeID=", UCVTypeID);
 
 export {FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID}
 
@@ -78,8 +83,10 @@ console.log("PAYROLL_SETUP_AGENT_KEY=", PAYROLL_SETUP_AGENT_KEY);
 const PAYROLL_EXECUTE_AGENT_KEY = "0xce8413630ab56be005a97f0ae8be1835fb972819fa4327995eb9568c76252d28";
 console.log("PAYROLL_EXECUTE_AGENT_KEY=", PAYROLL_EXECUTE_AGENT_KEY);
 
+const PAYROLL_UCV_MANAGER_KEY = "0x8856ac0b66da455dc361f170f91264627f70b6333b9103ff6104df3ce47aa4ec";
+console.log("PAYROLL_UCV_MANAGER_KEY=", PAYROLL_UCV_MANAGER_KEY);
 
-export {PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
+export {PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
 
 /**
  * Ink Default DutyIDs
@@ -92,7 +99,6 @@ const VOTER_DUTYID = "0xf579da1548edf1a4b47140c7e8df0e1e9f881c48184756b7f660e33b
 
 console.log("TREASURY_PAYROLL_SETUP_DUTYID=", keccak256(toUtf8Bytes("TREASURY_PAYROLL_SETUP_DUTYID")));
 const TREASURY_PAYROLL_SETUP_DUTYID = "0xf579da1548edf1a4b47140c7e8df0e1e9f881c48184756b7f660e33bbc767607";
-
 
 export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
 
@@ -137,6 +143,11 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     await payrollExecuteAgentImpl.deployed();
     console.log("PayrollExecuteAgent Address=", payrollExecuteAgentImpl.address);
 
+
+    const payrollUCVManagerImpl = await deployContract(signers[0], PayrollUCVManagerABI, []);
+    await payrollUCVManagerImpl.deployed();
+    console.log("Payroll UCV Manager Address=", payrollUCVManagerImpl.address);
+
     const inkUCVImpl = await deployContract(signers[0], InkUCVABI, []);
     await inkUCVImpl.deployed();
     console.log("InkUCV Address=", inkUCVImpl.address);
@@ -144,6 +155,7 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
 
 
     console.log("init keys:");
+    
     var factoryManagerFactoryKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "FactoryManager");
     console.log("factoryManagerFactoryKey=", factoryManagerFactoryKey);
 
@@ -171,6 +183,10 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     var payrollExecuteAgent = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "PayrollExecuteAgent");
     console.log("payrollExecuteAgent=", payrollExecuteAgent);
 
+    var payrollUCVManager = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "PayrollUCVManager");
+    console.log("payrollUCVManager=", payrollUCVManager);
+
+
     var keyValues = [];
     keyValues[0] = {"keyPrefix":"ADMIN", "keyName":"FactoryManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await factoryManager.address)}
     keyValues[1] = {"keyPrefix":"ADMIN", "keyName":"TheBoardCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theBoardCommitteeImpl.address)}
@@ -181,11 +197,11 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     keyValues[6] = {"keyPrefix":"ADMIN", "keyName":"InkUCV", "typeID":keccak256(toUtf8Bytes("address")), "data": (await inkUCVImpl.address)}
     keyValues[7] = {"keyPrefix":"ADMIN", "keyName":"PayrollSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollSetupAgentImpl.address)}
     keyValues[8] = {"keyPrefix":"ADMIN", "keyName":"PayrollExecuteAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollExecuteAgentImpl.address)}
- 
+    keyValues[9] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVManagerImpl.address)}
+    
     await configManager.batchSetKV(INK_CONFIG_DOMAIN, keyValues);
 
     console.log("config address and key:", await configManager.address, "|", FACTORY_MANAGER_KEY);
-
     console.log("factory manager key value:", await configManager.getKV(FACTORY_MANAGER_KEY));
 
     return {factoryManager};

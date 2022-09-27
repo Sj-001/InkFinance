@@ -63,14 +63,13 @@ contract TreasuryManagerAgent is BaseAgent {
         //////////////////// create treasury
 
         // TreasuryCommittee.InitData memory tInitData;
-
         // Committee.BaseInitData memory bInitData;
         // bInitData.name = "treasury-committee";
         // bInitData.describe = "";
         // tInitData.baseInitData = abi.encode(bInitData);
-
         // TreasuryCommittee tAddr = new TreasuryCommittee();
         // tAddr.init(address(this), address(addrRegistry), abi.encode(tInitData));
+
 
         // //////////////////// treasury init member
         bytes32 typeID;
@@ -117,10 +116,12 @@ contract TreasuryManagerAgent is BaseAgent {
     }
 
     function _setupUCV(address controller_) internal {
+
         IDAO(getAgentDAO()).setupUCV(
             controller_,
             0x01daab39d6af5b8f8de2237107ebffcbfba7ecbcac254fd429eb4543f0a2bf4a
         );
+
     }
 
     function _setupFlowInfo(bytes32 committeeKey) internal {
@@ -132,6 +133,7 @@ contract TreasuryManagerAgent is BaseAgent {
         );
         IDAO(getAgentDAO()).setupFlowInfo(flowInfo);
     }
+
 
     function _buildPayrollSetupFlow(bytes32 committeeKey)
         internal
@@ -155,7 +157,6 @@ contract TreasuryManagerAgent is BaseAgent {
         ] = 0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e;
 
         theTreasuryCommittee.dutyIDs = abi.encode(duty1);
-
         flowInfo.committees = new IProposalHandler.CommitteeCreateInfo[](1);
         flowInfo.committees[0] = theTreasuryCommittee;
     }

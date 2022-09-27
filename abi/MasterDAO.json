@@ -179,35 +179,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "contractAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "functionSignature",
-        "type": "bytes"
-      }
-    ],
-    "name": "callFromDAO",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "success",
-        "type": "bool"
-      },
-      {
-        "internalType": "bytes",
-        "name": "returnedBytes",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "proposalID",
         "type": "bytes32"

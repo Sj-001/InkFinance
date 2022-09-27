@@ -135,35 +135,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "contractAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "functionSignature",
-        "type": "bytes"
-      }
-    ],
-    "name": "callFromDAO",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "success",
-        "type": "bool"
-      },
-      {
-        "internalType": "bytes",
-        "name": "returnedBytes",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "proposalID",
         "type": "bytes32"
@@ -249,6 +220,35 @@
     ],
     "name": "decideProposal",
     "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "typeID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "contractKey",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "initData",
+        "type": "bytes"
+      }
+    ],
+    "name": "deployByKey",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "deployedAddress",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },

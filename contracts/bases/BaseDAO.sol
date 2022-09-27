@@ -227,16 +227,15 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         // _decideProposal(proposalID, info.nextCommittee.committee, true);
     }
 
-    /// @inheritdoc IDAO
-    function callFromDAO(
-        address contractAddress,
-        bytes memory functionSignature
-    ) external override returns (bool success, bytes memory returnedBytes) {
-        /// very import to verify the caller
-        (success, returnedBytes) = address(contractAddress).call(
-            functionSignature
-        );
-    }
+    // @inheritdoc IDAO
+    // function callFromDAO(
+    //     bytes memory functionSignature
+    // ) external override returns (bool success, bytes memory returnedBytes) {
+    //     /// very import to verify the caller
+    //     (success, returnedBytes) = address(contractAddress).call(
+    //         functionSignature
+    //     );
+    // }
 
     // functions ////////////////////////////////////////////////////////////////////////
     function generateProposalID() internal returns (bytes32 proposalID) {
@@ -633,7 +632,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 typeID,
         bytes32 contractKey,
         bytes memory initData
-    ) external returns (address deployedAddress) {
+    ) external override returns (address deployedAddress) {
+
+
+
         bytes memory deployCall = abi.encodeWithSignature(
             "deploy(bytes32,bytes32,bytes)",
             typeID,
