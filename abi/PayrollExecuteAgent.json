@@ -121,19 +121,6 @@
   },
   {
     "inputs": [],
-    "name": "FLOW_ID",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "configManager",
     "outputs": [
       {

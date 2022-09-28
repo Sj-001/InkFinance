@@ -635,6 +635,25 @@
     "inputs": [
       {
         "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getProposalTopic",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "topicID",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
         "name": "topicID",
         "type": "bytes32"
       }

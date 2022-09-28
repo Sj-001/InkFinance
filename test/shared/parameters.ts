@@ -124,6 +124,7 @@ export function buildOffchainProposal() {
 export function buildTreasurySetupProposal() {
 
     var agents = []
+    // agent - related duties
     agents[0] = THE_TREASURY_MANAGER_AGENT_KEY;
     
     // agents[1] = toUtf8Bytes("");
@@ -144,6 +145,16 @@ export function buildTreasurySetupProposal() {
     };
 
     var kvData = [];
+
+    // different roles
+
+    // operator
+
+    // signer
+
+    // auditor
+
+
     kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
     // kvData[0] = {
     //     "key":  "key",
@@ -174,7 +185,6 @@ export function buildPayrollSetupProposal(erc20Address:string) {
     var headers = [];
 
     // setup member and schedule and payments.
-
     headers[0] = {
         "key":  "committeeKey",
         "typeID": THE_TREASURY_COMMITTEE_KEY,
@@ -231,7 +241,7 @@ export function buildPayrollSetupProposal(erc20Address:string) {
 
 
 
-export function buildPayrollPayProposal(proposalID:string) {
+export function buildPayrollPayProposal(topicID:string) {
 
     var agents = []
     agents[0] = PAYROLL_EXECUTE_AGENT_KEY;
@@ -256,20 +266,8 @@ export function buildPayrollPayProposal(proposalID:string) {
         "desc": "0x0002",
     };
 
-
     // include vote rule, require all the "signer to vote pass"
-    
 
-    // var memberItem = {
-    //     addr:  "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
-    //     coin: erc20Address,
-    //     oncePay:  10000000,
-    //     desc: "payroll",
-    // };
-
-
-    // var memberList = [];
-    // memberList[0] = ["0xf46B1E93aF2Bf497b07726108A539B478B31e64C", erc20Address, 10000000, "payroll"]; ;
 
     // console.log("start member bytes encode:");
     // var memberItemTuple = 'tuple(address, address, uint256, string)[]';
@@ -289,7 +287,7 @@ export function buildPayrollPayProposal(proposalID:string) {
 
     var proposal = {
         "agents" : agents,
-        "topicID" : proposalID,
+        "topicID" : topicID,
         "crossChainProtocal":toUtf8Bytes(""),
         "metadata" : headers,
         "kvData" : kvData

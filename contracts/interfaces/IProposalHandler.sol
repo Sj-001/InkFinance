@@ -124,6 +124,11 @@ interface IProposalHandler is IProposalInfo {
 
     //////////////////// proposal
 
+
+    /// @dev get proposal's topic, so anyone could create a new proposal with the same topic
+    function getProposalTopic(bytes32 proposalID) external view returns(bytes32 topicID);
+
+
     function getProposalSummary(bytes32 proposalID)
         external
         view

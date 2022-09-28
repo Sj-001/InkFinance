@@ -177,7 +177,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         console.logBytes(proposal.kvData[0]);
         p.kvData._setBytesSlice(proposal.kvData);
 
+        console.log("agent ID is:");
+        console.logBytes32(agents[0]);
         bytes32 flowID = _getAgentFlowID(agents[0]);
+        console.log("flow ID is:");
+        console.logBytes32(flowID);
 
         // 0x 全0 DAO 内部Offchain
         // 0x 全FFF 任意执行，
@@ -419,6 +423,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         return proposal.kvData._getAllKeys(startKey, pageSize);
     }
 
+
+    function getProposalTopic(bytes32 proposalID) external view override returns(bytes32 topicID) {
+        return _proposals[proposalID].topicID;
+    }
+
     //////////////////// flush index
     // dao查看该topicID上次刷新到的位置(lastIndexedProposalID, lastIndexedKey), 来继续进行, 所以权限问题.
     function flushTopicIndex(bytes32 topicID, uint256 operateNum)
@@ -458,12 +467,18 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         internal
         returns (bytes32 flowID)
     {
+
         if (
             agentID ==
             0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1
         ) {
             return keccak256("financial-payroll-setup");
         }
+
+        if (agentID == 0xce8413630ab56be005a97f0ae8be1835fb972819fa4327995eb9568c76252d28) {
+            return keccak256("financial-payroll-pay");
+        }
+
         return DEFAULT_FLOW_ID;
     }
 

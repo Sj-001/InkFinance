@@ -9,7 +9,8 @@ import "hardhat/console.sol";
 
 /// @title set up a payroll schedule
 contract PayrollSetupAgent is BaseAgent {
-    bytes32 public FLOW_ID = "";
+    
+    bytes32 public FLOW_ID = keccak256("financial-payroll-setup");
 
     function init(
         address dao_,
@@ -27,8 +28,10 @@ contract PayrollSetupAgent is BaseAgent {
     {
         // valid, if it's proposl, etc.
         console.log(
-            "pre exec --------------------------------------------------------------------------------- "
+            "pre exec make sure every one should vote setting "
         );
+
+        // require()
     }
 
     function _setupUCV(bytes32 proposalID, address controllerAddress) internal {
@@ -51,6 +54,8 @@ contract PayrollSetupAgent is BaseAgent {
             0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1,
             initData
         );
+
+
     }
 
     /// @inheritdoc IAgent

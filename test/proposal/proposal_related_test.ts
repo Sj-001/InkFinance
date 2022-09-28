@@ -72,9 +72,23 @@ describe("proposal related test", function () {
         // proposal category = payroll?
         await makeSetupPayrollProposal(committeeAddress, erc20Address);
 
-        var payrollProposalID = await masterDAO.getProposalIDByIndex(1);
-        console.log(payrollProposalID)
-        await makePayrollPayProposal(payrollProposalID, committeeAddress);
+        var payrollSetupProposalID = await masterDAO.getProposalIDByIndex(1);
+        console.log(payrollSetupProposalID)
+
+        var payrollTopicID = await masterDAO.getProposalTopic(payrollSetupProposalID);
+        console.log("payroll proposal topic:: ", payrollTopicID);
+        await makePayrollPayProposal(payrollTopicID, committeeAddress);
+
+        var payrollProposalID = await masterDAO.getProposalIDByIndex(2);
+        console.log("payroll proposal id: ", payrollProposalID);
+
+        var payrollProposalSummary = await masterDAO.getProposalSummary(payrollProposalID);
+        console.log("payroll proposal status:: ", payrollProposalSummary.status);
+
+
+        var payrollVoteSteps = await masterDAO.getFlowSteps("0x4dd2d7e10785fafbaaf1f3990a197abc75ee660a97f6667083816f872ef1f877");
+
+        await makePayrollPayProposal(payrollTopicID, committeeAddress);
 
 
     });
@@ -95,22 +109,23 @@ describe("proposal related test", function () {
 
     }
 
-    async function makePayrollPayProposal (proposalID:string, committeeAddress:string ) {
+    async function makePayrollPayProposal (topicID:string, committeeAddress:string ) {
         // treasury committee has been setup.
         // now prepare to setup payroll
 
-        var payrollPayProposal = buildPayrollPayProposal(proposalID);
+        var payrollPayProposal = buildPayrollPayProposal(topicID);
 
         var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
 
         var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
         
+        
+
+
+
         // make proposal and require voteing
         await treasuryCommittee.newProposal(payrollPayProposal, true, toUtf8Bytes(""));
-
-
-
-
+        
     }
 
     
@@ -160,6 +175,19 @@ describe("proposal related test", function () {
     
 
     */
+
+    async function votePayrollScheduleSignProposal (proposalID:string, step:string, committeeAddress:string ) {
+        
+        console.log("proposalID", proposalID);
+        console.log("committeeAddress", committeeAddress);
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var theTreasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
+        var thePublicCommittee = await theTreasuryCommitteeFactory.attach(committeeAddress);
+        var voteIdentity = {"proposalID":proposalID, "step":step};
+        
+        await thePublicCommittee.vote(voteIdentity, true, 10, "", "0x00");
+    }
+
 
     async function voteProposal (proposalID:string, step:string, committeeAddress:string ) {
         

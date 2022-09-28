@@ -1,5 +1,77 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "paymentBatch",
+        "type": "uint256"
+      }
+    ],
+    "name": "approvePayrollBatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "paymentBatch",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimPayroll",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "limit",
+        "type": "uint256"
+      }
+    ],
+    "name": "getPayrollBatch",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "batch",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "approved",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IPayrollManager.PayrollBatchInfo[]",
+        "name": "batchs",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getTypeID",
     "outputs": [
