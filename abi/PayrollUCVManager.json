@@ -29,7 +29,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "admin",
+        "name": "dao",
         "type": "address"
       },
       {

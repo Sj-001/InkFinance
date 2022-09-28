@@ -72,8 +72,9 @@ describe("proposal related test", function () {
         // proposal category = payroll?
         await makeSetupPayrollProposal(committeeAddress, erc20Address);
 
-
-        await makePayrollPayProposal(committeeAddress);
+        var payrollProposalID = await masterDAO.getProposalIDByIndex(1);
+        console.log(payrollProposalID)
+        await makePayrollPayProposal(payrollProposalID, committeeAddress);
 
 
     });
@@ -94,19 +95,21 @@ describe("proposal related test", function () {
 
     }
 
-    async function makePayrollPayProposal (committeeAddress:string ) {
+    async function makePayrollPayProposal (proposalID:string, committeeAddress:string ) {
         // treasury committee has been setup.
         // now prepare to setup payroll
-        console.log("financial-payroll-setup: ", keccak256(toUtf8Bytes("financial-payroll-setup")))
-        
-        var payrollPayProposal = buildPayrollPayProposal();
+
+        var payrollPayProposal = buildPayrollPayProposal(proposalID);
 
         var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
 
         var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
         
-        // pass direct
+        // make proposal and require voteing
         await treasuryCommittee.newProposal(payrollPayProposal, true, toUtf8Bytes(""));
+
+
+
 
     }
 

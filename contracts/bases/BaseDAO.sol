@@ -109,6 +109,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// proposalID=>Store
     mapping(bytes32 => Proposal) internal _proposals;
 
+
     /// for test
     EnumerableSet.Bytes32Set internal _proposalsArray;
 
@@ -152,6 +153,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         p.status = ProposalStatus.PENDING;
         p.proposalID = proposalID;
+
+        if (proposal.topicID == 0x0) {
+            proposal.topicID = keccak256(abi.encodePacked(address(this), proposalID));
+        }
+        
         p.topicID = proposal.topicID;
         // p.headers._init();
         console.log("show init data");
@@ -492,6 +498,36 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     //   return (minVotes, minWallets, );
     // }
+
+
+    // function _setTopicID(Proposal storage p) private {
+    //     (, bytes memory data) = p.metadata._get(MetadataKeyID.TOPIC_ID);
+    //     if (data.length == 0) {
+    //         return;
+    //     }
+
+    //     bytes32 topicID = abi.decode(data, (bytes32));
+    //     require(_isTopicExist(topicID), "not have topic");
+    //     require(
+    //         _topics[topicID].dao == _msgSender(),
+    //         "can't fix other dao topic"
+    //     );
+
+    //     p.topicID = topicID;
+    // }
+
+
+    function _isTopicExist(bytes32 topicID) private view returns (bool) {
+        if (topicID == bytes32(0x0)) {
+            return false;
+        }
+
+        if (_topics[topicID].topicID == bytes32(0x0)) {
+            return false;
+        }
+
+        return true;
+    }
 
     // if agree, apply the proposal kvdata to topic.
     function syncProposalKvDataToTopic(

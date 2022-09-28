@@ -256,7 +256,10 @@ export function buildPayrollPayProposal(proposalID:string) {
         "desc": "0x0002",
     };
 
+
+    // include vote rule, require all the "signer to vote pass"
     
+
     // var memberItem = {
     //     addr:  "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
     //     coin: erc20Address,
@@ -270,19 +273,19 @@ export function buildPayrollPayProposal(proposalID:string) {
 
     // console.log("start member bytes encode:");
     // var memberItemTuple = 'tuple(address, address, uint256, string)[]';
-    // var memberListBytes = defaultAbiCoder.encode([memberItemTuple],[memberList]);
+    var memberListBytes = "0x00";
     // console.log("member bytes:", memberListBytes);
 
     var kvData = [];
-    // kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["members", keccak256(toUtf8Bytes("list")), memberListBytes]) ;
+    kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["members", keccak256(toUtf8Bytes("list")), memberListBytes]) ;
 
 
-    kvData[0] = {
-        "key":  "key",
-        "typeID": keccak256(toUtf8Bytes("typeID")),
-        "data": "0x0001",
-        "desc": "0x0002",
-    };
+    // kvData[0] = {
+    //     "key":  "key",
+    //     "typeID": keccak256(toUtf8Bytes("typeID")),
+    //     "data": "0x0001",
+    //     "desc": "0x0002",
+    // };
 
     var proposal = {
         "agents" : agents,

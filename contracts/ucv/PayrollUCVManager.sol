@@ -52,8 +52,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
     }
 
-
-
     function getTypeID() external override returns (bytes32 typeID) {
 
     }
