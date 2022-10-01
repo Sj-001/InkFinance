@@ -17,12 +17,11 @@ with each record containing one metadata string that is supplied by the deposito
 
 */
 interface IUCV is IDeploy {
-
     event UCVTransfer(address to, uint256 value, bytes data, uint256 txGas);
 
     event UCVManagerDisabled(bool disabled);
 
-    function transfer (
+    function transfer(
         address to,
         uint256 value,
         address token,

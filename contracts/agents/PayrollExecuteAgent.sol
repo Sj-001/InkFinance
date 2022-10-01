@@ -8,9 +8,8 @@ import "hardhat/console.sol";
 
 /// @title execute a payroll schedule, like make a proposal about a payroll, once the proposal has been passed, everyone could claim the token under that payroll
 contract PayrollExecuteAgent is BaseAgent {
-
-    bytes32 private FLOW_ID = 0xce8413630ab56be005a97f0ae8be1835fb972819fa4327995eb9568c76252d28;
-
+    bytes32 private FLOW_ID =
+        0xce8413630ab56be005a97f0ae8be1835fb972819fa4327995eb9568c76252d28;
 
     function getAgentFlow() external virtual override returns (bytes32 flowID) {
         return FLOW_ID;
@@ -36,22 +35,15 @@ contract PayrollExecuteAgent is BaseAgent {
         );
 
         // 检查批次是不是到期可以领取
-
-
-
     }
 
     /// @inheritdoc IAgent
     function exec(bytes32 proposalID) external override {
-
         console.log(
             "PayrollExecuteAgent exec --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- "
         );
 
         // 获得 ProposalID 提议 发放的 Payroll 的批次
-        
-
-
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}

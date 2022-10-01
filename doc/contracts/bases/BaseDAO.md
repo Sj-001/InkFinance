@@ -105,32 +105,6 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
-### callFromDAO
-
-> let agent call any DAO method
-
-
-*Declaration:*
-```solidity
-function callFromDAO(
-address contractAddress,
-bytes functionSignature
-) external returns
-(bool success, bytes returnedBytes)
-```
-
-*Args:*
-| Arg | Type | Description |
-| --- | --- | --- |
-|`contractAddress` | address | ask DAO to call the contractAddress
-|`functionSignature` | bytes | the function signatures
-
-*Returns:*
-| Arg | Description |
-| --- | --- |
-|`success` | if the call succeed
-|`returnedBytes` | the returned bytes from the contract function call
-
 ### generateProposalID
 
 
@@ -429,6 +403,20 @@ function getProposalKvDataKeys(
 
 
 
+### getProposalTopic
+
+
+
+*Declaration:*
+```solidity
+function getProposalTopic(
+) external returns
+(bytes32 topicID)
+```
+
+
+
+
 ### flushTopicIndex
 
 
@@ -648,13 +636,20 @@ function setupFlowInfo(
 
 > setup a new UCV
 
+
 *Declaration:*
 ```solidity
 function setupUCV(
+bytes32 ucvContractKey,
+bytes initData
 ) external
 ```
 
-
+*Args:*
+| Arg | Type | Description |
+| --- | --- | --- |
+|`ucvContractKey` | bytes32 | the contract implemention mapping key in the ConfigManager
+|`initData` | bytes | the initial paramters when UCV required, such as controller address, manager address, etc.
 
 
 ### _setFlowStep

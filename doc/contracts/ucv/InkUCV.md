@@ -48,13 +48,13 @@ function init(
 
 
 
-### execute
+### transfer
 
 
 
 *Declaration:*
 ```solidity
-function execute(
+function transfer(
 ) external enableToExecute returns
 (bool success)
 ```

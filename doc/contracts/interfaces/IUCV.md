@@ -14,13 +14,13 @@
 
 ## 4.Functions
 
-### execute
+### transfer
 
 
 
 *Declaration:*
 ```solidity
-function execute(
+function transfer(
 ) external returns
 (bool success)
 ```
@@ -56,7 +56,7 @@ function getManager(
 
 
 ## 5.Events
-### Execute
+### UCVTransfer
 
 
 

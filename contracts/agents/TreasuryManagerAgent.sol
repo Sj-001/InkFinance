@@ -7,7 +7,6 @@ import "../interfaces/IDAO.sol";
 import "hardhat/console.sol";
 
 contract TreasuryManagerAgent is BaseAgent {
-
     string internal constant _MD_SIGNERS = "Signers";
     string internal constant _MD_OPERATORS = "Operators";
     string internal constant _MD_INCOME_AUDITORS = "IncomeAuditors";
@@ -71,7 +70,6 @@ contract TreasuryManagerAgent is BaseAgent {
         // TreasuryCommittee tAddr = new TreasuryCommittee();
         // tAddr.init(address(this), address(addrRegistry), abi.encode(tInitData));
 
-
         // //////////////////// treasury init member
         bytes32 typeID;
         bytes memory committeeKey;
@@ -114,27 +112,20 @@ contract TreasuryManagerAgent is BaseAgent {
         */
     }
 
-
     function _setupFlowInfo(bytes32 committeeKey) internal {
+        IProposalHandler.FlowInfo
+            memory payrollSetupflowInfo = _buildPayrollSetupFlow(committeeKey);
 
-        IProposalHandler.FlowInfo memory payrollSetupflowInfo = _buildPayrollSetupFlow(
-            committeeKey
-        );
-        
         console.log(
             "start to generate payroll flow ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         );
-        
+
         IDAO(getAgentDAO()).setupFlowInfo(payrollSetupflowInfo);
 
-
-        IProposalHandler.FlowInfo memory payrollSignflowInfo = _buildPayrollPayFlow(
-            committeeKey
-        );
+        IProposalHandler.FlowInfo
+            memory payrollSignflowInfo = _buildPayrollPayFlow(committeeKey);
         IDAO(getAgentDAO()).setupFlowInfo(payrollSignflowInfo);
-
     }
-
 
     function _buildPayrollSetupFlow(bytes32 committeeKey)
         internal
@@ -162,21 +153,17 @@ contract TreasuryManagerAgent is BaseAgent {
         flowInfo.committees[0] = theTreasuryCommittee;
     }
 
-
     function _buildPayrollPayFlow(bytes32 committeeKey)
         internal
         returns (IProposalHandler.FlowInfo memory flowInfo)
     {
-        
         flowInfo.flowID = keccak256("financial-payroll-pay");
         console.log("financial-payroll-pay:");
         console.logBytes32(flowInfo.flowID);
         // Flow[0] generate payroll, Operator could create that kind of proposal.
         IProposalHandler.CommitteeCreateInfo memory theTreasuryCommittee;
         // create agent - after passed, should set up
-        theTreasuryCommittee.step = keccak256(
-            abi.encode("sign-payroll")
-        );
+        theTreasuryCommittee.step = keccak256(abi.encode("sign-payroll"));
         // treasury committee
         theTreasuryCommittee.addressConfigKey = committeeKey;
         bytes32[] memory duty1 = new bytes32[](1);

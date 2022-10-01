@@ -33,9 +33,10 @@ contract InkUCV is IUCV, BaseVerify {
     ) external override returns (bytes memory callbackEvent) {}
 
     /// @inheritdoc IUCV
-    function execute(
+    function transfer(
         address to,
         uint256 value,
+        address token,
         bytes memory data,
         uint256 txGas
     ) external override enableToExecute returns (bool success) {
@@ -46,7 +47,7 @@ contract InkUCV is IUCV, BaseVerify {
             txGas = gasleft() - 5000;
         }
 
-        emit Execute(to, value, data, txGas);
+        emit UCVTransfer(to, value, data, txGas);
 
         // solhint-disable-next-line no-inline-assembly
         assembly {

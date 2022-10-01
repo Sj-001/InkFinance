@@ -110,6 +110,20 @@ function getTopicInfo(
 
 
 
+### getProposalTopic
+
+> get proposal's topic, so anyone could create a new proposal with the same topic
+
+*Declaration:*
+```solidity
+function getProposalTopic(
+) external returns
+(bytes32 topicID)
+```
+
+
+
+
 ### getProposalSummary
 
 

@@ -67,7 +67,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         0x0000000000000000000000000000000000000000000000000000000000000001;
 
     /// @dev DEFAULT_FLOW_ID means the highest priority
-    bytes32 public constant DEFAULT_FLOW_ID = 0x0;
+    bytes32 public constant DEFAULT_FLOW_ID =
+        0x0000000000000000000000000000000000000000000000000000000000000000;
 
     // @dev the one who created the DAO
     address private _ownerAddress;
@@ -108,7 +109,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// @dev proposal storage
     /// proposalID=>Store
     mapping(bytes32 => Proposal) internal _proposals;
-
 
     /// for test
     EnumerableSet.Bytes32Set internal _proposalsArray;
@@ -155,9 +155,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         p.proposalID = proposalID;
 
         if (proposal.topicID == 0x0) {
-            proposal.topicID = keccak256(abi.encodePacked(address(this), proposalID));
+            proposal.topicID = keccak256(
+                abi.encodePacked(address(this), proposalID)
+            );
         }
-        
+
         p.topicID = proposal.topicID;
         // p.headers._init();
         console.log("show init data");
@@ -410,7 +412,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         override
         returns (bytes32 typeID, bytes memory data)
     {
-                
         return _proposals[proposalID].kvData._getByKey(key);
     }
 
@@ -423,8 +424,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         return proposal.kvData._getAllKeys(startKey, pageSize);
     }
 
-
-    function getProposalTopic(bytes32 proposalID) external view override returns(bytes32 topicID) {
+    function getProposalTopic(bytes32 proposalID)
+        external
+        view
+        override
+        returns (bytes32 topicID)
+    {
         return _proposals[proposalID].topicID;
     }
 
@@ -467,7 +472,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         internal
         returns (bytes32 flowID)
     {
-
         if (
             agentID ==
             0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1
@@ -475,7 +479,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             return keccak256("financial-payroll-setup");
         }
 
-        if (agentID == 0xce8413630ab56be005a97f0ae8be1835fb972819fa4327995eb9568c76252d28) {
+        if (
+            agentID ==
+            0xce8413630ab56be005a97f0ae8be1835fb972819fa4327995eb9568c76252d28
+        ) {
             return keccak256("financial-payroll-pay");
         }
 
@@ -514,7 +521,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     //   return (minVotes, minWallets, );
     // }
 
-
     // function _setTopicID(Proposal storage p) private {
     //     (, bytes memory data) = p.metadata._get(MetadataKeyID.TOPIC_ID);
     //     if (data.length == 0) {
@@ -530,7 +536,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     //     p.topicID = topicID;
     // }
-
 
     function _isTopicExist(bytes32 topicID) private view returns (bool) {
         if (topicID == bytes32(0x0)) {
@@ -689,9 +694,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 contractKey,
         bytes memory initData
     ) external override returns (address deployedAddress) {
-
-
-
         bytes memory deployCall = abi.encodeWithSignature(
             "deploy(bytes32,bytes32,bytes)",
             typeID,
@@ -792,8 +794,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
-
-        /// @inheritdoc IDAO
+    /// @inheritdoc IDAO
     function setupUCV(bytes32 contractKey, bytes memory initData)
         external
         override

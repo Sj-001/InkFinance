@@ -18,6 +18,18 @@ interface IProposalInfo {
     /// @dev kvData if the key is the same, the value will be override
     event ProposalAppend(bytes32 indexed proposalID, bytes[] kvData);
 
+    /// @notice once proposal decided, this emit will be emit
+    /// @param dao from which dao;
+    /// @param proposalID proposalID
+    /// @param agree true=ageree, false=disagree
+    /// @param topicID the topic of the proposal
+    event ProposalDecide(
+        address indexed dao,
+        bytes32 indexed proposalID,
+        bool indexed agree,
+        bytes32 topicID
+    );
+
     /// @dev once propsal decided this event will be emit
     event ProposalTopicSynced(
         bytes32 indexed proposalID,

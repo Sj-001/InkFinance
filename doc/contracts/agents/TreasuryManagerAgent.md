@@ -92,19 +92,6 @@ bytes32 proposalID
 |`proposalID` | bytes32 | target proposal
 
 
-### _setupUCV
-
-
-
-*Declaration:*
-```solidity
-function _setupUCV(
-) internal
-```
-
-
-
-
 ### _setupFlowInfo
 
 
@@ -125,6 +112,20 @@ function _setupFlowInfo(
 *Declaration:*
 ```solidity
 function _buildPayrollSetupFlow(
+) internal returns
+(struct IProposalHandler.FlowInfo flowInfo)
+```
+
+
+
+
+### _buildPayrollPayFlow
+
+
+
+*Declaration:*
+```solidity
+function _buildPayrollPayFlow(
 ) internal returns
 (struct IProposalHandler.FlowInfo flowInfo)
 ```

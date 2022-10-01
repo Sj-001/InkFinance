@@ -8,7 +8,6 @@ import "../interfaces/IDAO.sol";
 import "hardhat/console.sol";
 
 contract TreasuryCommittee is BaseCommittee {
-
     struct InitData {
         address[] members;
         bytes baseInitData;
@@ -37,7 +36,6 @@ contract TreasuryCommittee is BaseCommittee {
     ) external override returns (bytes32 proposalID) {
         // make sure it's operator
 
-
         console.log("parent dao:", getParentDAO());
         // verify duty
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
@@ -54,7 +52,6 @@ contract TreasuryCommittee is BaseCommittee {
         identity.proposalID = proposalID;
         identity.step = infos[0].step;
 
-        
         // identity.
         _vote(identity, true, 1, false, "", "");
 

@@ -10,15 +10,23 @@
 
 ## 2.Globals
 
-> Note this contains internal vars as well due to a bug in the docgen procedure
-
-| Var | Type |
-| --- | --- |
-| FLOW_ID | bytes32 |
-
 ## 3.Modifiers
 
 ## 4.Functions
+
+### getAgentFlow
+
+
+
+*Declaration:*
+```solidity
+function getAgentFlow(
+) external returns
+(bytes32 flowID)
+```
+
+
+
 
 ### init
 

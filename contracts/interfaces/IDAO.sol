@@ -41,18 +41,14 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
         view
         returns (CommitteeInfo[] memory infos);
 
-
     /// @dev setup a new UCV
     /// @param ucvContractKey the contract implemention mapping key in the ConfigManager
     /// @param initData the initial paramters when UCV required, such as controller address, manager address, etc.
     function setupUCV(bytes32 ucvContractKey, bytes memory initData) external;
 
-
-        function deployByKey(
+    function deployByKey(
         bytes32 typeID,
         bytes32 contractKey,
-        bytes memory initData) external returns (address deployedAddress);
-
-
-    
+        bytes memory initData
+    ) external returns (address deployedAddress);
 }

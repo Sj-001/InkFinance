@@ -28,6 +28,19 @@ when kvData has been add to the proposal this event will be emit
 
 
 
+### ProposalDecide
+once proposal decided, this emit will be emit
+
+
+
+
+*Params:*
+| Param | Type | Indexed | Description |
+| --- | --- | :---: | --- |
+|`dao` | address | :white_check_mark: | from which dao;
+|`proposalID` | bytes32 | :white_check_mark: | proposalID
+|`agree` | bool | :white_check_mark: | true=ageree, false=disagree
+|`topicID` | bytes32 |  | the topic of the proposal
 ### ProposalTopicSynced
 
 > once propsal decided this event will be emit
