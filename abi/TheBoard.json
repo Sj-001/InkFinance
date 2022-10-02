@@ -5,6 +5,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "YouDoNotHaveDutyToOperate",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {

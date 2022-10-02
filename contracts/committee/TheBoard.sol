@@ -38,13 +38,34 @@ contract TheBoard is BaseCommittee {
         bytes calldata data
     ) external override returns (bytes32 proposalID) {
         console.log("parent dao:", getParentDAO());
-
+        // valid have dutyID to create the proposal
+        // valid the right step
+        // valid the status of the proposal
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
         proposalID = proposalHandler.newProposal(proposal, commit, data);
         console.log("making proposal:");
         console.logBytes32(proposalID);
+    }
 
-        proposalHandler.decideProposal(proposalID, true, data);
+    /// @inheritdoc IVoteHandler
+    function vote(
+        VoteIdentity calldata identity,
+        bool agree,
+        uint256 count,
+        string calldata feedback,
+        bytes calldata data
+    ) external override {
+        // check duty
+        if (
+            !_hasDutyToOperate(
+                0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e,
+                _msgSender()
+            )
+        ) {
+            revert YouDoNotHaveDutyToOperate();
+        }
+
+        _vote(identity, agree, count, true, feedback, data);
     }
 
     /// @inheritdoc ICommittee

@@ -32,6 +32,16 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
     //     bytes memory functionSignature
     // ) external returns (bool success, bytes memory returnedBytes);
 
+    /// @dev check the account has badges or not
+    function hasDAOBadges(address account)
+        external
+        view
+        returns (bool hasBadges);
+
+    /// @notice verify if the account could vote
+    /// @dev if dao dao require the badeges to vote or enought pledged tokens
+    function allowToVote(address account) external view returns (bool isAllow);
+
     /// @dev add a new workflow, noramll call by agent
     function setupFlowInfo(FlowInfo memory flow) external;
 

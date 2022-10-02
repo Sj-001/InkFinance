@@ -12,7 +12,7 @@ const {loadFixture, deployContract} = waffle;
 
 
 
-export function buildMasterDAOInitData(erc20Address:string) {
+export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:number) {
         /* 
         MasterDAOInitData
         string name;
@@ -39,41 +39,65 @@ export function buildMasterDAOInitData(erc20Address:string) {
         }
         */
 
-
-        var committees = [];
-
         var theBoardCommitteeDutyIDsBytesArrary = [];
         theBoardCommitteeDutyIDsBytesArrary[0] = PROPOSER_DUTYID;
+        theBoardCommitteeDutyIDsBytesArrary[0] = PROPOSER_DUTYID;
+        
         var theBoardCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", theBoardCommitteeDutyIDsBytesArrary);
         // console.log("board duty bytes----:   ", theBoardCommitteeDutyIDs)
         var thePublicCommitteeDutyIDsByteArray = [];
         thePublicCommitteeDutyIDsByteArray[0] = VOTER_DUTYID;
         var thePublicCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", thePublicCommitteeDutyIDsByteArray);
 
-
+        
         var proposalTuple = 'tuple(bytes32, bytes32, bytes)';
-        committees[0] = [keccak256(toUtf8Bytes("generate proposal")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs]; 
-        committees[1] = [keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs];
+        
+
+        var flow0Committees = [];
+        flow0Committees[0] = [keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs];
+
+        var flow1Committees = [];
+        flow1Committees[0] = [keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs];
+        flow1Committees[1] = [keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs]; 
+
+        var flow2Committees = [];
+        flow2Committees[0] = [keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs]; 
+
 
         var flows = [];
         var flowTuple = 'tuple(bytes32, ' + proposalTuple +'[])';
         // flows[0] = defaultAbiCoder.encode(['tuple(bytes32, ' + proposalTuple +'[])'], [[flowID, committees]]);
         // flows[0] = [keccak256(toUtf8Bytes("0")), committees];
-        flows[0] = ["0x0000000000000000000000000000000000000000000000000000000000000000", committees];
+        if (defaultFlowIndex == 0) {
+            flows[0] = ["0x0000000000000000000000000000000000000000000000000000000000000000", flow0Committees];
+            flows[1] = ["0x0000000000000000000000000000000000000000000000000000000000000001", flow1Committees];
+            flows[2] = ["0x0000000000000000000000000000000000000000000000000000000000000002", flow2Committees];
+        }
 
+        if (defaultFlowIndex == 1) {
+
+            flows[0] = ["0x0000000000000000000000000000000000000000000000000000000000000001", flow1Committees];
+            flows[1] = ["0x0000000000000000000000000000000000000000000000000000000000000002", flow2Committees];
+        }
+
+        if (defaultFlowIndex == 2) {
+            flows[0] = ["0x0000000000000000000000000000000000000000000000000000000000000002", flow2Committees];
+        }
+        
         var mds = [];
         mds[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
 
 
         var badgeName = "badgeName1";
-        var badgeTotal = 100;
+        var badgeTotal = ethers.utils.parseEther("10000000");
         var daoLogo = "daoDefaultLogo";
         var minPledgeRequired = 10;
         var minEffectiveVotes = 100;
         var minEffectiveVoteWallets = 1;
+        var defaultFlowIDIndex = 0;
 
-        var masterDAOInitialData = defaultAbiCoder.encode(['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, ' + flowTuple +'[])'],
-             [["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, flows]]);
+        var masterDAOInitialData = defaultAbiCoder.encode(['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[])'],
+             [["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIDIndex, flows]]);
 
         return masterDAOInitialData;
         

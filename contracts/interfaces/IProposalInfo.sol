@@ -61,6 +61,7 @@ interface IProposalInfo {
         bytes crossChainProtocal;
         KVItem[] metadata;
         bytes[] kvData;
+        // require vote options
     }
 
     // 接口返回格式

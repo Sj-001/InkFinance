@@ -14,6 +14,35 @@
 
 ## 4.Functions
 
+### hasDAOBadges
+
+> check the account has badges or not
+
+*Declaration:*
+```solidity
+function hasDAOBadges(
+) external returns
+(bool hasBadges)
+```
+
+
+
+
+### allowToVote
+verify if the account could vote
+
+> if dao dao require the badeges to vote or enought pledged tokens
+
+*Declaration:*
+```solidity
+function allowToVote(
+) external returns
+(bool isAllow)
+```
+
+
+
+
 ### setupFlowInfo
 
 > add a new workflow, noramll call by agent

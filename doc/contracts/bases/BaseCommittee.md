@@ -131,6 +131,20 @@ function allowOperate(
 
 
 
+### _hasDutyToOperate
+
+
+
+*Declaration:*
+```solidity
+function _hasDutyToOperate(
+) internal returns
+(bool hasDutyToOperate)
+```
+
+
+
+
 ### _vote
 
 > by default, vote require pledge
@@ -142,32 +156,6 @@ function _vote(
 ```
 
 
-
-
-### vote
-the voter vote proposal
-
-
-
-*Declaration:*
-```solidity
-function vote(
-struct IVoteHandler.VoteIdentity identity,
-bool agree,
-uint256 count,
-string feedback,
-bytes data
-) external
-```
-
-*Args:*
-| Arg | Type | Description |
-| --- | --- | --- |
-|`identity` | struct IVoteHandler.VoteIdentity | target proposal, include step
-|`agree` | bool | true=agree, false=disagree
-|`count` | uint256 | how many votes
-|`feedback` | string | comment of the vote action
-|`data` | bytes | extra data
 
 
 ### getVoteDetail

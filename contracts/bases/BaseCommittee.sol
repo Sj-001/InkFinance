@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../interfaces/ICommittee.sol";
 import "../interfaces/IDeploy.sol";
 import "../interfaces/IProposalHandler.sol";
+import "../interfaces/IDutyControl.sol";
 
 import "../libraries/LVoteIdentityHelper.sol";
 import "../libraries/LEnumerableMetadata.sol";
@@ -106,6 +107,16 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         // return _checkAllowOperate(proposal, identity, user);
     }
 
+    function _hasDutyToOperate(bytes32 dutyID, address operator)
+        internal
+        returns (bool hasDutyToOperate)
+    {
+        hasDutyToOperate = IDutyControl(getParentDAO()).hasDuty(
+            operator,
+            dutyID
+        );
+    }
+
     /// @dev by default, vote require pledge
     function _vote(
         VoteIdentity memory identity,
@@ -115,9 +126,14 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         string memory feedback,
         bytes memory data
     ) internal {
-        // Proposal memory proposal = _getProposalInfo(
-        //     identity.proposalID
-        // );
+        // // DutyID, Require badge, isPledgeEnouth
+        // _isAllowToVote();
+
+        // // Deadline, status, at right step
+        // _isProposalOpenToVote()
+        // // Proposal memory proposal = _getProposalInfo(
+        // //     identity.proposalID
+        // // );
 
         // require(
         //     _checkAllowOperate(proposal, identity, _msgSender()),
@@ -173,16 +189,16 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         emit Vote(voteID, _msgSender(), agree, count, feedback);
     }
 
-    /// @inheritdoc IVoteHandler
-    function vote(
-        VoteIdentity calldata identity,
-        bool agree,
-        uint256 count,
-        string calldata feedback,
-        bytes calldata data
-    ) external override {
-        _vote(identity, agree, count, true, feedback, data);
-    }
+    // /// @inheritdoc IVoteHandler
+    // function vote(
+    //     VoteIdentity calldata identity,
+    //     bool agree,
+    //     uint256 count,
+    //     string calldata feedback,
+    //     bytes calldata data
+    // ) external override {
+    //     _vote(identity, agree, count, true, feedback, data);
+    // }
 
     /// @inheritdoc IVoteHandler
     function getVoteDetail(

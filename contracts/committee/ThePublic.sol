@@ -44,6 +44,19 @@ contract ThePublic is BaseCommittee {
         revert ThisCommitteeCannotMakeProposal();
     }
 
+    /// @inheritdoc IVoteHandler
+    function vote(
+        VoteIdentity calldata identity,
+        bool agree,
+        uint256 count,
+        string calldata feedback,
+        bytes calldata data
+    ) external override {
+        // it's public everyone has duty to vote
+
+        _vote(identity, agree, count, true, feedback, data);
+    }
+
     /// @inheritdoc ICommittee
     function tallyVotes(VoteIdentity calldata identity, bytes memory data)
         public

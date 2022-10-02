@@ -21,7 +21,6 @@ contract TreasuryCommittee is BaseCommittee {
         _init(dao_, config_, data_);
         // InitData memory initData = abi.decode(data_, (InitData));
         // makeProposalLockVotes = initData.makeProposalLockVotes;
-
         // _init(admin, addrRegistry, initData.baseInitData);
         // _memberSetting(admin, 1);
         console.log("TreasuryCommittee. called initial ");
@@ -44,6 +43,7 @@ contract TreasuryCommittee is BaseCommittee {
         bytes32 flowID = IAgentHandler(getParentDAO()).getAgentFlowID(
             proposal.agents[0]
         );
+
         IProposalHandler.CommitteeInfo[] memory infos = IDAO(getParentDAO())
             .getFlowSteps(flowID);
         // valid committee
@@ -85,6 +85,17 @@ contract TreasuryCommittee is BaseCommittee {
 
         bool passOrNot = true;
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
+    }
+
+    function vote(
+        VoteIdentity calldata identity,
+        bool agree,
+        uint256 count,
+        string calldata feedback,
+        bytes calldata data
+    ) external override {
+        // check duty
+        _vote(identity, agree, count, true, feedback, data);
     }
 
     /// @inheritdoc ICommittee

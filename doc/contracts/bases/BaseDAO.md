@@ -14,9 +14,12 @@
 
 | Var | Type |
 | --- | --- |
+| PROPOSER_DUTYID | bytes32 |
+| VOTER_DUTYID | bytes32 |
 | MAX_STEP_NUM | uint256 |
 | _SENTINEL_ID | bytes32 |
 | DEFAULT_FLOW_ID | bytes32 |
+| _defaultFlowIDIndex | uint256 |
 | _flowSteps | mapping(bytes32 => mapping(bytes32 => struct BaseDAO.StepLinkInfo)) |
 | _proposalInfo | mapping(bytes32 => struct IProposalHandler.ProposalProgress) |
 | _proposals | mapping(bytes32 => struct IProposalInfo.Proposal) |
@@ -104,6 +107,20 @@ bytes data
 | Arg | Description |
 | --- | --- |
 |`proposalID` | generated proposal id
+
+### _getVoteFlow
+
+
+
+*Declaration:*
+```solidity
+function _getVoteFlow(
+) internal returns
+(bytes32 flowID)
+```
+
+
+
 
 ### generateProposalID
 
@@ -538,6 +555,20 @@ function getFlowSteps(
 
 
 
+### getNextVoteCommitteeInfo
+
+
+
+*Declaration:*
+```solidity
+function getNextVoteCommitteeInfo(
+) external returns
+(struct IProposalHandler.CommitteeInfo committeeInfo)
+```
+
+
+
+
 ### _isNextCommittee
 
 > verify if the committee is the next committee
@@ -691,6 +722,35 @@ This function call must use less than 30 000 gas.
 function supportsInterface(
 ) public returns
 (bool)
+```
+
+
+
+
+### hasDAOBadges
+
+
+
+*Declaration:*
+```solidity
+function hasDAOBadges(
+) external returns
+(bool hasBadges)
+```
+
+
+
+
+### allowToVote
+verify if the account could vote
+
+> if dao dao require the badeges to vote or enought pledged tokens
+
+*Declaration:*
+```solidity
+function allowToVote(
+) external returns
+(bool isAllow)
 ```
 
 

@@ -36,7 +36,7 @@ describe("contract dao test", function () {
         var erc20Address = inkERC20.address;
 
         // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address);
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
         await factoryManager.deploy(DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);

@@ -7,6 +7,7 @@ import "./IVoteHandler.sol";
 
 error ThisCommitteeDoesNotSupportThisAction();
 error ThisCommitteeCannotMakeProposal();
+error YouDoNotHaveDutyToOperate();
 
 interface ICommittee is IProposalInfo, IVoteHandler, IERC165 {
     /// @notice return committee's duties

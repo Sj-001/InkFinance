@@ -166,6 +166,25 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "allowToVote",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "isAllow",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "proposalID",
         "type": "bytes32"
@@ -684,6 +703,25 @@
         "internalType": "bytes",
         "name": "data",
         "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "hasDAOBadges",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "hasBadges",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

@@ -156,7 +156,7 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
 
 
     console.log("init keys:");
-    
+
     var factoryManagerFactoryKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "FactoryManager");
     console.log("factoryManagerFactoryKey=", factoryManagerFactoryKey);
 

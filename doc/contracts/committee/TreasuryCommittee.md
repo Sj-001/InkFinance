@@ -56,6 +56,19 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
+### vote
+
+
+
+*Declaration:*
+```solidity
+function vote(
+) external
+```
+
+
+
+
 ### tallyVotes
 
 > calculate votes and find out if the proposal is passed

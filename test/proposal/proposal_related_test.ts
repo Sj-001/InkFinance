@@ -28,121 +28,121 @@ const {loadFixture, deployContract} = waffle;
 
 describe("proposal related test", function () {
 
-    it("test create treasury-setup proposal", async function () {
+    // it("test create treasury-setup proposal", async function () {
 
-        const signers = await ethers.getSigners();
-        console.log("########################current signer:", signers[0].address);
+    //     const signers = await ethers.getSigners();
+    //     console.log("########################current signer:", signers[0].address);
         
-        const {factoryManager} = await loadFixture(FactoryManagerFixture);
-        const {inkERC20} = await loadFixture(InkERC20Fixture);        
-        var erc20Address = inkERC20.address;
+    //     const {factoryManager} = await loadFixture(FactoryManagerFixture);
+    //     const {inkERC20} = await loadFixture(InkERC20Fixture);        
+    //     var erc20Address = inkERC20.address;
 
-        // // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address);
-        await factoryManager.deploy(DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
+    //     // // select/create a DAO
+    //     var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
+    //     await factoryManager.deploy(DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
-        var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
-        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
-        var masterDAO = masterDAOFactory.attach(firstDAOAddress);
-        console.log("dao address:", masterDAO.address);
-        // // select one flow of the DAO
+    //     var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
+    //     var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+    //     var masterDAO = masterDAOFactory.attach(firstDAOAddress);
+    //     console.log("dao address:", masterDAO.address);
+    //     // // select one flow of the DAO
 
-        var proposal = buildTreasurySetupProposal();
+    //     var proposal = buildTreasurySetupProposal();
 
-        // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
+    //     // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
         
-        var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
-        var theBoardFactory = await ethers.getContractFactory("TheBoard");
-        var theBoard = theBoardFactory.attach(flowSteps[0].committee);
+    //     var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
+    //     var theBoardFactory = await ethers.getContractFactory("TheBoard");
+    //     var theBoard = theBoardFactory.attach(flowSteps[0].committee);
         
-        await theBoard.newProposal(proposal, true, "0x00");
+    //     await theBoard.newProposal(proposal, true, "0x00");
 
-        var proposalID = await masterDAO.getProposalIDByIndex(0);
-        // console.log("first proposal id: ", proposalID);
-        await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
+    //     var proposalID = await masterDAO.getProposalIDByIndex(0);
+    //     // console.log("first proposal id: ", proposalID);
+    //     await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
-        // once decide, 
-        await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
+    //     // once decide, 
+    //     await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
         
-        var committeeAddress = await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0);
+    //     var committeeAddress = await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0);
 
-        console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
-        console.log("treasury committee address:", committeeAddress);
+    //     console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
+    //     console.log("treasury committee address:", committeeAddress);
         
-        // proposal category = payroll?
-        await makeSetupPayrollProposal(committeeAddress, erc20Address);
+    //     // proposal category = payroll?
+    //     await makeSetupPayrollProposal(committeeAddress, erc20Address);
 
-        var payrollSetupProposalID = await masterDAO.getProposalIDByIndex(1);
-        console.log(payrollSetupProposalID)
+    //     var payrollSetupProposalID = await masterDAO.getProposalIDByIndex(1);
+    //     console.log(payrollSetupProposalID)
 
-        var payrollTopicID = await masterDAO.getProposalTopic(payrollSetupProposalID);
-        console.log("payroll proposal topic:: ", payrollTopicID);
-        await makePayrollPayProposal(payrollTopicID, committeeAddress);
+    //     var payrollTopicID = await masterDAO.getProposalTopic(payrollSetupProposalID);
+    //     console.log("payroll proposal topic:: ", payrollTopicID);
+    //     await makePayrollPayProposal(payrollTopicID, committeeAddress);
 
-        var payrollProposalID = await masterDAO.getProposalIDByIndex(2);
-        console.log("payroll proposal id: ", payrollProposalID);
+    //     var payrollProposalID = await masterDAO.getProposalIDByIndex(2);
+    //     console.log("payroll proposal id: ", payrollProposalID);
 
-        var payrollProposalSummary = await masterDAO.getProposalSummary(payrollProposalID);
-        console.log("payroll proposal status:: ", payrollProposalSummary.status);
-
-
-        var payrollVoteSteps = await masterDAO.getFlowSteps("0x4dd2d7e10785fafbaaf1f3990a197abc75ee660a97f6667083816f872ef1f877");
-
-        await makePayrollPayProposal(payrollTopicID, committeeAddress);
+    //     var payrollProposalSummary = await masterDAO.getProposalSummary(payrollProposalID);
+    //     console.log("payroll proposal status:: ", payrollProposalSummary.status);
 
 
-    });
+    //     var payrollVoteSteps = await masterDAO.getFlowSteps("0x4dd2d7e10785fafbaaf1f3990a197abc75ee660a97f6667083816f872ef1f877");
 
-    async function makeSetupPayrollProposal (committeeAddress:string, erc20Address:string ) {
-        // treasury committee has been setup.
-        // now prepare to setup payroll
-        console.log("financial-payroll-setup: ", keccak256(toUtf8Bytes("financial-payroll-setup")))
+    //     await makePayrollPayProposal(payrollTopicID, committeeAddress);
+
+
+    // });
+
+    // async function makeSetupPayrollProposal (committeeAddress:string, erc20Address:string ) {
+    //     // treasury committee has been setup.
+    //     // now prepare to setup payroll
+    //     console.log("financial-payroll-setup: ", keccak256(toUtf8Bytes("financial-payroll-setup")))
         
-        var setupPayrollProposal = buildPayrollSetupProposal(erc20Address);
+    //     var setupPayrollProposal = buildPayrollSetupProposal(erc20Address);
 
-        var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
+    //     var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
 
-        var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
+    //     var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
         
-        // pass direct
-        await treasuryCommittee.newProposal(setupPayrollProposal, true, toUtf8Bytes(""));
+    //     // pass direct
+    //     await treasuryCommittee.newProposal(setupPayrollProposal, true, toUtf8Bytes(""));
 
-    }
+    // }
 
-    async function makePayrollPayProposal (topicID:string, committeeAddress:string ) {
-        // treasury committee has been setup.
-        // now prepare to setup payroll
+    // async function makePayrollPayProposal (topicID:string, committeeAddress:string ) {
+    //     // treasury committee has been setup.
+    //     // now prepare to setup payroll
 
-        var payrollPayProposal = buildPayrollPayProposal(topicID);
+    //     var payrollPayProposal = buildPayrollPayProposal(topicID);
 
-        var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
+    //     var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
 
-        var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
+    //     var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
         
         
 
 
 
-        // make proposal and require voteing
-        await treasuryCommittee.newProposal(payrollPayProposal, true, toUtf8Bytes(""));
+    //     // make proposal and require voteing
+    //     await treasuryCommittee.newProposal(payrollPayProposal, true, toUtf8Bytes(""));
         
-    }
+    // }
 
     
-    /*
-    it("test create off-chain proposal", async function () {
+    
+    it("test create off-chain proposal - flow 0 - Board Only ", async function () {
 
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
         const {inkERC20} = await loadFixture(InkERC20Fixture);        
         var erc20Address = inkERC20.address;
 
         // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address);
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
         await factoryManager.deploy(DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
-        var masterDAO = masterDAOFactory.attach(firstDAOAddress);
+        var masterDAO = await masterDAOFactory.attach(firstDAOAddress);
         console.log("dao address:", masterDAO.address);
         // select one flow of the DAO
         
@@ -155,32 +155,31 @@ describe("proposal related test", function () {
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
         var theBoard = theBoardFactory.attach(flowSteps[0].committee);
 
-
-
-
         await theBoard.newProposal(offchainProposal, true, "0x00");
         var proposalID = await masterDAO.getProposalIDByIndex(0);
 
         console.log("first proposal id: ", proposalID);
         
-        await voteProposal(proposalID, flowSteps[1].step, flowSteps[1].committee);
+        await voteProposalByTheBoard(await masterDAO.address, proposalID);
 
-        await voteDetail(proposalID, flowSteps[1].step, flowSteps[1].committee);
+        await voteDetail(await masterDAO.address, proposalID);
 
-        await voteAccountInfo(proposalID, flowSteps[1].step, flowSteps[1].committee);
+        await voteAccountInfo(await masterDAO.address, proposalID);
 
-        await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
+        // await tallyVotes(proposalID, flowSteps[1].step, flowSteps[1].committee);
 
     });
     
 
-    */
+    
 
-    async function votePayrollScheduleSignProposal (proposalID:string, step:string, committeeAddress:string ) {
+    async function votePayrollScheduleSignProposal ( proposalID:string, step:string, committeeAddress:string ) {
         
         console.log("proposalID", proposalID);
         console.log("committeeAddress", committeeAddress);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+
+
         var theTreasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
         var thePublicCommittee = await theTreasuryCommitteeFactory.attach(committeeAddress);
         var voteIdentity = {"proposalID":proposalID, "step":step};
@@ -189,42 +188,59 @@ describe("proposal related test", function () {
     }
 
 
-    async function voteProposal (proposalID:string, step:string, committeeAddress:string ) {
+    async function voteProposalByTheBoard(daoAddress:string, proposalID:string) {
         
-        console.log("proposalID", proposalID);
-        console.log("committeeAddress", committeeAddress);
+        console.log("voteProposalByTheBoard proposalID", proposalID);
+
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
-        var thePublicCommitteeFactory = await ethers.getContractFactory("ThePublic");
-        var thePublicCommittee = await thePublicCommitteeFactory.attach(committeeAddress);
-        var voteIdentity = {"proposalID":proposalID, "step":step};
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
+        var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
+        console.log("voteProposalByTheBoard vote committee info:", await committeeInfo);
+        // var theVoteCommitteeFactory = await ethers.getContractFactory("TheBoard");
+        // var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
+        const theVoteCommittee = await ethers.getContractAt("ICommittee", committeeInfo.committee);
+        var voteIdentity = {"proposalID":proposalID, "step": committeeInfo.step};
         
-        await thePublicCommittee.vote(voteIdentity, true, 10, "", "0x00");
+        await theVoteCommittee.vote(voteIdentity, true, 10, "", "0x00");
+
     }
 
 
-    async function voteDetail (proposalID:string, step:string, committeeAddress:string ) {
+    async function voteDetail (daoAddress:string, proposalID:string ) {
         
-        console.log("proposalID", proposalID);
-        console.log("committeeAddress", committeeAddress);
-        var thePublicCommitteeFactory = await ethers.getContractFactory("ThePublic");
-        var thePublicCommittee = await thePublicCommitteeFactory.attach(committeeAddress);
-        var voteIdentity = {"proposalID":proposalID, "step":step};
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
+
+        var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
+
+        var theVoteCommitteeFactory = await ethers.getContractFactory("TheBoard");
+        var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
+
+        console.log("vote detail the vote committee :", committeeInfo);
+        var voteIdentity = {"proposalID":proposalID, "step":committeeInfo.step};
 
 
-        console.log("vote detail info:", await thePublicCommittee.getVoteDetail(voteIdentity, true, "0x0000000000000000000000000000000000000000", 10));
+        console.log("vote detail info:", await theVoteCommittee.getVoteDetail(voteIdentity, true, "0x0000000000000000000000000000000000000000", 10));
     }
 
 
-    async function voteAccountInfo (proposalID:string, step:string, committeeAddress:string ) {
+    async function voteAccountInfo (daoAddress:string, proposalID:string ) {
         
-        console.log("proposalID", proposalID);
-        console.log("committeeAddress", committeeAddress);
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
 
-        var thePublicCommitteeFactory = await ethers.getContractFactory("ThePublic");
-        var thePublicCommittee = await thePublicCommitteeFactory.attach(committeeAddress);
-        var voteIdentity = {"proposalID":proposalID, "step":step};
+        var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
+
+        var theVoteCommitteeFactory = await ethers.getContractFactory("TheBoard");
+        var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
+
+        console.log("vote detail the vote committee :", committeeInfo);
+        var voteIdentity = {"proposalID":proposalID, "step":committeeInfo.step};
+
+
+
         const signers = await ethers.getSigners();
-        console.log("getVoteDetailByAccount:", await thePublicCommittee.getVoteDetailByAccount(voteIdentity, await signers[0].address));
+        console.log("getVoteDetailByAccount:", await theVoteCommittee.getVoteDetailByAccount(voteIdentity, await signers[0].address));
     }
 
 

@@ -27,6 +27,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 nextStep;
     }
 
+    //console.log("PROPOSER_DUTYID=", keccak256(toUtf8Bytes("PROPOSER_DUTYID")));
+    bytes32 internal constant PROPOSER_DUTYID =
+        0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e;
+
+    //console.log("VOTER_DUTYID=", keccak256(toUtf8Bytes("VOTER_DUTYID")));
+    bytes32 internal constant VOTER_DUTYID =
+        0xf579da1548edf1a4b47140c7e8df0e1e9f881c48184756b7f660e33bbc767607;
+
     /// @notice BaseDAO initial data, when create dao,
     /// these data is necessary for creating the DAO instance.
     /// @param name DAO name
@@ -42,6 +50,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// @param minPledgeRequired minimal token needed to pledge
     /// @param minEffectiveVotes minimal effective votes
     /// @param minEffectiveVoteWallets minimal effective vote wallets
+    /// @param defaultFlowIDIndex three base flows [0] = 0x00...0, [1] = 0x00..1, [2] = 0x00..2
     struct BaseDAOInitData {
         string name;
         string describe;
@@ -56,6 +65,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         uint256 minEffectiveVotes;
         uint256 minEffectiveVoteWallets;
         bytes32 factoryManagerKey;
+        uint256 defaultFlowIDIndex;
         FlowInfo[] flows;
     }
 
@@ -69,6 +79,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// @dev DEFAULT_FLOW_ID means the highest priority
     bytes32 public constant DEFAULT_FLOW_ID =
         0x0000000000000000000000000000000000000000000000000000000000000000;
+
+    bytes32[] private _defaultFlows;
 
     // @dev the one who created the DAO
     address private _ownerAddress;
@@ -84,11 +96,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     uint256 private _minPledgeRequired;
     uint256 private _minEffectiveVotes;
     uint256 private _minEffectiveVoteWallets;
-    ///@dev BoardOnly=1, PublicAndBoard=10, Public Only=100
-    uint256 private _voteMode;
+    ///@dev BoardOnly=0, PublicAndBoard=1, Public Only=2
+    uint256 _defaultFlowIDIndex = 0;
 
     /// @dev how many propsoals in the DAO
-    ///      also used to generated proposalID;
+    /// also used to generated proposalID;
     uint256 private totalProposal;
 
     /// @dev key is dutyID
@@ -98,6 +110,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// @notice how many dutyIDs the EOA address have in the DAO
     /// @dev once the _dutyCounts become 0, it should be removed from the DAO
     mapping(address => uint256) private _dutyCounts;
+
+    /// @notice anyone has one duty will be stored here.
+    EnumerableSet.AddressSet private _daoMembersWithDuties;
 
     // process category flow ID => (stepID => step info)
     mapping(bytes32 => mapping(bytes32 => StepLinkInfo)) internal _flowSteps;
@@ -187,18 +202,30 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         // 0x 全0 DAO 内部Offchain
         // 0x 全FFF 任意执行，
-        mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[flowID];
+
+        bytes32 defaultFlowID = _getVoteFlow(_defaultFlowIDIndex);
+
+        console.log("defaultFlowID::");
+        console.logBytes32(defaultFlowID);
+
+        mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[
+            defaultFlowID
+        ];
 
         bytes32 firstStep = steps[_SENTINEL_ID].nextStep;
         if (firstStep == bytes32(0x0)) {
             revert SystemError();
         }
-
+        console.log("new proposal id:");
+        console.logBytes32(proposalID);
         ProposalProgress storage info = _proposalInfo[proposalID];
         info.proposalID = proposalID;
         // decicde next step and which commit is handle the process
         info.nextCommittee.step = firstStep;
         info.nextCommittee.committee = steps[firstStep].committee;
+        console.log("new proposal step:");
+        console.logBytes32(firstStep);
+        console.log("next committee :", info.nextCommittee.committee);
     }
 
     /// @inheritdoc IProposalHandler
@@ -251,6 +278,18 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     //     );
     // }
 
+    function _getVoteFlow(uint256 flowIndex) internal returns (bytes32 flowID) {
+        console.log("flow index is:", flowIndex);
+        require(
+            flowIndex >= _defaultFlowIDIndex,
+            "flow should be more open than default flow"
+        );
+        console.log("supported flow length:", _defaultFlows.length);
+
+        require(flowIndex < _defaultFlows.length, "flow is not support");
+        flowID = _defaultFlows[flowIndex];
+    }
+
     // functions ////////////////////////////////////////////////////////////////////////
     function generateProposalID() internal returns (bytes32 proposalID) {
         totalProposal++;
@@ -278,6 +317,19 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes calldata data
     ) public virtual override returns (bytes memory callbackEvent) {
         super.init(config_);
+        /// board vote
+        _defaultFlows.push(
+            0x0000000000000000000000000000000000000000000000000000000000000000
+        );
+        /// public vote and board vote
+        _defaultFlows.push(
+            0x0000000000000000000000000000000000000000000000000000000000000001
+        );
+        /// public vote
+        _defaultFlows.push(
+            0x0000000000000000000000000000000000000000000000000000000000000002
+        );
+
         // init data
         BaseDAOInitData memory initData = abi.decode(data, (BaseDAOInitData));
 
@@ -314,6 +366,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         // callbackData.govTokenAddr = address(govToken);
         // callbackData.name = name;
         // return abi.encode(callbackData);
+        // initial dutyID
+
+        _dutyMembers[PROPOSER_DUTYID].add(admin_);
+        _dutyMembers[VOTER_DUTYID].add(admin_);
+        _dutyCounts[admin_] = 2;
+        _daoMembersWithDuties.add(admin_);
 
         return bytes("");
     }
@@ -333,6 +391,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// @inheritdoc IDutyControl
     function hasDuty(address account, bytes32 dutyID)
         external
+        view
         override
         returns (bool exist)
     {
@@ -341,8 +400,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     function _hasDuty(address account, bytes32 dutyID)
         internal
+        view
         returns (bool exist)
-    {}
+    {
+        exist = _dutyMembers[dutyID].contains(account);
+    }
 
     /// @inheritdoc IDutyControl
     function getDutyOwners(bytes32 dutyID)
@@ -611,7 +673,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         returns (CommitteeInfo[] memory infos)
     {
         infos = new CommitteeInfo[](MAX_STEP_NUM);
-
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[flowID];
 
         bytes32 currentStep = steps[_SENTINEL_ID].nextStep;
@@ -636,6 +697,20 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     //////////////////// internal
+
+    function getNextVoteCommitteeInfo(bytes32 proposalID)
+        external
+        view
+        returns (CommitteeInfo memory committeeInfo)
+    {
+        ProposalProgress storage info = _proposalInfo[proposalID];
+
+        committeeInfo = info.nextCommittee;
+
+        console.log("1 new proposal step:");
+        console.logBytes32(info.nextCommittee.step);
+        console.log("1 next committee :", info.nextCommittee.committee);
+    }
 
     /// @dev verify if the committee is the next committee
     function _isNextCommittee(bytes32 proposalID, address committee)
@@ -821,89 +896,99 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         // init sentinel.
         steps[_SENTINEL_ID].nextStep = flow.committees[0].step;
 
-        for (uint256 j = 0; j < flow.committees.length; j++) {
-            CommitteeCreateInfo memory committeeInfo = flow.committees[j];
+        if (flow.committees[0].step != 0x00) {
+            // no action required,
+            for (uint256 j = 0; j < flow.committees.length; j++) {
+                CommitteeCreateInfo memory committeeInfo = flow.committees[j];
+                bytes32[] memory duties = abi.decode(
+                    committeeInfo.dutyIDs,
+                    (bytes32[])
+                );
 
-            bytes32[] memory duties = abi.decode(
-                committeeInfo.dutyIDs,
-                (bytes32[])
-            );
-            // bytes32[] memory duties;
+                // bytes32[] memory duties;
+                // console.logBytes(committeeInfo.dutyIDs);
+                // console.log("duty length:::", duties.length);
+                // console.logBytes32(committeeInfo.addressConfigKey);
+                // (bytes32 typeID, bytes memory committeeAddressBytes) = IConfig(_config).getKV(committeeInfo.addressConfigKey);
 
-            // console.logBytes(committeeInfo.dutyIDs);
-            // console.log("duty length:::", duties.length);
-            // console.logBytes32(committeeInfo.addressConfigKey);
-            // (bytes32 typeID, bytes memory committeeAddressBytes) = IConfig(_config).getKV(committeeInfo.addressConfigKey);
+                // // valid typeID
+                // address committeeAddress = turnBytesToAddress(committeeAddressBytes);
+                // console.log("committee address:", committeeAddress);
 
-            // // valid typeID
-            // address committeeAddress = turnBytesToAddress(committeeAddressBytes);
-            // console.log("committee address:", committeeAddress);
+                require(
+                    committeeInfo.step != bytes32(0x0) &&
+                        committeeInfo.step != _SENTINEL_ID,
+                    "step empty"
+                );
+                console.log("");
+                console.log(
+                    "START TO GENRATE ############################################################################################################"
+                );
 
-            require(
-                committeeInfo.step != bytes32(0x0) &&
-                    committeeInfo.step != _SENTINEL_ID,
-                "step empty"
-            );
-            console.log("");
-            console.log(
-                "START TO GENRATE ############################################################################################################"
-            );
-            // Deploy committee
-            // require(
-            //     ICommittee(committeeAddress).supportsInterface(
-            //         type(ICommittee).interfaceId
-            //     ),
-            //     "committee addr not support ICommittee"
-            // );
+                // Deploy committee
+                // require(
+                //     ICommittee(committeeAddress).supportsInterface(
+                //         type(ICommittee).interfaceId
+                //     ),
+                //     "committee addr not support ICommittee"
+                // );
 
-            bytes memory initData = abi.encode(duties);
-            address committeeAddress = _deployByFactoryKey(
-                0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
-                committeeInfo.addressConfigKey,
-                initData
-            );
+                bytes memory initData = abi.encode(duties);
+                address committeeAddress = _deployByFactoryKey(
+                    0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
+                    committeeInfo.addressConfigKey,
+                    initData
+                );
 
-            console.log("deploy committee address by key:", committeeAddress);
-            console.logBytes32(committeeInfo.addressConfigKey);
-            console.log("deployed committee address:", committeeAddress);
+                console.log(
+                    "deploy committee address by key:",
+                    committeeAddress
+                );
+                console.logBytes32(committeeInfo.addressConfigKey);
+                console.log("deployed committee address:", committeeAddress);
 
-            // bytes memory deployCall = abi.encodeWithSignature(
-            //     "deploy(bytes32,bytes32,bytes)",
-            //     0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
-            //     committeeInfo.addressConfigKey,
-            //     initData
-            // );
-            // address committeeAddress2 = IFactoryManager(_factoryAddress).deploy(
-            //     0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
-            //     committeeInfo.addressConfigKey,
-            //     initData
-            // );
-            // (bool success, bytes memory returnedBytes) = address(
-            //     _factoryAddress
-            // ).call(deployCall);
-            // console.log("returned bytes");
-            // console.logBytes(returnedBytes);
-            // console.log(success);
-            // console.log("turned address", turnBytesToAddress(returnedBytes));
-            console.log("set step's committee is:", committeeAddress);
-            console.log("step is:");
-            console.logBytes32(committeeInfo.step);
+                // bytes memory deployCall = abi.encodeWithSignature(
+                //     "deploy(bytes32,bytes32,bytes)",
+                //     0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
+                //     committeeInfo.addressConfigKey,
+                //     initData
+                // );
+                // address committeeAddress2 = IFactoryManager(_factoryAddress).deploy(
+                //     0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
+                //     committeeInfo.addressConfigKey,
+                //     initData
+                // );
+                // (bool success, bytes memory returnedBytes) = address(
+                //     _factoryAddress
+                // ).call(deployCall);
+                // console.log("returned bytes");
+                // console.logBytes(returnedBytes);
+                // console.log(success);
+                // console.log("turned address", turnBytesToAddress(returnedBytes));
+                console.log("set step's committee is:", committeeAddress);
+                console.log("step is:");
+                console.logBytes32(committeeInfo.step);
 
-            steps[committeeInfo.step].committee = committeeAddress;
+                steps[committeeInfo.step].committee = committeeAddress;
 
-            // link next committee
-            if (j < flow.committees.length - 1) {
-                steps[committeeInfo.step].nextStep = flow
-                    .committees[j + 1]
-                    .step;
-            } else {
-                steps[committeeInfo.step].nextStep = bytes32(0x0);
+                // link next committee
+                if (j < flow.committees.length - 1) {
+                    steps[committeeInfo.step].nextStep = flow
+                        .committees[j + 1]
+                        .step;
+                } else {
+                    steps[committeeInfo.step].nextStep = bytes32(0x0);
+                }
+
+                console.log(
+                    "DEPLOY END ############################################################################################################"
+                );
+                console.log("");
             }
-
+        } else {
             console.log(
-                "DEPLOY END ############################################################################################################"
+                "no action required #############################################################################################################################################################################################################################################################################################################################################################################################################################"
             );
-            console.log("");
         }
     }
 
@@ -939,6 +1024,22 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             interfaceId == type(IDAO).interfaceId ||
             interfaceId == type(IDeploy).interfaceId;
     }
+
+    function hasDAOBadges(address account)
+        external
+        view
+        override
+        returns (bool hasBadges)
+    {}
+
+    /// @notice verify if the account could vote
+    /// @dev if dao dao require the badeges to vote or enought pledged tokens
+    function allowToVote(address account)
+        external
+        view
+        override
+        returns (bool isAllow)
+    {}
 
     function changeProposal(
         bytes32 proposalID,
