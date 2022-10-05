@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 
 import "../interfaces/IFactoryManager.sol";
 import "../interfaces/IDeploy.sol";
-// import "../library/LChainLink.sol";
+import "../utils/BytesUtils.sol";
 
 import "../proxy/InkBeacon.sol";
 import "../proxy/InkProxy.sol";
@@ -18,11 +18,14 @@ import "../proxy/InkProxy.sol";
 
 import "hardhat/console.sol";
 
+error WrongTypeOfTheFactoryKey();
+
 /// @title FactoryManager
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice Factory is used to generate DAO instance
 contract FactoryManager is BaseVerify, IFactoryManager {
     // using LChainLink for LChainLink.Link;
+    using BytesUtils for bytes;
 
     /// @dev only for test
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -31,8 +34,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         uint256 disable;
         InkBeacon inkBeacon;
     }
-
-    uint256 private nounce;
 
     InkProxy proxy;
 
@@ -44,91 +45,32 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
     function supportsInterface(bytes4 interfaceId)
         external
-        view
+        pure
         override
         returns (bool)
     {
-        return true;
+        return interfaceId == type(IFactoryManager).interfaceId;
     }
 
     constructor(address config_) {
         super.init(config_);
-
         console.log("initialize config:");
         console.log(config_);
         _config = config_;
         proxy = new InkProxy();
     }
 
-    function getPredictAddress(bytes32 contractID)
-        external
-        view
-        override
-        returns (address _calculatedAddress)
-    {
-        bytes32 salt = keccak256(abi.encode(contractID, nounce));
+    function _getPredictAddress(
+        bytes32 typeID,
+        bytes32 contractKey,
+        address msgSender
+    ) internal view returns (address _calculatedAddress) {
+        bytes32 salt = keccak256(abi.encode(typeID, contractKey, msgSender));
         address generatedContract = Clones.predictDeterministicAddress(
-            address(proxy),
-            salt,
-            address(this)
-        );
-        return generatedContract;
-    }
-
-    /*
-    /// @inheritdoc IFactoryManager
-    function deploy(bytes32 contractID, bytes calldata initData)
-        external
-        override
-        returns (address _newContract)
-    {
-        DeployableContract storage deployableContract = _deployableContracts[
-            contractID
-        ];
-        // require(!deployableContract.link._isEmpty(), "this contract is already exist");
-        require(
-            deployableContract.disable == 0,
-            "this contractID can't be deployed anymore"
-        );
-
-        bytes32 salt = keccak256(abi.encode(contractID, nounce));
-        address generatedContract = Clones.cloneDeterministic(
             address(proxy),
             salt
         );
-
-        // miss proxy init
-        InkProxy(payable(generatedContract)).init(
-            _config,
-            address(deployableContract.inkBeacon),
-            ""
-        );
-
-        IDeploy(generatedContract).init(msg.sender, _config, initData);
-
-        _deployedContracts[contractID].add(generatedContract);
-        nounce++;
-
-        emit NewContractDeployed(
-            contractID,
-            deployableContract.inkBeacon.implementation(),
-            generatedContract,
-            initData,
-            msg.sender
-        );
-
         return generatedContract;
-    }
-    */
-
-    function turnBytesToAddress(bytes memory byteAddress)
-        internal
-        pure
-        returns (address addr)
-    {
-        assembly {
-            addr := mload(add(byteAddress, 20))
-        }
     }
 
     /// @inheritdoc IFactoryManager
@@ -141,16 +83,33 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             factoryKey
         );
 
+        // if (_typeID != typeID) {
+        //     revert WrongTypeOfTheFactoryKey();
+        // }
+
+        address afterDeployedAddressPredict = _getPredictAddress(
+            _typeID,
+            factoryKey,
+            msg.sender
+        );
+        console.log("predict address", afterDeployedAddressPredict);
+
+        if (
+            _deployedContracts[factoryKey].contains(afterDeployedAddressPredict)
+        ) {
+            console.log("already deployed before <ALREADY>");
+            return afterDeployedAddressPredict;
+        }
+
         console.log("KEY IS:");
         console.logBytes32(factoryKey);
         console.log("DATA IS:");
         console.logBytes(addressBytes);
 
         // valid typeID
-        address implementAddress = turnBytesToAddress(addressBytes);
+        address implementAddress = addressBytes.toAddress();
         console.log("implement address:", implementAddress);
-
-        bytes32 salt = keccak256(abi.encode(implementAddress, nounce));
+        bytes32 salt = keccak256(abi.encode(_typeID, factoryKey, msg.sender));
         address generatedContract = Clones.cloneDeterministic(
             address(proxy),
             salt
@@ -165,12 +124,8 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             address(inkBeacon),
             ""
         );
-
         console.log("start call IDeploy init");
         IDeploy(generatedContract).init(msg.sender, _config, initData);
-
-        nounce++;
-
         emit NewContractDeployed(
             typeID,
             factoryKey,

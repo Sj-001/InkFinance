@@ -8,11 +8,13 @@ import "./IProposalInfo.sol";
 /// @notice inteface which defined how to deal with the vote process
 interface IProposalHandler is IProposalInfo {
     /// @dev when proposal create, the submited data structure
+    /// @param name the name of the Committee
     /// @param step the step identity of that committee in the workflow
     /// @param addressConfigKey the committee address key in the ConfigManager
     /// @param committeeAddress contract address of the committee
     /// @param dutyIDs the dutyIDs of the committee
     struct CommitteeCreateInfo {
+        string committeeName;
         bytes32 step;
         bytes32 addressConfigKey;
         bytes dutyIDs;
@@ -116,6 +118,15 @@ interface IProposalHandler is IProposalInfo {
         external
         view
         returns (bytes32 typeID, bytes memory data);
+
+    function getTopicKVdata(bytes32 topicID, string memory key)
+        external
+        view
+        returns (
+            // ExistTopic(topicID)
+            bytes32 typeID,
+            bytes memory data
+        );
 
     function getTopicInfo(bytes32 topicID)
         external

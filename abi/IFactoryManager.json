@@ -74,25 +74,6 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "contractID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getPredictAddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "_calculatedAddress",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes4",
         "name": "interfaceId",
         "type": "bytes4"

@@ -83,13 +83,30 @@ function getAgentFlow(
 ```solidity
 function exec(
 bytes32 proposalID
-) external
+) external onlyCallFromDAO
 ```
+*Modifiers:*
+| Modifier |
+| --- |
+| onlyCallFromDAO |
 
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
 |`proposalID` | bytes32 | target proposal
+
+
+### _setMemberDuties
+
+
+
+*Declaration:*
+```solidity
+function _setMemberDuties(
+) internal
+```
+
+
 
 
 ### _setupFlowInfo
@@ -174,34 +191,6 @@ This function call must use less than 30 000 gas.
 function supportsInterface(
 ) public returns
 (bool)
-```
-
-
-
-
-### turnBytesToBytes32
-
-
-
-*Declaration:*
-```solidity
-function turnBytesToBytes32(
-) internal returns
-(bytes32)
-```
-
-
-
-
-### turnBytesToAddress
-
-
-
-*Declaration:*
-```solidity
-function turnBytesToAddress(
-) internal returns
-(address addr)
 ```
 
 

@@ -41,20 +41,6 @@ bytes initData
 | --- | --- |
 |`contractAddr` | according to the factoryKey, genereated new contract address with the same kind proxy contract.
 
-### getPredictAddress
-
-
-
-*Declaration:*
-```solidity
-function getPredictAddress(
-) external returns
-(address _calculatedAddress)
-```
-
-
-
-
 ## 5.Events
 ### NewContractDeployed
 

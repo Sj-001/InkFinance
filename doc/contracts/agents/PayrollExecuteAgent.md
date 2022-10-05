@@ -66,6 +66,7 @@ bytes32 proposalID
 |`success` | true means works
 
 ### exec
+only DAO could execute
 
 > do run the proposal decision
 
@@ -124,34 +125,6 @@ This function call must use less than 30 000 gas.
 function supportsInterface(
 ) public returns
 (bool)
-```
-
-
-
-
-### turnBytesToBytes32
-
-
-
-*Declaration:*
-```solidity
-function turnBytesToBytes32(
-) internal returns
-(bytes32)
-```
-
-
-
-
-### turnBytesToAddress
-
-
-
-*Declaration:*
-```solidity
-function turnBytesToAddress(
-) internal returns
-(address addr)
 ```
 
 

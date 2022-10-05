@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "../interfaces/ICommittee.sol";
 import "../interfaces/IDeploy.sol";
+import "../interfaces/IDAO.sol";
 import "../interfaces/IProposalHandler.sol";
 import "../interfaces/IDutyControl.sol";
 
@@ -25,25 +26,22 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     using LChainLink for LChainLink.Link;
 
     /// structs ////////////////////////////////////////////////////////////////////////////////
-    struct BaseCommitteeInitData {
-        string name;
-        string describe;
-        bytes[] mds;
-        address daoAddress;
-    }
 
-    // key is voter addr
+    /// @dev key is voter's address
     struct PersonVoteDetail {
         uint256 voteCount;
         LChainLink.Link link;
     }
 
+    string private _committeeName;
+    string private _describe;
+    bytes[] private _mds;
+
+    /// @dev all committee's duties stored here
+    EnumerableSet.Bytes32Set private _committeeDuties;
     // variables
     /// @dev belong to which DAO
     address internal _parentDAO;
-
-    /// @dev all committee's duties stored here
-    EnumerableSet.Bytes32Set committeeDuties;
 
     // keccak256(proposalID, step) => vote info
     mapping(bytes32 => VoteInfo) internal _voteInfos;
@@ -59,7 +57,15 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     ) internal {
         super.init(config_);
         _parentDAO = dao_;
-        // committeeDuties.add(keccak256(data));
+        (string memory name, bytes memory duties) = abi.decode(
+            data,
+            (string, bytes)
+        );
+        _committeeName = name;
+        bytes32[] memory dutyArray = abi.decode(duties, (bytes32[]));
+        for (uint256 i = 0; i < dutyArray.length; i++) {
+            _committeeDuties.add(dutyArray[i]);
+        }
     }
 
     function getParentDAO() internal view returns (address parentDAO) {
@@ -72,7 +78,9 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         view
         override
         returns (bytes32[] memory duties)
-    {}
+    {
+        duties = _committeeDuties.values();
+    }
 
     /// @inheritdoc IVoteHandler
     function getVoteDetailByAccount(
@@ -273,6 +281,55 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
 
     //     return true;
     // }
+
+    function _calculateVoteResults(VoteIdentity memory identity)
+        internal
+        returns (bool _passedOrNot)
+    {
+        // require(_getVoteExpiration(proposal) < block.timestamp, "vote not end");
+        // require(_checkProposalStatus(proposal, identity), "no right proposal");
+
+        (
+            uint256 minAgreeRatio,
+            uint256 minEffectiveVotes,
+            uint256 minEffectiveWallets
+        ) = IDAO(getParentDAO()).getTallyVoteRules();
+
+        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
+
+        bool agree;
+
+        if (
+            voteInfo.totalVotes >= minEffectiveVotes &&
+            voteInfo.agreeVoterNum + voteInfo.denyVoterNum >=
+            minEffectiveWallets
+        ) {
+            agree =
+                (voteInfo.agreeVotes * 1e18) / (voteInfo.totalVotes) >
+                minAgreeRatio;
+        } else {
+            agree = false;
+        }
+        if (agree) {
+            voteInfo.status = VoteStatus.AGREE;
+        } else {
+            voteInfo.status = VoteStatus.DENY;
+        }
+        _passedOrNot = agree;
+    }
+
+    function _tallyVotes(VoteIdentity calldata identity, bytes memory data)
+        internal
+    {
+        console.log("parent dao:", getParentDAO());
+        // @todo verify duty
+        IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+        // @todo verify if it's expired.
+        bool passOrNot = _calculateVoteResults(identity);
+        console.log("pass or not", passOrNot);
+
+        proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
+    }
 
     function _getProposalAccountDetail(bytes32 voteID, address account)
         internal

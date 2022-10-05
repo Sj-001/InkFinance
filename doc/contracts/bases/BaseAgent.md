@@ -11,6 +11,16 @@
 ## 2.Globals
 
 ## 3.Modifiers
+### onlyCallFromDAO
+
+
+
+*Declaration:*
+```solidity
+modifier onlyCallFromDAO
+```
+
+
 
 ## 4.Functions
 

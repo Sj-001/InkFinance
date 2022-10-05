@@ -10,12 +10,6 @@ the board committee has the highest priority of the DAO
 
 ## 2.Globals
 
-> Note this contains internal vars as well due to a bug in the docgen procedure
-
-| Var | Type |
-| --- | --- |
-| minPledgeRequired | uint256 |
-
 ## 3.Modifiers
 
 ## 4.Functions

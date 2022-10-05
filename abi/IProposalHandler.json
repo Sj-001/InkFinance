@@ -419,6 +419,35 @@
         "type": "string"
       }
     ],
+    "name": "getTopicKVdata",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "typeID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "topicID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "string",
+        "name": "key",
+        "type": "string"
+      }
+    ],
     "name": "getTopicKeyProposal",
     "outputs": [
       {

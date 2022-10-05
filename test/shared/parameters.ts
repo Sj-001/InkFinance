@@ -42,7 +42,7 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         var theBoardCommitteeDutyIDsBytesArrary = [];
         theBoardCommitteeDutyIDsBytesArrary[0] = PROPOSER_DUTYID;
         theBoardCommitteeDutyIDsBytesArrary[0] = PROPOSER_DUTYID;
-        
+
         var theBoardCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", theBoardCommitteeDutyIDsBytesArrary);
         // console.log("board duty bytes----:   ", theBoardCommitteeDutyIDs)
         var thePublicCommitteeDutyIDsByteArray = [];
@@ -50,22 +50,28 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         var thePublicCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", thePublicCommitteeDutyIDsByteArray);
 
         
-        var proposalTuple = 'tuple(bytes32, bytes32, bytes)';
-        
-
+        /* 
+        struct CommitteeCreateInfo {
+            string committeeName;
+            bytes32 step;
+            bytes32 addressConfigKey;
+            bytes dutyIDs;
+        }
+        */
+        var committeeInFlowTuple = 'tuple(string, bytes32, bytes32, bytes)';
         var flow0Committees = [];
-        flow0Committees[0] = [keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs];
+        flow0Committees[0] = ["The Board", keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs];
 
         var flow1Committees = [];
-        flow1Committees[0] = [keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs];
-        flow1Committees[1] = [keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs]; 
+        flow1Committees[0] = ["The Public", keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs];
+        flow1Committees[1] = ["The Board", keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs]; 
 
         var flow2Committees = [];
-        flow2Committees[0] = [keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs]; 
+        flow2Committees[0] = ["The Board", keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs]; 
 
 
         var flows = [];
-        var flowTuple = 'tuple(bytes32, ' + proposalTuple +'[])';
+        var flowTuple = 'tuple(bytes32, ' + committeeInFlowTuple +'[])';
         // flows[0] = defaultAbiCoder.encode(['tuple(bytes32, ' + proposalTuple +'[])'], [[flowID, committees]]);
         // flows[0] = [keccak256(toUtf8Bytes("0")), committees];
         if (defaultFlowIndex == 0) {
@@ -168,24 +174,33 @@ export function buildTreasurySetupProposal() {
         "desc": "0x0002",
     };
 
-    var kvData = [];
-
-    // different roles
-
-    // operator
-
-    // signer
-
-    // auditor
-
-
-    kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
     // kvData[0] = {
     //     "key":  "key",
     //     "typeID": keccak256(toUtf8Bytes("typeID")),
     //     "data": "0x0001",
     //     "desc": "0x0002",
     // };
+    //kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+
+    var kvData = [];
+    // different roles
+    // treasury operator
+    var treasuryOperator = [];
+    treasuryOperator[0] = "0xf46B1E93aF2Bf497b07726108A539B478B31e64C";
+    treasuryOperator[1] = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+    var treasuryOperatorBytes = web3.eth.abi.encodeParameter("address[]", treasuryOperator);
+    // // treasury signer
+    var treasurySigner = [];
+    treasurySigner[0] = "0x6c555518C66e7152a282330853aBf6F83a7FD19a";
+    var treasurySignerBytes = web3.eth.abi.encodeParameter("address[]", treasurySigner);
+    // treasury auditor
+    var treasuryAuditor = [];
+    treasuryAuditor[0] = "0x7e2FFA4eF972500020f1fa85ca6b453E931F51aA";
+    var treasuryAuditorBytes = web3.eth.abi.encodeParameter("address[]", treasuryAuditor);
+
+    kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["operators", keccak256(toUtf8Bytes("address")), treasuryOperatorBytes]);
+    kvData[1] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["signer", keccak256(toUtf8Bytes("address")), treasurySignerBytes]);
+    kvData[2] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["auditor", keccak256(toUtf8Bytes("address")), treasuryAuditorBytes]);
 
 
     var proposal = {
@@ -242,19 +257,26 @@ export function buildPayrollSetupProposal(erc20Address:string) {
     console.log("member bytes:", memberListBytes);
 
     var kvData = [];
+
+    var timestamp = Date.now();
+    var sec = Math.floor(timestamp / 1000);
+    console.log("now time ################################################################# ", sec);
+
+    var startTimeBytes = web3.eth.abi.encodeParameter("uint256", (sec - 100));
+    var periodBytes = web3.eth.abi.encodeParameter("uint256",5 );
+    var claimTimesByte = web3.eth.abi.encodeParameter("uint256",100);
+
+
     kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["members", keccak256(toUtf8Bytes("list")), memberListBytes]) ;
+    kvData[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["startTime", keccak256(toUtf8Bytes("uint256")), startTimeBytes]) ;
+    kvData[2] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["period", keccak256(toUtf8Bytes("uint256")), periodBytes]) ;
+    kvData[3] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["claimTimes", keccak256(toUtf8Bytes("uint256")), claimTimesByte]) ;
 
-
-    // kvData[0] = {
-    //     "key":  "key",
-    //     "typeID": keccak256(toUtf8Bytes("typeID")),
-    //     "data": "0x0001",
-    //     "desc": "0x0002",
-    // };
-
+    // 0x0000000000000000000000000000000000000000000000000000000000000000
+    // 0x0000000000000000000000000000000000000000000000000000000000000000
     var proposal = {
         "agents" : agents,
-        "topicID" : keccak256(toUtf8Bytes("topic")),
+        "topicID" : "0x0000000000000000000000000000000000000000000000000000000000000000",
         "crossChainProtocal":toUtf8Bytes(""),
         "metadata" : headers,
         "kvData" : kvData
@@ -284,23 +306,29 @@ export function buildPayrollPayProposal(topicID:string) {
     };
     
     headers[1] = {
-        "key":  "controllerAddress",
+        "key":  "anyKey",
         "typeID": keccak256(toUtf8Bytes("typeID")),
         "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
         "desc": "0x0002",
     };
 
     // include vote rule, require all the "signer to vote pass"
-
-
     // console.log("start member bytes encode:");
     // var memberItemTuple = 'tuple(address, address, uint256, string)[]';
     var memberListBytes = "0x00";
     // console.log("member bytes:", memberListBytes);
 
-    var kvData = [];
-    kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["members", keccak256(toUtf8Bytes("list")), memberListBytes]) ;
 
+    var signClaimTimes = web3.eth.abi.encodeParameter("uint256", 1);
+
+    console.log("PAYROLL's topicID is ::::: ", topicID);
+    
+    var kvData = [];
+    kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["topicID", keccak256(toUtf8Bytes("bytes32")), topicID]) ;
+    kvData[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["startTime", keccak256(toUtf8Bytes("uint256")), signClaimTimes]) ;
+ 
+
+ 
 
     // kvData[0] = {
     //     "key":  "key",

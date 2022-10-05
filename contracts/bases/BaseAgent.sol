@@ -14,6 +14,11 @@ abstract contract BaseAgent is IDeploy, IAgent, IProposalInfo, BaseVerify {
     /// @dev
     address private _parentDAO;
 
+    modifier onlyCallFromDAO() {
+        require(_msgSender() == _parentDAO, "MsgSender is not DAO");
+        _;
+    }
+
     /// @inheritdoc IAgent
     function initAgent(address dao_) external override {
         _parentDAO = dao_;

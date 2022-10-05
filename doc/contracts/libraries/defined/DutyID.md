@@ -14,6 +14,8 @@
 
 | Var | Type |
 | --- | --- |
+| PROPOSER | bytes32 |
+| VOTER | bytes32 |
 | SIGNER | bytes32 |
 | OPERATOR | bytes32 |
 | INCOME_AUDITOR | bytes32 |

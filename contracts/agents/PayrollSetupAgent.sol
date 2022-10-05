@@ -25,10 +25,10 @@ contract PayrollSetupAgent is BaseAgent {
         override
         returns (bool success)
     {
-        // valid, if it's proposl, etc.
-        console.log("pre exec make sure every one should vote setting ");
+        console.log("PayrollSetupAgent pre Exec ");
+        // make sure there is members.
 
-        // require()
+        success = true;
     }
 
     function _setupUCV(bytes32 proposalID, address controllerAddress) internal {

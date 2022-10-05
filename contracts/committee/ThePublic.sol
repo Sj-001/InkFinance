@@ -6,19 +6,6 @@ import "../bases/BaseCommittee.sol";
 import "hardhat/console.sol";
 
 contract ThePublic is BaseCommittee {
-    using LVoteIdentityHelper for VoteIdentity;
-
-    uint256 public minAgreeRatio;
-    uint256 public minEffectiveVotes;
-    uint256 public minEffectiveWallets;
-
-    struct InitData {
-        uint256 minAgreeRatio;
-        uint256 minEffectiveVotes;
-        uint256 minEffectiveWallets;
-        bytes baseInitData;
-    }
-
     function init(
         address dao_,
         address config_,
@@ -26,20 +13,14 @@ contract ThePublic is BaseCommittee {
     ) external override returns (bytes memory callbackEvent) {
         console.log("init in the Public:", dao_);
         _init(dao_, config_, data_);
-        // InitData memory initData = abi.decode(data_, (InitData));
-        // makeProposalLockVotes = initData.makeProposalLockVotes;
-
-        // _init(admin, addrRegistry, initData.baseInitData);
-        // _memberSetting(admin, 1);
-
         return callbackEvent;
     }
 
     /// @inheritdoc ICommittee
     function newProposal(
-        NewProposalInfo calldata proposal,
-        bool commit,
-        bytes calldata data
+        NewProposalInfo calldata,
+        bool,
+        bytes calldata
     ) external pure override returns (bytes32) {
         revert ThisCommitteeCannotMakeProposal();
     }
@@ -52,8 +33,11 @@ contract ThePublic is BaseCommittee {
         string calldata feedback,
         bytes calldata data
     ) external override {
-        // it's public everyone has duty to vote
+        console.log(
+            "public voting ------------------------------------------------------------------------------------ "
+        );
 
+        // it's public everyone has duty to vote
         _vote(identity, agree, count, true, feedback, data);
     }
 
@@ -62,45 +46,7 @@ contract ThePublic is BaseCommittee {
         public
         override
     {
-        console.log("parent dao:", getParentDAO());
-        // @todo verify duty
-        IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
-        // @todo verify if it's expired.
-        bool passOrNot = _calculateVoteResults(identity);
-        console.log("pass or not", passOrNot);
-
-        proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
-    }
-
-    function _calculateVoteResults(VoteIdentity calldata identity)
-        internal
-        returns (bool _passedOrNot)
-    {
-        // require(_getVoteExpiration(proposal) < block.timestamp, "vote not end");
-        // require(_checkProposalStatus(proposal, identity), "no right proposal");
-        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
-
-        bool agree;
-
-        if (
-            voteInfo.totalVotes >= minEffectiveVotes &&
-            voteInfo.agreeVoterNum + voteInfo.denyVoterNum >=
-            minEffectiveWallets
-        ) {
-            agree =
-                (voteInfo.agreeVotes * 1e18) / (voteInfo.totalVotes) >
-                minAgreeRatio;
-        } else {
-            agree = false;
-        }
-
-        if (agree) {
-            voteInfo.status = VoteStatus.AGREE;
-        } else {
-            voteInfo.status = VoteStatus.DENY;
-        }
-        _passedOrNot = agree;
-        // IDAO(proposal.dao).decideProposal(proposal.proposalID, agree, "");
+        _tallyVotes(identity, data);
     }
 
     /// @inheritdoc IDeploy

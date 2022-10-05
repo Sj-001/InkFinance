@@ -2,6 +2,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
         "internalType": "bytes32",
         "name": "dutyID",
         "type": "bytes32"
@@ -94,6 +99,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
       {
         "internalType": "bytes32",
         "name": "dutyID",

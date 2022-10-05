@@ -1,6 +1,16 @@
 [
   {
     "inputs": [],
+    "name": "AgentCannotBeExecute",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "GenerateContractByKeyFailure",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "SystemError",
     "type": "error"
   },
@@ -183,6 +193,40 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "address",
+        "name": "admin_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "config_",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "_init",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "callbackEvent",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
       {
         "internalType": "bytes32",
         "name": "dutyID",
@@ -742,6 +786,42 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getTallyVoteRules",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "minAgreeRatio",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minEffectiveVotes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minEffectiveWallets",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTheBoard",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "theBoardAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -767,6 +847,35 @@
         "internalType": "struct IProposalInfo.Topic",
         "name": "topic",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "topicID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "string",
+        "name": "key",
+        "type": "string"
+      }
+    ],
+    "name": "getTopicKVdata",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "typeID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
       }
     ],
     "stateMutability": "view",
@@ -921,7 +1030,7 @@
       },
       {
         "internalType": "bytes",
-        "name": "data",
+        "name": "data_",
         "type": "bytes"
       }
     ],
@@ -931,84 +1040,6 @@
         "internalType": "bytes",
         "name": "callbackEvent",
         "type": "bytes"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "bytes32[]",
-            "name": "agents",
-            "type": "bytes32[]"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "topicID",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes",
-            "name": "crossChainProtocal",
-            "type": "bytes"
-          },
-          {
-            "components": [
-              {
-                "internalType": "string",
-                "name": "key",
-                "type": "string"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "typeID",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes",
-                "name": "data",
-                "type": "bytes"
-              },
-              {
-                "internalType": "bytes",
-                "name": "desc",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct IProposalInfo.KVItem[]",
-            "name": "metadata",
-            "type": "tuple[]"
-          },
-          {
-            "internalType": "bytes[]",
-            "name": "kvData",
-            "type": "bytes[]"
-          }
-        ],
-        "internalType": "struct IProposalInfo.NewProposalInfo",
-        "name": "proposal",
-        "type": "tuple"
-      },
-      {
-        "internalType": "bool",
-        "name": "commit",
-        "type": "bool"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "newBoardProposal",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
       }
     ],
     "stateMutability": "nonpayable",
@@ -1095,6 +1126,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
         "internalType": "bytes32",
         "name": "dutyID",
         "type": "bytes32"
@@ -1148,6 +1184,11 @@
           {
             "components": [
               {
+                "internalType": "string",
+                "name": "committeeName",
+                "type": "string"
+              },
+              {
                 "internalType": "bytes32",
                 "name": "step",
                 "type": "bytes32"
@@ -1189,6 +1230,11 @@
           },
           {
             "components": [
+              {
+                "internalType": "string",
+                "name": "committeeName",
+                "type": "string"
+              },
               {
                 "internalType": "bytes32",
                 "name": "step",

@@ -96,6 +96,20 @@ function getTopicMetadata(
 
 
 
+### getTopicKVdata
+
+
+
+*Declaration:*
+```solidity
+function getTopicKVdata(
+) external returns
+(bytes32 typeID, bytes data)
+```
+
+
+
+
 ### getTopicInfo
 
 

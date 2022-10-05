@@ -502,45 +502,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "minAgreeRatio",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "minEffectiveVotes",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "minEffectiveWallets",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "components": [
@@ -593,17 +554,17 @@
           }
         ],
         "internalType": "struct IProposalInfo.NewProposalInfo",
-        "name": "proposal",
+        "name": "",
         "type": "tuple"
       },
       {
         "internalType": "bool",
-        "name": "commit",
+        "name": "",
         "type": "bool"
       },
       {
         "internalType": "bytes",
-        "name": "data",
+        "name": "",
         "type": "bytes"
       }
     ],

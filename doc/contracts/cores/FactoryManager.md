@@ -47,29 +47,15 @@ function constructor(
 
 
 
-### getPredictAddress
+### _getPredictAddress
 
 
 
 *Declaration:*
 ```solidity
-function getPredictAddress(
-) external returns
-(address _calculatedAddress)
-```
-
-
-
-
-### turnBytesToAddress
-
-
-
-*Declaration:*
-```solidity
-function turnBytesToAddress(
+function _getPredictAddress(
 ) internal returns
-(address addr)
+(address _calculatedAddress)
 ```
 
 

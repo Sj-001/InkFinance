@@ -14,15 +14,29 @@
 
 ## 4.Functions
 
-### newBoardProposal
+### init
 
 
 
 *Declaration:*
 ```solidity
-function newBoardProposal(
-) public returns
-(bytes32 proposalID)
+function init(
+) external returns
+(bytes callbackEvent)
+```
+
+
+
+
+### getTheBoard
+
+
+
+*Declaration:*
+```solidity
+function getTheBoard(
+) external returns
+(address theBoardAddress)
 ```
 
 

@@ -91,13 +91,22 @@ export {PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_
 /**
  * Ink Default DutyIDs
  */
-console.log("PROPOSER_DUTYID=", keccak256(toUtf8Bytes("PROPOSER_DUTYID")));
+console.log("PROPOSER_DUTYID=", keccak256(toUtf8Bytes("dutyID.PROPOSER")));
 const PROPOSER_DUTYID = "0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e";
 
-console.log("VOTER_DUTYID=", keccak256(toUtf8Bytes("VOTER_DUTYID")));
+console.log("VOTER_DUTYID=", keccak256(toUtf8Bytes("dutyID.VOTER")));
 const VOTER_DUTYID = "0xf579da1548edf1a4b47140c7e8df0e1e9f881c48184756b7f660e33bbc767607";
 
-console.log("TREASURY_PAYROLL_SETUP_DUTYID=", keccak256(toUtf8Bytes("TREASURY_PAYROLL_SETUP_DUTYID")));
+console.log("OPERATOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.OPERATOR")));
+const OPERATOR_DUTYID = "0x7fc29d7165e16fd9e059fc2637218a216a838baf76410a896bd9789802186cd4";
+
+console.log("SIGNER_DUTYID=", keccak256(toUtf8Bytes("dutyID.SIGNER")));
+const SIGNER_DUTYID = "0x461cab96cf4e8d93f044537dc0accaa1fa44a556bed2df44eb88ea471c2c186f";
+
+console.log("AUDITOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.AUDITOR")));
+const AUDITOR_DUTYID = "0x7f014c5b03a1a6fcf5a57ebc1689669c0315c27f4755c182dbd0f35a51a754eb";
+
+console.log("TREASURY_PAYROLL_SETUP_DUTYID=", keccak256(toUtf8Bytes("dutyID.TREASURY_PAYROLL_SETUP")));
 const TREASURY_PAYROLL_SETUP_DUTYID = "0xf579da1548edf1a4b47140c7e8df0e1e9f881c48184756b7f660e33bbc767607";
 
 export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {

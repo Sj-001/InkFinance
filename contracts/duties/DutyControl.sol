@@ -5,10 +5,10 @@ import "../interfaces/IDutyControl.sol";
 
 contract DutyControl is IDutyControl {
     /// @inheritdoc IDutyControl
-    function addDuty(bytes32 dutyID) external override {}
+    function addDuty(address account, bytes32 dutyID) external override {}
 
     /// @inheritdoc IDutyControl
-    function remmoveDuty(bytes32 dutyID) external override {}
+    function remmoveDuty(address account, bytes32 dutyID) external override {}
 
     /// @inheritdoc IDutyControl
     function addUser(address account) external override {}

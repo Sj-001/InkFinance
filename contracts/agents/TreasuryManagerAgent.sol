@@ -4,9 +4,12 @@ pragma solidity ^0.8.0;
 import "../committee/TreasuryCommittee.sol";
 import "../bases/BaseAgent.sol";
 import "../interfaces/IDAO.sol";
+import "../utils/BytesUtils.sol";
 import "hardhat/console.sol";
 
 contract TreasuryManagerAgent is BaseAgent {
+    using BytesUtils for bytes;
+
     string internal constant _MD_SIGNERS = "Signers";
     string internal constant _MD_OPERATORS = "Operators";
     string internal constant _MD_INCOME_AUDITORS = "IncomeAuditors";
@@ -14,12 +17,15 @@ contract TreasuryManagerAgent is BaseAgent {
 
     bytes32 private FLOW_ID = "";
 
+    address private _dao;
+
     function init(
         address dao_,
         address config_,
         bytes calldata data
     ) public virtual override returns (bytes memory callbackEvent) {
         super.init(config_);
+        _dao = dao_;
     }
 
     /// @inheritdoc IAgent
@@ -29,9 +35,38 @@ contract TreasuryManagerAgent is BaseAgent {
         returns (bool success)
     {
         // valid, if it's proposl, etc.
+        console.log("pre exec TreasuryManagerAgent ");
+
+        // valid related address，include operator ｜ multisigner ｜ auditor
+
+        (bytes32 typeID, bytes memory operatorBytes) = IProposalHandler(_dao)
+            .getProposalKvData(proposalID, "operators");
+
+        address[] memory operators = abi.decode(operatorBytes, (address[]));
+
         console.log(
-            "pre exec --------------------------------------------------------------------------------- "
+            "operator address ::::::::::::::::::::::::::::::::: ",
+            operators[0]
         );
+
+        (bytes32 typeID2, bytes memory signerBytes) = IProposalHandler(_dao)
+            .getProposalKvData(proposalID, "signer");
+
+        address[] memory signers = abi.decode(signerBytes, (address[]));
+        console.log(
+            "signer address ::::::::::::::::::::::::::::::::: ",
+            signers[0]
+        );
+
+        (bytes32 typeID3, bytes memory auditorBytes) = IProposalHandler(_dao)
+            .getProposalKvData(proposalID, "auditor");
+        address[] memory auditors = abi.decode(auditorBytes, (address[]));
+        console.log(
+            "auditor address ::::::::::::::::::::::::::::::::: ",
+            auditors[0]
+        );
+
+        success = true;
     }
 
     function getAgentFlow() external override returns (bytes32 flowID) {
@@ -39,18 +74,9 @@ contract TreasuryManagerAgent is BaseAgent {
     }
 
     /// @inheritdoc IAgent
-    function exec(bytes32 proposalID) external override {
-        /*
-            address to;
-            uint256 value;
-            bytes data;
-            uint256 gasLimit;
-        */
-        // TxInfo[] memory txs;
-        // txs[0] = TxInfo(address(0), 1, bytes(""), 1);
-
+    function exec(bytes32 proposalID) external override onlyCallFromDAO {
         console.log(
-            "exec --------------------------------------------------------------------------------- "
+            "TreasuryManagerAgent exec --------------------------------------------------------------------------------- "
         );
 
         //////////////////// get platform addr
@@ -61,7 +87,6 @@ contract TreasuryManagerAgent is BaseAgent {
         // );
 
         //////////////////// create treasury
-
         // TreasuryCommittee.InitData memory tInitData;
         // Committee.BaseInitData memory bInitData;
         // bInitData.name = "treasury-committee";
@@ -72,6 +97,8 @@ contract TreasuryManagerAgent is BaseAgent {
 
         // //////////////////// treasury init member
         bytes32 typeID;
+        bytes memory memberBytes;
+
         bytes memory committeeKey;
         bytes memory controllerAddressBytes;
 
@@ -82,9 +109,8 @@ contract TreasuryManagerAgent is BaseAgent {
             proposalID,
             "committeeKey"
         );
-        // console.logBytes(committeeKey);
-        bytes32 committeeKeyBytes32 = turnBytesToBytes32(committeeKey);
-        _setupFlowInfo(committeeKeyBytes32);
+
+        _setupFlowInfo(committeeKey.toBytes32());
 
         (typeID, controllerAddressBytes) = proposalHandler.getProposalMetadata(
             proposalID,
@@ -92,7 +118,7 @@ contract TreasuryManagerAgent is BaseAgent {
         );
 
         console.logBytes(controllerAddressBytes);
-        address controllerAddress = turnBytesToAddress(controllerAddressBytes);
+        // address controllerAddress = controllerAddressBytes.toAddress();
 
         // ////////// signers
         // (typeID, data) = proposalRegistry.getProposalKvData(proposalID, _MD_SIGNERS);
@@ -110,6 +136,51 @@ contract TreasuryManagerAgent is BaseAgent {
         require(typeID == TypeID.ADDRESS_SLICE, "INCOME_AUDITORS not addr[]");
         setMemberList(tAddr, data, DutyID.INCOME_AUDITOR);
         */
+
+        // console.log("OPERATOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.OPERATOR")));
+        // console.log("SIGNER_DUTYID=", keccak256(toUtf8Bytes("dutyID.SIGNER")));
+        // console.log("AUDITOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.AUDITOR")));
+
+        (typeID, memberBytes) = IProposalHandler(_dao).getProposalKvData(
+            proposalID,
+            "operators"
+        );
+        // const OPERATOR_DUTYID = "0x7fc29d7165e16fd9e059fc2637218a216a838baf76410a896bd9789802186cd4";
+        _setMemberDuties(
+            0x7fc29d7165e16fd9e059fc2637218a216a838baf76410a896bd9789802186cd4,
+            memberBytes
+        );
+        // const SIGNER_DUTYID = "0x461cab96cf4e8d93f044537dc0accaa1fa44a556bed2df44eb88ea471c2c186f";
+        (typeID, memberBytes) = IProposalHandler(_dao).getProposalKvData(
+            proposalID,
+            "signer"
+        );
+        _setMemberDuties(
+            0x461cab96cf4e8d93f044537dc0accaa1fa44a556bed2df44eb88ea471c2c186f,
+            memberBytes
+        );
+        // address[] memory signers = abi.decode(signerBytes, (address[]));
+        // console.log("signer address ::::::::::::::::::::::::::::::::: ", signers[0]);
+        // const AUDITOR_DUTYID = "0x7f014c5b03a1a6fcf5a57ebc1689669c0315c27f4755c182dbd0f35a51a754eb";
+        (typeID, memberBytes) = IProposalHandler(_dao).getProposalKvData(
+            proposalID,
+            "auditor"
+        );
+        _setMemberDuties(
+            0x7f014c5b03a1a6fcf5a57ebc1689669c0315c27f4755c182dbd0f35a51a754eb,
+            memberBytes
+        );
+        // address[] memory auditors = abi.decode(auditorBytes, (address[]));
+        // console.log("auditor address ::::::::::::::::::::::::::::::::: ", auditors[0]);
+    }
+
+    function _setMemberDuties(bytes32 dutyID, bytes memory memberBytes)
+        internal
+    {
+        address[] memory members = abi.decode(memberBytes, (address[]));
+        for (uint256 i = 0; i < members.length; i++) {
+            IDAO(_dao).addDuty(members[i], dutyID);
+        }
     }
 
     function _setupFlowInfo(bytes32 committeeKey) internal {
@@ -132,6 +203,7 @@ contract TreasuryManagerAgent is BaseAgent {
         returns (IProposalHandler.FlowInfo memory flowInfo)
     {
         flowInfo.flowID = keccak256("financial-payroll-setup");
+
         console.log("financial-payroll-setup:");
         console.logBytes32(flowInfo.flowID);
         // Flow[0] generate payroll, Operator could create that kind of proposal.
@@ -190,29 +262,5 @@ contract TreasuryManagerAgent is BaseAgent {
         returns (bool)
     {
         return interfaceId == type(IAgent).interfaceId;
-    }
-
-    function turnBytesToBytes32(bytes memory originBytes)
-        internal
-        pure
-        returns (bytes32)
-    {
-        bytes32 targetBytes32;
-
-        assembly {
-            targetBytes32 := mload(add(originBytes, 32))
-        }
-
-        return targetBytes32;
-    }
-
-    function turnBytesToAddress(bytes memory byteAddress)
-        internal
-        pure
-        returns (address addr)
-    {
-        assembly {
-            addr := mload(add(byteAddress, 32))
-        }
     }
 }

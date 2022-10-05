@@ -3,18 +3,20 @@ pragma solidity ^0.8.0;
 
 import "../bases/BaseCommittee.sol";
 import "../interfaces/IProposalHandler.sol";
+import "../libraries/defined/DutyID.sol";
 
 import "hardhat/console.sol";
 
 /// @notice the board committee has the highest priority of the DAO
 contract TheBoard is BaseCommittee {
     /// @notice when create proposal, how many staked tokens need to be locked.
-    uint256 public minPledgeRequired;
+    uint256 private _minPledgeRequired;
 
-    // struct InitData {
-    //     uint256 makeProposalLockVotes;
-    //     bytes baseInitData;
-    // }
+    struct InitData {
+        uint256 minPledgeRequired;
+        bytes tallyVoteRules;
+        bytes baseInitData;
+    }
 
     function init(
         address dao_,
@@ -27,7 +29,6 @@ contract TheBoard is BaseCommittee {
         // makeProposalLockVotes = initData.makeProposalLockVotes;
         // _init(admin, addrRegistry, initData.baseInitData);
         // _memberSetting(admin, 1);
-
         return callbackEvent;
     }
 
@@ -56,12 +57,7 @@ contract TheBoard is BaseCommittee {
         bytes calldata data
     ) external override {
         // check duty
-        if (
-            !_hasDutyToOperate(
-                0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e,
-                _msgSender()
-            )
-        ) {
+        if (!_hasDutyToOperate(DutyID.VOTER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
 
@@ -69,8 +65,11 @@ contract TheBoard is BaseCommittee {
     }
 
     /// @inheritdoc ICommittee
-    function tallyVotes(VoteIdentity calldata, bytes memory) external override {
-        revert ThisCommitteeDoesNotSupportThisAction();
+    function tallyVotes(VoteIdentity calldata identity, bytes memory data)
+        external
+        override
+    {
+        _tallyVotes(identity, data);
     }
 
     /// @inheritdoc IDeploy

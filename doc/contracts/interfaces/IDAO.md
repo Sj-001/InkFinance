@@ -70,6 +70,20 @@ function getFlowSteps(
 
 
 
+### getTallyVoteRules
+
+
+
+*Declaration:*
+```solidity
+function getTallyVoteRules(
+) external returns
+(uint256 minAgreeRatio, uint256 minEffectiveVotes, uint256 minEffectiveWallets)
+```
+
+
+
+
 ### setupUCV
 
 > setup a new UCV

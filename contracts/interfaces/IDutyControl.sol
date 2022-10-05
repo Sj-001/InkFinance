@@ -7,11 +7,11 @@ interface IDutyControl {
     /// Duty Related
     /// @dev add user-defined DutyID, !!! Agent call only
     /// @param dutyID user-defined dutyID, formed by keccak256
-    function addDuty(bytes32 dutyID) external;
+    function addDuty(address account, bytes32 dutyID) external;
 
     /// @dev remove user-defined DutyID, !!! Agent call only
     /// @param dutyID user-defined dutyID, formed by keccak256
-    function remmoveDuty(bytes32 dutyID) external;
+    function remmoveDuty(address account, bytes32 dutyID) external;
 
     /// @dev add user into the DAO, !!! Agent call only
     /// @param account target user

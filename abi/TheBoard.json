@@ -1,11 +1,6 @@
 [
   {
     "inputs": [],
-    "name": "ThisCommitteeDoesNotSupportThisAction",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "YouDoNotHaveDutyToOperate",
     "type": "error"
   },
@@ -507,19 +502,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "minPledgeRequired",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "components": [
@@ -632,12 +614,12 @@
           }
         ],
         "internalType": "struct IVoteHandler.VoteIdentity",
-        "name": "",
+        "name": "identity",
         "type": "tuple"
       },
       {
         "internalType": "bytes",
-        "name": "",
+        "name": "data",
         "type": "bytes"
       }
     ],

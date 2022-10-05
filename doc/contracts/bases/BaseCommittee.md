@@ -15,7 +15,6 @@
 | Var | Type |
 | --- | --- |
 | _parentDAO | address |
-| committeeDuties | struct EnumerableSet.Bytes32Set |
 | _voteInfos | mapping(bytes32 => struct IVoteHandler.VoteInfo) |
 | _proposalVoteDetail | mapping(bytes32 => mapping(bool => mapping(address => struct BaseCommittee.PersonVoteDetail))) |
 
@@ -186,6 +185,33 @@ uint256 pageSize
 | Arg | Description |
 | --- | --- |
 |`voteDetails` | vote informations
+
+### _calculateVoteResults
+
+
+
+*Declaration:*
+```solidity
+function _calculateVoteResults(
+) internal returns
+(bool _passedOrNot)
+```
+
+
+
+
+### _tallyVotes
+
+
+
+*Declaration:*
+```solidity
+function _tallyVotes(
+) internal
+```
+
+
+
 
 ### _getProposalAccountDetail
 

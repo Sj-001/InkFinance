@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
+error GenerateContractByKeyFailure();
+
 interface IFactoryManager is IERC165 {
     /// @dev when new contract was deployed, the event will be emit.
     /// @param typeID each kind of contract have different contractID
@@ -29,9 +31,4 @@ interface IFactoryManager is IERC165 {
         bytes32 factoryKey,
         bytes calldata initData
     ) external returns (address contractAddr);
-
-    function getPredictAddress(bytes32 contractID)
-        external
-        view
-        returns (address _calculatedAddress);
 }

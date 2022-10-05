@@ -34,8 +34,16 @@ contract TreasuryCommittee is BaseCommittee {
         bytes calldata data
     ) external override returns (bytes32 proposalID) {
         // make sure it's operator
+        // const OPERATOR_DUTYID = "0x7fc29d7165e16fd9e059fc2637218a216a838baf76410a896bd9789802186cd4";
+        if (
+            !_hasDutyToOperate(
+                0x7fc29d7165e16fd9e059fc2637218a216a838baf76410a896bd9789802186cd4,
+                _msgSender()
+            )
+        ) {
+            revert YouDoNotHaveDutyToOperate();
+        }
 
-        console.log("parent dao:", getParentDAO());
         // verify duty
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
         proposalID = proposalHandler.newProposal(proposal, commit, data);
@@ -94,7 +102,17 @@ contract TreasuryCommittee is BaseCommittee {
         string calldata feedback,
         bytes calldata data
     ) external override {
-        // check duty
+        // const SIGNER_DUTYID = "0x461cab96cf4e8d93f044537dc0accaa1fa44a556bed2df44eb88ea471c2c186f";
+
+        if (
+            !_hasDutyToOperate(
+                0x461cab96cf4e8d93f044537dc0accaa1fa44a556bed2df44eb88ea471c2c186f,
+                _msgSender()
+            )
+        ) {
+            revert YouDoNotHaveDutyToOperate();
+        }
+
         _vote(identity, agree, count, true, feedback, data);
     }
 

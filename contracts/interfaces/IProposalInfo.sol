@@ -77,6 +77,7 @@ interface IProposalInfo {
         bytes32 agents;
     }
 
+    //PREPARING,
     enum ProposalStatus {
         PENDING,
         AGREE,

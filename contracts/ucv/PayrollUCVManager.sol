@@ -18,7 +18,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         address coin
     );
 
-    struct ScheduleMember {
+    struct PayrollScheduleMember {
         address coin;
         uint256 oncePay;
         uint256 active;
@@ -26,12 +26,13 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         uint256 maxTimes;
     }
 
-    struct Schedule {
+    struct PayrollSchedule {
         // member addr -> member.
-        mapping(address => ScheduleMember) members;
+        mapping(address => PayrollScheduleMember) members;
         uint256 duration;
-        uint256 times;
+        uint256 availableTimes;
         uint256 startTime;
+        uint256 approvedTimes;
     }
 
     // address private _dao;
@@ -40,7 +41,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
     // payroll item
     // PropsalID(payroll setup Proposal)=>ScheduleInfo
-    mapping(bytes32 => Schedule) private _schedules;
+    mapping(bytes32 => PayrollSchedule) private _schedules;
 
     // PropsalID(payroll setup Proposal)=>Removed member address
     mapping(bytes32 => EnumerableSet.AddressSet) private _removedMembers;
@@ -63,17 +64,18 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         console.log(
             "set up payroll ------------------------------------------------------------------------------------------------------------------------------------------------------------------ "
         );
-        Schedule storage schedule = _schedules[proposalID];
+        PayrollSchedule storage schedule = _schedules[proposalID];
     }
 
     // agent only
 
     /// @inheritdoc IPayrollManager
-    function approvePayrollBatch(bytes32 proposalID, uint256 paymentBatch)
+    function approvePayrollBatch(bytes32 proposalID, uint256 approvedTimes)
         external
         override
     {
-        _payrollBatchVoteInfo[proposalID][paymentBatch] = 1;
+        PayrollSchedule storage schedule = _schedules[proposalID];
+        schedule.approvedTimes = schedule.approvedTimes + approvedTimes;
     }
 
     /// @inheritdoc IPayrollManager

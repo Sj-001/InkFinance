@@ -23,14 +23,14 @@ Duty Related
 *Declaration:*
 ```solidity
 function addDuty(
-bytes32 dutyID
+address dutyID
 ) external
 ```
 
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`dutyID` | bytes32 | user-defined dutyID, formed by keccak256
+|`dutyID` | address | user-defined dutyID, formed by keccak256
 
 
 ### remmoveDuty
@@ -41,14 +41,14 @@ bytes32 dutyID
 *Declaration:*
 ```solidity
 function remmoveDuty(
-bytes32 dutyID
+address dutyID
 ) external
 ```
 
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`dutyID` | bytes32 | user-defined dutyID, formed by keccak256
+|`dutyID` | address | user-defined dutyID, formed by keccak256
 
 
 ### addUser

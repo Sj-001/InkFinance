@@ -13,6 +13,7 @@ error DAO_error1();
 error CommitteeIsNotExist();
 error SystemError();
 error NotAllowedToOperate();
+error AgentCannotBeExecute();
 
 interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
     struct CallbackData {
@@ -50,6 +51,15 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
         external
         view
         returns (CommitteeInfo[] memory infos);
+
+    function getTallyVoteRules()
+        external
+        view
+        returns (
+            uint256 minAgreeRatio,
+            uint256 minEffectiveVotes,
+            uint256 minEffectiveWallets
+        );
 
     /// @dev setup a new UCV
     /// @param ucvContractKey the contract implemention mapping key in the ConfigManager

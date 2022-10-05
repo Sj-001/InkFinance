@@ -14,8 +14,6 @@
 
 | Var | Type |
 | --- | --- |
-| PROPOSER_DUTYID | bytes32 |
-| VOTER_DUTYID | bytes32 |
 | MAX_STEP_NUM | uint256 |
 | _SENTINEL_ID | bytes32 |
 | DEFAULT_FLOW_ID | bytes32 |
@@ -150,13 +148,27 @@ function turnBytesToAddress(
 
 
 
-### init
+### getTallyVoteRules
 
 
 
 *Declaration:*
 ```solidity
-function init(
+function getTallyVoteRules(
+) external returns
+(uint256 minAgreeRatio, uint256 minEffectiveVotes, uint256 minEffectiveWallets)
+```
+
+
+
+
+### _init
+
+
+
+*Declaration:*
+```solidity
+function _init(
 ) public returns
 (bytes callbackEvent)
 ```
@@ -173,14 +185,14 @@ Duty Related
 *Declaration:*
 ```solidity
 function addDuty(
-bytes32 dutyID
+address dutyID
 ) external
 ```
 
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`dutyID` | bytes32 | user-defined dutyID, formed by keccak256
+|`dutyID` | address | user-defined dutyID, formed by keccak256
 
 
 ### remmoveDuty
@@ -191,14 +203,14 @@ bytes32 dutyID
 *Declaration:*
 ```solidity
 function remmoveDuty(
-bytes32 dutyID
+address dutyID
 ) external
 ```
 
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`dutyID` | bytes32 | user-defined dutyID, formed by keccak256
+|`dutyID` | address | user-defined dutyID, formed by keccak256
 
 
 ### addUser
@@ -336,6 +348,20 @@ function getTopicKeyProposal(
 
 
 
+### _getTopicKeyProposal
+
+
+
+*Declaration:*
+```solidity
+function _getTopicKeyProposal(
+) internal returns
+(bytes32 proposalID)
+```
+
+
+
+
 ### getTopicMetadata
 
 
@@ -392,6 +418,20 @@ function getProposalMetadata(
 
 
 
+### getTopicKVdata
+
+
+
+*Declaration:*
+```solidity
+function getTopicKVdata(
+) public returns
+(bytes32 typeID, bytes data)
+```
+
+
+
+
 ### getProposalKvData
 
 
@@ -414,6 +454,20 @@ function getProposalKvData(
 ```solidity
 function getProposalKvDataKeys(
 ) external returns
+(string[] keys)
+```
+
+
+
+
+### _getProposalKvDataKeys
+
+
+
+*Declaration:*
+```solidity
+function _getProposalKvDataKeys(
+) internal returns
 (string[] keys)
 ```
 
