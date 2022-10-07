@@ -717,24 +717,65 @@ function setupFlowInfo(
 
 
 
-### setupUCV
+### setupPayrollUCV
 
-> setup a new UCV
+> setup a new payroll UCV
 
 
 *Declaration:*
 ```solidity
-function setupUCV(
-bytes32 ucvContractKey,
-bytes initData
+function setupPayrollUCV(
+bytes32 proposalID,
+address controller
 ) external
 ```
 
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`ucvContractKey` | bytes32 | the contract implemention mapping key in the ConfigManager
-|`initData` | bytes | the initial paramters when UCV required, such as controller address, manager address, etc.
+|`proposalID` | bytes32 | the ucv based on which proposal
+|`controller` | address | the contract controller address
+
+
+### payrollPaymentApprove
+
+> only agent
+
+*Declaration:*
+```solidity
+function payrollPaymentApprove(
+) external
+```
+
+
+
+
+### getUCVs
+
+
+
+*Declaration:*
+```solidity
+function getUCVs(
+) external returns
+(address[] ucvs)
+```
+
+
+
+
+### getUCVManagers
+
+
+
+*Declaration:*
+```solidity
+function getUCVManagers(
+) external returns
+(address[] managers)
+```
+
+
 
 
 ### _setFlowStep

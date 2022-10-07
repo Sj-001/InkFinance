@@ -21,12 +21,11 @@ interface IUCV is IDeploy {
 
     event UCVManagerDisabled(bool disabled);
 
-    function transfer(
+    function transferTo(
         address to,
-        uint256 value,
         address token,
-        bytes memory data,
-        uint256 txGas
+        uint256 value,
+        bytes memory data
     ) external returns (bool success);
 
     function enableUCVManager(bool enable_) external;

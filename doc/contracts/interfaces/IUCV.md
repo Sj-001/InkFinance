@@ -14,13 +14,13 @@
 
 ## 4.Functions
 
-### transfer
+### transferTo
 
 
 
 *Declaration:*
 ```solidity
-function transfer(
+function transferTo(
 ) external returns
 (bool success)
 ```

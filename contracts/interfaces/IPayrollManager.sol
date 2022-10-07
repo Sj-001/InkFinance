@@ -63,15 +63,25 @@ interface IPayrollManager {
 
     /// @notice create a new payroll based on a proposal
     /// @dev only agent could call this
-    /// @param proposalID the payroll manager would load data from that proposal and create the payroll instance
-    function setupPayroll(bytes32 proposalID) external;
+    /// @param topicID the payroll manager would load data from that proposal(topic) and create the payroll instance
+    /// @param ucv the fund from which ucv
+    function setupPayroll(bytes32 topicID, address ucv) external;
 
-    /// @dev after multi-signer voted, batch of payment  under a payroll should be paid
-    function approvePayrollBatch(bytes32 proposalID, uint256 paymentBatch)
-        external;
+    /// @dev after multi-signer voted, how many batchs of payment under a payroll should be paid
+    function approvePayrollBatch(bytes32 proposalID, uint256 batches) external;
 
-    /// @dev claim payroll from the UCV contract
-    function claimPayroll(bytes32 proposalID, uint256 paymentBatch) external;
+    /// @dev claim payroll from the UCV contract and everytime claimed amount is approved batch(not claimed before) multiply once time payment
+    function claimPayroll(bytes32 proposalID) external;
+
+    /// @dev calculate how many time and how many token the user can claim under a proposal
+    function getClaimableAmount(bytes32 proposalID, address claimer)
+        external
+        view
+        returns (
+            uint256 leftTimes,
+            uint256 leftAmount,
+            address token
+        );
 
     /// @dev return payroll batches
     function getPayrollBatch(bytes32 proposalID, uint256 limit)

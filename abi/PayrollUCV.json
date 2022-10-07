@@ -195,27 +195,22 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      },
-      {
         "internalType": "address",
         "name": "token",
         "type": "address"
       },
       {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      },
+      {
         "internalType": "bytes",
         "name": "data",
         "type": "bytes"
-      },
-      {
-        "internalType": "uint256",
-        "name": "txGas",
-        "type": "uint256"
       }
     ],
-    "name": "transfer",
+    "name": "transferTo",
     "outputs": [
       {
         "internalType": "bool",

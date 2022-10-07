@@ -7,7 +7,7 @@ import "../interfaces/IUCV.sol";
 
 error OperateIsNowAllowed();
 
-contract InkUCV is IUCV, BaseVerify {
+contract PayrollUCV is IUCV, BaseVerify {
     address private _ucvController;
     address private _ucvManager;
     bool private _ucvManagerEnable;
@@ -33,35 +33,12 @@ contract InkUCV is IUCV, BaseVerify {
     ) external override returns (bytes memory callbackEvent) {}
 
     /// @inheritdoc IUCV
-    function transfer(
+    function transferTo(
         address to,
-        uint256 value,
         address token,
-        bytes memory data,
-        uint256 txGas
+        uint256 value,
+        bytes memory data
     ) external override enableToExecute returns (bool success) {
-        if (txGas == 0) {
-            // 5000 is not exact, in dev, is random.
-            // TODO: fix 5000
-            require(gasleft() > 5000, "gas not enough");
-            txGas = gasleft() - 5000;
-        }
-
-        emit UCVTransfer(to, value, data, txGas);
-
-        // solhint-disable-next-line no-inline-assembly
-        assembly {
-            success := call(
-                txGas,
-                to,
-                value,
-                add(data, 0x20),
-                mload(data),
-                0,
-                0
-            )
-        }
-
         return success;
     }
 

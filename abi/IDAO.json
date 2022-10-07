@@ -889,6 +889,29 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "approveTimes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "managerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "payrollPaymentApprove",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "account",
         "type": "address"
@@ -986,16 +1009,16 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "ucvContractKey",
+        "name": "proposalID",
         "type": "bytes32"
       },
       {
-        "internalType": "bytes",
-        "name": "initData",
-        "type": "bytes"
+        "internalType": "address",
+        "name": "controller",
+        "type": "address"
       }
     ],
-    "name": "setupUCV",
+    "name": "setupPayrollUCV",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

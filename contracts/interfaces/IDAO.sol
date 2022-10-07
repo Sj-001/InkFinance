@@ -61,10 +61,17 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
             uint256 minEffectiveWallets
         );
 
-    /// @dev setup a new UCV
-    /// @param ucvContractKey the contract implemention mapping key in the ConfigManager
-    /// @param initData the initial paramters when UCV required, such as controller address, manager address, etc.
-    function setupUCV(bytes32 ucvContractKey, bytes memory initData) external;
+    /// @dev setup a new payroll UCV
+    /// @param proposalID the ucv based on which proposal
+    /// @param controller the contract controller address
+    function setupPayrollUCV(bytes32 proposalID, address controller) external;
+
+    /// @notice when payroll pay propsal passed, agent call will call this function to approve the paymenta
+    function payrollPaymentApprove(
+        bytes32 proposalID,
+        uint256 approveTimes,
+        address managerAddress
+    ) external;
 
     function deployByKey(
         bytes32 typeID,

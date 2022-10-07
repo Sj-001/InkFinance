@@ -7,6 +7,7 @@ import "../interfaces/IDAO.sol";
 import "../interfaces/IDeploy.sol";
 import "../interfaces/IFactoryManager.sol";
 import "../interfaces/IAgent.sol";
+import "../interfaces/IPayrollManager.sol";
 
 import "./BaseVerify.sol";
 import "../utils/BytesUtils.sol";
@@ -125,6 +126,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     /// @dev agentsKey=>agentDeployedAddress;
     mapping(bytes32 => address) private _agents;
+
+    EnumerableSet.AddressSet private _ucvSet;
+
+    EnumerableSet.AddressSet private _ucvManager;
 
     // test functins
     function getProposalIDByIndex(uint256 index)
@@ -942,20 +947,60 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     /// @inheritdoc IDAO
-    function setupUCV(bytes32 contractKey, bytes memory initData)
+    function setupPayrollUCV(bytes32 topicID, address controller)
         external
         override
     {
         console.log("setup ucv ---------------- ");
+        bytes memory initData = abi.encode(controller);
 
+        // generate ucv
         address deployedUCV = _deployByFactoryKey(
             0x7f16b5baf10ee29b9e7468e87c742159d5575c73984a100d194e812750cad820,
-            contractKey,
+            0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1,
             initData
         );
 
+        address managerAddress = _deployByFactoryKey(
+            0x9dbd9f87f8d58402d143fb49ec60ec5b8c4fa567e418b41a6249fd125a267101,
+            0x8856ac0b66da455dc361f170f91264627f70b6333b9103ff6104df3ce47aa4ec,
+            initData
+        );
+
+        if (deployedUCV != address(0)) {
+            _ucvSet.add(deployedUCV);
+            // stored ucv manager
+            _ucvManager.add(managerAddress);
+        }
+
+        IPayrollManager(managerAddress).setupPayroll(topicID, deployedUCV);
+
         // require deploy succeed
         console.log("ucv:", deployedUCV);
+    }
+
+    /// @dev only agent
+    function payrollPaymentApprove(
+        bytes32 proposalID,
+        uint256 approveTimes,
+        address managerAddress
+    ) external override {
+        IPayrollManager(managerAddress).approvePayrollBatch(
+            proposalID,
+            approveTimes
+        );
+    }
+
+    function getUCVs() external view returns (address[] memory ucvs) {
+        ucvs = _ucvSet.values();
+    }
+
+    function getUCVManagers()
+        external
+        view
+        returns (address[] memory managers)
+    {
+        managers = _ucvManager.values();
     }
 
     function _setFlowStep(FlowInfo memory flow) internal {
@@ -1105,4 +1150,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         );
         _;
     }
+
+    // modifier AgentOnly() {
+    //     return
+    // }
 }

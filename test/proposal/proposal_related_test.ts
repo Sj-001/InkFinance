@@ -71,6 +71,7 @@ describe("proposal related test", function () {
         
         // proposal category = payroll?
         await makeSetupPayrollProposal(committeeAddress, erc20Address);
+
         var payrollSetupProposalID = await masterDAO.getProposalIDByIndex(1);
         console.log("payroll setup proposal", payrollSetupProposalID)
 
@@ -78,23 +79,30 @@ describe("proposal related test", function () {
         var payrollTopicID = await masterDAO.getProposalTopic(payrollSetupProposalID);
         console.log("payroll proposal topic:: ", payrollTopicID);
 
+
+        var payManager = await masterDAO.getUCVManagers();
+        console.log("ucv managers: ", await payManager);
+
+        var payrollUCVManagerFactory = await ethers.getContractFactory("PayrollUCVManager");
+        var payrollUCVManager = await payrollUCVManagerFactory.attach(payManager[0]);
+
+
+        await makePayrollPayProposal(payrollTopicID, committeeAddress, payManager[0]);
+
+
+        var payrollProposalID = await masterDAO.getProposalIDByIndex(2);
+        console.log("payroll proposal id: ", payrollProposalID);
+
         
-        await makePayrollPayProposal(payrollTopicID, committeeAddress);
+        var payrollProposalSummary = await masterDAO.getProposalSummary(payrollProposalID);
+        console.log("payroll proposal status:: ", payrollProposalSummary.status);
+
+    
+        console.log("claim information:", await payrollUCVManager.getClaimableAmount(payrollTopicID, "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"))
 
 
-        // var payrollProposalID = await masterDAO.getProposalIDByIndex(2);
-        // console.log("payroll proposal id: ", payrollProposalID);
-
+        //await makePayrollPayProposal(payrollTopicID, committeeAddress);
         
-        // var payrollProposalSummary = await masterDAO.getProposalSummary(payrollProposalID);
-        // console.log("payroll proposal status:: ", payrollProposalSummary.status);
-
-
-        /*
-        var payrollVoteSteps = await masterDAO.getFlowSteps("0x4dd2d7e10785fafbaaf1f3990a197abc75ee660a97f6667083816f872ef1f877");
-
-        await makePayrollPayProposal(payrollTopicID, committeeAddress);
-        */
 
     });
 
@@ -114,11 +122,11 @@ describe("proposal related test", function () {
 
     }
 
-    async function makePayrollPayProposal (topicID:string, committeeAddress:string ) {
+    async function makePayrollPayProposal (topicID:string, committeeAddress:string, managerAddress:string ) {
         // treasury committee has been setup.
         // now prepare to setup payroll
 
-        var payrollPayProposal = buildPayrollPayProposal(topicID);
+        var payrollPayProposal = buildPayrollPayProposal(topicID, managerAddress);
 
         var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
 
@@ -126,6 +134,9 @@ describe("proposal related test", function () {
         
         // make proposal and require voteing
         await treasuryCommittee.newProposal(payrollPayProposal, true, toUtf8Bytes(""));
+
+
+
         
     }
 

@@ -4,9 +4,12 @@ pragma solidity ^0.8.0;
 import "../interfaces/IDeploy.sol";
 
 abstract contract BaseUCVManager is IDeploy {
-    address private _dao;
+    address internal _dao;
 
-    address private _ucv;
+    modifier daoOnly() {
+        require(msg.sender == _dao, "DAO only");
+        _;
+    }
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)

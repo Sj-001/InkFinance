@@ -5,10 +5,13 @@ import "../committee/TreasuryCommittee.sol";
 import "../bases/BaseAgent.sol";
 import "../interfaces/IDAO.sol";
 import "../interfaces/IPayrollManager.sol";
+import "../utils/BytesUtils.sol";
 import "hardhat/console.sol";
 
 /// @title set up a payroll schedule
 contract PayrollSetupAgent is BaseAgent {
+    using BytesUtils for bytes;
+
     bytes32 public FLOW_ID = keccak256("financial-payroll-setup");
 
     function init(
@@ -31,31 +34,6 @@ contract PayrollSetupAgent is BaseAgent {
         success = true;
     }
 
-    function _setupUCV(bytes32 proposalID, address controllerAddress) internal {
-        // UCVManagerTypeID = "0x9dbd9f87f8d58402d143fb49ec60ec5b8c4fa567e418b41a6249fd125a267101";
-        // payrollUCVManager= 0x8856ac0b66da455dc361f170f91264627f70b6333b9103ff6104df3ce47aa4ec
-        console.log("start payroll ucv manager create");
-
-        address managerAddress = IDAO(getAgentDAO()).deployByKey(
-            0x9dbd9f87f8d58402d143fb49ec60ec5b8c4fa567e418b41a6249fd125a267101,
-            0x8856ac0b66da455dc361f170f91264627f70b6333b9103ff6104df3ce47aa4ec,
-            ""
-        );
-
-        // require managerAddress != 0
-        console.log("payroll ucv manager address:", managerAddress);
-
-        // PayrollSetupAgent Key is 0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1
-        bytes memory initData = abi.encode(controllerAddress, managerAddress);
-
-        IPayrollManager(managerAddress).setupPayroll(proposalID);
-
-        IDAO(getAgentDAO()).setupUCV(
-            0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1,
-            initData
-        );
-    }
-
     /// @inheritdoc IAgent
     function exec(bytes32 proposalID) external override {
         console.log("execute pay manager here");
@@ -66,8 +44,32 @@ contract PayrollSetupAgent is BaseAgent {
 
         console.log("member bytes:");
         console.logBytes(memberBytes);
+        console.logBytes32(proposalID);
 
-        _setupUCV(proposalID, msg.sender);
+        bytes memory bytesData;
+        (typeID, bytesData) = proposalHandler.getProposalKvData(
+            proposalID,
+            "startTime"
+        );
+
+        uint256 startTime = abi.decode(bytesData, (uint256));
+        console.log("start time: ", startTime);
+
+        bytes32 topicID = proposalHandler.getProposalTopic(proposalID);
+        console.log("topicID111");
+        console.logBytes32(topicID);
+
+        _setupPayrollUCV(topicID, msg.sender);
+    }
+
+    function _setupPayrollUCV(bytes32 topicID, address controllerAddress)
+        internal
+    {
+        // UCVManagerTypeID = "0x9dbd9f87f8d58402d143fb49ec60ec5b8c4fa567e418b41a6249fd125a267101";
+        // payrollUCVManager= 0x8856ac0b66da455dc361f170f91264627f70b6333b9103ff6104df3ce47aa4ec
+        console.log("start payroll ucv manager create");
+
+        IDAO(getAgentDAO()).setupPayrollUCV(topicID, controllerAddress);
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}

@@ -19,7 +19,7 @@ import * as PayrollExecuteAgentABI from "../../artifacts/contracts/agents/Payrol
 import * as PayrollSetupAgentABI from "../../artifacts/contracts/agents/PayrollSetupAgent.sol/PayrollSetupAgent.json";
 import * as PayrollUCVManagerABI from "../../artifacts/contracts/ucv/PayrollUCVManager.sol/PayrollUCVManager.json";
 
-import * as InkUCVABI from "../../artifacts/contracts/ucv/InkUCV.sol/InkUCV.json";
+import * as PayrollUCVABI from "../../artifacts/contracts/ucv/PayrollUCV.sol/PayrollUCV.json";
 
 
 const {loadFixture, deployContract} = waffle;
@@ -74,8 +74,8 @@ console.log("THE_TREASURY_COMMITTEE_KEY=", THE_TREASURY_COMMITTEE_KEY);
 const THE_TREASURY_MANAGER_AGENT_KEY = "0x01daab39d6af5b8f8de2237107ebffcbfba7ecbcac254fd429eb4543f0a2bf4a";
 console.log("THE_TREASURY_MANAGER_AGENT_KEY=", THE_TREASURY_MANAGER_AGENT_KEY);
 
-const INK_UCV_KEY = "0x01daab39d6af5b8f8de2237107ebffcbfba7ecbcac254fd429eb4543f0a2bf4a";
-console.log("INK_UCV_KEY=", THE_TREASURY_MANAGER_AGENT_KEY);
+const PAYROLL_UCV_KEY = "0x1884db1d28ee07f8a363b415d044ce8a3e387ece0b603ebd0df3c4cc133ef70a";
+console.log("PAYROLL_UCV_KEY=", PAYROLL_UCV_KEY);
 
 const PAYROLL_SETUP_AGENT_KEY = "0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1";
 console.log("PAYROLL_SETUP_AGENT_KEY=", PAYROLL_SETUP_AGENT_KEY);
@@ -86,7 +86,7 @@ console.log("PAYROLL_EXECUTE_AGENT_KEY=", PAYROLL_EXECUTE_AGENT_KEY);
 const PAYROLL_UCV_MANAGER_KEY = "0x8856ac0b66da455dc361f170f91264627f70b6333b9103ff6104df3ce47aa4ec";
 console.log("PAYROLL_UCV_MANAGER_KEY=", PAYROLL_UCV_MANAGER_KEY);
 
-export {PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
+export {PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
 
 /**
  * Ink Default DutyIDs
@@ -158,9 +158,9 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     await payrollUCVManagerImpl.deployed();
     console.log("Payroll UCV Manager Address=", payrollUCVManagerImpl.address);
 
-    const inkUCVImpl = await deployContract(signers[0], InkUCVABI, []);
-    await inkUCVImpl.deployed();
-    console.log("InkUCV Address=", inkUCVImpl.address);
+    const payrollUCVImpl = await deployContract(signers[0], PayrollUCVABI, []);
+    await payrollUCVImpl.deployed();
+    console.log("PayrollUCV Address=", payrollUCVImpl.address);
 
 
 
@@ -184,8 +184,8 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     var treasuryManagerAgentKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "TreasuryManagerAgent");
     console.log("treasuryManagerAgentKey=", treasuryManagerAgentKey);
 
-    var inkUCVKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "InkUCV");
-    console.log("inkUCVKey=", treasuryManagerAgentKey);
+    var payrollUCVKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "PayrollUCV");
+    console.log("payrollUCVKey=", payrollUCVKey);
 
     var payrollSetupAgent = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "PayrollSetupAgent");
     console.log("payrollSetupAgent=", payrollSetupAgent);
@@ -204,7 +204,7 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     keyValues[3] = {"keyPrefix":"ADMIN", "keyName":"TreasuryCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theTreasuryCommitteeImpl.address)}
     keyValues[4] = {"keyPrefix":"ADMIN", "keyName":"MasterDAO", "typeID":keccak256(toUtf8Bytes("address")), "data": (await masterDAOImpl.address)}
     keyValues[5] = {"keyPrefix":"ADMIN", "keyName":"TreasuryManagerAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theTreasuryManagerAgentImpl.address)}
-    keyValues[6] = {"keyPrefix":"ADMIN", "keyName":"InkUCV", "typeID":keccak256(toUtf8Bytes("address")), "data": (await inkUCVImpl.address)}
+    keyValues[6] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCV", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVImpl.address)}
     keyValues[7] = {"keyPrefix":"ADMIN", "keyName":"PayrollSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollSetupAgentImpl.address)}
     keyValues[8] = {"keyPrefix":"ADMIN", "keyName":"PayrollExecuteAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollExecuteAgentImpl.address)}
     keyValues[9] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVManagerImpl.address)}

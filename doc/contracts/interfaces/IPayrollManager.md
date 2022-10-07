@@ -23,19 +23,21 @@ create a new payroll based on a proposal
 *Declaration:*
 ```solidity
 function setupPayroll(
-bytes32 proposalID
+bytes32 topicID,
+address ucv
 ) external
 ```
 
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`proposalID` | bytes32 | the payroll manager would load data from that proposal and create the payroll instance
+|`topicID` | bytes32 | the payroll manager would load data from that proposal(topic) and create the payroll instance
+|`ucv` | address | the fund from which ucv
 
 
 ### approvePayrollBatch
 
-> after multi-signer voted, batch of payment  under a payroll should be paid
+> after multi-signer voted, how many batchs of payment under a payroll should be paid
 
 *Declaration:*
 ```solidity
@@ -48,12 +50,26 @@ function approvePayrollBatch(
 
 ### claimPayroll
 
-> claim payroll from the UCV contract
+> claim payroll from the UCV contract and everytime claimed amount is approved batch(not claimed before) multiply once time payment
 
 *Declaration:*
 ```solidity
 function claimPayroll(
 ) external
+```
+
+
+
+
+### getClaimableAmount
+
+> calculate how many time and how many token the user can claim under a proposal
+
+*Declaration:*
+```solidity
+function getClaimableAmount(
+) external returns
+(uint256 leftTimes, uint256 leftAmount, address token)
 ```
 
 

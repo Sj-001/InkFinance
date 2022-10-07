@@ -936,6 +936,32 @@
   },
   {
     "inputs": [],
+    "name": "getUCVManagers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "managers",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getUCVs",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "ucvs",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getVersion",
     "outputs": [
       {
@@ -1113,6 +1139,29 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "approveTimes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "managerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "payrollPaymentApprove",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "account",
         "type": "address"
@@ -1257,16 +1306,16 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "contractKey",
+        "name": "topicID",
         "type": "bytes32"
       },
       {
-        "internalType": "bytes",
-        "name": "initData",
-        "type": "bytes"
+        "internalType": "address",
+        "name": "controller",
+        "type": "address"
       }
     ],
-    "name": "setupUCV",
+    "name": "setupPayrollUCV",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

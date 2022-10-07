@@ -57,19 +57,6 @@ bytes32 proposalID
 | --- | --- |
 |`success` | true means works
 
-### _setupUCV
-
-
-
-*Declaration:*
-```solidity
-function _setupUCV(
-) internal
-```
-
-
-
-
 ### exec
 
 > do run the proposal decision
@@ -86,6 +73,19 @@ bytes32 proposalID
 | Arg | Type | Description |
 | --- | --- | --- |
 |`proposalID` | bytes32 | target proposal
+
+
+### _setupPayrollUCV
+
+
+
+*Declaration:*
+```solidity
+function _setupPayrollUCV(
+) internal
+```
+
+
 
 
 ### getTypeID

@@ -164,12 +164,12 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "proposalID",
+        "name": "topicID",
         "type": "bytes32"
       },
       {
         "internalType": "uint256",
-        "name": "paymentBatch",
+        "name": "approvedTimes",
         "type": "uint256"
       }
     ],
@@ -182,18 +182,47 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "proposalID",
+        "name": "topicID",
         "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "paymentBatch",
-        "type": "uint256"
       }
     ],
     "name": "claimPayroll",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "claimer",
+        "type": "address"
+      }
+    ],
+    "name": "getClaimableAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "leftTimes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "leftAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -262,17 +291,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "dao",
+        "name": "dao_",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "config",
+        "name": "config_",
         "type": "address"
       },
       {
         "internalType": "bytes",
-        "name": "data",
+        "name": "data_",
         "type": "bytes"
       }
     ],
@@ -291,8 +320,13 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "proposalID",
+        "name": "topicID",
         "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "ucv",
+        "type": "address"
       }
     ],
     "name": "setupPayroll",

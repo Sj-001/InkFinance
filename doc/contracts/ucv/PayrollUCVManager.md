@@ -31,25 +31,31 @@ function init(
 ### setupPayroll
 create a new payroll based on a proposal
 
-> only agent could call this
+> todo todo DAO only
 
 
 *Declaration:*
 ```solidity
 function setupPayroll(
-bytes32 proposalID
-) external
+bytes32 topicID,
+address ucv
+) external daoOnly
 ```
+*Modifiers:*
+| Modifier |
+| --- |
+| daoOnly |
 
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`proposalID` | bytes32 | the payroll manager would load data from that proposal and create the payroll instance
+|`topicID` | bytes32 | the payroll manager would load data from that proposal(topic) and create the payroll instance
+|`ucv` | address | the fund from which ucv
 
 
 ### approvePayrollBatch
 
-> after multi-signer voted, batch of payment  under a payroll should be paid
+> after multi-signer voted, how many batchs of payment under a payroll should be paid
 
 *Declaration:*
 ```solidity
@@ -62,12 +68,40 @@ function approvePayrollBatch(
 
 ### claimPayroll
 
-> claim payroll from the UCV contract
+> claim payroll from the UCV contract and everytime claimed amount is approved batch(not claimed before) multiply once time payment
 
 *Declaration:*
 ```solidity
 function claimPayroll(
 ) external
+```
+
+
+
+
+### getClaimableAmount
+
+> calculate how many time and how many token the user can claim under a proposal
+
+*Declaration:*
+```solidity
+function getClaimableAmount(
+) external returns
+(uint256 leftTimes, uint256 leftAmount, address token)
+```
+
+
+
+
+### _getClaimableAmount
+
+
+
+*Declaration:*
+```solidity
+function _getClaimableAmount(
+) internal returns
+(uint256 leftTimes, uint256 leftAmount, address token)
 ```
 
 

@@ -287,7 +287,7 @@ export function buildPayrollSetupProposal(erc20Address:string) {
 
 
 
-export function buildPayrollPayProposal(topicID:string) {
+export function buildPayrollPayProposal(topicID:string, managerAddress:string) {
 
     var agents = []
     agents[0] = PAYROLL_EXECUTE_AGENT_KEY;
@@ -320,16 +320,14 @@ export function buildPayrollPayProposal(topicID:string) {
 
 
     var signClaimTimes = web3.eth.abi.encodeParameter("uint256", 1);
+    var managerAddressBytes = web3.eth.abi.encodeParameter("address", managerAddress);
 
     console.log("PAYROLL's topicID is ::::: ", topicID);
-    
+
     var kvData = [];
     kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["topicID", keccak256(toUtf8Bytes("bytes32")), topicID]) ;
-    kvData[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["startTime", keccak256(toUtf8Bytes("uint256")), signClaimTimes]) ;
- 
-
- 
-
+    kvData[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["approveTimes", keccak256(toUtf8Bytes("uint256")), signClaimTimes]) ;
+    kvData[2] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["managerAddress", keccak256(toUtf8Bytes("address")), managerAddressBytes]) ;
     // kvData[0] = {
     //     "key":  "key",
     //     "typeID": keccak256(toUtf8Bytes("typeID")),

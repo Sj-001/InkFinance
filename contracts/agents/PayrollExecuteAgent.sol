@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import "../committee/TreasuryCommittee.sol";
 import "../bases/BaseAgent.sol";
 import "../interfaces/IDAO.sol";
+import "../interfaces/IPayrollManager.sol";
+
 import "hardhat/console.sol";
 import "../utils/BytesUtils.sol";
 
@@ -12,6 +14,8 @@ contract PayrollExecuteAgent is BaseAgent {
     using BytesUtils for bytes;
     bytes32 private FLOW_ID =
         0xce8413630ab56be005a97f0ae8be1835fb972819fa4327995eb9568c76252d28;
+
+    address private _ucvManager;
 
     function getAgentFlow() external virtual override returns (bytes32 flowID) {
         return FLOW_ID;
@@ -41,6 +45,7 @@ contract PayrollExecuteAgent is BaseAgent {
         /// make sure this time suggested approve times should be less than available times
 
         IProposalHandler proposalHandler = IProposalHandler(getAgentDAO());
+
         bytes32 typeID;
         bytes memory bytesData;
         bytes memory timeBytes;
@@ -52,12 +57,15 @@ contract PayrollExecuteAgent is BaseAgent {
 
         bytes32 topicID = bytesData.toBytes32();
         console.log("read from the proposal:");
+        console.logBytes32(proposalID);
+        console.log("topic id:");
         console.logBytes(bytesData);
 
         (typeID, timeBytes) = proposalHandler.getTopicKVdata(
             topicID,
             "startTime"
         );
+
         uint256 startTime = abi.decode(timeBytes, (uint256));
         console.log("start time:", startTime);
 
@@ -69,6 +77,7 @@ contract PayrollExecuteAgent is BaseAgent {
             topicID,
             "claimTimes"
         );
+
         uint256 claimTimes = abi.decode(timeBytes, (uint256));
         console.log("claim time:", claimTimes);
 
@@ -78,13 +87,42 @@ contract PayrollExecuteAgent is BaseAgent {
     /// only DAO could execute
     /// @inheritdoc IAgent
     function exec(bytes32 proposalID) external override {
+        IProposalHandler proposalHandler = IProposalHandler(getAgentDAO());
         console.log(
             "PayrollExecuteAgent exec --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- "
         );
 
         // 获得 ProposalID 提议 发放的 Payroll 的批次
+        bytes32 typeID;
+        bytes memory bytesData;
+        bytes memory timeBytes;
 
+        (typeID, bytesData) = proposalHandler.getProposalKvData(
+            proposalID,
+            "topicID"
+        );
+
+        bytes32 topicID = bytesData.toBytes32();
+        (typeID, timeBytes) = proposalHandler.getTopicKVdata(
+            topicID,
+            "approveTimes"
+        );
+        uint256 approveTimes = abi.decode(timeBytes, (uint256));
+
+        console.log("approve times", approveTimes);
         // call UCVManager to approve the payroll
+
+        (typeID, timeBytes) = proposalHandler.getTopicKVdata(
+            topicID,
+            "managerAddress"
+        );
+        address managerAddress = abi.decode(timeBytes, (address));
+
+        IDAO(getAgentDAO()).payrollPaymentApprove(
+            topicID,
+            approveTimes,
+            managerAddress
+        );
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}
