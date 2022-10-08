@@ -22,10 +22,32 @@
         "type": "bytes32"
       },
       {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "key",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "typeID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          },
+          {
+            "internalType": "bytes",
+            "name": "desc",
+            "type": "bytes"
+          }
+        ],
         "indexed": false,
-        "internalType": "bytes[]",
+        "internalType": "struct IProposalInfo.KVItem[]",
         "name": "metadata",
-        "type": "bytes[]"
+        "type": "tuple[]"
       },
       {
         "indexed": false,

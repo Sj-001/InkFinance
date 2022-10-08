@@ -5,7 +5,7 @@ import 'hardhat-typechain'
 import '@nomiclabs/hardhat-ethers'
 
 import 'hardhat-abi-exporter';
-
+import 'hardhat-contract-sizer';
 import "@nomiclabs/hardhat-web3";
 import '@openzeppelin/hardhat-upgrades';
 
@@ -48,6 +48,12 @@ module.exports = {
         only: [],
         spacing: 2,
         pretty: false
+    },
+    contractSizer: {
+        alphaSort: true,
+        disambiguatePaths: false,
+        runOnCompile: true,
+        strict: false,
     }
 
 

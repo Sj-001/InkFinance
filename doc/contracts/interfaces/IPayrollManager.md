@@ -63,7 +63,7 @@ function claimPayroll(
 
 ### getClaimableAmount
 
-> calculate how many time and how many token the user can claim under a proposal
+> calculate how many time and how many token the user can claim under a proposal's topicID
 
 *Declaration:*
 ```solidity
@@ -100,7 +100,7 @@ when user claim payroll, this event will be emit
 *Params:*
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
-|`proposalID` | bytes32 | :white_check_mark: | the payroll under which proposal
+|`topicID` | bytes32 | :white_check_mark: | the payroll under which proposal's topicID
 |`claimAddress` | address | :white_check_mark: | claim token's address
 |`claimedBatchs` | uint256 | :white_check_mark: | how many batchs claimed
 |`total` | uint256 |  | how many token claimed
@@ -114,7 +114,7 @@ when a new payroll has been setup, this event will be emit.
 *Params:*
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
-|`proposalID` | bytes32 | :white_check_mark: | based on which proposal
+|`topicID` | bytes32 | :white_check_mark: | based on which proposal's topicID
 |`claimPeriod` | uint256 |  | claim period between each batch
 |`availableTimes` | uint256 |  | how many times could claim under this payroll
 |`firstClaimTime` | uint256 |  | first claimable time
@@ -127,7 +127,7 @@ once the multisigner role vote and pass the proposal(pay the batch under payroll
 *Params:*
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
-|`proposalID` | bytes32 | :white_check_mark: | target proposalID
+|`topicID` | bytes32 | :white_check_mark: | target proposalID's topicID
 |`batch` | uint256 | :white_check_mark: | the batch under the payroll
 ### PayrollMemberAdded
 once add member under a payroll, this event will be emit
@@ -138,7 +138,7 @@ once add member under a payroll, this event will be emit
 *Params:*
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
-|`proposalID` | bytes32 | :white_check_mark: | passed payroll proposalID
+|`topicID` | bytes32 | :white_check_mark: | passed payroll proposalID's topicID
 |`memberAddr` | address | :white_check_mark: | wallet address
 |`token` | address |  | token address
 |`oncePay` | uint256 |  | how many token paid once

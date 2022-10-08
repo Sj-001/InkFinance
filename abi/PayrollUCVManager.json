@@ -5,7 +5,7 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "proposalID",
+        "name": "topicID",
         "type": "bytes32"
       },
       {
@@ -24,7 +24,7 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "proposalID",
+        "name": "topicID",
         "type": "bytes32"
       },
       {
@@ -55,7 +55,7 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "proposalID",
+        "name": "topicID",
         "type": "bytes32"
       },
       {
@@ -92,7 +92,7 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "proposalID",
+        "name": "topicID",
         "type": "bytes32"
       },
       {

@@ -10,7 +10,7 @@ interface IProposalInfo {
     /// @notice when new proposal generated, this event will be emit
     event NewProposal(
         bytes32 indexed proposalID,
-        bytes[] metadata,
+        KVItem[] metadata,
         bytes[] kvData
     );
 

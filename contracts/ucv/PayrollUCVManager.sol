@@ -24,7 +24,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
     struct PayrollScheduleMember {
         address memberAddress;
-        address coin;
+        address token;
         uint256 oncePay;
         string scheduleType;
     }
@@ -88,23 +88,23 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         IProposalHandler proposalHandler = IProposalHandler(_dao);
         bytes32 typeID;
-        bytes memory timeBytes;
-        (typeID, timeBytes) = proposalHandler.getTopicKVdata(
+        bytes memory bytesData;
+        (typeID, bytesData) = proposalHandler.getTopicKVdata(
             topicID,
             "startTime"
         );
 
-        uint256 startTime = abi.decode(timeBytes, (uint256));
+        uint256 startTime = abi.decode(bytesData, (uint256));
 
-        (typeID, timeBytes) = proposalHandler.getTopicKVdata(topicID, "period");
-        uint256 period = abi.decode(timeBytes, (uint256));
+        (typeID, bytesData) = proposalHandler.getTopicKVdata(topicID, "period");
+        uint256 period = abi.decode(bytesData, (uint256));
 
-        (typeID, timeBytes) = proposalHandler.getTopicKVdata(
+        (typeID, bytesData) = proposalHandler.getTopicKVdata(
             topicID,
             "claimTimes"
         );
 
-        uint256 claimTimes = abi.decode(timeBytes, (uint256));
+        uint256 claimTimes = abi.decode(bytesData, (uint256));
 
         PayrollSchedule storage schedule = _schedules[topicID];
         schedule.startTime = startTime;
@@ -114,6 +114,31 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         console.log("payroll schedule setup:");
         console.logBytes32(topicID);
+
+        // emit event
+        emit NewPayrollSetup(topicID, period, claimTimes, startTime);
+
+        (typeID, bytesData) = proposalHandler.getTopicKVdata(
+            topicID,
+            "members"
+        );
+
+        PayrollScheduleMember[] memory payrollMembers = abi.decode(
+            bytesData,
+            (PayrollScheduleMember[])
+        );
+
+        console.log(payrollMembers.length);
+
+        for (uint256 i = 0; i < payrollMembers.length; i++) {
+            emit PayrollMemberAdded(
+                topicID,
+                payrollMembers[i].memberAddress,
+                payrollMembers[i].token,
+                payrollMembers[i].oncePay,
+                bytes("")
+            );
+        }
     }
 
     // agent only
@@ -128,6 +153,8 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         PayrollSchedule storage schedule = _schedules[topicID];
         schedule.approvedTimes = schedule.approvedTimes + approvedTimes;
+
+        emit ApprovePayrollBatch(topicID, approvedTimes);
     }
 
     /// @inheritdoc IPayrollManager
@@ -138,13 +165,15 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             uint256 leftAmount,
             address token
         ) = _getClaimableAmount(topicID, msg.sender);
+
         IUCV(_payrollUCVs[topicID]).transferTo(
             msg.sender,
             token,
             leftAmount,
             abi.encode("")
         );
-        // emit withdraw
+
+        emit PayrollClaimed(topicID, msg.sender, leftTimes, leftAmount, token);
         _userClaims[topicID][msg.sender] += leftTimes;
     }
 
@@ -184,6 +213,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             memberBytes,
             (PayrollScheduleMember[])
         );
+
         console.log(payrollMembers.length);
 
         for (uint256 i = 0; i < payrollMembers.length; i++) {
@@ -199,7 +229,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
                 leftAmount = leftTimes * payrollMembers[i].oncePay;
 
-                token = payrollMembers[i].coin;
+                token = payrollMembers[i].token;
 
                 break;
             }

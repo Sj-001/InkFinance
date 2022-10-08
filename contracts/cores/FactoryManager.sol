@@ -136,6 +136,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         );
 
         console.log("add to storage", generatedContract);
+
         _deployedContracts[factoryKey].add(generatedContract);
 
         return generatedContract;

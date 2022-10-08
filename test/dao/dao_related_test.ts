@@ -16,6 +16,7 @@ import { buildMasterDAOInitData } from '../shared/parameters';
 
 
 import {defaultAbiCoder} from '@ethersproject/abi';
+import { expect } from "chai";
 
 // const {
 
@@ -27,7 +28,7 @@ import {defaultAbiCoder} from '@ethersproject/abi';
 
 const {loadFixture, deployContract} = waffle;
 
-describe("contract dao test", function () {
+makeSuite("contract dao test", function () {
 
     it("test create master dao", async function () {
 
@@ -45,7 +46,7 @@ describe("contract dao test", function () {
 
         console.log("first dao address:", masterDAO.address);
         
-
+        
     });
 
 })

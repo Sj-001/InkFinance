@@ -14,13 +14,13 @@ interface IPayrollManager {
 
     /// @notice when user claim payroll, this event will be emit
     /// @dev once user claim, all claimable batchs(which they not claim before) will be transfer to the user in one time.
-    /// @param proposalID the payroll under which proposal
+    /// @param topicID the payroll under which proposal's topicID
     /// @param claimAddress claim token's address
     /// @param claimedBatchs how many batchs claimed
     /// @param total how many token claimed
     /// @param token which token has been claimed
     event PayrollClaimed(
-        bytes32 indexed proposalID,
+        bytes32 indexed topicID,
         address indexed claimAddress,
         uint256 indexed claimedBatchs,
         uint256 total,
@@ -28,33 +28,30 @@ interface IPayrollManager {
     );
 
     /// @notice when a new payroll has been setup, this event will be emit.
-    /// @param proposalID based on which proposal
+    /// @param topicID based on which proposal's topicID
     /// @param claimPeriod claim period between each batch
     /// @param availableTimes how many times could claim under this payroll
     /// @param firstClaimTime first claimable time
     event NewPayrollSetup(
-        bytes32 indexed proposalID,
+        bytes32 indexed topicID,
         uint256 claimPeriod,
         uint256 availableTimes,
         uint256 firstClaimTime
     );
 
     /// @notice once the multisigner role vote and pass the proposal(pay the batch under payroll), this event will be emit
-    /// @param proposalID target proposalID
+    /// @param topicID target proposalID's topicID
     /// @param batch the batch under the payroll
-    event ApprovePayrollBatch(
-        bytes32 indexed proposalID,
-        uint256 indexed batch
-    );
+    event ApprovePayrollBatch(bytes32 indexed topicID, uint256 indexed batch);
 
     /// @notice once add member under a payroll, this event will be emit
-    /// @param proposalID passed payroll proposalID
+    /// @param topicID passed payroll proposalID's topicID
     /// @param memberAddr wallet address
     /// @param token token address
     /// @param oncePay how many token paid once
     /// @param desc extra infomation
     event PayrollMemberAdded(
-        bytes32 indexed proposalID,
+        bytes32 indexed topicID,
         address indexed memberAddr,
         address token,
         uint256 oncePay,
@@ -68,13 +65,13 @@ interface IPayrollManager {
     function setupPayroll(bytes32 topicID, address ucv) external;
 
     /// @dev after multi-signer voted, how many batchs of payment under a payroll should be paid
-    function approvePayrollBatch(bytes32 proposalID, uint256 batches) external;
+    function approvePayrollBatch(bytes32 topicID, uint256 batches) external;
 
     /// @dev claim payroll from the UCV contract and everytime claimed amount is approved batch(not claimed before) multiply once time payment
-    function claimPayroll(bytes32 proposalID) external;
+    function claimPayroll(bytes32 topicID) external;
 
-    /// @dev calculate how many time and how many token the user can claim under a proposal
-    function getClaimableAmount(bytes32 proposalID, address claimer)
+    /// @dev calculate how many time and how many token the user can claim under a proposal's topicID
+    function getClaimableAmount(bytes32 topicID, address claimer)
         external
         view
         returns (

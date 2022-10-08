@@ -81,7 +81,7 @@ function claimPayroll(
 
 ### getClaimableAmount
 
-> calculate how many time and how many token the user can claim under a proposal
+> calculate how many time and how many token the user can claim under a proposal's topicID
 
 *Declaration:*
 ```solidity

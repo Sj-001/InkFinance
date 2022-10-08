@@ -159,12 +159,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         Proposal storage p = _proposals[proposalID];
 
         p.agents = proposal.agents;
-
-        console.log("proposal is:");
-        console.logBytes32(proposalID);
-        console.log("agents is:");
-        console.logBytes32(p.agents[0]);
-
         p.status = ProposalStatus.PENDING;
         p.proposalID = proposalID;
 
@@ -175,12 +169,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
 
         p.topicID = proposal.topicID;
-        // p.headers._init();
-        console.log("show init data");
-        console.log(proposal.metadata[0].key);
-
-        // p.headers._setBytesSlice(proposal.headers);
-
         for (uint256 i = 0; i < proposal.metadata.length; i++) {
             ItemValue memory itemValue;
             itemValue.typeID = proposal.metadata[i].typeID;
@@ -189,18 +177,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
 
         p.kvData._init();
-        console.log("kv data bytes");
-        console.logBytes(proposal.kvData[0]);
         p.kvData._setBytesSlice(proposal.kvData);
 
-        console.log("agent ID is:");
-        console.logBytes32(agents[0]);
+        console.log("proposal is:");
+        console.logBytes32(proposalID);
         bytes32 flowID = _getAgentFlowID(agents[0]);
         console.log("flow ID is:");
         console.logBytes32(flowID);
-
-        // 0x 全0 DAO 内部Offchain
-        // 0x 全FFF 任意执行，
 
         bytes32 defaultFlowID = _getVoteFlow(_defaultFlowIDIndex);
         console.log("defaultFlowID::");
@@ -215,17 +198,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             revert SystemError();
         }
 
-        console.log("new proposal id:");
-        console.logBytes32(proposalID);
         ProposalProgress storage info = _proposalInfo[proposalID];
         info.proposalID = proposalID;
         // decicde next step and which commit is handle the process
         info.nextCommittee.step = firstStep;
         info.nextCommittee.committee = steps[firstStep].committee;
-
-        console.log("new proposal step:");
-        console.logBytes32(firstStep);
-        console.log("next committee :", info.nextCommittee.committee);
+        // emit event
+        emit NewProposal(proposalID, proposal.metadata, proposal.kvData);
     }
 
     /// @inheritdoc IProposalHandler
@@ -310,7 +289,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     //     );
     // }
 
-    function _getVoteFlow(uint256 flowIndex) internal returns (bytes32 flowID) {
+    function _getVoteFlow(uint256 flowIndex)
+        internal
+        view
+        returns (bytes32 flowID)
+    {
         console.log("flow index is:", flowIndex);
         require(
             flowIndex >= _defaultFlowIDIndex,
@@ -899,20 +882,26 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     function _execFinish(ProposalProgress storage info, bool agree) internal {
         require(info.nextCommittee.committee == address(0x0), "can't finish");
+        Proposal storage p = _proposals[info.proposalID];
 
-        syncProposalKvDataToTopic(info.proposalID, agree, "");
         // emit EDecideProposal(info.proposalID, agree);
-        console.log("exec finished");
+        console.log("exec finished:", agree);
+
+        if (agree == false) {
+            Proposal storage proposal = _proposals[info.proposalID];
+            proposal.status = ProposalStatus.DENY;
+            emit ProposalDecide(
+                address(this),
+                info.proposalID,
+                agree,
+                bytes32(0x0)
+            );
+            return;
+        }
 
         if (agree == true) {
-            console.log("execute proposal's agent:");
-            console.logBytes32(info.proposalID);
-
-            Proposal storage p = _proposals[info.proposalID];
-            console.log("agent length:", p.agents.length);
-            console.log("proposal is:");
-            console.logBytes32(p.proposalID);
-
+            syncProposalKvDataToTopic(info.proposalID, agree, "");
+            // execute agent
             for (uint256 i = 0; i < p.agents.length; i++) {
                 if (
                     p.agents[i] !=
@@ -923,6 +912,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                 }
             }
         }
+
+        emit ProposalDecide(address(this), info.proposalID, agree, p.topicID);
     }
 
     function _setNextStep(ProposalProgress storage info, bool breakFlow)
@@ -1093,9 +1084,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bool agree
     ) internal {
         ProposalProgress storage info = _proposalInfo[proposalID];
-
         require(info.proposalID == proposalID, "proposal err");
-
         // why need to verify the next committee...
         // require(_isNextCommittee (proposalID, committee), "committee err");
 
