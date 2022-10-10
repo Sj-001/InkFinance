@@ -11,6 +11,11 @@
     "type": "constructor"
   },
   {
+    "inputs": [],
+    "name": "TheFactoryKeyIsNotExist",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -81,6 +86,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "bool",
+        "name": "randomSault",
+        "type": "bool"
+      },
       {
         "internalType": "bytes32",
         "name": "typeID",

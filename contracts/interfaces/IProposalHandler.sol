@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import "./IProposalInfo.sol";
 
+error OnlyDAOCouldOperate(address expectedDAO, address actualOperator);
+
 /// @title IDAOHandleProposal
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice inteface which defined how to deal with the vote process

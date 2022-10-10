@@ -18,10 +18,10 @@
 | _SENTINEL_ID | bytes32 |
 | DEFAULT_FLOW_ID | bytes32 |
 | _defaultFlowIDIndex | uint256 |
-| _flowSteps | mapping(bytes32 => mapping(bytes32 => struct BaseDAO.StepLinkInfo)) |
 | _proposalInfo | mapping(bytes32 => struct IProposalHandler.ProposalProgress) |
-| _proposals | mapping(bytes32 => struct IProposalInfo.Proposal) |
+| _flowSteps | mapping(bytes32 => mapping(bytes32 => struct BaseDAO.StepLinkInfo)) |
 | _proposalsArray | struct EnumerableSet.Bytes32Set |
+| _committees | struct IProposalHandler.CommitteeInfo[] |
 
 ## 3.Modifiers
 ### EnsureGovEnough
@@ -64,20 +64,6 @@ function setFlowStep(
 
 
 
-### _newProposal
-
-
-
-*Declaration:*
-```solidity
-function _newProposal(
-) internal returns
-(bytes32 proposalID)
-```
-
-
-
-
 ### newProposal
 makeing a new proposal
 
@@ -115,20 +101,6 @@ bytes data
 function _getVoteFlow(
 ) internal returns
 (bytes32 flowID)
-```
-
-
-
-
-### generateProposalID
-
-
-
-*Declaration:*
-```solidity
-function generateProposalID(
-) internal returns
-(bytes32 proposalID)
 ```
 
 
@@ -348,20 +320,6 @@ function getTopicKeyProposal(
 
 
 
-### _getTopicKeyProposal
-
-
-
-*Declaration:*
-```solidity
-function _getTopicKeyProposal(
-) internal returns
-(bytes32 proposalID)
-```
-
-
-
-
 ### getTopicMetadata
 
 
@@ -460,29 +418,28 @@ function getProposalKvDataKeys(
 
 
 
-### _getProposalKvDataKeys
-
-
-
-*Declaration:*
-```solidity
-function _getProposalKvDataKeys(
-) internal returns
-(string[] keys)
-```
-
-
-
-
 ### getProposalTopic
 
-
+> get proposal's topic, so anyone could create a new proposal with the same topic
 
 *Declaration:*
 ```solidity
 function getProposalTopic(
 ) external returns
 (bytes32 topicID)
+```
+
+
+
+
+### decideProposal
+
+
+
+*Declaration:*
+```solidity
+function decideProposal(
+) external
 ```
 
 
@@ -577,19 +534,6 @@ function _getAgentFlowID(
 ```solidity
 function execTx(
 ) external
-```
-
-
-
-
-### syncProposalKvDataToTopic
-
-
-
-*Declaration:*
-```solidity
-function syncProposalKvDataToTopic(
-) internal
 ```
 
 
@@ -785,6 +729,19 @@ function getUCVManagers(
 *Declaration:*
 ```solidity
 function _setFlowStep(
+) internal
+```
+
+
+
+
+### addIntoCurrentCommittee
+
+
+
+*Declaration:*
+```solidity
+function addIntoCurrentCommittee(
 ) internal
 ```
 

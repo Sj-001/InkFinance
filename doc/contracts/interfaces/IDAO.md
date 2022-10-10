@@ -105,7 +105,7 @@ address controller
 
 
 ### payrollPaymentApprove
-when payroll pay propsal passed, agent call will call this function to approve the paymenta
+when payroll pay propal passed, agent call will call this function to approve the paymenta
 
 
 *Declaration:*
@@ -132,3 +132,9 @@ function deployByKey(
 
 
 ## 5.Events
+### NewDAOCreated
+event
+
+
+
+

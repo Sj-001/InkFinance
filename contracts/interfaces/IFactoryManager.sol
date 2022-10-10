@@ -27,6 +27,7 @@ interface IFactoryManager is IERC165 {
     /// @param initData the initData of the contract
     /// @return contractAddr according to the factoryKey, genereated new contract address with the same kind proxy contract.
     function deploy(
+        bool randomSault,
         bytes32 typeID,
         bytes32 factoryKey,
         bytes calldata initData

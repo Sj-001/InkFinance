@@ -15,14 +15,18 @@ contract MasterDAO is BaseDAO {
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
         _init(admin_, config_, data_);
-        // deploy the Board automaticlly
-        // CommitteeTypeID = "0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f";
-        // THE_BOARD_COMMITTEE_KEY = "0x9386c0f239c958604010fb0d19f447c347da25b93a863f07e6c4a1a5eca03672";
-        _theBoard = _deployByFactoryKey(
-            0x686ecb53ebc024d158132b40f7a767a50148650820407176d3262a6c55cd458f,
-            0x9386c0f239c958604010fb0d19f447c347da25b93a863f07e6c4a1a5eca03672,
-            ""
-        );
+
+        for (uint256 i = 0; i < _committees.length; i++) {
+            string memory committeName = _committees[i].name;
+            string memory targetName = "The Board";
+            if (
+                keccak256(abi.encodePacked(committeName)) ==
+                keccak256(abi.encodePacked(targetName))
+            ) {
+                _theBoard = _committees[i].committee;
+                break;
+            }
+        }
         return callbackEvent;
     }
 
@@ -72,16 +76,6 @@ contract MasterDAO is BaseDAO {
 
     //     _decideProposal(proposalID, info.nextCommittee.committee, true);
     // }
-
-    function decideProposal(
-        bytes32 proposalID,
-        bool agree,
-        bytes calldata data
-    ) external override {
-        console.log("call from", msg.sender);
-
-        _decideProposal(proposalID, msg.sender, true);
-    }
 
     /// @inheritdoc IDeploy
     function getTypeID() external override returns (bytes32 typeID) {}

@@ -39,7 +39,7 @@ describe("proposal related test", function () {
 
         // // select/create a DAO
         var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
-        await factoryManager.deploy(DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
+        await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
@@ -141,8 +141,8 @@ describe("proposal related test", function () {
     }
 
     
-    /*
-    it("test create off-chain proposal - flow 0 - Board Only ", async function () {
+    
+    it.only("test create off-chain proposal - flow 0 - Board Only ", async function () {
         
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
         const {inkERC20} = await loadFixture(InkERC20Fixture);        
@@ -150,7 +150,7 @@ describe("proposal related test", function () {
 
         // select/create a DAO
         var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
-        await factoryManager.deploy(DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
+        await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
@@ -192,7 +192,7 @@ describe("proposal related test", function () {
 
         // select/create a DAO
         var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
-        await factoryManager.deploy(DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
+        await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
@@ -224,7 +224,7 @@ describe("proposal related test", function () {
     });
 
 
-    */
+    
 
     async function votePayrollScheduleSignProposal ( proposalID:string, step:string, committeeAddress:string ) {
         

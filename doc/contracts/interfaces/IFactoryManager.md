@@ -22,9 +22,9 @@ generate new contract storage
 *Declaration:*
 ```solidity
 function deploy(
-bytes32 typeID,
+bool typeID,
 bytes32 factoryKey,
-bytes initData
+bytes32 initData
 ) external returns
 (address contractAddr)
 ```
@@ -32,9 +32,9 @@ bytes initData
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`typeID` | bytes32 | contract type, eg: DAO, committee, agent, etc. use typeID to verify the factoryKey is point to a proper contract address.
+|`typeID` | bool | contract type, eg: DAO, committee, agent, etc. use typeID to verify the factoryKey is point to a proper contract address.
 |`factoryKey` | bytes32 | a contract key stored in the ConfigManager which point to a contract implementation.
-|`initData` | bytes | the initData of the contract
+|`initData` | bytes32 | the initData of the contract
 
 *Returns:*
 | Arg | Description |

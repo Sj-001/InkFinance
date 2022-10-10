@@ -19,6 +19,7 @@ import "../proxy/InkProxy.sol";
 import "hardhat/console.sol";
 
 error WrongTypeOfTheFactoryKey();
+error TheFactoryKeyIsNotExist();
 
 /// @title FactoryManager
 /// @author InkTech <tech-support@inkfinance.xyz>
@@ -61,11 +62,20 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     }
 
     function _getPredictAddress(
+        bool randomSalt,
         bytes32 typeID,
         bytes32 contractKey,
         address msgSender
     ) internal view returns (address _calculatedAddress) {
-        bytes32 salt = keccak256(abi.encode(typeID, contractKey, msgSender));
+        bytes32 salt = bytes32(0x0);
+
+        if (randomSalt) {
+            salt = keccak256(
+                abi.encode(typeID, contractKey, msgSender, block.timestamp)
+            );
+        } else {
+            salt = keccak256(abi.encode(typeID, contractKey, msgSender));
+        }
         address generatedContract = Clones.predictDeterministicAddress(
             address(proxy),
             salt
@@ -73,25 +83,31 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         return generatedContract;
     }
 
-    /// @inheritdoc IFactoryManager
-    function deploy(
+    function _deploy(
+        bool randomSalt,
         bytes32 typeID,
         bytes32 factoryKey,
         bytes calldata initData
-    ) external override returns (address _newContract) {
+    ) internal returns (address _newContract) {
         (bytes32 _typeID, bytes memory addressBytes) = configManager.getKV(
             factoryKey
         );
+
+        if (addressBytes.length == 0) {
+            revert TheFactoryKeyIsNotExist();
+        }
 
         // if (_typeID != typeID) {
         //     revert WrongTypeOfTheFactoryKey();
         // }
 
         address afterDeployedAddressPredict = _getPredictAddress(
+            randomSalt,
             _typeID,
             factoryKey,
             msg.sender
         );
+
         console.log("predict address", afterDeployedAddressPredict);
 
         if (
@@ -136,10 +152,18 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         );
 
         console.log("add to storage", generatedContract);
-
         _deployedContracts[factoryKey].add(generatedContract);
-
         return generatedContract;
+    }
+
+    /// @inheritdoc IFactoryManager
+    function deploy(
+        bool randomSault,
+        bytes32 typeID,
+        bytes32 factoryKey,
+        bytes calldata initData
+    ) external override returns (address _newContract) {
+        return _deploy(randomSault, typeID, factoryKey, initData);
     }
 
     function getDeployedAddress(bytes32 contractID, uint256 index)

@@ -19,12 +19,11 @@ async function deploy(){
 
 
   const configManagerFactory = await ethers.getContractFactory("ConfigManager");
-  const configManager = await configManagerFactory.deploy();
-  await configManager.deployed();
+  const configManager = await configManagerFactory.attach("0x5af8110C8635caF0Cd866278238023c52eb922CA");
 
   const factoryManagerFactory = await ethers.getContractFactory("FactoryManager");
-  const factoryManager = await factoryManagerFactory.deploy(configManager.address);
-  await factoryManager.deployed();
+  const factoryManager = await factoryManagerFactory.attach("0x3bb1774ffc6792F2Ed8b85d7f6F89a1C3B9976Bc");
+
 
   const theBoardFactory = await ethers.getContractFactory("TheBoard");
   const theBoardCommitteeImpl = await theBoardFactory.deploy();
@@ -64,9 +63,6 @@ async function deploy(){
   const payrollUCVFactory = await ethers.getContractFactory("PayrollUCV");
   const payrollUCVImpl = await payrollUCVFactory.deploy();
   await payrollUCVImpl.deployed();
-
-
-  
 
 
 

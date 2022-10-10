@@ -42,19 +42,6 @@ function getTheBoard(
 
 
 
-### decideProposal
-
-
-
-*Declaration:*
-```solidity
-function decideProposal(
-) external
-```
-
-
-
-
 ### getTypeID
 get the type of the contract, it's constant
 

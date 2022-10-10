@@ -16,6 +16,16 @@ error NotAllowedToOperate();
 error AgentCannotBeExecute();
 
 interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
+    /// event
+
+    event NewDAOCreated(
+        address indexed owner,
+        address indexed token,
+        string daoName,
+        string daoLogo,
+        uint256 createTime
+    );
+
     struct CallbackData {
         address addr;
         address admin;
@@ -66,7 +76,7 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
     /// @param controller the contract controller address
     function setupPayrollUCV(bytes32 proposalID, address controller) external;
 
-    /// @notice when payroll pay propsal passed, agent call will call this function to approve the paymenta
+    /// @notice when payroll pay propal passed, agent call will call this function to approve the paymenta
     function payrollPaymentApprove(
         bytes32 proposalID,
         uint256 approveTimes,

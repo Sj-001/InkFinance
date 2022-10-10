@@ -28,7 +28,7 @@ import { expect } from "chai";
 
 const {loadFixture, deployContract} = waffle;
 
-makeSuite("contract dao test", function () {
+describe("contract dao test", function () {
 
     it("test create master dao", async function () {
 
@@ -38,7 +38,7 @@ makeSuite("contract dao test", function () {
 
         // select/create a DAO
         var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
-        await factoryManager.deploy(DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
+        await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
