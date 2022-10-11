@@ -66,8 +66,9 @@ async function deploy(){
   await payrollUCVImpl.deployed();
 
 
-  
-
+  const proposalHandlerFactory = await ethers.getContractFactory("ProposalHandler");
+  const proposalHandlerImpl = await proposalHandlerFactory.deploy();
+  await proposalHandlerImpl.deployed();
 
 
   //init factory manager key
@@ -85,6 +86,7 @@ async function deploy(){
   console.log("the payroll execute agent key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollExecuteAgent"));
   console.log("the payroll ucv manager key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollUCVManager"));
   console.log("the payroll ucv key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollUCV"));
+  console.log("the proposal handler key:", await configManager.buildConfigKey(admin, "ADMIN", "ProposalHandler"));
 
   console.log("contract type ------------------------------------------------------------------ ")
   console.log("FactoryTypeID=", keccak256(toUtf8Bytes("FactoryTypeID")));
@@ -115,6 +117,7 @@ async function deploy(){
   keyValues[7] = {"keyPrefix":"ADMIN", "keyName":"PayrollSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollSetupAgentImpl.address)}
   keyValues[8] = {"keyPrefix":"ADMIN", "keyName":"PayrollExecuteAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollExecuteAgentImpl.address)}
   keyValues[9] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVManagerImpl.address)}
+  keyValues[10] = {"keyPrefix":"ADMIN", "keyName":"ProposalHandler", "typeID":keccak256(toUtf8Bytes("address")), "data": (await proposalHandlerImpl.address)}
   
   await configManager.batchSetKV(admin, keyValues);
 

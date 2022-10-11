@@ -460,6 +460,42 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getDAOCommittees",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "committeeName",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "committee",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "duties",
+            "type": "bytes32[]"
+          }
+        ],
+        "internalType": "struct IDAO.DAOCommitteeWithDuty[]",
+        "name": "userCommitteeDuties",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "dutyID",
         "type": "bytes32"

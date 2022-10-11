@@ -41,7 +41,7 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
 
         var theBoardCommitteeDutyIDsBytesArrary = [];
         theBoardCommitteeDutyIDsBytesArrary[0] = PROPOSER_DUTYID;
-        theBoardCommitteeDutyIDsBytesArrary[0] = PROPOSER_DUTYID;
+
 
         var theBoardCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", theBoardCommitteeDutyIDsBytesArrary);
         // console.log("board duty bytes----:   ", theBoardCommitteeDutyIDs)

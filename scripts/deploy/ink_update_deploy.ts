@@ -19,80 +19,80 @@ async function deploy(){
 
 
   const configManagerFactory = await ethers.getContractFactory("ConfigManager");
-  const configManager = await configManagerFactory.attach("0x5af8110C8635caF0Cd866278238023c52eb922CA");
+  const configManager = await configManagerFactory.attach("0xd711FcF5AB000Dc88c0Bb64B90Eb60858C0459fD");
 
   const factoryManagerFactory = await ethers.getContractFactory("FactoryManager");
-  const factoryManager = await factoryManagerFactory.attach("0x3bb1774ffc6792F2Ed8b85d7f6F89a1C3B9976Bc");
+  const factoryManager = await factoryManagerFactory.attach("0xA43b0F8f1aE6bF55843401dd490a92d4959D6cE8");
 
+  
+  // const theBoardFactory = await ethers.getContractFactory("TheBoard");
+  // const theBoardCommitteeImpl = await theBoardFactory.deploy();
+  // await theBoardCommitteeImpl.deployed();
 
-  const theBoardFactory = await ethers.getContractFactory("TheBoard");
-  const theBoardCommitteeImpl = await theBoardFactory.deploy();
-  await theBoardCommitteeImpl.deployed();
+  // const thePublicFactory = await ethers.getContractFactory("ThePublic");
+  // const thePublicCommitteeImpl = await thePublicFactory.deploy();
+  // await thePublicCommitteeImpl.deployed();
 
-  const thePublicFactory = await ethers.getContractFactory("ThePublic");
-  const thePublicCommitteeImpl = await thePublicFactory.deploy();
-  await thePublicCommitteeImpl.deployed();
-
-  const treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
-  const theTreasuryCommitteeImpl = await treasuryCommitteeFactory.deploy();
-  await theTreasuryCommitteeImpl.deployed();
+  // const treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
+  // const theTreasuryCommitteeImpl = await treasuryCommitteeFactory.deploy();
+  // await theTreasuryCommitteeImpl.deployed();
 
   const masterDAOFactory = await ethers.getContractFactory("MasterDAO");
   const masterDAOImpl = await masterDAOFactory.deploy();
   await masterDAOImpl.deployed();
 
-  const treasuryManagerAgentFactory = await ethers.getContractFactory("TreasuryManagerAgent");
-  const theTreasuryManagerAgentImpl = await treasuryManagerAgentFactory.deploy();
-  await theTreasuryManagerAgentImpl.deployed();
+  // const treasuryManagerAgentFactory = await ethers.getContractFactory("TreasuryManagerAgent");
+  // const theTreasuryManagerAgentImpl = await treasuryManagerAgentFactory.deploy();
+  // await theTreasuryManagerAgentImpl.deployed();
 
-  const payrollSetupAgentFactory = await ethers.getContractFactory("PayrollSetupAgent");
-  const payrollSetupAgentImpl = await payrollSetupAgentFactory.deploy();
-  await payrollSetupAgentImpl.deployed();
-
-
-  const payrollExecuteAgentFactory = await ethers.getContractFactory("PayrollExecuteAgent");
-  const payrollExecuteAgentImpl = await payrollExecuteAgentFactory.deploy();
-  await payrollExecuteAgentImpl.deployed();
+  // const payrollSetupAgentFactory = await ethers.getContractFactory("PayrollSetupAgent");
+  // const payrollSetupAgentImpl = await payrollSetupAgentFactory.deploy();
+  // await payrollSetupAgentImpl.deployed();
 
 
-  const payrollUCVManagerAgentFactory = await ethers.getContractFactory("PayrollUCVManager");
-  const payrollUCVManagerImpl = await payrollUCVManagerAgentFactory.deploy();
-  await payrollUCVManagerImpl.deployed();
+  // const payrollExecuteAgentFactory = await ethers.getContractFactory("PayrollExecuteAgent");
+  // const payrollExecuteAgentImpl = await payrollExecuteAgentFactory.deploy();
+  // await payrollExecuteAgentImpl.deployed();
 
 
-  const payrollUCVFactory = await ethers.getContractFactory("PayrollUCV");
-  const payrollUCVImpl = await payrollUCVFactory.deploy();
-  await payrollUCVImpl.deployed();
+  // const payrollUCVManagerAgentFactory = await ethers.getContractFactory("PayrollUCVManager");
+  // const payrollUCVManagerImpl = await payrollUCVManagerAgentFactory.deploy();
+  // await payrollUCVManagerImpl.deployed();
+
+
+  // const payrollUCVFactory = await ethers.getContractFactory("PayrollUCV");
+  // const payrollUCVImpl = await payrollUCVFactory.deploy();
+  // await payrollUCVImpl.deployed();
 
 
 
   //init factory manager key
-  console.log("useful constant ################################################################################################################## ")
-  console.log("deploy key ------------------------------------------------------------------ ")
-  console.log("domain: ", admin);
-  console.log("");
-  console.log("the board committee key:", await configManager.buildConfigKey(admin, "ADMIN", "TheBoardCommittee"));
-  console.log("the public committee key:", await configManager.buildConfigKey(admin, "ADMIN", "ThePublicCommittee"));
-  console.log("the treasury committee key:", await configManager.buildConfigKey(admin, "ADMIN", "TreasuryCommittee"));
-  console.log("the master DAO key:", await configManager.buildConfigKey(admin, "ADMIN", "MasterDAO"));
-  console.log("the factory manager key:", await configManager.buildConfigKey(admin, "ADMIN", "FactoryManager"));
-  console.log("the treasury manager agent key:", await configManager.buildConfigKey(admin, "ADMIN", "TreasuryManagerAgent"));
-  console.log("the payroll setup agent key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollSetupAgent"));
-  console.log("the payroll execute agent key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollExecuteAgent"));
-  console.log("the payroll ucv manager key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollUCVManager"));
-  console.log("the payroll ucv key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollUCV"));
+  // console.log("useful constant ################################################################################################################## ")
+  // console.log("deploy key ------------------------------------------------------------------ ")
+  // console.log("domain: ", admin);
+  // console.log("");
+  // console.log("the board committee key:", await configManager.buildConfigKey(admin, "ADMIN", "TheBoardCommittee"));
+  // console.log("the public committee key:", await configManager.buildConfigKey(admin, "ADMIN", "ThePublicCommittee"));
+  // console.log("the treasury committee key:", await configManager.buildConfigKey(admin, "ADMIN", "TreasuryCommittee"));
+  // console.log("the master DAO key:", await configManager.buildConfigKey(admin, "ADMIN", "MasterDAO"));
+  // console.log("the factory manager key:", await configManager.buildConfigKey(admin, "ADMIN", "FactoryManager"));
+  // console.log("the treasury manager agent key:", await configManager.buildConfigKey(admin, "ADMIN", "TreasuryManagerAgent"));
+  // console.log("the payroll setup agent key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollSetupAgent"));
+  // console.log("the payroll execute agent key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollExecuteAgent"));
+  // console.log("the payroll ucv manager key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollUCVManager"));
+  // console.log("the payroll ucv key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollUCV"));
 
-  console.log("contract type ------------------------------------------------------------------ ")
-  console.log("FactoryTypeID=", keccak256(toUtf8Bytes("FactoryTypeID")));
-  console.log("DAOTypeID=", keccak256(toUtf8Bytes("DAOTypeID")));
-  console.log("AgentTypeID=", keccak256(toUtf8Bytes("AgentTypeID")));
-  console.log("CommitteeTypeID=", keccak256(toUtf8Bytes("CommitteeTypeID")));
-  console.log("");
+  // console.log("contract type ------------------------------------------------------------------ ")
+  // console.log("FactoryTypeID=", keccak256(toUtf8Bytes("FactoryTypeID")));
+  // console.log("DAOTypeID=", keccak256(toUtf8Bytes("DAOTypeID")));
+  // console.log("AgentTypeID=", keccak256(toUtf8Bytes("AgentTypeID")));
+  // console.log("CommitteeTypeID=", keccak256(toUtf8Bytes("CommitteeTypeID")));
+  // console.log("");
 
-  console.log("duty id ------------------------------------------------------------------ ")
-  console.log("PROPOSER_DUTYID=", keccak256(toUtf8Bytes("PROPOSER_DUTYID")));
-  console.log("VOTER_DUTYID=", keccak256(toUtf8Bytes("VOTER_DUTYID")));
-  console.log("");
+  // console.log("duty id ------------------------------------------------------------------ ")
+  // console.log("PROPOSER_DUTYID=", keccak256(toUtf8Bytes("PROPOSER_DUTYID")));
+  // console.log("VOTER_DUTYID=", keccak256(toUtf8Bytes("VOTER_DUTYID")));
+  // console.log("");
 
 
   console.log("deployed address ##################################################################################################################")
@@ -101,17 +101,17 @@ async function deploy(){
 
   /// init template
   var keyValues : any = [];
-  keyValues[0] = {"keyPrefix":"ADMIN", "keyName":"FactoryManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await factoryManager.address)}
-  keyValues[1] = {"keyPrefix":"ADMIN", "keyName":"TheBoardCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theBoardCommitteeImpl.address)}
-  keyValues[2] = {"keyPrefix":"ADMIN", "keyName":"ThePublicCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await thePublicCommitteeImpl.address)}
-  keyValues[3] = {"keyPrefix":"ADMIN", "keyName":"TreasuryCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theTreasuryCommitteeImpl.address)}
-  keyValues[4] = {"keyPrefix":"ADMIN", "keyName":"MasterDAO", "typeID":keccak256(toUtf8Bytes("address")), "data": (await masterDAOImpl.address)}
-  keyValues[5] = {"keyPrefix":"ADMIN", "keyName":"TreasuryManagerAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theTreasuryManagerAgentImpl.address)}
-  keyValues[6] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCV", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVImpl.address)}
-  keyValues[7] = {"keyPrefix":"ADMIN", "keyName":"PayrollSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollSetupAgentImpl.address)}
-  keyValues[8] = {"keyPrefix":"ADMIN", "keyName":"PayrollExecuteAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollExecuteAgentImpl.address)}
-  keyValues[9] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVManagerImpl.address)}
+  // keyValues[0] = {"keyPrefix":"ADMIN", "keyName":"FactoryManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await factoryManager.address)}
+  // keyValues[1] = {"keyPrefix":"ADMIN", "keyName":"TheBoardCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theBoardCommitteeImpl.address)}
+  // keyValues[2] = {"keyPrefix":"ADMIN", "keyName":"ThePublicCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await thePublicCommitteeImpl.address)}
+  // keyValues[3] = {"keyPrefix":"ADMIN", "keyName":"TreasuryCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theTreasuryCommitteeImpl.address)}
+  // keyValues[5] = {"keyPrefix":"ADMIN", "keyName":"TreasuryManagerAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theTreasuryManagerAgentImpl.address)}
+  // keyValues[6] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCV", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVImpl.address)}
+  // keyValues[7] = {"keyPrefix":"ADMIN", "keyName":"PayrollSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollSetupAgentImpl.address)}
+  // keyValues[8] = {"keyPrefix":"ADMIN", "keyName":"PayrollExecuteAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollExecuteAgentImpl.address)}
+  // keyValues[9] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVManagerImpl.address)}
   
+  keyValues[0] = {"keyPrefix":"ADMIN", "keyName":"MasterDAO", "typeID":keccak256(toUtf8Bytes("address")), "data": (await masterDAOImpl.address)};
   await configManager.batchSetKV(admin, keyValues);
 
 

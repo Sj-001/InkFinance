@@ -28,7 +28,7 @@ const {loadFixture, deployContract} = waffle;
 
 describe("proposal related test", function () {
 
-    it("test create treasury-setup proposal", async function () {
+    it.only("test create treasury-setup proposal", async function () {
 
         const signers = await ethers.getSigners();
         console.log("########################current signer:", signers[0].address);
@@ -55,12 +55,22 @@ describe("proposal related test", function () {
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
         // var theBoard = theBoardFactory.attach(flowSteps[0].committee);
         var theBoard = theBoardFactory.attach(theBoardAddress);
+
         await theBoard.newProposal(proposal, true, "0x00");
 
+
+        console.log("committee infos:", await masterDAO.getDAOCommittees(signers[0].address));
+
+
+        
+
         var proposalID = await masterDAO.getProposalIDByIndex(0);
+        
+        
         // console.log("first proposal id: ", proposalID);
         await voteProposalByThePublic(await masterDAO.address, proposalID);
 
+        /*
         // once decide, 
         await tallyVotes(await masterDAO.address, proposalID);
         
@@ -99,6 +109,8 @@ describe("proposal related test", function () {
 
     
         console.log("claim information:", await payrollUCVManager.getClaimableAmount(payrollTopicID, "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"))
+
+        */
 
 
         //await makePayrollPayProposal(payrollTopicID, committeeAddress);
@@ -142,7 +154,7 @@ describe("proposal related test", function () {
 
     
     
-    it.only("test create off-chain proposal - flow 0 - Board Only ", async function () {
+    it("test create off-chain proposal - flow 0 - Board Only ", async function () {
         
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
         const {inkERC20} = await loadFixture(InkERC20Fixture);        

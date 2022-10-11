@@ -33,6 +33,15 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
         string name;
     }
 
+
+    
+    struct DAOCommitteeWithDuty {
+        string committeeName;
+        address committee;
+        bytes32 []duties;
+    }
+
+
     // /// @dev let agent call any DAO method
     // /// @param contractAddress ask DAO to call the contractAddress
     // /// @param functionSignature the function signatures
@@ -88,4 +97,9 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
         bytes32 contractKey,
         bytes memory initData
     ) external returns (address deployedAddress);
+
+
+    /// @notice return all commitees and user's duty
+    /// @return userCommitteeDuties return user's dutyID in the committee, the dutyID could be bytes32(0x00) if they don't have the duty
+    function getDAOCommittees(address user) external view returns(DAOCommitteeWithDuty[] memory userCommitteeDuties);
 }

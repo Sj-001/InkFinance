@@ -8,7 +8,7 @@ import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import { FactoryManagerFixture, InkERC20Fixture } from '../shared/fixtures'; 
 
-import { INK_CONFIG_DOMAIN, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
+import { PROPOSAL_HANDLER_KEY,INK_CONFIG_DOMAIN, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
 
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
@@ -46,6 +46,8 @@ describe("contract dao test", function () {
 
         console.log("first dao address:", masterDAO.address);
         
+        console.log(await factoryManager.deploy(false, keccak256(toUtf8Bytes("DAOTypeID")), PROPOSAL_HANDLER_KEY,  toUtf8Bytes("")));
+
         
     });
 

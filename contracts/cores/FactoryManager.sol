@@ -44,6 +44,8 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     /// @dev config address
     address private _config;
 
+    uint256 nounce = 0;
+
     function supportsInterface(bytes4 interfaceId)
         external
         pure
@@ -67,20 +69,37 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         bytes32 contractKey,
         address msgSender
     ) internal view returns (address _calculatedAddress) {
-        bytes32 salt = bytes32(0x0);
 
-        if (randomSalt) {
-            salt = keccak256(
-                abi.encode(typeID, contractKey, msgSender, block.timestamp)
-            );
-        } else {
-            salt = keccak256(abi.encode(typeID, contractKey, msgSender));
-        }
+
+        bytes32 salt = _getSalt(randomSalt, typeID, contractKey, msgSender);
+        
+        console.log("predict salt is --- ");
+        console.logBytes32(salt);
+        console.log(randomSalt);
+        console.logBytes32(typeID);
+        console.logBytes32(contractKey);
+        console.log(msgSender);
+        
         address generatedContract = Clones.predictDeterministicAddress(
             address(proxy),
             salt
         );
+
         return generatedContract;
+    }
+
+    function _getSalt(bool randomSalt,
+        bytes32 typeID,
+        bytes32 factoryKey, 
+        address msgSender) internal view returns(bytes32 salt) {
+
+        if (randomSalt) {
+            salt = keccak256(
+                abi.encode(typeID, factoryKey, msgSender, block.timestamp)
+            );
+        } else {
+            salt = keccak256(abi.encode(typeID, factoryKey, msgSender));
+        }
     }
 
     function _deploy(
@@ -89,9 +108,21 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         bytes32 factoryKey,
         bytes calldata initData
     ) internal returns (address _newContract) {
-        (bytes32 _typeID, bytes memory addressBytes) = configManager.getKV(
+
+        console.log("deploy start ##### ");
+
+
+
+        (bytes32 _typeID, bytes memory addressBytes) = IConfigManager(_config).getKV(
             factoryKey
         );
+
+        // require(false, "before predict ");
+
+        console.log("KEY IS:");
+        console.logBytes32(factoryKey);
+        console.log("DATA IS:");
+        console.logBytes(addressBytes);
 
         if (addressBytes.length == 0) {
             revert TheFactoryKeyIsNotExist();
@@ -100,14 +131,14 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         // if (_typeID != typeID) {
         //     revert WrongTypeOfTheFactoryKey();
         // }
-
+        // require(false, "before predict ");
         address afterDeployedAddressPredict = _getPredictAddress(
             randomSalt,
             _typeID,
             factoryKey,
             msg.sender
         );
-
+        // require(false, "here predict ");
         console.log("predict address", afterDeployedAddressPredict);
 
         if (
@@ -117,19 +148,24 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             return afterDeployedAddressPredict;
         }
 
-        console.log("KEY IS:");
-        console.logBytes32(factoryKey);
-        console.log("DATA IS:");
-        console.logBytes(addressBytes);
+        // require(false, "here predict saved ");
+
 
         // valid typeID
         address implementAddress = addressBytes.toAddress();
+
+        // require(false, toAsciiString(implementAddress));
+
         console.log("implement address:", implementAddress);
-        bytes32 salt = keccak256(abi.encode(_typeID, factoryKey, msg.sender));
+
+        bytes32 salt = _getSalt(randomSalt, _typeID, factoryKey, msg.sender);
+
         address generatedContract = Clones.cloneDeterministic(
             address(proxy),
             salt
         );
+
+
         console.log("generated address:", generatedContract);
 
         InkBeacon inkBeacon = new InkBeacon(implementAddress, _config);
@@ -140,8 +176,12 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             address(inkBeacon),
             ""
         );
+
         console.log("start call IDeploy init");
+        
+
         IDeploy(generatedContract).init(msg.sender, _config, initData);
+
         emit NewContractDeployed(
             typeID,
             factoryKey,
@@ -153,6 +193,9 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         console.log("add to storage", generatedContract);
         _deployedContracts[factoryKey].add(generatedContract);
+
+
+        console.log("deploy end");
         return generatedContract;
     }
 
@@ -181,4 +224,25 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     {
         return _deployedContracts[contractID].length();
     }
+
+
+    function toAsciiString(address x) public returns (string memory) {
+        bytes memory s = new bytes(40);
+        for (uint i = 0; i < 20; i++) {
+            bytes1 b = bytes1(uint8(uint(uint160(x)) / (2**(8*(19 - i)))));
+            bytes1 hi = bytes1(uint8(b) / 16);
+            bytes1 lo = bytes1(uint8(b) - 16 * uint8(hi));
+            s[2*i] = char(hi);
+            s[2*i+1] = char(lo);
+        }
+        string memory r = string(abi.encodePacked("0x",s));
+        return r;
+    }
+
+    function char(bytes1 b) public returns (bytes1 c) {
+        if (uint8(b) < 10) return bytes1(uint8(b) + 0x30);
+        else return bytes1(uint8(b) + 0x57);
+    }
+
+    
 }

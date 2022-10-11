@@ -10,6 +10,7 @@ error ThisCommitteeCannotMakeProposal();
 error YouDoNotHaveDutyToOperate();
 
 interface ICommittee is IProposalInfo, IVoteHandler, IERC165 {
+    
     /// @notice return committee's duties
     /// @return duties committee's duties
     function getCommitteeDuties() external returns (bytes32[] memory duties);

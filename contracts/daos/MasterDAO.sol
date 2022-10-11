@@ -27,6 +27,7 @@ contract MasterDAO is BaseDAO {
                 break;
             }
         }
+
         return callbackEvent;
     }
 

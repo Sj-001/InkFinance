@@ -110,6 +110,7 @@ contract ConfigManager is IConfigManager {
             }
         }
     }
+    error KeyISNotExist(bytes32 key);
 
     /// @inheritdoc IConfigManager
     function getKV(bytes32 key)
@@ -117,10 +118,16 @@ contract ConfigManager is IConfigManager {
         view
         override
         returns (bytes32 typeID, bytes memory data)
-    {
+    {   
         ConfigHelper.KVInfo memory info = _domainKeyValues[key];
+        
+
         typeID = info.typeID;
         data = info.data;
+
+        if (data.length == 0) {
+            revert KeyISNotExist(key);
+        }
     }
 
     /// @notice verify the msgSender has the right to update the value under that domain

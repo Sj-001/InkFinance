@@ -2,13 +2,13 @@
 pragma solidity ^0.8.0;
 
 library DutyID {
-    // keccak256("dutyID.SIGNER")
+    // keccak256("dutyID.PROPOSER")
     bytes32 internal constant PROPOSER =
-        0x4575c11fbfaf5400e74dbe9f6f86279ce134d6214445926cc50dccd877e75fa2;
+        0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e;
 
     // keccak256("dutyID.VOTER")
     bytes32 internal constant VOTER =
-        0x241f6fe66d0c676e71b48b26e0b0ddb2dede4dca4534df353a6391c3d6d695e2;
+        0xf579da1548edf1a4b47140c7e8df0e1e9f881c48184756b7f660e33bbc767607;
 
     // keccak256("dutyID.SIGNER")
     bytes32 internal constant SIGNER =

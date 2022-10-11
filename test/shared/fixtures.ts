@@ -51,6 +51,11 @@ console.log("UCVManagerTypeID=", keccak256(toUtf8Bytes("UCVManagerTypeID")));
 const UCVManagerTypeID = "0x9dbd9f87f8d58402d143fb49ec60ec5b8c4fa567e418b41a6249fd125a267101";
 console.log("UCVManagerTypeID=", UCVTypeID);
 
+
+console.log("PropoalHandlerTypeID=", keccak256(toUtf8Bytes("PropoalHandlerTypeID")));
+const PropoalHandlerTypeID = "0x1858c200a95d03e2d42c3cf57541f3bc9a8c8471b5f80b7c26e756d34fbced97";
+console.log("PropoalHandlerTypeID=", PropoalHandlerTypeID);
+
 export {FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID}
 
 // signer[0].address

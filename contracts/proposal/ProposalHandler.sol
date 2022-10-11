@@ -46,7 +46,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         address config_,
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
-        super.init(config_);
+        // super.init(config_);
 
         _dao = dao_;
         return callbackEvent;

@@ -5,8 +5,30 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "factoryKey",
+        "type": "bytes32"
+      }
+    ],
+    "name": "DeployFailuer",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "GenerateContractByKeyFailure",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "msgSender",
+        "type": "address"
+      }
+    ],
+    "name": "MSG_SENDER_IS_NOT_AGENT",
     "type": "error"
   },
   {
@@ -551,6 +573,42 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getDAOCommittees",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "committeeName",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "committee",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "duties",
+            "type": "bytes32[]"
+          }
+        ],
+        "internalType": "struct IDAO.DAOCommitteeWithDuty[]",
+        "name": "userCommitteeDuties",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1276,53 +1334,6 @@
       }
     ],
     "name": "setAgentFlowID",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "bytes32",
-            "name": "flowID",
-            "type": "bytes32"
-          },
-          {
-            "components": [
-              {
-                "internalType": "string",
-                "name": "committeeName",
-                "type": "string"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "step",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "addressConfigKey",
-                "type": "bytes32"
-              },
-              {
-                "internalType": "bytes",
-                "name": "dutyIDs",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct IProposalHandler.CommitteeCreateInfo[]",
-            "name": "committees",
-            "type": "tuple[]"
-          }
-        ],
-        "internalType": "struct IProposalHandler.FlowInfo",
-        "name": "flow",
-        "type": "tuple"
-      }
-    ],
-    "name": "setFlowStep",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
