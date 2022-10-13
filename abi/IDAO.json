@@ -3,6 +3,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "dutyID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "AddDAOMemberDuty",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "owner",
@@ -78,6 +97,12 @@
         "internalType": "bytes[]",
         "name": "kvData",
         "type": "bytes[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "createTime",
+        "type": "uint256"
       }
     ],
     "name": "NewProposal",
@@ -583,6 +608,25 @@
         "internalType": "bytes32",
         "name": "proposalID",
         "type": "bytes32"
+      }
+    ],
+    "name": "getProposalFlow",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "flowID",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
       },
       {
         "internalType": "string",
@@ -725,7 +769,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
     "name": "getTallyVoteRules",
     "outputs": [
       {

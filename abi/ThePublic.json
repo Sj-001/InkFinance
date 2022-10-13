@@ -59,6 +59,12 @@
         "internalType": "bytes[]",
         "name": "kvData",
         "type": "bytes[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "createTime",
+        "type": "uint256"
       }
     ],
     "name": "NewProposal",

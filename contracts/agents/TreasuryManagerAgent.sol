@@ -34,7 +34,8 @@ contract TreasuryManagerAgent is BaseAgent {
         override
         returns (bool success)
     {
-        // valid, if it's proposl, etc.
+        // verify the treasury has been set up before
+
         console.log("pre exec TreasuryManagerAgent ");
 
         // valid related address，include operator ｜ multisigner ｜ auditor
@@ -262,5 +263,9 @@ contract TreasuryManagerAgent is BaseAgent {
         returns (bool)
     {
         return interfaceId == type(IAgent).interfaceId;
+    }
+
+    function isUniqueInDAO() external override returns (bool isUnique) {
+        isUnique = true;
     }
 }

@@ -130,4 +130,18 @@ function supportsInterface(
 
 
 
+### isUniqueInDAO
+
+
+
+*Declaration:*
+```solidity
+function isUniqueInDAO(
+) external returns
+(bool isUnique)
+```
+
+
+
+
 ## 5.Events

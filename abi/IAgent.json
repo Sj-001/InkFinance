@@ -52,6 +52,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "isUniqueInDAO",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "isUnique",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",

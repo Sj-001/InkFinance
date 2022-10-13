@@ -41,12 +41,12 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
 
         var theBoardCommitteeDutyIDsBytesArrary = [];
         theBoardCommitteeDutyIDsBytesArrary[0] = PROPOSER_DUTYID;
-
+        theBoardCommitteeDutyIDsBytesArrary[1] = VOTER_DUTYID;
 
         var theBoardCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", theBoardCommitteeDutyIDsBytesArrary);
         // console.log("board duty bytes----:   ", theBoardCommitteeDutyIDs)
         var thePublicCommitteeDutyIDsByteArray = [];
-        thePublicCommitteeDutyIDsByteArray[0] = VOTER_DUTYID;
+        thePublicCommitteeDutyIDsByteArray[0] = "0x0000000000000000000000000000000000000000000000000000000000000000";
         var thePublicCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", thePublicCommitteeDutyIDsByteArray);
 
         
@@ -127,18 +127,28 @@ export function buildOffchainProposal() {
         
         var headers = [];
         headers[0] = {
-            "key":  "key0",
-            "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+            "key":  "MinEffectiveVotes",
+            "typeID": keccak256(toUtf8Bytes("type.UINT256")),
+            "data": web3.eth.abi.encodeParameter("uint256", 99),
             "desc": "0x0002",
         };
 
         headers[1] = {
-            "key":  "key1",
-            "typeID": keccak256(toUtf8Bytes("typeID")),
-            "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+            "key":  "MinEffectiveVoteWallets",
+            "typeID": keccak256(toUtf8Bytes("type.UINT256")),
+            "data": web3.eth.abi.encodeParameter("uint256", 99),
             "desc": toUtf8Bytes(""),
         };
+
+        headers[2] = {
+            "key":  "VoteFlow",
+            "typeID": keccak256(toUtf8Bytes("type.BYTES32")),
+            "data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+            "desc": toUtf8Bytes(""),
+        };
+
+        console.log("type.BYTES32:::: ", keccak256(toUtf8Bytes("type.BYTES32")));
+        
 
         var kvData = [];
         kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);

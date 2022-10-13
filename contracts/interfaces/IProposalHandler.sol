@@ -61,6 +61,20 @@ interface IProposalHandler is IProposalInfo {
         CommitteeInfo[] committees;
     }
 
+    function getTallyVoteRules(bytes32 proposalID)
+        external
+        view
+        returns (
+            uint256 minAgreeRatio,
+            uint256 minEffectiveVotes,
+            uint256 minEffectiveWallets
+        );
+
+    function getProposalFlow(bytes32 proposalID)
+        external
+        view
+        returns (bytes32 flowID);
+
     // //////////////////// proposal info
 
     // function getDAOProcessInfo(bytes32 proposalID)

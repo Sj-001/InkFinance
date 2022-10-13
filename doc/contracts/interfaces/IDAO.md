@@ -70,20 +70,6 @@ function getFlowSteps(
 
 
 
-### getTallyVoteRules
-
-
-
-*Declaration:*
-```solidity
-function getTallyVoteRules(
-) external returns
-(uint256 minAgreeRatio, uint256 minEffectiveVotes, uint256 minEffectiveWallets)
-```
-
-
-
-
 ### setupPayrollUCV
 
 > setup a new payroll UCV
@@ -130,6 +116,24 @@ function deployByKey(
 
 
 
+
+### getDAOCommittees
+return all commitees and user's duty
+
+
+
+*Declaration:*
+```solidity
+function getDAOCommittees(
+) external returns
+(struct IDAO.DAOCommitteeWithDuty[] userCommitteeDuties)
+```
+
+
+*Returns:*
+| Arg | Description |
+| --- | --- |
+|`userCommitteeDuties` | return user's dutyID in the committee, the dutyID could be bytes32(0x00) if they don't have the duty
 
 ## 5.Events
 ### NewDAOCreated

@@ -14,6 +14,9 @@
 
 | Var | Type |
 | --- | --- |
+| MIN_EFFECTIVE_VOTES | string |
+| MIN_EFFECTIVE_VOTE_WALLETS | string |
+| VOTE_FLOW | string |
 | _proposals | mapping(bytes32 => struct IProposalInfo.Proposal) |
 
 ## 3.Modifiers
@@ -243,6 +246,34 @@ function flushTopicIndex(
 | Modifier |
 | --- |
 | onlyDAO |
+
+
+
+
+### getProposalFlow
+
+
+
+*Declaration:*
+```solidity
+function getProposalFlow(
+) external returns
+(bytes32 flowID)
+```
+
+
+
+
+### getTallyVoteRules
+
+
+
+*Declaration:*
+```solidity
+function getTallyVoteRules(
+) external returns
+(uint256 minAgreeRatio, uint256 minEffectiveVotes, uint256 minEffectiveWallets)
+```
 
 
 

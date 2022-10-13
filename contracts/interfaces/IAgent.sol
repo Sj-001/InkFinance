@@ -24,4 +24,7 @@ interface IAgent is IAgentInfo {
     /// @dev return the flow of the agent
     /// @return flowID the flow of the agent
     function getAgentFlow() external returns (bytes32 flowID);
+
+    /// @dev this function will be used in dao, when they create the agent, they have to verify the agent has been created only once.
+    function isUniqueInDAO() external returns (bool isUnique);
 }

@@ -110,6 +110,7 @@ contract ConfigManager is IConfigManager {
             }
         }
     }
+
     error KeyISNotExist(bytes32 key);
 
     /// @inheritdoc IConfigManager
@@ -118,9 +119,8 @@ contract ConfigManager is IConfigManager {
         view
         override
         returns (bytes32 typeID, bytes memory data)
-    {   
+    {
         ConfigHelper.KVInfo memory info = _domainKeyValues[key];
-        
 
         typeID = info.typeID;
         data = info.data;

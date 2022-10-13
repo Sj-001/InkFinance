@@ -82,5 +82,7 @@ contract MasterDAO is BaseDAO {
     function getTypeID() external override returns (bytes32 typeID) {}
 
     /// @inheritdoc IDeploy
-    function getVersion() external override returns (uint256 version) {}
+    function getVersion() external pure override returns (uint256 version) {
+        version = 3;
+    }
 }

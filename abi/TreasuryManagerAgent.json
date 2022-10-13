@@ -54,6 +54,12 @@
         "internalType": "bytes[]",
         "name": "kvData",
         "type": "bytes[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "createTime",
+        "type": "uint256"
       }
     ],
     "name": "NewProposal",
@@ -302,6 +308,19 @@
     ],
     "name": "initAgent",
     "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isUniqueInDAO",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "isUnique",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },

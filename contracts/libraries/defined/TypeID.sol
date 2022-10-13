@@ -16,6 +16,9 @@ library TypeID {
     bytes32 internal constant ADDRESS_SLICE =
         0x100736460f1973acb7722a13b56f289c66801ac691257810b6b8c1236aa0dd27;
 
+    /* keccak256("type.Bytes32"); */
+    bytes32 internal constant BYTES32 =
+        0x2c47c0fa9d746ea80bdd45fbe8c1a28a65808ed7f5eca2dc3f6ead835fc7d468;
     /* keccak256("type.BOOL"); */
     /* keccak256("type.STRING"); */
 }

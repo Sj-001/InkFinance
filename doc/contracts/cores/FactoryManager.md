@@ -15,6 +15,7 @@ Factory is used to generate DAO instance
 | Var | Type |
 | --- | --- |
 | proxy | contract InkProxy |
+| nounce | uint256 |
 
 ## 3.Modifiers
 
@@ -56,6 +57,20 @@ function constructor(
 function _getPredictAddress(
 ) internal returns
 (address _calculatedAddress)
+```
+
+
+
+
+### _getSalt
+
+
+
+*Declaration:*
+```solidity
+function _getSalt(
+) internal returns
+(bytes32 salt)
 ```
 
 
@@ -125,6 +140,34 @@ function getDeployedAddress(
 function getDeployedAddressCount(
 ) public returns
 (uint256 size)
+```
+
+
+
+
+### toAsciiString
+
+
+
+*Declaration:*
+```solidity
+function toAsciiString(
+) public returns
+(string)
+```
+
+
+
+
+### char
+
+
+
+*Declaration:*
+```solidity
+function char(
+) public returns
+(bytes1 c)
 ```
 
 

@@ -139,4 +139,8 @@ contract PayrollExecuteAgent is BaseAgent {
     {
         return interfaceId == type(IAgent).interfaceId;
     }
+
+    function isUniqueInDAO() external override returns (bool isUnique) {
+        isUnique = false;
+    }
 }

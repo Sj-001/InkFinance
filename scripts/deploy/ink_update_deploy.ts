@@ -19,10 +19,10 @@ async function deploy(){
 
 
   const configManagerFactory = await ethers.getContractFactory("ConfigManager");
-  const configManager = await configManagerFactory.attach("0xd711FcF5AB000Dc88c0Bb64B90Eb60858C0459fD");
+  const configManager = await configManagerFactory.attach("0xc47FfA67FDd7427441Da8ED7A7C5E65A9B52a275");
 
   const factoryManagerFactory = await ethers.getContractFactory("FactoryManager");
-  const factoryManager = await factoryManagerFactory.attach("0xA43b0F8f1aE6bF55843401dd490a92d4959D6cE8");
+  const factoryManager = await factoryManagerFactory.attach("0x7Fa52BE7394456dc20Bb9227810254290D5a2B34");
 
   
   // const theBoardFactory = await ethers.getContractFactory("TheBoard");

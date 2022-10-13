@@ -159,3 +159,9 @@ uint256 index
 |`addr` | the address at that index
 
 ## 5.Events
+### AddDAOMemberDuty
+
+
+
+
+

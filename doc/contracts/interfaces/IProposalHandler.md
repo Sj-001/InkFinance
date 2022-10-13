@@ -14,6 +14,34 @@ inteface which defined how to deal with the vote process
 
 ## 4.Functions
 
+### getTallyVoteRules
+
+
+
+*Declaration:*
+```solidity
+function getTallyVoteRules(
+) external returns
+(uint256 minAgreeRatio, uint256 minEffectiveVotes, uint256 minEffectiveWallets)
+```
+
+
+
+
+### getProposalFlow
+
+
+
+*Declaration:*
+```solidity
+function getProposalFlow(
+) external returns
+(bytes32 flowID)
+```
+
+
+
+
 ### newProposal
 makeing a new proposal
 

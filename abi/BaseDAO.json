@@ -1,5 +1,16 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "agentsKey",
+        "type": "bytes32"
+      }
+    ],
+    "name": "AgentCanBeCreatedOnlyOnceInDAO",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "AgentCannotBeExecute",
     "type": "error"
@@ -16,6 +27,22 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "flowIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "wantedFlowID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "FlowIsNotSupport",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "GenerateContractByKeyFailure",
     "type": "error"
@@ -28,13 +55,32 @@
         "type": "address"
       }
     ],
-    "name": "MSG_SENDER_IS_NOT_AGENT",
+    "name": "MsgSenderIsNotAgent",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "SystemError",
     "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "dutyID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "AddDAOMemberDuty",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -128,6 +174,12 @@
         "internalType": "bytes[]",
         "name": "kvData",
         "type": "bytes[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "createTime",
+        "type": "uint256"
       }
     ],
     "name": "NewProposal",
@@ -739,6 +791,25 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getProposalFlow",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "flowID",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "index",
         "type": "uint256"
@@ -903,7 +974,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
     "name": "getTallyVoteRules",
     "outputs": [
       {

@@ -100,11 +100,6 @@ async function deploy(){
   console.log("VOTER_DUTYID=", keccak256(toUtf8Bytes("VOTER_DUTYID")));
   console.log("");
 
-
-  console.log("deployed address ##################################################################################################################")
-  console.log("config address:", configManager.address);
-  console.log("factory address:", factoryManager.address);
-
   /// init template
   var keyValues : any = [];
   keyValues[0] = {"keyPrefix":"ADMIN", "keyName":"FactoryManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await factoryManager.address)}
@@ -121,7 +116,9 @@ async function deploy(){
   
   await configManager.batchSetKV(admin, keyValues);
 
-
+  console.log("deployed address ##################################################################################################################")
+  console.log("config address:", configManager.address);
+  console.log("factory address:", factoryManager.address);
 
 }
 

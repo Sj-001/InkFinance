@@ -16,9 +16,7 @@ abstract contract BaseVerify is Context, Initializable {
     function init(address _config) public initializer {
         configManager = IConfigManager(_config);
 
-    
         require(
-            
             configManager.supportsInterface(type(IConfigManager).interfaceId),
             "not implement IConfig"
         );

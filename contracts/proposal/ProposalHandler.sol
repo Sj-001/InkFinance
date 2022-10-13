@@ -10,6 +10,8 @@ import "../bases/BaseVerify.sol";
 
 import "../utils/BytesUtils.sol";
 import "../libraries/defined/DutyID.sol";
+import "../libraries/defined/TypeID.sol";
+
 import "hardhat/console.sol";
 
 contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
@@ -18,6 +20,11 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     using LEnumerableMetadata for LEnumerableMetadata.MetadataSet;
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.Bytes32Set;
+
+    string public constant MIN_EFFECTIVE_VOTES = "MinEffectiveVotes";
+    string public constant MIN_EFFECTIVE_VOTE_WALLETS =
+        "MinEffectiveVoteWallets";
+    string public constant VOTE_FLOW = "VoteFlow";
 
     /// @dev how many propsoals in the DAO
     /// also used to generated proposalID;
@@ -193,34 +200,67 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         onlyDAO
     {}
 
-    // function getProposalVoteLimit(bytes32 proposalID) public view returns(uint256 minVotes, uint256 minWallets, uint256 minAgreeRatio){
+    function getProposalFlow(bytes32 proposalID)
+        external
+        view
+        override
+        returns (bytes32 flowID)
+    {
+        (bytes32 typeID, bytes memory voteFlow) = getProposalMetadata(
+            proposalID,
+            VOTE_FLOW
+        );
+        if (typeID == TypeID.BYTES32) {
+            console.log("Proposal Handler");
 
-    //   // DAO default setting
-    //   minVotes = _minEffectiveVotes;
-    //   minWallets = _minEffectiveVoteWallets;
-    //   minAgreeRatio = _minEffectiveVoteWallets;
+            bytes32 value = abi.decode(voteFlow, (bytes32));
+            console.logBytes32(value);
+            if (value > 0) {
+                flowID = value;
+            }
+        }
+    }
 
-    //   // reading from the proposal metadata, which has the higer priority.
+    function getTallyVoteRules(bytes32 proposalID)
+        external
+        view
+        override
+        returns (
+            uint256 minAgreeRatio,
+            uint256 minEffectiveVotes,
+            uint256 minEffectiveWallets
+        )
+    {
+        // DAO default setting
+        minAgreeRatio = 60;
+        minEffectiveVotes = 0;
+        minEffectiveWallets = 0;
 
-    //   (bytes32 typeID, bytes memory minVoteData) = getProposalMetadata(proposalID, MIN_VOTES);
-    //   if(typeID == TypeID.UINT256){
-    //     uint256 value = abi.decode(minVoteData, (uint256));
-    //     if(value > 0){
-    //       minVotes = value;
-    //     }
-    //   }
+        // reading from the proposal metadata, which has the higer priority.
 
-    //   bytes memory minWalletData;
-    //   (typeID, minWalletData) = getProposalMetadata(proposalID, MIN_WALLETS);
-    //   if(typeID == TypeID.UINT256){
-    //     uint256 value = abi.decode(minWalletData, (uint256));
-    //     if(value > 0){
-    //       minWallets = value;
-    //     }
-    //   }
+        (bytes32 typeID, bytes memory minVoteData) = getProposalMetadata(
+            proposalID,
+            MIN_EFFECTIVE_VOTES
+        );
+        if (typeID == TypeID.UINT256) {
+            uint256 value = abi.decode(minVoteData, (uint256));
+            if (value > 0) {
+                minEffectiveVotes = value;
+            }
+        }
 
-    //   return (minVotes, minWallets, );
-    // }
+        bytes memory minWalletData;
+        (typeID, minWalletData) = getProposalMetadata(
+            proposalID,
+            MIN_EFFECTIVE_VOTE_WALLETS
+        );
+        if (typeID == TypeID.UINT256) {
+            uint256 value = abi.decode(minWalletData, (uint256));
+            if (value > 0) {
+                minEffectiveWallets = value;
+            }
+        }
+    }
 
     // function _setTopicID(Proposal storage p) private {
     //     (, bytes memory data) = p.metadata._get(MetadataKeyID.TOPIC_ID);

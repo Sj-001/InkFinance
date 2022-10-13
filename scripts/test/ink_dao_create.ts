@@ -19,16 +19,9 @@ async function deploy(){
 //  config address: 0xd711FcF5AB000Dc88c0Bb64B90Eb60858C0459fD
 //  factory address: 0xA43b0F8f1aE6bF55843401dd490a92d4959D6cE8
 
-  const configManagerFactory = await ethers.getContractFactory("ConfigManager");
-  const configManager = await configManagerFactory.attach("0xd711FcF5AB000Dc88c0Bb64B90Eb60858C0459fD");
-  await configManager.deployed();
-
-
   const factoryManagerFactory = await ethers.getContractFactory("FactoryManager");
-  const factoryManager = await factoryManagerFactory.attach("0xA43b0F8f1aE6bF55843401dd490a92d4959D6cE8");
-  await factoryManager.deployed();
-
-
+  const factoryManager = await factoryManagerFactory.attach("0x7Fa52BE7394456dc20Bb9227810254290D5a2B34");
+//   await factoryManager.deployed();
 
   //init factory manager key
 
@@ -57,11 +50,11 @@ async function deploy(){
   }
   */
 
-  const theBoardCommitteeDutyIDsBytesArrary: any[] = [keccak256(toUtf8Bytes("PROPOSER_DUTYID"))];
+  const theBoardCommitteeDutyIDsBytesArrary: any[] = ["0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e", "0xf579da1548edf1a4b47140c7e8df0e1e9f881c48184756b7f660e33bbc767607"];
 
   var theBoardCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", theBoardCommitteeDutyIDsBytesArrary);
   // console.log("board duty bytes----:   ", theBoardCommitteeDutyIDs)
-  var thePublicCommitteeDutyIDsByteArray:any[] = [keccak256(toUtf8Bytes("VOTER_DUTYID"))];
+  var thePublicCommitteeDutyIDsByteArray:any[] = ["0x0000000000000000000000000000000000000000000000000000000000000000"];
   var thePublicCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", thePublicCommitteeDutyIDsByteArray);
 
   
@@ -82,7 +75,7 @@ async function deploy(){
   flow1Committees[1] = ["The Board", keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs]; 
 
   var flow2Committees: any[] = []
-  flow2Committees[0] = ["The Board", keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs]; 
+  flow2Committees[0] = ["The Public", keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs]; 
 
 
   var flows: any[] = [];
@@ -129,7 +122,8 @@ async function deploy(){
 
 
 
-  
+// config address: 0xc47FfA67FDd7427441Da8ED7A7C5E65A9B52a275
+// factory address: 0x7Fa52BE7394456dc20Bb9227810254290D5a2B34
 
 
 }

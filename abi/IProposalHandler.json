@@ -41,6 +41,12 @@
         "internalType": "bytes[]",
         "name": "kvData",
         "type": "bytes[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "createTime",
+        "type": "uint256"
       }
     ],
     "name": "NewProposal",
@@ -256,6 +262,25 @@
         "internalType": "bytes32",
         "name": "proposalID",
         "type": "bytes32"
+      }
+    ],
+    "name": "getProposalFlow",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "flowID",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
       },
       {
         "internalType": "string",
@@ -392,6 +417,35 @@
         "internalType": "bytes32",
         "name": "topicID",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getTallyVoteRules",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "minAgreeRatio",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minEffectiveVotes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minEffectiveWallets",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

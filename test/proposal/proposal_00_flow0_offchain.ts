@@ -1,4 +1,4 @@
-
+import chai from "chai";
 import {Wallet, Contract} from "ethers";
 import {MockProvider} from "ethereum-waffle";
 import {keccak256, toUtf8Bytes } from 'ethers/lib/utils';
@@ -7,7 +7,7 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import { FactoryManagerFixture, InkERC20Fixture } from '../shared/fixtures'; 
-
+const { expect } = chai;
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
 import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
@@ -30,13 +30,15 @@ describe("proposal_00_flow0_offchain", function () {
 
     it("test create off-chain proposal - flow 0 - Board Only ", async function () {
         
+        const signers = await ethers.getSigners();
+
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
         const {inkERC20} = await loadFixture(InkERC20Fixture);        
         var erc20Address = inkERC20.address;
 
         // select/create a DAO
         var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
-        await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
+        await factoryManager.deploy(true, DAOTypeID, MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
@@ -49,7 +51,19 @@ describe("proposal_00_flow0_offchain", function () {
         await theBoard.newProposal(offchainProposal, true, "0x00");
         var proposalID = await masterDAO.getProposalIDByIndex(0);
 
-        
+        var proposalSummery = await masterDAO.getProposalSummary(proposalID);
+
+        console.log(await masterDAO.getTallyVoteRules(proposalID));
+        console.log("Proposal Flow: ", await masterDAO.getProposalFlow(proposalID));
+
+        expect(proposalSummery.status).to.be.equal(0);
+
+
+
+        console.log("committee infos:", await masterDAO.getDAOCommittees(signers[0].address));
+
+
+
 
     });
     

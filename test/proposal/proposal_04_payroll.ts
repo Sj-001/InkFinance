@@ -28,7 +28,7 @@ const {loadFixture, deployContract} = waffle;
 
 describe("proposal related test", function () {
 
-    it.only("test create treasury-setup proposal", async function () {
+    it("test create treasury-setup proposal", async function () {
 
         const signers = await ethers.getSigners();
         console.log("########################current signer:", signers[0].address);

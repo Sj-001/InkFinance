@@ -293,7 +293,9 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             uint256 minAgreeRatio,
             uint256 minEffectiveVotes,
             uint256 minEffectiveWallets
-        ) = IDAO(getParentDAO()).getTallyVoteRules();
+        ) = IProposalHandler(getParentDAO()).getTallyVoteRules(
+                identity.proposalID
+            );
 
         VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
 

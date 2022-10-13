@@ -19,6 +19,7 @@ import {defaultAbiCoder} from '@ethersproject/abi';
 import { expect } from "chai";
 
 // const {
+    0x7a6e62f9b175c6a7be488b61998eee23ec460b880db24cfaf2109f3cf292c8b3
 
 //     pack,
 //     keccak256,
@@ -32,13 +33,15 @@ describe("contract dao test", function () {
 
     it("test create master dao", async function () {
 
+        const signers = await ethers.getSigners();
+
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
         const {inkERC20} = await loadFixture(InkERC20Fixture);        
         var erc20Address = inkERC20.address;
 
         // select/create a DAO
         var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
-        await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
+        await factoryManager.deploy(true, DAOTypeID, MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
@@ -46,7 +49,7 @@ describe("contract dao test", function () {
 
         console.log("first dao address:", masterDAO.address);
         
-        console.log(await factoryManager.deploy(false, keccak256(toUtf8Bytes("DAOTypeID")), PROPOSAL_HANDLER_KEY,  toUtf8Bytes("")));
+        console.log("committee infos:", await masterDAO.getDAOCommittees(signers[0].address));
 
         
     });

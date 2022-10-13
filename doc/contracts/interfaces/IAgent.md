@@ -104,4 +104,18 @@ function getAgentFlow(
 | --- | --- |
 |`flowID` | the flow of the agent
 
+### isUniqueInDAO
+
+> this function will be used in dao, when they create the agent, they have to verify the agent has been created only once.
+
+*Declaration:*
+```solidity
+function isUniqueInDAO(
+) external returns
+(bool isUnique)
+```
+
+
+
+
 ## 5.Events

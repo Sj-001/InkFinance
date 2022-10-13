@@ -1,5 +1,24 @@
 [
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "dutyID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "AddDAOMemberDuty",
+    "type": "event"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",

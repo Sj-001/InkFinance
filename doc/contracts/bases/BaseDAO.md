@@ -24,13 +24,33 @@
 | _committees | struct IProposalHandler.CommitteeInfo[] |
 
 ## 3.Modifiers
-### EnsureGovEnough
+### ensureGovEnough
 
 
 
 *Declaration:*
 ```solidity
-modifier EnsureGovEnough
+modifier ensureGovEnough
+```
+
+
+### onlyAgent
+
+
+
+*Declaration:*
+```solidity
+modifier onlyAgent
+```
+
+
+### onlyCommittee
+
+
+
+*Declaration:*
+```solidity
+modifier onlyCommittee
 ```
 
 
@@ -46,19 +66,6 @@ modifier EnsureGovEnough
 function getProposalIDByIndex(
 ) external returns
 (bytes32 _proposalID)
-```
-
-
-
-
-### setFlowStep
-
-
-
-*Declaration:*
-```solidity
-function setFlowStep(
-) public
 ```
 
 
@@ -92,33 +99,23 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
-### _getVoteFlow
+### getDAOCommittees
+return all commitees and user's duty
 
 
 
 *Declaration:*
 ```solidity
-function _getVoteFlow(
-) internal returns
-(bytes32 flowID)
+function getDAOCommittees(
+) external returns
+(struct IDAO.DAOCommitteeWithDuty[] userCommitteeDuties)
 ```
 
 
-
-
-### turnBytesToAddress
-
-
-
-*Declaration:*
-```solidity
-function turnBytesToAddress(
-) internal returns
-(address addr)
-```
-
-
-
+*Returns:*
+| Arg | Description |
+| --- | --- |
+|`userCommitteeDuties` | return user's dutyID in the committee, the dutyID could be bytes32(0x00) if they don't have the duty
 
 ### getTallyVoteRules
 
@@ -165,6 +162,19 @@ address dutyID
 | Arg | Type | Description |
 | --- | --- | --- |
 |`dutyID` | address | user-defined dutyID, formed by keccak256
+
+
+### _addDuty
+
+
+
+*Declaration:*
+```solidity
+function _addDuty(
+) internal
+```
+
+
 
 
 ### remmoveDuty
@@ -553,6 +563,61 @@ function getFlowSteps(
 
 
 
+### _setupAgents
+
+
+
+*Declaration:*
+```solidity
+function _setupAgents(
+) internal
+```
+
+
+
+
+### getProposalFlow
+
+
+
+*Declaration:*
+```solidity
+function getProposalFlow(
+) external returns
+(bytes32 flowID)
+```
+
+
+
+
+### _getProposalFlow
+
+
+
+*Declaration:*
+```solidity
+function _getProposalFlow(
+) internal returns
+(bytes32 flowID)
+```
+
+
+
+
+### turnBytesToAddress
+
+
+
+*Declaration:*
+```solidity
+function turnBytesToAddress(
+) internal returns
+(address addr)
+```
+
+
+
+
 ### getNextVoteCommitteeInfo
 
 
@@ -655,8 +720,12 @@ function _setNextStep(
 *Declaration:*
 ```solidity
 function setupFlowInfo(
-) external
+) external onlyAgent
 ```
+*Modifiers:*
+| Modifier |
+| --- |
+| onlyAgent |
 
 
 
@@ -688,8 +757,12 @@ address controller
 *Declaration:*
 ```solidity
 function payrollPaymentApprove(
-) external
+) external onlyAgent
 ```
+*Modifiers:*
+| Modifier |
+| --- |
+| onlyAgent |
 
 
 

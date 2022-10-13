@@ -17,6 +17,7 @@
 | ADDRESS | bytes32 |
 | UINT256 | bytes32 |
 | ADDRESS_SLICE | bytes32 |
+| BYTES32 | bytes32 |
 
 ## 3.Modifiers
 
