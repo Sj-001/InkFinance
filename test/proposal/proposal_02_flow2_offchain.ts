@@ -48,7 +48,7 @@ describe("proposal related test", function () {
         var masterDAO = await masterDAOFactory.attach(firstDAOAddress);        
         var offchainProposal = buildOffchainProposal();
         
-        var theBoardAddress = await masterDAO.getTheBoard();
+        var theBoardAddress = await masterDAO.getDeployedContractByKey(THE_BOARD_COMMITTEE_KEY);
 
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
 

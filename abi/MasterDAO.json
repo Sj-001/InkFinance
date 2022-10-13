@@ -677,6 +677,25 @@
     "inputs": [
       {
         "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getDeployedContractByKey",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "deployedAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
         "name": "dutyID",
         "type": "bytes32"
       },
@@ -1020,19 +1039,6 @@
         "internalType": "uint256",
         "name": "minEffectiveWallets",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getTheBoard",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "theBoardAddress",
-        "type": "address"
       }
     ],
     "stateMutability": "view",

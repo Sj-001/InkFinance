@@ -56,6 +56,8 @@ struct PersonVoteDetail {
         bytes calldata data
     ) internal {
         super.init(config_);
+
+        console.log("start to init");
         _parentDAO = dao_;
         (string memory name, bytes memory duties) = abi.decode(
             data,

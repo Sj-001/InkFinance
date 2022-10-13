@@ -69,6 +69,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         uint256 defaultFlowIDIndex;
         FlowInfo[] flows;
         bytes32 proposalHandlerKey;
+        bytes[] committees;
     }
 
     // variables ////////////////////////////////////////////////////////////////////////
@@ -126,6 +127,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     /// @notice anyone has one duty will be stored here.
     EnumerableSet.AddressSet private _daoMembersWithDuties;
+
+    /// @dev for verify the deployed contracts by key
+    mapping(bytes32=>address) private _deployedContractdByKey;
 
     // process category flow ID => (stepID => step info)
     mapping(bytes32 => mapping(bytes32 => StepLinkInfo)) internal _flowSteps;
@@ -364,6 +368,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _factoryAddress = factoryAddressBytes.toAddress();
         console.log("turned address:", _factoryAddress);
 
+        _setupCommittees(initData.committees);
+
         // _metadata._init();
         // _metadata._setBytesSlice(initData.mds);
         // require(initData.flows.length != 0, "no flow set");
@@ -423,6 +429,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                 _daoMembersWithDuties.add(account);
             }
         }
+    }
+
+    function getDeployedContractByKey(bytes32 key) external view returns(address deployedAddress) {
+        deployedAddress = _deployedContractdByKey[key];
     }
 
     /// @inheritdoc IDutyControl
@@ -712,6 +722,44 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     //////////////////// internal
+
+    function _setupCommittees(bytes[] memory committees) internal {
+        for (uint256 i = 0; i < committees.length; i++) { 
+            (string memory name, bytes32 deployKey, bytes memory dutyIDs) = abi.decode(committees[i], (string, bytes32, bytes));
+            _deployCommittees(name, deployKey, dutyIDs);       
+        }
+    }
+
+    
+    function _deployCommittees(string memory name, bytes32 deployKey, bytes memory dutyIDBytes) internal returns(address committeeAddr) {
+
+        bytes memory initData = abi.encode(
+            name,
+            dutyIDBytes
+        );
+
+        address committeeAddress = _deployByFactoryKey(
+            false,
+            FactoryKeyTypeID.COMMITTEE_TYPE_ID,
+            deployKey,
+            initData
+        );
+
+        // // valid typeID
+        // address committeeAddress = turnBytesToAddress(committeeAddressBytes);
+        // console.log("committee address:", committeeAddress);
+        // Deploy committee
+        // require(
+        //     ICommittee(committeeAddress).supportsInterface(
+        //         type(ICommittee).interfaceId
+        //     ),
+        //     "committee addr not support ICommittee"
+        // );
+        _addIntoCurrentCommittee(committeeAddress, name, dutyIDBytes);
+        committeeAddr = committeeAddress;
+
+    }
+
     function _setupAgents(
         bytes32 proposalID,
         bytes32[] memory agents,
@@ -857,6 +905,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         // console.log(
         //     "START TO GENRATE ############################################################################################################"
         // );
+
+        if (randomSalt == false && _deployedContractdByKey[contractKey] != address(0)) {
+            // deploy only once
+
+            return _deployedContractdByKey[contractKey];
+        }
+
         bytes memory deployCall = abi.encodeWithSignature(
             "deploy(bool,bytes32,bytes32,bytes)",
             randomSalt,
@@ -871,9 +926,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         (bool _success, bytes memory _returnedBytes) = address(_factoryAddress)
             .call(deployCall);
 
-        // console.log("deploy by key:");
-        // console.log(_success);
-        // console.logBytes(_returnedBytes);
+        console.log("deploy by key:");
+        console.log(_success);
+        console.logBytes(_returnedBytes);
 
         // console.log(
         //     "DEPLOY END ############################################################################################################"
@@ -882,6 +937,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         if (_success) {
             deployedAddress = turnBytesToAddress(_returnedBytes);
+            if (randomSalt == false) {
+                _deployedContractdByKey[contractKey] = deployedAddress;
+            }
         } else {
             revert DeployFailuer(contractKey);
             // console.log("test turn turn bytes 32 ", deployedAddress);
@@ -956,6 +1014,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     function setupFlowInfo(FlowInfo memory flow) external override onlyAgent {
         _setFlowStep(flow);
     }
+
+
 
     /// @inheritdoc IDAO
     function setupPayrollUCV(bytes32 topicID, address controller)
@@ -1035,36 +1095,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     "step empty"
                 );
 
-                bytes memory initData = abi.encode(
-                    committeeInfo.committeeName,
-                    committeeInfo.dutyIDs
-                );
 
-                address committeeAddress = _deployByFactoryKey(
-                    false,
-                    FactoryKeyTypeID.COMMITTEE_TYPE_ID,
-                    committeeInfo.addressConfigKey,
-                    initData
-                );
-
-                // // valid typeID
-                // address committeeAddress = turnBytesToAddress(committeeAddressBytes);
-                // console.log("committee address:", committeeAddress);
-                // Deploy committee
-                // require(
-                //     ICommittee(committeeAddress).supportsInterface(
-                //         type(ICommittee).interfaceId
-                //     ),
-                //     "committee addr not support ICommittee"
-                // );
-
-                addIntoCurrentCommittee(
-                    committeeAddress,
-                    committeeInfo.committeeName,
-                    committeeInfo.dutyIDs
-                );
-
-                steps[committeeInfo.step].committee = committeeAddress;
+                address deployedAddress = _deployCommittees(committeeInfo.committeeName, committeeInfo.addressConfigKey, committeeInfo.dutyIDs);
+                steps[committeeInfo.step].committee = deployedAddress;
                 // link next committee
                 if (j < flow.committees.length - 1) {
                     steps[committeeInfo.step].nextStep = flow
@@ -1081,7 +1114,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
     }
 
-    function addIntoCurrentCommittee(
+    function _addIntoCurrentCommittee(
         address committeeAddress,
         string memory committeeName,
         bytes memory dutyIDs

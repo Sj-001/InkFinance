@@ -15,25 +15,9 @@ contract MasterDAO is BaseDAO {
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
         _init(admin_, config_, data_);
-
-        for (uint256 i = 0; i < _committees.length; i++) {
-            string memory committeName = _committees[i].name;
-            string memory targetName = "The Board";
-            if (
-                keccak256(abi.encodePacked(committeName)) ==
-                keccak256(abi.encodePacked(targetName))
-            ) {
-                _theBoard = _committees[i].committee;
-                break;
-            }
-        }
-
         return callbackEvent;
     }
 
-    function getTheBoard() external view returns (address theBoardAddress) {
-        theBoardAddress = _theBoard;
-    }
 
     // function newBoardProposal(
     //     NewProposalInfo calldata proposal,

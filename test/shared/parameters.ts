@@ -67,7 +67,7 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         flow1Committees[1] = ["The Board", keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs]; 
 
         var flow2Committees = [];
-        flow2Committees[0] = ["The Board", keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs]; 
+        flow2Committees[0] = ["The Public", keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs]; 
 
 
         var flows = [];
@@ -91,7 +91,7 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         }
         
         var mds = [];
-        mds[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+        mds[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")), "0x00"]);
 
 
         var badgeName = "badgeName1";
@@ -103,9 +103,16 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         var defaultFlowIDIndex = 0;
         var defaultFlowIDIndex = 0;
 
+        // committee info
+        var committesInfo = [];
+        // name | committeeKey | dutyIDs
+        committesInfo[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["The Board", THE_BOARD_COMMITTEE_KEY , theBoardCommitteeDutyIDs]);
+        committesInfo[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["The Public", THE_PUBLIC_COMMITTEE_KEY , thePublicCommitteeDutyIDs]);
 
-        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32)'];
-        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIDIndex, flows, PROPOSAL_HANDLER_KEY];
+
+
+        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes[])'];
+        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIDIndex, flows, PROPOSAL_HANDLER_KEY, committesInfo];
         var masterDAOInitialData = defaultAbiCoder.encode(tupleSting,
              [tupleData]);
         // console.log("dao init data:", masterDAOInitialData);
