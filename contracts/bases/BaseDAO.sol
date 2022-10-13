@@ -78,10 +78,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     bytes32 internal constant _SENTINEL_ID =
         0x0000000000000000000000000000000000000000000000000000000000000001;
 
-    /// @dev DEFAULT_FLOW_ID means the highest priority
-    bytes32 public constant DEFAULT_FLOW_ID =
-        0x0000000000000000000000000000000000000000000000000000000000000000;
-
     /// @dev maintain three basic steps(The Board, The Public+The Board, The Public)
     bytes32[] private _defaultFlows;
 
@@ -300,6 +296,29 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         if (minWallets > 0) {
             minEffectiveWallets = minWallets;
+        }
+    }
+
+    function getDAOTallyVoteRules()
+        external
+        view
+        returns (
+            uint256 minAgreeRatio,
+            uint256 minEffectiveVotes,
+            uint256 minEffectiveWallets
+        )
+    {
+        minAgreeRatio = 60;
+        minEffectiveVotes = _minEffectiveVotes;
+        minEffectiveWallets = _minEffectiveVoteWallets;
+    }
+
+    function getSupportedFlow() external view returns (bytes32[] memory flows) {
+        flows = new bytes32[](_defaultFlows.length - _defaultFlowIDIndex);
+        uint256 startIndex = 0;
+        for (uint256 i = _defaultFlowIDIndex; i < _defaultFlows.length; i++) {
+            flows[startIndex] = _defaultFlows[i];
+            startIndex++;
         }
     }
 

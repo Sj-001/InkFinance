@@ -55,6 +55,8 @@ describe("proposal_00_flow0_offchain", function () {
 
         console.log(await masterDAO.getTallyVoteRules(proposalID));
         console.log("Proposal Flow: ", await masterDAO.getProposalFlow(proposalID));
+        console.log("DAO Flow: ", await masterDAO.getDAOTallyVoteRules());
+        console.log("DAO Supported Flow: ", await masterDAO.getSupportedFlow());
 
         expect(proposalSummery.status).to.be.equal(0);
 

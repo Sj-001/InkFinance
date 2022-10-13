@@ -300,19 +300,6 @@
   },
   {
     "inputs": [],
-    "name": "DEFAULT_FLOW_ID",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "MAX_STEP_NUM",
     "outputs": [
       {
@@ -664,6 +651,29 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getDAOTallyVoteRules",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "minAgreeRatio",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minEffectiveVotes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minEffectiveWallets",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -968,6 +978,19 @@
         "internalType": "bytes32",
         "name": "topicID",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getSupportedFlow",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "flows",
+        "type": "bytes32[]"
       }
     ],
     "stateMutability": "view",
