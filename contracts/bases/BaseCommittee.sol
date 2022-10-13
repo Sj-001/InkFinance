@@ -28,7 +28,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     /// structs ////////////////////////////////////////////////////////////////////////////////
 
     /// @dev key is voter's address
-    struct PersonVoteDetail {
+struct PersonVoteDetail {
         uint256 voteCount;
         LChainLink.Link link;
     }

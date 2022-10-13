@@ -206,9 +206,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         /// @dev create agent and check parameters
         _setupAgents(proposalID, proposal.agents, data);
 
-        // bytes32 flowID = _getAgentFlowID(agents[0]);
+        bytes32 flowID = _getFlowID(proposal.agents[0], proposalID);
 
-        bytes32 flowID = _getProposalFlow(proposalID);
+        // bytes32 flowID = _getProposalFlow(proposalID);
 
         console.log("_getProposalFlow");
         console.logBytes32(flowID);
@@ -640,17 +640,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         flowID = _getAgentFlowID(agentID);
     }
 
+
     function _getAgentFlowID(bytes32 agentID)
         internal
         returns (bytes32 flowID)
     {
+
         address agentAddress = _agents[agentID];
-        if (agentAddress == address(0)) {
-            // default address
-            flowID = _defaultFlows[_defaultFlowIDIndex];
-        } else {
-            flowID = IAgent(agentAddress).getAgentFlow();
-        }
+        flowID = IAgent(agentAddress).getAgentFlow();
         /*
         if (
             agentID ==
@@ -667,6 +664,18 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
         _agents[agentID];
         */
+    }
+
+    function _getFlowID(bytes32 agentID, bytes32 proposalID)
+        internal
+        returns (bytes32 flowID)
+    {
+        if (agentID == 0x0000000000000000000000000000000000000000000000000000000000000000) {
+            // using default flow
+            flowID = _getProposalFlow(proposalID);
+        } else {
+            flowID = _getAgentFlowID(agentID);
+        }
     }
 
     /// @inheritdoc IAgentHandler
