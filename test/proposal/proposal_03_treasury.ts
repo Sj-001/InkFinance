@@ -59,21 +59,22 @@ describe("proposal related test", function () {
         await theBoard.newProposal(proposal, true, "0x00");
 
 
-        console.log("committee infos:", await masterDAO.getDAOCommittees(signers[0].address));
+        console.log("committee infos:", await masterDAO.getDAOCommittees());
 
         var proposalID = await masterDAO.getProposalIDByIndex(0);
     
-        // console.log("first proposal id: ", proposalID);
-        // await voteProposalByThePublic(await masterDAO.address, proposalID);
+        console.log("first proposal id: ", proposalID);
+        await voteProposalByThePublic(await masterDAO.address, proposalID);
 
-        /*
+        
         // once decide, 
-        await tallyVotesByThePublic(await masterDAO.address, proposalID);
+        await tallyVotesByThePublic(await masterDAO.address,  proposalID);
         
         var committeeAddress = await masterDAO.getDeployedContractByKey(THE_TREASURY_COMMITTEE_KEY);
 
         console.log("treasury committee:", committeeAddress);
 
+        
         // proposal category = payroll?
         await makeSetupPayrollProposal(committeeAddress, erc20Address);
 
@@ -241,14 +242,14 @@ describe("proposal related test", function () {
     }
 
 
-    async function tallyVotesByThePublic (daoAddress:string, committeeAddress:string, proposalID:string ) {
+    async function tallyVotesByThePublic (daoAddress:string, proposalID:string ) {
 
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
         var masterDAO = await masterDAOFactory.attach(daoAddress);
 
         var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
 
-        var theVoteCommitteeFactory = await ethers.getContractFactory("TheBoard");
+        var theVoteCommitteeFactory = await ethers.getContractFactory("ThePublic");
         var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
 
         console.log("vote detail the vote committee :", committeeInfo);

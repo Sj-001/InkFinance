@@ -51,7 +51,7 @@ contract TreasuryCommittee is BaseCommittee {
         // require(stepInfo.committee == address(this), "sys err");
         VoteIdentity memory identity;
         identity.proposalID = proposalID;
-        identity.step = infos[0].step;
+        // identity.step = infos[0].step;
 
         // identity.
         // _vote(identity, true, 1, false, "", "");

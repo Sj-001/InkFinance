@@ -161,7 +161,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     modifier onlyAgent() {
         address[] memory agentAddress;
         bool exist = false;
+                    console.log("compare agent:");
         for (uint256 i = 0; i < _agentKeys.length(); i++) {
+
+            console.log(_msgSender());
+            console.log(_agents[_agentKeys.at(i)]);
             if (_msgSender() == _agents[_agentKeys.at(i)]) {
                 exist = true;
                 break;
@@ -234,6 +238,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         info.nextCommittee.step = firstStep;
         info.nextCommittee.committee = steps[firstStep].committee;
         info.lastOperationTimestamp = block.timestamp;
+        info.agents = proposal.agents;
         /// for test
         _proposalsArray.add(proposalID);
 
@@ -778,7 +783,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                 ) {
                     revert AgentCanBeCreatedOnlyOnceInDAO(agents[i]);
                 }
-
+                _agentKeys.add(agents[i]);
                 address agentContractAddress = _deployByFactoryKey(
                     false,
                     FactoryKeyTypeID.AGENT_TYPE_ID,
@@ -795,7 +800,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     if (!isGoodToExecute) {
                         revert AgentCannotBeExecute();
                     }
-
+                    console.log("agent address is ", agentContractAddress);
                     _agents[agents[i]] = agentContractAddress;
                 } else {
                     revert GenerateContractByKeyFailure();
@@ -858,9 +863,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         pure
         returns (address addr)
     {
-        assembly {
-            addr := mload(add(byteAddress, 32))
-        }
+        addr = abi.decode(byteAddress, (address));
     }
 
     function getNextVoteCommitteeInfo(bytes32 proposalID)
@@ -988,6 +991,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     0x0000000000000000000000000000000000000000000000000000000000000000
                 ) {
                     address agentAddress = _agents[agents[i]];
+
+                    console.log("agentAddress", agentAddress);
+
                     IAgent(agentAddress).exec(info.proposalID);
                 }
             }
@@ -1228,6 +1234,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         } else {
             return uint256(int256(-1));
         }
+        console.log("getVoteExpirationTime:");
+        console.log(lastTime);
+        console.log(expiration);
 
         return lastTime + expiration;
     }
