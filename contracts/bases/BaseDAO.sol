@@ -109,7 +109,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     uint256 private _minEffectiveVotes;
     uint256 private _minEffectiveVoteWallets;
     ///@dev BoardOnly=0, PublicAndBoard=1, Public Only=2
-    uint256 _defaultFlowIDIndex = 0;
+    uint256 private _defaultFlowIDIndex = 0;
 
     address private _proposalHandlerAddress;
 
@@ -201,6 +201,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes calldata data
     ) public override returns (bytes32 proposalID) {
         /* EnsureGovEnough */
+        console.log("nnnnn");
+
         proposalID = IProposalHandler(_proposalHandlerAddress).newProposal(
             proposal,
             commit,
@@ -210,7 +212,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         /// @dev create agent and check parameters
         _setupAgents(proposalID, proposal.agents, data);
 
-        bytes32 flowID = _getFlowID(proposal.agents[0], proposalID);
+        bytes32 flowID = _getProposalFlow(proposalID);
+
 
         // bytes32 flowID = _getProposalFlow(proposalID);
 
@@ -358,7 +361,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _minEffectiveVoteWallets = initData.minEffectiveVoteWallets;
         _minPledgeRequired = initData.minPledgeRequired;
         _defaultFlowIDIndex = initData.defaultFlowIDIndex;
-
+        console.log("when init the _defaultFlowID is", _defaultFlowIDIndex);
         (, bytes memory factoryAddressBytes) = configManager.getKV(
             initData.factoryManagerKey
         );
@@ -680,6 +683,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         internal
         returns (bytes32 flowID)
     {
+        console.log("_getFlowID agentID:");
+        console.logBytes32(agentID);
+
         if (agentID == 0x0000000000000000000000000000000000000000000000000000000000000000) {
             // using default flow
             flowID = _getProposalFlow(proposalID);
@@ -730,7 +736,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
     }
 
-    
+
     function _deployCommittees(string memory name, bytes32 deployKey, bytes memory dutyIDBytes) internal returns(address committeeAddr) {
 
         bytes memory initData = abi.encode(
@@ -770,11 +776,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                 agents[i] !=
                 0x0000000000000000000000000000000000000000000000000000000000000000
             ) {
-                bytes memory initData = "";
-
                 address existAgents = _agents[agents[i]];
-
-                if (IAgent(existAgents).isUniqueInDAO() == true) {
+                if (existAgents != address(0) && IAgent(existAgents).isUniqueInDAO() == true) {
                     revert AgentCanBeCreatedOnlyOnceInDAO(agents[i]);
                 }
 
@@ -826,23 +829,29 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 proposalFlowID = IProposalHandler(_proposalHandlerAddress)
             .getProposalFlow(proposalID);
 
+        console.log("_getProposalFlow:");
         console.logBytes32(proposalFlowID);
 
-        bool support = false;
-        for (uint256 i = _defaultFlowIDIndex; i < _defaultFlows.length; i++) {
-            if (_defaultFlows[i] == proposalFlowID) {
-                support = true;
-                break;
-            }
-        }
 
         if (proposalFlowID > 0) {
+
+            bool support = false;
+            for (uint256 i = _defaultFlowIDIndex; i < _defaultFlows.length; i++) {
+                if (_defaultFlows[i] == proposalFlowID) {
+                    support = true;
+                    break;
+                }
+            }
+
+
             if (support) {
                 flowID = proposalFlowID;
             } else {
                 revert FlowIsNotSupport(_defaultFlowIDIndex, proposalFlowID);
             }
         } else {
+
+            console.log("get default flow: ", _defaultFlowIDIndex);
             flowID = _defaultFlows[_defaultFlowIDIndex];
         }
     }

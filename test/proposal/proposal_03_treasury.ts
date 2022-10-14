@@ -38,7 +38,7 @@ describe("proposal related test", function () {
         var erc20Address = inkERC20.address;
 
         // // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 2);
         await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
@@ -51,7 +51,7 @@ describe("proposal related test", function () {
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
         
-        var theBoardAddress = await masterDAO.getTheBoard();
+        var theBoardAddress = await masterDAO.getDeployedContractByKey("0x9386c0f239c958604010fb0d19f447c347da25b93a863f07e6c4a1a5eca03672");
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
         // var theBoard = theBoardFactory.attach(flowSteps[0].committee);
         var theBoard = theBoardFactory.attach(theBoardAddress);
@@ -61,31 +61,25 @@ describe("proposal related test", function () {
 
         console.log("committee infos:", await masterDAO.getDAOCommittees(signers[0].address));
 
-
-        
-
         var proposalID = await masterDAO.getProposalIDByIndex(0);
         
         
         // console.log("first proposal id: ", proposalID);
         await voteProposalByThePublic(await masterDAO.address, proposalID);
 
-        /*
+        
         // once decide, 
         await tallyVotes(await masterDAO.address, proposalID);
         
-        var committeeAddress = await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0);
+        var committeeAddress = await masterDAO.getDeployedContractByKey(THE_TREASURY_COMMITTEE_KEY);
 
-        console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
-        console.log("treasury committee address:", committeeAddress);
-        
         // proposal category = payroll?
         await makeSetupPayrollProposal(committeeAddress, erc20Address);
 
         var payrollSetupProposalID = await masterDAO.getProposalIDByIndex(1);
         console.log("payroll setup proposal", payrollSetupProposalID)
 
-        
+        /*
         var payrollTopicID = await masterDAO.getProposalTopic(payrollSetupProposalID);
         console.log("payroll proposal topic:: ", payrollTopicID);
 
@@ -153,87 +147,9 @@ describe("proposal related test", function () {
     }
 
     
-    
-    it("test create off-chain proposal - flow 0 - Board Only ", async function () {
-        
-        const {factoryManager} = await loadFixture(FactoryManagerFixture);
-        const {inkERC20} = await loadFixture(InkERC20Fixture);        
-        var erc20Address = inkERC20.address;
 
-        // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
-        await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
-
-        var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
-        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
-        var masterDAO = await masterDAOFactory.attach(firstDAOAddress);
-        console.log("dao address:", masterDAO.address);
-        // select one flow of the DAO
-        
-        var offchainProposal = buildOffchainProposal();
-
-        var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
-        console.log(flowSteps);
-        console.log("first proposal committee:", flowSteps[0].committee);
-
-        var theBoardFactory = await ethers.getContractFactory("TheBoard");
-        var theBoard = theBoardFactory.attach(flowSteps[0].committee);
-        
-
-        await theBoard.newProposal(offchainProposal, true, "0x00");
-        var proposalID = await masterDAO.getProposalIDByIndex(0);
-
-        console.log("first proposal id: ", proposalID);
-        
-        await voteProposalByTheBoard(await masterDAO.address, proposalID);
-
-        await voteDetail(await masterDAO.address, proposalID);
-
-        await voteAccountInfo(await masterDAO.address, proposalID);
-
-        await tallyVotes(await masterDAO.address, proposalID);
-
-    });
     
 
-    it("test create off-chain proposal - flow 2 - The Public Only ", async function () {
-
-        const {factoryManager} = await loadFixture(FactoryManagerFixture);
-        const {inkERC20} = await loadFixture(InkERC20Fixture);        
-        var erc20Address = inkERC20.address;
-
-        // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
-        await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
-
-        var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
-        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
-        var masterDAO = await masterDAOFactory.attach(firstDAOAddress);
-        console.log("dao address:", masterDAO.address);
-        // select one flow of the DAO
-        
-        var offchainProposal = buildOffchainProposal();
-
-        var theBoardAddress = await masterDAO.getTheBoard();
-
-        var theBoardFactory = await ethers.getContractFactory("TheBoard");
-        var theBoard = theBoardFactory.attach(theBoardAddress);
-
-        await theBoard.newProposal(offchainProposal, true, "0x00");
-
-        var proposalID = await masterDAO.getProposalIDByIndex(0);
-
-        console.log("first proposal id: ", proposalID);
-        
-        await voteProposalByTheBoard(await masterDAO.address, proposalID);
-
-        await voteDetail(await masterDAO.address, proposalID);
-
-        await voteAccountInfo(await masterDAO.address, proposalID);
-
-        await tallyVotes(await masterDAO.address, proposalID);
-
-    });
 
 
     

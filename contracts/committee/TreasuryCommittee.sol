@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "../bases/BaseCommittee.sol";
 import "../interfaces/IAgentHandler.sol";
 import "../interfaces/IDAO.sol";
-
+import "../libraries/defined/DutyID.sol";
 import "hardhat/console.sol";
 
 contract TreasuryCommittee is BaseCommittee {
@@ -33,11 +33,9 @@ contract TreasuryCommittee is BaseCommittee {
         bool commit,
         bytes calldata data
     ) external override returns (bytes32 proposalID) {
-        // make sure it's operator
-        // const OPERATOR_DUTYID = "0x7fc29d7165e16fd9e059fc2637218a216a838baf76410a896bd9789802186cd4";
         if (
             !_hasDutyToOperate(
-                0x7fc29d7165e16fd9e059fc2637218a216a838baf76410a896bd9789802186cd4,
+                DutyID.OPERATOR,
                 _msgSender()
             )
         ) {
@@ -61,7 +59,7 @@ contract TreasuryCommittee is BaseCommittee {
         identity.step = infos[0].step;
 
         // identity.
-        _vote(identity, true, 1, false, "", "");
+        // _vote(identity, true, 1, false, "", "");
 
         // //// deal vote process info
         // VoteInfo storage voteInfo = _voteInfos[voteID];
@@ -106,7 +104,7 @@ contract TreasuryCommittee is BaseCommittee {
 
         if (
             !_hasDutyToOperate(
-                0x461cab96cf4e8d93f044537dc0accaa1fa44a556bed2df44eb88ea471c2c186f,
+                DutyID.SIGNER,
                 _msgSender()
             )
         ) {

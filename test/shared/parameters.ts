@@ -98,10 +98,9 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         var badgeTotal = ethers.utils.parseEther("10000000");
         var daoLogo = "daoDefaultLogo";
         var minPledgeRequired = 10;
-        var minEffectiveVotes = 100;
+        var minEffectiveVotes = 1;
         var minEffectiveVoteWallets = 1;
-        var defaultFlowIDIndex = 0;
-        var defaultFlowIDIndex = 0;
+
 
         // committee info
         var committesInfo = [];
@@ -112,7 +111,7 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
 
 
         var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes[])'];
-        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIDIndex, flows, PROPOSAL_HANDLER_KEY, committesInfo];
+        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, committesInfo];
         var masterDAOInitialData = defaultAbiCoder.encode(tupleSting,
              [tupleData]);
         // console.log("dao init data:", masterDAOInitialData);
@@ -154,8 +153,6 @@ export function buildOffchainProposal() {
             "desc": toUtf8Bytes(""),
         };
 
-        console.log("type.BYTES32:::: ", keccak256(toUtf8Bytes("type.BYTES32")));
-        
 
         var kvData = [];
         kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
@@ -279,7 +276,7 @@ export function buildPayrollSetupProposal(erc20Address:string) {
     console.log("start member bytes encode:");
     var memberItemTuple = 'tuple(address, address, uint256, string)[]';
     var memberListBytes = defaultAbiCoder.encode([memberItemTuple],[memberList]);
-    console.log("member bytes:", memberListBytes);
+    // console.log("member bytes:", memberListBytes);
 
     var kvData = [];
 
