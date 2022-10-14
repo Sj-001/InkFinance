@@ -206,7 +206,7 @@ export function buildTreasurySetupProposal() {
 
     var kvData = [];
     // different roles
-    // treasury operator
+    // treasury operator 
     var treasuryOperator = [];
     treasuryOperator[0] = "0xf46B1E93aF2Bf497b07726108A539B478B31e64C";
     treasuryOperator[1] = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";

@@ -62,7 +62,7 @@ describe("proposal_00_flow0_offchain", function () {
 
 
 
-        console.log("committee infos:", await masterDAO.getDAOCommittees(signers[0].address));
+        console.log("committee infos:", await masterDAO.getDAOCommittees());
 
 
 

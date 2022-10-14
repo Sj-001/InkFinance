@@ -62,16 +62,17 @@ describe("proposal related test", function () {
         console.log("committee infos:", await masterDAO.getDAOCommittees(signers[0].address));
 
         var proposalID = await masterDAO.getProposalIDByIndex(0);
-        
-        
+    
         // console.log("first proposal id: ", proposalID);
-        await voteProposalByThePublic(await masterDAO.address, proposalID);
+        // await voteProposalByThePublic(await masterDAO.address, proposalID);
 
-        
+        /*
         // once decide, 
-        await tallyVotes(await masterDAO.address, proposalID);
+        await tallyVotesByThePublic(await masterDAO.address, proposalID);
         
         var committeeAddress = await masterDAO.getDeployedContractByKey(THE_TREASURY_COMMITTEE_KEY);
+
+        console.log("treasury committee:", committeeAddress);
 
         // proposal category = payroll?
         await makeSetupPayrollProposal(committeeAddress, erc20Address);
@@ -240,7 +241,7 @@ describe("proposal related test", function () {
     }
 
 
-    async function tallyVotes (daoAddress:string, proposalID:string ) {
+    async function tallyVotesByThePublic (daoAddress:string, committeeAddress:string, proposalID:string ) {
 
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
         var masterDAO = await masterDAOFactory.attach(daoAddress);

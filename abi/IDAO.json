@@ -483,13 +483,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "name": "getDAOCommittees",
     "outputs": [
       {
@@ -511,7 +505,7 @@
           }
         ],
         "internalType": "struct IDAO.DAOCommitteeWithDuty[]",
-        "name": "userCommitteeDuties",
+        "name": "committeeDuties",
         "type": "tuple[]"
       }
     ],

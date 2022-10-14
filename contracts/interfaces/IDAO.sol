@@ -86,10 +86,10 @@ interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
         bytes memory initData
     ) external returns (address deployedAddress);
 
-    /// @notice return all commitees and user's duty
-    /// @return userCommitteeDuties return user's dutyID in the committee, the dutyID could be bytes32(0x00) if they don't have the duty
-    function getDAOCommittees(address user)
+    /// @notice return all commitees and it's dutyIDs
+    /// @return committeeDuties return the committee's dutyID as array
+    function getDAOCommittees()
         external
         view
-        returns (DAOCommitteeWithDuty[] memory userCommitteeDuties);
+        returns (DAOCommitteeWithDuty[] memory committeeDuties);
 }

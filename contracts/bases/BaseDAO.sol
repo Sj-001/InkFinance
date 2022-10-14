@@ -246,34 +246,24 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     /// @inheritdoc IDAO
-    function getDAOCommittees(address user)
+    function getDAOCommittees()
         external
         view
         override
-        returns (DAOCommitteeWithDuty[] memory userCommitteeDuties)
+        returns (DAOCommitteeWithDuty[] memory committeeDuties)
     {
         uint256 len = _committees.length;
-        userCommitteeDuties = new DAOCommitteeWithDuty[](len);
-
-        console.log("len:", len);
+        committeeDuties = new DAOCommitteeWithDuty[](len);
 
         for (uint256 i = 0; i < len; i++) {
-            userCommitteeDuties[i].committee = _committees[i].committee;
-            userCommitteeDuties[i].committeeName = _committees[i].name;
-
+            committeeDuties[i].committee = _committees[i].committee;
+            committeeDuties[i].committeeName = _committees[i].name;
             if (_committees[i].dutyIDs.length > 0) {
                 bytes32[] memory dutyArray = abi.decode(
                     _committees[i].dutyIDs,
                     (bytes32[])
                 );
-                userCommitteeDuties[i].duties = new bytes32[](dutyArray.length);
-                for (uint256 j = 0; j < dutyArray.length; j++) {
-                    if (_hasDuty(user, dutyArray[j])) {
-                        userCommitteeDuties[i].duties[j] = dutyArray[j];
-                    } else {
-                        userCommitteeDuties[i].duties[j] = bytes32(0x0);
-                    }
-                }
+                committeeDuties[i].duties = dutyArray;
             }
         }
     }
