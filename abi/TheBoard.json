@@ -1,6 +1,11 @@
 [
   {
     "inputs": [],
+    "name": "NotAllowToOperate",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "YouDoNotHaveDutyToOperate",
     "type": "error"
   },
@@ -249,7 +254,7 @@
     "outputs": [
       {
         "internalType": "bool",
-        "name": "",
+        "name": "allowToOperate",
         "type": "bool"
       }
     ],

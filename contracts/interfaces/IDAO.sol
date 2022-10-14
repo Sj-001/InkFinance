@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import "./IProcessHandler.sol";
 import "./IProposalHandler.sol";
 import "./IAgentHandler.sol";
 import "./ICommittee.sol";
@@ -15,7 +16,12 @@ error SystemError();
 error NotAllowedToOperate();
 error AgentCannotBeExecute();
 
-interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
+interface IDAO is
+    IProposalHandler,
+    IDutyControl,
+    IAgentHandler,
+    IProcessHandler
+{
     /// event
 
     event NewDAOCreated(

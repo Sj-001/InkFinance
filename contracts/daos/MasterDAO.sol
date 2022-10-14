@@ -18,7 +18,6 @@ contract MasterDAO is BaseDAO {
         return callbackEvent;
     }
 
-
     // function newBoardProposal(
     //     NewProposalInfo calldata proposal,
     //     bool commit,

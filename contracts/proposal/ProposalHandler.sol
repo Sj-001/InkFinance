@@ -210,7 +210,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             proposalID,
             VOTE_FLOW
         );
-        
+
         if (typeID == TypeID.BYTES32) {
             console.log("Proposal Handler");
 

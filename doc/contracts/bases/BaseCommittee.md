@@ -118,13 +118,13 @@ struct IVoteHandler.VoteIdentity identity
 
 ### allowOperate
 
-> verify the user has the permission to vote
+> verify the user has the permission to vote, and it's time to vote, etc
 
 *Declaration:*
 ```solidity
 function allowOperate(
 ) public returns
-(bool)
+(bool allowToOperate)
 ```
 
 
@@ -186,6 +186,20 @@ uint256 pageSize
 | --- | --- |
 |`voteDetails` | vote informations
 
+### _checkAllowOperate
+
+
+
+*Declaration:*
+```solidity
+function _checkAllowOperate(
+) internal returns
+(bool)
+```
+
+
+
+
 ### _calculateVoteResults
 
 
@@ -222,6 +236,34 @@ function _tallyVotes(
 function _getProposalAccountDetail(
 ) internal returns
 (uint256 agree, uint256 deny)
+```
+
+
+
+
+### _checkProposalStatus
+
+
+
+*Declaration:*
+```solidity
+function _checkProposalStatus(
+) internal returns
+(bool)
+```
+
+
+
+
+### _checkDeadline
+
+
+
+*Declaration:*
+```solidity
+function _checkDeadline(
+) internal returns
+(bool end)
 ```
 
 

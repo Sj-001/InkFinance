@@ -45,6 +45,7 @@ describe("proposal_00_flow0_offchain", function () {
         var masterDAO = await masterDAOFactory.attach(firstDAOAddress);        
         var offchainProposal = buildOffchainProposal();
         var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
+        
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
         var theBoard = theBoardFactory.attach(flowSteps[0].committee);
         
@@ -57,18 +58,37 @@ describe("proposal_00_flow0_offchain", function () {
         console.log("Proposal Flow: ", await masterDAO.getProposalFlow(proposalID));
         console.log("DAO Flow: ", await masterDAO.getDAOTallyVoteRules());
         console.log("DAO Supported Flow: ", await masterDAO.getSupportedFlow());
+        console.log("get vote expiration: ", await masterDAO.getVoteExpirationTime(proposalID));
+        console.log("get allow to operate: ", await masterDAO.getVoteExpirationTime(proposalID));
+
 
         expect(proposalSummery.status).to.be.equal(0);
 
-
+        await voteProposalByThePublic(masterDAO.address, proposalID);
 
         console.log("committee infos:", await masterDAO.getDAOCommittees());
 
 
-
-
     });
     
+    async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
+        const signers = await ethers.getSigners();
+        console.log("voteProposalByThePublic proposalID", proposalID);
 
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
+        var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
+        console.log("voteProposalByThePublic vote committee info:", await committeeInfo);
+        // var theVoteCommitteeFactory = await ethers.getContractFactory("TheBoard");
+        // var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
+        const theVoteCommittee = await ethers.getContractAt("ICommittee", committeeInfo.committee);
+        var voteIdentity = {"proposalID":proposalID, "step": committeeInfo.step};
+
+
+        console.log("is legal operation: ", await theVoteCommittee.allowOperate(voteIdentity, signers[0].address))
+        
+        await theVoteCommittee.vote(voteIdentity, true, 10, "", "0x00");
+
+    }
 
 })

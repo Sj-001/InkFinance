@@ -33,12 +33,7 @@ contract TreasuryCommittee is BaseCommittee {
         bool commit,
         bytes calldata data
     ) external override returns (bytes32 proposalID) {
-        if (
-            !_hasDutyToOperate(
-                DutyID.OPERATOR,
-                _msgSender()
-            )
-        ) {
+        if (!_hasDutyToOperate(DutyID.OPERATOR, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
 
@@ -102,12 +97,7 @@ contract TreasuryCommittee is BaseCommittee {
     ) external override {
         // const SIGNER_DUTYID = "0x461cab96cf4e8d93f044537dc0accaa1fa44a556bed2df44eb88ea471c2c186f";
 
-        if (
-            !_hasDutyToOperate(
-                DutyID.SIGNER,
-                _msgSender()
-            )
-        ) {
+        if (!_hasDutyToOperate(DutyID.SIGNER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
 

@@ -37,11 +37,11 @@ interface ICommittee is IProposalInfo, IVoteHandler, IERC165 {
         bytes calldata data
     ) external returns (bytes32 proposalID);
 
-    /// @dev verify the user has the permission to vote
+    /// @dev verify the user has the permission to vote, and it's time to vote, etc
     function allowOperate(VoteIdentity calldata identity, address user)
         external
         view
-        returns (bool isAllow);
+        returns (bool allowToOperate);
 
     /// @dev calculate votes and find out if the proposal is passed
     function tallyVotes(VoteIdentity calldata identity, bytes calldata data)
@@ -61,9 +61,4 @@ interface ICommittee is IProposalInfo, IVoteHandler, IERC165 {
     //     uint256 voteNum,
     //     bytes calldata data
     // ) external;
-
-    // function getVoteExpiration(VoteIdentity memory identity)
-    //     external
-    //     view
-    //     returns (uint256);
 }

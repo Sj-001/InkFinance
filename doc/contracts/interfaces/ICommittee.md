@@ -62,13 +62,13 @@ bytes data
 
 ### allowOperate
 
-> verify the user has the permission to vote
+> verify the user has the permission to vote, and it's time to vote, etc
 
 *Declaration:*
 ```solidity
 function allowOperate(
 ) external returns
-(bool isAllow)
+(bool allowToOperate)
 ```
 
 

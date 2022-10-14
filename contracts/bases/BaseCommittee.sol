@@ -8,6 +8,7 @@ import "../interfaces/IDeploy.sol";
 import "../interfaces/IDAO.sol";
 import "../interfaces/IProposalHandler.sol";
 import "../interfaces/IDutyControl.sol";
+import "../interfaces/IProcessHandler.sol";
 
 import "../libraries/LVoteIdentityHelper.sol";
 import "../libraries/LEnumerableMetadata.sol";
@@ -15,6 +16,8 @@ import "../libraries/LChainLink.sol";
 
 import "./BaseVerify.sol";
 import "hardhat/console.sol";
+
+error NotAllowToOperate();
 
 abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     // libs
@@ -28,7 +31,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     /// structs ////////////////////////////////////////////////////////////////////////////////
 
     /// @dev key is voter's address
-struct PersonVoteDetail {
+    struct PersonVoteDetail {
         uint256 voteCount;
         LChainLink.Link link;
     }
@@ -104,17 +107,17 @@ struct PersonVoteDetail {
     }
 
     /// @inheritdoc ICommittee
-    function allowOperate(VoteIdentity calldata identity, address user)
+    function allowOperate(VoteIdentity memory identity, address user)
         public
         view
         virtual
         override
-        returns (bool)
+        returns (bool allowToOperate)
     {
-        // IProposalRegistryInfo.Proposal memory proposal = _getProposalInfo(
-        //     identity.proposalID
-        // );
-        // return _checkAllowOperate(proposal, identity, user);
+        ProposalSummary memory proposal = IProposalHandler(getParentDAO())
+            .getProposalSummary(identity.proposalID);
+
+        return _checkAllowOperate(proposal, identity, user);
     }
 
     function _hasDutyToOperate(bytes32 dutyID, address operator)
@@ -136,19 +139,9 @@ struct PersonVoteDetail {
         string memory feedback,
         bytes memory data
     ) internal {
-        // // DutyID, Require badge, isPledgeEnouth
-        // _isAllowToVote();
-
-        // // Deadline, status, at right step
-        // _isProposalOpenToVote()
-        // // Proposal memory proposal = _getProposalInfo(
-        // //     identity.proposalID
-        // // );
-
-        // require(
-        //     _checkAllowOperate(proposal, identity, _msgSender()),
-        //     "not allow"
-        // );
+        if (!allowOperate(identity, _msgSender())) {
+            revert NotAllowToOperate();
+        }
 
         bytes32 voteID = identity._getIdentityID();
         VoteInfo storage voteInfo = _voteInfos[voteID];
@@ -255,34 +248,25 @@ struct PersonVoteDetail {
         return voteDetails;
     }
 
-    // function _checkAllowOperate(
-    //     Proposal memory proposal,
-    //     VoteIdentity calldata identity,
-    //     address user
-    // ) internal view returns (bool) {
+    function _checkAllowOperate(
+        ProposalSummary memory proposal,
+        VoteIdentity memory identity,
+        address user
+    ) internal view returns (bool) {
+        if (!_checkProposalStatus(proposal, identity)) {
+            return false;
+        }
 
-    //     if (!isCommitteeMember(user)) {
-    //         return false;
-    //     }
+        if (_checkDeadline(proposal)) {
+            return false;
+        }
 
-    //     if (!_checkProposalStatus(proposal, identity)) {
-    //         return false;
-    //     }
+        // if(!_checkBadge(proposal, user)){
+        //   return false;
+        // }
 
-    //     if (!_checkSensitivePosition(proposal, user)) {
-    //         return false;
-    //     }
-
-    //     if (_checkDeadline(proposal)) {
-    //         return false;
-    //     }
-
-    //     if(!_checkBadge(proposal, user)){
-    //       return false;
-    //     }
-
-    //     return true;
-    // }
+        return true;
+    }
 
     function _calculateVoteResults(VoteIdentity memory identity)
         internal
@@ -344,6 +328,37 @@ struct PersonVoteDetail {
             _proposalVoteDetail[voteID][true][account].voteCount,
             _proposalVoteDetail[voteID][false][account].voteCount
         );
+    }
+
+    function _checkProposalStatus(
+        ProposalSummary memory proposal,
+        VoteIdentity memory identity
+    ) internal view returns (bool) {
+        if (proposal.status != IProposalInfo.ProposalStatus.PENDING) {
+            return false;
+        }
+
+        // IDAO.ProposalCommitteeInfo memory nextInfo = IDAO(proposal.dao)
+        //     .getNextCommittee(proposal.proposalID);
+        // if (
+        //     nextInfo.step != identity.step ||
+        //     nextInfo.committee != address(this)
+        // ) {
+        //     return false;
+        // }
+
+        return true;
+    }
+
+    function _checkDeadline(ProposalSummary memory proposal)
+        internal
+        view
+        returns (bool end)
+    {
+        return
+            IProcessHandler(getParentDAO()).getVoteExpirationTime(
+                proposal.proposalID
+            ) < block.timestamp;
     }
 
     /// @inheritdoc IERC165

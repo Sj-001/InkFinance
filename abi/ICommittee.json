@@ -231,7 +231,7 @@
     "outputs": [
       {
         "internalType": "bool",
-        "name": "isAllow",
+        "name": "allowToOperate",
         "type": "bool"
       }
     ],

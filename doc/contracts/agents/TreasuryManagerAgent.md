@@ -60,20 +60,6 @@ bytes32 proposalID
 | --- | --- |
 |`success` | true means works
 
-### getAgentFlow
-
-
-
-*Declaration:*
-```solidity
-function getAgentFlow(
-) external returns
-(bytes32 flowID)
-```
-
-
-
-
 ### exec
 
 > do run the proposal decision

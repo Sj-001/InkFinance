@@ -118,7 +118,7 @@ function deployByKey(
 
 
 ### getDAOCommittees
-return all commitees and user's duty
+return all commitees and it's dutyIDs
 
 
 
@@ -126,14 +126,14 @@ return all commitees and user's duty
 ```solidity
 function getDAOCommittees(
 ) external returns
-(struct IDAO.DAOCommitteeWithDuty[] userCommitteeDuties)
+(struct IDAO.DAOCommitteeWithDuty[] committeeDuties)
 ```
 
 
 *Returns:*
 | Arg | Description |
 | --- | --- |
-|`userCommitteeDuties` | return user's dutyID in the committee, the dutyID could be bytes32(0x00) if they don't have the duty
+|`committeeDuties` | return the committee's dutyID as array
 
 ## 5.Events
 ### NewDAOCreated

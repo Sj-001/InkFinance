@@ -14,10 +14,9 @@
 
 | Var | Type |
 | --- | --- |
+| EXPIRATION_KEY | string |
 | MAX_STEP_NUM | uint256 |
 | _SENTINEL_ID | bytes32 |
-| DEFAULT_FLOW_ID | bytes32 |
-| _defaultFlowIDIndex | uint256 |
 | _proposalInfo | mapping(bytes32 => struct IProposalHandler.ProposalProgress) |
 | _flowSteps | mapping(bytes32 => mapping(bytes32 => struct BaseDAO.StepLinkInfo)) |
 | _proposalsArray | struct EnumerableSet.Bytes32Set |
@@ -100,7 +99,7 @@ bytes data
 |`proposalID` | generated proposal id
 
 ### getDAOCommittees
-return all commitees and user's duty
+return all commitees and it's dutyIDs
 
 
 
@@ -108,14 +107,14 @@ return all commitees and user's duty
 ```solidity
 function getDAOCommittees(
 ) external returns
-(struct IDAO.DAOCommitteeWithDuty[] userCommitteeDuties)
+(struct IDAO.DAOCommitteeWithDuty[] committeeDuties)
 ```
 
 
 *Returns:*
 | Arg | Description |
 | --- | --- |
-|`userCommitteeDuties` | return user's dutyID in the committee, the dutyID could be bytes32(0x00) if they don't have the duty
+|`committeeDuties` | return the committee's dutyID as array
 
 ### getTallyVoteRules
 
@@ -126,6 +125,34 @@ function getDAOCommittees(
 function getTallyVoteRules(
 ) external returns
 (uint256 minAgreeRatio, uint256 minEffectiveVotes, uint256 minEffectiveWallets)
+```
+
+
+
+
+### getDAOTallyVoteRules
+
+
+
+*Declaration:*
+```solidity
+function getDAOTallyVoteRules(
+) external returns
+(uint256 minAgreeRatio, uint256 minEffectiveVotes, uint256 minEffectiveWallets)
+```
+
+
+
+
+### getSupportedFlow
+
+
+
+*Declaration:*
+```solidity
+function getSupportedFlow(
+) external returns
+(bytes32[] flows)
 ```
 
 
@@ -172,6 +199,20 @@ address dutyID
 ```solidity
 function _addDuty(
 ) internal
+```
+
+
+
+
+### getDeployedContractByKey
+
+
+
+*Declaration:*
+```solidity
+function getDeployedContractByKey(
+) external returns
+(address deployedAddress)
 ```
 
 
@@ -536,6 +577,20 @@ function _getAgentFlowID(
 
 
 
+### _getFlowID
+
+
+
+*Declaration:*
+```solidity
+function _getFlowID(
+) internal returns
+(bytes32 flowID)
+```
+
+
+
+
 ### execTx
 
 
@@ -558,6 +613,33 @@ function execTx(
 function getFlowSteps(
 ) external returns
 (struct IProposalHandler.CommitteeInfo[] infos)
+```
+
+
+
+
+### _setupCommittees
+
+
+
+*Declaration:*
+```solidity
+function _setupCommittees(
+) internal
+```
+
+
+
+
+### _deployCommittees
+
+
+
+*Declaration:*
+```solidity
+function _deployCommittees(
+) internal returns
+(address committeeAddr)
 ```
 
 
@@ -808,13 +890,13 @@ function _setFlowStep(
 
 
 
-### addIntoCurrentCommittee
+### _addIntoCurrentCommittee
 
 
 
 *Declaration:*
 ```solidity
-function addIntoCurrentCommittee(
+function _addIntoCurrentCommittee(
 ) internal
 ```
 
@@ -889,6 +971,23 @@ function allowToVote(
 ```solidity
 function changeProposal(
 ) external
+```
+
+
+
+
+### getVoteExpirationTime
+return the expiratin time of the proposal's step
+
+> the expiration period was stored in the metadata, and key is Expiration
+but it is just stored period, the actual date time should be add the last operatie time
+for eg: every time the new proposal post or one committee stage had be decided, the operation time would be reset at that moment
+
+*Declaration:*
+```solidity
+function getVoteExpirationTime(
+) external returns
+(uint256 expiration)
 ```
 
 

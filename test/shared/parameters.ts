@@ -153,7 +153,13 @@ export function buildOffchainProposal() {
             "desc": toUtf8Bytes(""),
         };
 
-
+        headers[3] = {
+            "key":  "Expiration",
+            "typeID": keccak256(toUtf8Bytes("type.UINT256")),
+            "data":  web3.eth.abi.encodeParameter("uint256", 120),
+            "desc": toUtf8Bytes(""),
+        };
+        
         var kvData = [];
         kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
         // kvData[0] = {

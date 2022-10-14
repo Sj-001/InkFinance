@@ -28,20 +28,6 @@ function init(
 
 
 
-### getTheBoard
-
-
-
-*Declaration:*
-```solidity
-function getTheBoard(
-) external returns
-(address theBoardAddress)
-```
-
-
-
-
 ### getTypeID
 get the type of the contract, it's constant
 

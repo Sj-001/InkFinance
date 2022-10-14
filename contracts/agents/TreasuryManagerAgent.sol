@@ -15,8 +15,6 @@ contract TreasuryManagerAgent is BaseAgent {
     string internal constant _MD_INCOME_AUDITORS = "IncomeAuditors";
     string internal constant _MD_EXP_AUDITORS = "ExpAuditors";
 
-    bytes32 private FLOW_ID = "";
-
     address private _dao;
 
     function init(
@@ -68,10 +66,6 @@ contract TreasuryManagerAgent is BaseAgent {
         );
 
         success = true;
-    }
-
-    function getAgentFlow() external override returns (bytes32 flowID) {
-        return FLOW_ID;
     }
 
     /// @inheritdoc IAgent
