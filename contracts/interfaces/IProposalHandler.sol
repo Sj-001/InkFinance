@@ -9,6 +9,15 @@ error OnlyDAOCouldOperate(address expectedDAO, address actualOperator);
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice inteface which defined how to deal with the vote process
 interface IProposalHandler is IProposalInfo {
+
+
+    /// @dev created for ProposalHelper to form data easily
+    struct TypeData {
+        bytes32 typeID;
+        bytes data;
+    }
+
+
     /// @dev when proposal create, the submited data structure
     /// @param name the name of the Committee
     /// @param step the step identity of that committee in the workflow

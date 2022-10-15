@@ -17,12 +17,16 @@ async function deploy(){
   var admin = signers[0].address;
   console.log("deploy InkFinance Governance Module V2 with this account: ", admin);
 
+  /*
 
+  config address: 0x335088193CDE7e1D05475AC2d28b89070a1b0C7e
+  factory address: 0x33806C358917641D85fA1d5dCB3f41DF2F375482
+  */
   const configManagerFactory = await ethers.getContractFactory("ConfigManager");
-  const configManager = await configManagerFactory.attach("0xc47FfA67FDd7427441Da8ED7A7C5E65A9B52a275");
+  const configManager = await configManagerFactory.attach("0x335088193CDE7e1D05475AC2d28b89070a1b0C7e");
 
   const factoryManagerFactory = await ethers.getContractFactory("FactoryManager");
-  const factoryManager = await factoryManagerFactory.attach("0x7Fa52BE7394456dc20Bb9227810254290D5a2B34");
+  const factoryManager = await factoryManagerFactory.attach("0x33806C358917641D85fA1d5dCB3f41DF2F375482");
 
   
   // const theBoardFactory = await ethers.getContractFactory("TheBoard");

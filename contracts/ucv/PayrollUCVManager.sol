@@ -8,11 +8,16 @@ import "../interfaces/IPayrollManager.sol";
 import "../interfaces/IDAO.sol";
 import "../interfaces/IUCV.sol";
 
+
+import "../utils/ProposalHelper.sol";
+
 import "hardhat/console.sol";
 
 contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
+
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.UintSet;
+    using ProposalHelper for IProposalInfo.Proposal;
 
     event Withdraw(
         uint256 indexed id,
@@ -21,13 +26,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         uint256 total,
         address coin
     );
-
-    struct PayrollScheduleMember {
-        address memberAddress;
-        address token;
-        uint256 oncePay;
-        string scheduleType;
-    }
 
     struct PayrollSchedule {
         // member addr -> member.

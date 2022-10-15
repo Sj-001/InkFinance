@@ -207,7 +207,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes calldata data
     ) public override returns (bytes32 proposalID) {
         /* EnsureGovEnough */
-        console.log("nnnnn");
+        console.log("test member ####################################################### : ");
+
+
 
         proposalID = IProposalHandler(_proposalHandlerAddress).newProposal(
             proposal,
@@ -783,6 +785,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                 ) {
                     revert AgentCanBeCreatedOnlyOnceInDAO(agents[i]);
                 }
+
                 _agentKeys.add(agents[i]);
                 address agentContractAddress = _deployByFactoryKey(
                     false,
@@ -1031,7 +1034,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     /// @inheritdoc IDAO
-    function setupPayrollUCV(bytes32 topicID, address controller)
+    function setupPayrollUCV(bytes32 topicID, address controller, bytes32 ucvKey, bytes32 managerKey)
         external
         override
     {

@@ -4,6 +4,14 @@ pragma solidity ^0.8.0;
 import "./IUCVController.sol";
 
 interface IPayrollManager {
+
+    struct PayrollScheduleMember {
+        address memberAddress;
+        address token;
+        uint256 oncePay;
+        string scheduleType;
+    }
+
     /// @dev payroll batch approve info
     /// @param batch payroll batch
     /// @param approved if all the signer voted to approve, approved = 1, otherwise it's 0

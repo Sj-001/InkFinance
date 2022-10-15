@@ -81,14 +81,16 @@ describe("proposal related test", function () {
         var payrollSetupProposalID = await masterDAO.getProposalIDByIndex(1);
         console.log("payroll setup proposal", payrollSetupProposalID)
 
-        /*
+        
         var payrollTopicID = await masterDAO.getProposalTopic(payrollSetupProposalID);
         console.log("payroll proposal topic:: ", payrollTopicID);
 
 
         var payManager = await masterDAO.getUCVManagers();
         console.log("ucv managers: ", await payManager);
+        
 
+        
         var payrollUCVManagerFactory = await ethers.getContractFactory("PayrollUCVManager");
         var payrollUCVManager = await payrollUCVManagerFactory.attach(payManager[0]);
 
@@ -96,6 +98,7 @@ describe("proposal related test", function () {
         await makePayrollPayProposal(payrollTopicID, committeeAddress, payManager[0]);
 
 
+        /*
         var payrollProposalID = await masterDAO.getProposalIDByIndex(2);
         console.log("payroll proposal id: ", payrollProposalID);
 
@@ -106,11 +109,11 @@ describe("proposal related test", function () {
     
         console.log("claim information:", await payrollUCVManager.getClaimableAmount(payrollTopicID, "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"))
 
-        */
+        
 
 
         //await makePayrollPayProposal(payrollTopicID, committeeAddress);
-        
+        */
 
     });
 
@@ -141,11 +144,7 @@ describe("proposal related test", function () {
         var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
         
         // make proposal and require voteing
-        await treasuryCommittee.newProposal(payrollPayProposal, true, toUtf8Bytes(""));
-
-
-
-        
+        await treasuryCommittee.newProposal(payrollPayProposal, true, toUtf8Bytes(""));        
     }
 
     

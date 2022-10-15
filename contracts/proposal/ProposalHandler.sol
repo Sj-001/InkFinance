@@ -15,6 +15,7 @@ import "../libraries/defined/TypeID.sol";
 import "hardhat/console.sol";
 
 contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
+
     using Address for address;
     using BytesUtils for bytes;
     using LEnumerableMetadata for LEnumerableMetadata.MetadataSet;
@@ -158,7 +159,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     /// @inheritdoc IProposalHandler
     function getProposalKvData(bytes32 proposalID, string memory key)
         external
-        view
+        view 
         override
         returns (bytes32 typeID, bytes memory data)
     {
@@ -255,6 +256,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             proposalID,
             MIN_EFFECTIVE_VOTE_WALLETS
         );
+
         if (typeID == TypeID.UINT256) {
             uint256 value = abi.decode(minWalletData, (uint256));
             if (value > 0) {

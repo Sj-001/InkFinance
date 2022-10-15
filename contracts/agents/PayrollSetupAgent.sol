@@ -10,6 +10,7 @@ import "hardhat/console.sol";
 
 /// @title set up a payroll schedule
 contract PayrollSetupAgent is BaseAgent {
+
     using BytesUtils for bytes;
 
     bytes32 public FLOW_ID = keccak256("financial-payroll-setup");
@@ -59,17 +60,28 @@ contract PayrollSetupAgent is BaseAgent {
         console.log("topicID111");
         console.logBytes32(topicID);
 
-        _setupPayrollUCV(topicID, msg.sender);
+
+        (typeID, bytesData) = proposalHandler.getProposalMetadata(
+            proposalID,
+            "ucvKey"
+        );
+        bytes32 ucvKey = abi.decode(bytesData, (bytes32));
+
+        (typeID, bytesData) = proposalHandler.getProposalMetadata(
+            proposalID,
+            "ucvManagerKey"
+        );
+        bytes32 ucvManagerKey = abi.decode(bytesData, (bytes32));
+        _setupPayrollUCV(topicID, msg.sender, ucvKey ,ucvManagerKey);
+    
+    
     }
 
-    function _setupPayrollUCV(bytes32 topicID, address controllerAddress)
+    function _setupPayrollUCV(bytes32 topicID, address controllerAddress, bytes32 ucvKey, bytes32 managerKey)
         internal
     {
-        // UCVManagerTypeID = "0x9dbd9f87f8d58402d143fb49ec60ec5b8c4fa567e418b41a6249fd125a267101";
-        // payrollUCVManager= 0x8856ac0b66da455dc361f170f91264627f70b6333b9103ff6104df3ce47aa4ec
         console.log("start payroll ucv manager create");
-
-        IDAO(getAgentDAO()).setupPayrollUCV(topicID, controllerAddress);
+        IDAO(getAgentDAO()).setupPayrollUCV(topicID, controllerAddress, ucvKey, managerKey);
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}
@@ -87,7 +99,7 @@ contract PayrollSetupAgent is BaseAgent {
         return interfaceId == type(IAgent).interfaceId;
     }
 
-    function isUniqueInDAO() external override returns (bool isUnique) {
+    function isUniqueInDAO() external pure override returns (bool isUnique) {
         isUnique = false;
     }
 }

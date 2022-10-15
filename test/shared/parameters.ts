@@ -7,7 +7,7 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-import {PROPOSAL_HANDLER_KEY, PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, PAYROLL_EXECUTE_AGENT_KEY } from '../shared/fixtures';  
+import {PROPOSAL_HANDLER_KEY, PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY } from '../shared/fixtures';  
 const {loadFixture, deployContract} = waffle;
 
 
@@ -159,7 +159,7 @@ export function buildOffchainProposal() {
             "data":  web3.eth.abi.encodeParameter("uint256", 120),
             "desc": toUtf8Bytes(""),
         };
-        
+
         var kvData = [];
         kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
         // kvData[0] = {
@@ -253,14 +253,22 @@ export function buildPayrollSetupProposal(erc20Address:string) {
 
     // setup member and schedule and payments.
     headers[0] = {
-        "key":  "committeeKey",
-        "typeID": THE_TREASURY_COMMITTEE_KEY,
+        "key":  "ucvKey",
+        "typeID": PAYROLL_UCV_KEY,
         // "typeID": keccak256(toUtf8Bytes("typeID")),
         "data": THE_TREASURY_COMMITTEE_KEY,
         "desc": "0x0002",
     };
-    
+
     headers[1] = {
+        "key":  "ucvManagerKey",
+        "typeID": PAYROLL_UCV_MANAGER_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": PAYROLL_UCV_MANAGER_KEY,
+        "desc": "0x0002",
+    };
+
+    headers[2] = {
         "key":  "controllerAddress",
         "typeID": keccak256(toUtf8Bytes("typeID")),
         "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
@@ -295,10 +303,18 @@ export function buildPayrollSetupProposal(erc20Address:string) {
     var claimTimesByte = web3.eth.abi.encodeParameter("uint256",100);
 
 
+
+
+
     kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["members", keccak256(toUtf8Bytes("list")), memberListBytes]) ;
     kvData[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["startTime", keccak256(toUtf8Bytes("uint256")), startTimeBytes]) ;
     kvData[2] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["period", keccak256(toUtf8Bytes("uint256")), periodBytes]) ;
     kvData[3] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["claimTimes", keccak256(toUtf8Bytes("uint256")), claimTimesByte]) ;
+    var memberBytes1 = web3.eth.abi.encodeParameters(["address", "address", "uint256", "string"],["0xf46B1E93aF2Bf497b07726108A539B478B31e64C", erc20Address, 10000000, "payroll"]);
+    var memberBytes2 = web3.eth.abi.encodeParameters(["address", "address", "uint256", "string"],["0xf46B1E93aF2Bf497b07726108A539B478B31e64C", erc20Address, 10000000, "payroll"]);
+
+    kvData[4] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["payee-1", keccak256(toUtf8Bytes("member")), memberBytes1]) ;
+    kvData[5] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["payee-2", keccak256(toUtf8Bytes("member")), memberBytes2]) ;
 
     // 0x0000000000000000000000000000000000000000000000000000000000000000
     // 0x0000000000000000000000000000000000000000000000000000000000000000

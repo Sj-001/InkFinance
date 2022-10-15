@@ -1515,6 +1515,16 @@
         "internalType": "address",
         "name": "controller",
         "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "ucvKey",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "managerKey",
+        "type": "bytes32"
       }
     ],
     "name": "setupPayrollUCV",
