@@ -258,7 +258,7 @@ export function buildPayrollSetupProposal(erc20Address:string) {
         // "typeID": keccak256(toUtf8Bytes("typeID")),
         "data": THE_TREASURY_COMMITTEE_KEY,
         "desc": "0x0002",
-    };
+    }; 
 
     headers[1] = {
         "key":  "ucvManagerKey",
@@ -313,8 +313,8 @@ export function buildPayrollSetupProposal(erc20Address:string) {
     var memberBytes1 = web3.eth.abi.encodeParameters(["address", "address", "uint256", "string"],["0xf46B1E93aF2Bf497b07726108A539B478B31e64C", erc20Address, 10000000, "payroll"]);
     var memberBytes2 = web3.eth.abi.encodeParameters(["address", "address", "uint256", "string"],["0xf46B1E93aF2Bf497b07726108A539B478B31e64C", erc20Address, 10000000, "payroll"]);
 
-    kvData[4] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["payee-1", keccak256(toUtf8Bytes("member")), memberBytes1]) ;
-    kvData[5] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["payee-2", keccak256(toUtf8Bytes("member")), memberBytes2]) ;
+    kvData[4] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["payee-0", keccak256(toUtf8Bytes("member")), memberBytes1]) ;
+    kvData[5] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["payee-1", keccak256(toUtf8Bytes("member")), memberBytes2]) ;
 
     // 0x0000000000000000000000000000000000000000000000000000000000000000
     // 0x0000000000000000000000000000000000000000000000000000000000000000

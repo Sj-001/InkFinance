@@ -145,9 +145,9 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     {
         bytes32 proposalID = _getTopicKeyProposal(topicID, key);
 
-        console.log("get topic key value");
-        console.logBytes32(topicID);
-        console.logBytes32(proposalID);
+        // console.log("get topic key value");
+        // console.logBytes32(topicID);
+        // console.logBytes32(proposalID);
 
         // if (!_isProposalExist(proposalID)) {
         //     return (typeID, data);
@@ -339,12 +339,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             p.kvData.size
         );
         for (uint256 i = 0; i < keys.length; i++) {
-            if (
-                proposalID ==
-                0x1e98798a158fb217032ae08c1bb5863c8f284b28fc7e70ab8a39ba272a17657d
-            ) {
-                console.log("sync key:", keys[i]);
-            }
+
 
             bytes32 keyID = LEnumerableMetadata._getKeyID(keys[i]);
             TopicKey2Proposal storage keymap = t.key2Proposal[keyID];
@@ -429,6 +424,9 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             syncProposalKvDataToTopic(proposalID, agree, "");
         }
     }
+
+
+
 
     /// @inheritdoc IDeploy
     function getTypeID() external override returns (bytes32 typeID) {}

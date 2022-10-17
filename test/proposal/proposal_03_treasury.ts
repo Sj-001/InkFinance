@@ -98,7 +98,7 @@ describe("proposal related test", function () {
         await makePayrollPayProposal(payrollTopicID, committeeAddress, payManager[0]);
 
 
-        /*
+        
         var payrollProposalID = await masterDAO.getProposalIDByIndex(2);
         console.log("payroll proposal id: ", payrollProposalID);
 
@@ -106,6 +106,8 @@ describe("proposal related test", function () {
         var payrollProposalSummary = await masterDAO.getProposalSummary(payrollProposalID);
         console.log("payroll proposal status:: ", payrollProposalSummary.status);
 
+
+        /*
     
         console.log("claim information:", await payrollUCVManager.getClaimableAmount(payrollTopicID, "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"))
 

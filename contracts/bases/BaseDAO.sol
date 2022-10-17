@@ -415,12 +415,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     /// @inheritdoc IDutyControl
-    function addDuty(address account, bytes32 dutyID) external override {
+    function addDuty(address account, bytes32 dutyID) external override onlyAgent {
         _addDuty(account, dutyID);
     }
 
     function _addDuty(address account, bytes32 dutyID) internal {
         if (!_dutyMembers[dutyID].contains(account)) {
+
             emit AddDAOMemberDuty(account, dutyID);
 
             _dutyMembers[dutyID].add(account);
@@ -969,6 +970,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     ) external override returns (address deployedAddress) {
         return _deployByFactoryKey(false, typeID, contractKey, initData);
     }
+
 
     function _execFinish(ProposalProgress storage info, bool agree) internal {
         require(info.nextCommittee.committee == address(0x0), "can't finish");

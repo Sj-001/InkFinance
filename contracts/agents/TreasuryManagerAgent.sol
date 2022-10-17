@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "../committee/TreasuryCommittee.sol";
 import "../bases/BaseAgent.sol";
 import "../interfaces/IDAO.sol";
+import "../libraries/defined/DutyID.sol";
 import "../utils/BytesUtils.sol";
 import "hardhat/console.sol";
 
@@ -112,29 +113,6 @@ contract TreasuryManagerAgent is BaseAgent {
             "controllerAddress"
         );
 
-        console.logBytes(controllerAddressBytes);
-        // address controllerAddress = controllerAddressBytes.toAddress();
-
-        // ////////// signers
-        // (typeID, data) = proposalRegistry.getProposalKvData(proposalID, _MD_SIGNERS);
-        // require(typeID == TypeID.ADDRESS_SLICE, "signers not addr[]");
-        // setMemberList(tAddr, data, DutyID.SIGNER);
-
-        /*
-        ////////// operators
-        (typeID, data) = proposalRegistry.getProposalKvData(proposalID, _MD_OPERATORS);
-        require(typeID == TypeID.ADDRESS_SLICE, "operators not addr[]");
-        setMemberList(tAddr, data, DutyID.OPERATOR);
-
-        ////////// income auditor
-        (typeID, data) = proposalRegistry.getProposalKvData(proposalID, _MD_INCOME_AUDITORS);
-        require(typeID == TypeID.ADDRESS_SLICE, "INCOME_AUDITORS not addr[]");
-        setMemberList(tAddr, data, DutyID.INCOME_AUDITOR);
-        */
-
-        // console.log("OPERATOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.OPERATOR")));
-        // console.log("SIGNER_DUTYID=", keccak256(toUtf8Bytes("dutyID.SIGNER")));
-        // console.log("AUDITOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.AUDITOR")));
 
         (typeID, memberBytes) = IProposalHandler(_dao).getProposalKvData(
             proposalID,
@@ -178,6 +156,8 @@ contract TreasuryManagerAgent is BaseAgent {
     {
         address[] memory members = abi.decode(memberBytes, (address[]));
         for (uint256 i = 0; i < members.length; i++) {
+
+            console.log("_setMemberDuties :", members[i]);
             IDAO(_dao).addDuty(members[i], dutyID);
         }
     }
@@ -240,14 +220,21 @@ contract TreasuryManagerAgent is BaseAgent {
         IProposalHandler.CommitteeCreateInfo memory theTreasuryCommittee;
         // create agent - after passed, should set up
         theTreasuryCommittee.step = keccak256(abi.encode("sign-payroll"));
+
+        theTreasuryCommittee.committeeName = "Treasury Committee";
         // treasury committee
         theTreasuryCommittee.addressConfigKey = committeeKey;
-        bytes32[] memory duty1 = new bytes32[](0);
+        bytes32[] memory duties = new bytes32[](3);
+        duties[0] = DutyID.OPERATOR;
+        duties[1] = DutyID.SIGNER;
+        duties[2] = DutyID.INCOME_AUDITOR;
         // make financial proposl(create payroll)
 
-        theTreasuryCommittee.dutyIDs = abi.encode(duty1);
+        theTreasuryCommittee.dutyIDs = abi.encode(duties);
+
         flowInfo.committees = new IProposalHandler.CommitteeCreateInfo[](1);
         flowInfo.committees[0] = theTreasuryCommittee;
+
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}
