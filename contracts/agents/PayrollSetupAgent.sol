@@ -10,7 +10,6 @@ import "hardhat/console.sol";
 
 /// @title set up a payroll schedule
 contract PayrollSetupAgent is BaseAgent {
-
     using BytesUtils for bytes;
 
     bytes32 public FLOW_ID = keccak256("financial-payroll-setup");
@@ -60,7 +59,6 @@ contract PayrollSetupAgent is BaseAgent {
         console.log("topicID111");
         console.logBytes32(topicID);
 
-
         (typeID, bytesData) = proposalHandler.getProposalMetadata(
             proposalID,
             "ucvKey"
@@ -72,16 +70,22 @@ contract PayrollSetupAgent is BaseAgent {
             "ucvManagerKey"
         );
         bytes32 ucvManagerKey = abi.decode(bytesData, (bytes32));
-        _setupPayrollUCV(topicID, msg.sender, ucvKey ,ucvManagerKey);
-    
-    
+        _setupPayrollUCV(topicID, msg.sender, ucvKey, ucvManagerKey);
     }
 
-    function _setupPayrollUCV(bytes32 topicID, address controllerAddress, bytes32 ucvKey, bytes32 managerKey)
-        internal
-    {
+    function _setupPayrollUCV(
+        bytes32 topicID,
+        address controllerAddress,
+        bytes32 ucvKey,
+        bytes32 managerKey
+    ) internal {
         console.log("start payroll ucv manager create");
-        IDAO(getAgentDAO()).setupPayrollUCV(topicID, controllerAddress, ucvKey, managerKey);
+        IDAO(getAgentDAO()).setupPayrollUCV(
+            topicID,
+            controllerAddress,
+            ucvKey,
+            managerKey
+        );
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}

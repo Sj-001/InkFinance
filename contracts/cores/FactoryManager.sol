@@ -20,6 +20,12 @@ import "hardhat/console.sol";
 
 error WrongTypeOfTheFactoryKey();
 error TheFactoryKeyIsNotExist();
+error FailedToGeneraateAddress(
+    bool randomSalt,
+    bytes32 typeID,
+    bytes32 factoryKey,
+    address msgSender
+);
 
 /// @title FactoryManager
 /// @author InkTech <tech-support@inkfinance.xyz>
@@ -159,6 +165,15 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             salt
         );
 
+        if (generatedContract == address(0)) {
+            revert FailedToGeneraateAddress(
+                randomSalt,
+                typeID,
+                factoryKey,
+                msg.sender
+            );
+        }
+
         console.log("generated address:", generatedContract);
 
         InkBeacon inkBeacon = new InkBeacon(implementAddress, _config);
@@ -169,8 +184,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             address(inkBeacon),
             ""
         );
-
-        console.log("start call IDeploy init");
 
         IDeploy(generatedContract).init(msg.sender, _config, initData);
 

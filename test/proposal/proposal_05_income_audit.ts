@@ -11,7 +11,7 @@ import { FactoryManagerFixture, InkERC20Fixture } from '../shared/fixtures';
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
 import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
-import { buildMasterDAOInitData, buildOffchainProposal, buildPayrollPayProposal, buildPayrollSetupProposal, buildTreasurySetupProposal } from '../shared/parameters'; 
+import { buildIncomeManagementSetupProposal, buildMasterDAOInitData, buildOffchainProposal, buildPayrollPayProposal, buildPayrollSetupProposal, buildTreasurySetupProposal } from '../shared/parameters'; 
 
 
 import {defaultAbiCoder} from '@ethersproject/abi';
@@ -28,7 +28,7 @@ const {loadFixture, deployContract} = waffle;
 
 describe("proposal related test", function () {
 
-    it("test create treasury-setup proposal", async function () {
+    it("test treasury income manager setup proposal", async function () {
 
         const signers = await ethers.getSigners();
         console.log("########################current signer:", signers[0].address);
@@ -66,7 +66,6 @@ describe("proposal related test", function () {
         console.log("first proposal id: ", proposalID);
         await voteProposalByThePublic(await masterDAO.address, proposalID);
 
-        
         // once decide, 
         await tallyVotesByThePublic(await masterDAO.address,  proposalID);
         
@@ -76,79 +75,31 @@ describe("proposal related test", function () {
 
         console.log("dao committees: ", await masterDAO.getDAOCommittees());
 
-
-
         var treasurySetupProposalID = await masterDAO.getProposalIDByIndex(0);
         console.log("treasury setup proposal", treasurySetupProposalID)
 
-
-
         var treasurySetupPropoalTopicID = await masterDAO.getProposalTopic(treasurySetupProposalID);
         console.log("treasury setup proposal topic:: ", treasurySetupPropoalTopicID);
-
-        // proposal category = payroll?
-        await makeSetupPayrollProposal(committeeAddress, erc20Address, treasurySetupPropoalTopicID);
-
-
-
-        var payrollSetupProposalID = await masterDAO.getProposalIDByIndex(1);
-        console.log("payroll setup proposal", payrollSetupProposalID)
-
         
+        var proposal = buildIncomeManagementSetupProposal(treasurySetupPropoalTopicID);
 
-        var payrollSetupPropoalTopicID = await masterDAO.getProposalTopic(payrollSetupProposalID);
-        console.log("treasury setup proposal topic:: ", payrollSetupPropoalTopicID);
+        await theBoard.newProposal(proposal, true, "0x00");
 
-
-        await votePayrollSetupProposal(payrollSetupProposalID, keccak256(toUtf8Bytes("generate payroll setup")), committeeAddress)
-
-
-        var payManager = await masterDAO.getUCVManagers();
-        console.log("ucv managers: ", await payManager);
+        proposalID = await masterDAO.getProposalIDByIndex(1);
         
+        console.log("IncomeManagementSetupProposal ID:", proposalID);
 
-        
-        var payrollUCVManagerFactory = await ethers.getContractFactory("PayrollUCVManager");
-        var payrollUCVManager = await payrollUCVManagerFactory.attach(payManager[0]);
+        await voteProposalByThePublic(await masterDAO.address, proposalID);
 
-
-        await makePayrollPayProposal(payrollSetupPropoalTopicID, committeeAddress, payManager[0]);
+        // once decide, 
+        await tallyVotesByThePublic(await masterDAO.address,  proposalID);
 
 
         
-        var payrollProposalID = await masterDAO.getProposalIDByIndex(2);
-        console.log("payroll proposal id: ", payrollProposalID);
-
-        
-        var payrollProposalSummary = await masterDAO.getProposalSummary(payrollProposalID);
-        console.log("payroll proposal status:: ", payrollProposalSummary.status);
-
-
-        /*
-    
-        console.log("claim information:", await payrollUCVManager.getClaimableAmount(payrollTopicID, "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"))
-        //await makePayrollPayProposal(payrollTopicID, committeeAddress);
-        */
 
     });
 
-    async function makeSetupPayrollProposal (committeeAddress:string, erc20Address:string , topicID:string) {
-        // treasury committee has been setup.
-        // now prepare to setup payroll
-        console.log("financial-payroll-setup: ", keccak256(toUtf8Bytes("financial-payroll-setup")))
-        
-        var setupPayrollProposal = buildPayrollSetupProposal(erc20Address, topicID);
 
-        var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
-
-        var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
-        
-        // pass direct
-        await treasuryCommittee.newProposal(setupPayrollProposal, true, toUtf8Bytes(""));
-
-        
-
-    }
 
     async function makePayrollPayProposal (topicID:string, committeeAddress:string, managerAddress:string ) {
         // treasury committee has been setup.

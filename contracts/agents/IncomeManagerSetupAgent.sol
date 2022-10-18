@@ -28,6 +28,9 @@ contract IncomeManagerSetupAgent is BaseAgent {
         override
         returns (bool success)
     {
+        console.log(
+            "IncomeManagerSetupAgent pre exec ------------------------------------------------------ "
+        );
         success = true;
     }
 
@@ -35,10 +38,22 @@ contract IncomeManagerSetupAgent is BaseAgent {
     function exec(bytes32 proposalID) external override onlyCallFromDAO {
         console.log(
             "IncomeManagerSetupAgent exec --------------------------------------------------------------------------------- "
-        );        
-    }   
+        );
 
+        bytes32 typeID;
+        bytes memory bytesData;
 
+        IProposalHandler proposalHandler = IProposalHandler(getAgentDAO());
+        (typeID, bytesData) = proposalHandler.getProposalMetadata(
+            proposalID,
+            "incomeManagerKey"
+        );
+
+        console.log("bytes data");
+        console.logBytes(bytesData);
+
+        IDAO(getAgentDAO()).deployByKey(typeID, bytesData.toBytes32(), "");
+    }
 
     function getTypeID() external view override returns (bytes32 typeID) {}
 

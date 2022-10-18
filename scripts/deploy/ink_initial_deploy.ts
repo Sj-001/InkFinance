@@ -71,6 +71,15 @@ async function deploy(){
   await proposalHandlerImpl.deployed();
 
 
+  const incomeManagerSetupAgentFactory = await ethers.getContractFactory("IncomeManagerSetupAgent");
+  const incomeManagerSetupAgentImpl = await incomeManagerSetupAgentFactory.deploy();
+  await incomeManagerSetupAgentImpl.deployed();
+
+
+  const treasuryIncomeManagerFactory = await ethers.getContractFactory("TreasuryIncomeManager");
+  const treasuryIncomeManagerImpl = await treasuryIncomeManagerFactory.deploy();
+  await treasuryIncomeManagerImpl.deployed();
+
   //init factory manager key
   console.log("useful constant ################################################################################################################## ")
   console.log("deploy key ------------------------------------------------------------------ ")
@@ -87,6 +96,8 @@ async function deploy(){
   console.log("the payroll ucv manager key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollUCVManager"));
   console.log("the payroll ucv key:", await configManager.buildConfigKey(admin, "ADMIN", "PayrollUCV"));
   console.log("the proposal handler key:", await configManager.buildConfigKey(admin, "ADMIN", "ProposalHandler"));
+  console.log("the income agent key:", await configManager.buildConfigKey(admin, "ADMIN", "IncomeManagerSetupAgent"));
+  console.log("the income manager key:", await configManager.buildConfigKey(admin, "ADMIN", "TreasuryIncomeManager"));
 
   console.log("contract type ------------------------------------------------------------------ ")
   console.log("FactoryTypeID=", keccak256(toUtf8Bytes("FactoryTypeID")));
@@ -113,6 +124,8 @@ async function deploy(){
   keyValues[8] = {"keyPrefix":"ADMIN", "keyName":"PayrollExecuteAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollExecuteAgentImpl.address)}
   keyValues[9] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVManagerImpl.address)}
   keyValues[10] = {"keyPrefix":"ADMIN", "keyName":"ProposalHandler", "typeID":keccak256(toUtf8Bytes("address")), "data": (await proposalHandlerImpl.address)}
+  keyValues[11] = {"keyPrefix":"ADMIN", "keyName":"IncomeManagerSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await incomeManagerSetupAgentImpl.address)}
+  keyValues[12] = {"keyPrefix":"ADMIN", "keyName":"TreasuryIncomeManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await treasuryIncomeManagerImpl.address)}
   
   await configManager.batchSetKV(admin, keyValues);
 

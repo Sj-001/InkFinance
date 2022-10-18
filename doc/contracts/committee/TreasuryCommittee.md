@@ -69,6 +69,33 @@ function vote(
 
 
 
+### _tally
+
+
+
+*Declaration:*
+```solidity
+function _tally(
+) internal
+```
+
+
+
+
+### _getSignerCount
+
+
+
+*Declaration:*
+```solidity
+function _getSignerCount(
+) internal returns
+(uint256 signers)
+```
+
+
+
+
 ### tallyVotes
 
 > calculate votes and find out if the proposal is passed

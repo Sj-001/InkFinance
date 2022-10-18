@@ -161,9 +161,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     modifier onlyAgent() {
         address[] memory agentAddress;
         bool exist = false;
-                    console.log("compare agent:");
+        console.log("compare agent:");
         for (uint256 i = 0; i < _agentKeys.length(); i++) {
-
             console.log(_msgSender());
             console.log(_agents[_agentKeys.at(i)]);
             if (_msgSender() == _agents[_agentKeys.at(i)]) {
@@ -207,9 +206,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes calldata data
     ) public override returns (bytes32 proposalID) {
         /* EnsureGovEnough */
-        console.log("test member ####################################################### : ");
-
-
+        console.log(
+            "test member ####################################################### : "
+        );
 
         proposalID = IProposalHandler(_proposalHandlerAddress).newProposal(
             proposal,
@@ -415,13 +414,16 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     /// @inheritdoc IDutyControl
-    function addDuty(address account, bytes32 dutyID) external override onlyAgent {
+    function addDuty(address account, bytes32 dutyID)
+        external
+        override
+        onlyAgent
+    {
         _addDuty(account, dutyID);
     }
 
     function _addDuty(address account, bytes32 dutyID) internal {
         if (!_dutyMembers[dutyID].contains(account)) {
-
             emit AddDAOMemberDuty(account, dutyID);
 
             _dutyMembers[dutyID].add(account);
@@ -971,7 +973,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         return _deployByFactoryKey(false, typeID, contractKey, initData);
     }
 
-
     function _execFinish(ProposalProgress storage info, bool agree) internal {
         require(info.nextCommittee.committee == address(0x0), "can't finish");
         // emit EDecideProposal(info.proposalID, agree);
@@ -1036,10 +1037,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     /// @inheritdoc IDAO
-    function setupPayrollUCV(bytes32 topicID, address controller, bytes32 ucvKey, bytes32 managerKey)
-        external
-        override
-    {
+    function setupPayrollUCV(
+        bytes32 topicID,
+        address controller,
+        bytes32 ucvKey,
+        bytes32 managerKey
+    ) external override {
         console.log("setup ucv ---------------- ");
         bytes memory initData = abi.encode(controller);
 
@@ -1047,14 +1050,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         address deployedUCV = _deployByFactoryKey(
             false,
             FactoryKeyTypeID.UCV_TYPE_ID,
-            0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1,
+            ucvKey,
             initData
         );
 
         address managerAddress = _deployByFactoryKey(
             false,
             FactoryKeyTypeID.UCV_MANAGER_TYPE_ID,
-            0x8856ac0b66da455dc361f170f91264627f70b6333b9103ff6104df3ce47aa4ec,
+            managerKey,
             initData
         );
 

@@ -6,6 +6,8 @@ library BytesUtils {
         assembly {
             addr := mload(add(self, 20))
         }
+
+        //addr = abi.decode(self, (address));
     }
 
     function toBytes32(bytes memory self) internal pure returns (bytes32) {

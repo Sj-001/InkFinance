@@ -2,13 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import '@openzeppelin/contracts/utils/Strings.sol';
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 import "../bases/BaseUCVManager.sol";
 import "../interfaces/IPayrollManager.sol";
 import "../interfaces/IDAO.sol";
 import "../interfaces/IUCV.sol";
-
 
 import "../utils/ProposalHelper.sol";
 
@@ -117,11 +116,9 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         // emit event
         emit NewPayrollSetup(topicID, period, claimTimes, startTime);
 
-
-
         // start get payee topic:
         console.log("start get payee topic");
-        
+
         PayrollScheduleMember[] memory payees = getPayeeInTopic(topicID);
 
         console.log("payee members", payees.length);
@@ -151,8 +148,10 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         _approvePayrollBatch(topicID, 1);
     }
 
-
-    function _getPayeeCountInTopic(bytes32 topicID) internal returns(uint256 payeeCount) {
+    function _getPayeeCountInTopic(bytes32 topicID)
+        internal
+        returns (uint256 payeeCount)
+    {
         IProposalHandler proposalHandler = IProposalHandler(_dao);
         bytes32 typeID;
         bytes memory bytesData;
@@ -160,28 +159,33 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         uint256 keepNoneLimit = 5;
         uint256 currentNone = 0;
-        for (uint256 i=0; i<2000; i++) {
-            string memory keyIs = string(abi.encodePacked("payee-", i.toString()));
-                console.log("the key is: ", keyIs);
+        for (uint256 i = 0; i < 2000; i++) {
+            string memory keyIs = string(
+                abi.encodePacked("payee-", i.toString())
+            );
+            console.log("the key is: ", keyIs);
 
-                (typeID, bytesData) = proposalHandler.getTopicKVdata(
-                    topicID,
-                    keyIs
-                );
+            (typeID, bytesData) = proposalHandler.getTopicKVdata(
+                topicID,
+                keyIs
+            );
 
-                if (bytesData.length > 0) {
-                    currentNone = 0;
-                    payeeCount ++;
-                } else {
-                    currentNone ++;
-                    if (currentNone >= keepNoneLimit) {
-                        break;
-                    }
+            if (bytesData.length > 0) {
+                currentNone = 0;
+                payeeCount++;
+            } else {
+                currentNone++;
+                if (currentNone >= keepNoneLimit) {
+                    break;
                 }
+            }
         }
     }
 
-    function getPayeeInTopic(bytes32 topicID) internal returns(PayrollScheduleMember[] memory payees) {
+    function getPayeeInTopic(bytes32 topicID)
+        internal
+        returns (PayrollScheduleMember[] memory payees)
+    {
         IProposalHandler proposalHandler = IProposalHandler(_dao);
         bytes32 typeID;
         bytes memory bytesData;
@@ -193,32 +197,37 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         uint256 payeeIndex = 0;
 
-        for (uint256 i=0; i<2000; i++) {
-            string memory keyIs = string(abi.encodePacked("payee-", i.toString()));
-                console.log("the key is: ", keyIs);
+        for (uint256 i = 0; i < 2000; i++) {
+            string memory keyIs = string(
+                abi.encodePacked("payee-", i.toString())
+            );
+            console.log("the key is: ", keyIs);
 
-                (typeID, bytesData) = proposalHandler.getTopicKVdata(
-                    topicID,
-                    keyIs
-                );
+            (typeID, bytesData) = proposalHandler.getTopicKVdata(
+                topicID,
+                keyIs
+            );
 
-                if (bytesData.length > 0) {
+            if (bytesData.length > 0) {
+                currentNone = 0;
+                (
+                    address payee,
+                    address token,
+                    uint256 amount,
+                    string memory describe
+                ) = abi.decode(bytesData, (address, address, uint256, string));
+                console.log("Payroll UCV Manager:::::::", payee);
 
-                    currentNone = 0;
-                    (address payee, address token, uint256 amount, string memory describe) = abi.decode(bytesData, (address, address, uint256, string));
-                    console.log("Payroll UCV Manager:::::::", payee);
-                    
-                    payees[payeeIndex].memberAddress = payee;
-                    payees[payeeIndex].token = token;
-                    payees[payeeIndex].oncePay = amount;
-                    payees[payeeIndex].scheduleType = describe;
-
-                } else {
-                    currentNone ++;
-                    if (currentNone >= keepNoneLimit) {
-                        break;
-                    }
+                payees[payeeIndex].memberAddress = payee;
+                payees[payeeIndex].token = token;
+                payees[payeeIndex].oncePay = amount;
+                payees[payeeIndex].scheduleType = describe;
+            } else {
+                currentNone++;
+                if (currentNone >= keepNoneLimit) {
+                    break;
                 }
+            }
         }
     }
 
@@ -232,8 +241,9 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         _approvePayrollBatch(topicID, approvedTimes);
     }
 
-    function _approvePayrollBatch(bytes32 topicID, uint256 approvedTimes) internal {
-
+    function _approvePayrollBatch(bytes32 topicID, uint256 approvedTimes)
+        internal
+    {
         PayrollSchedule storage schedule = _schedules[topicID];
         schedule.approvedTimes = schedule.approvedTimes + approvedTimes;
 

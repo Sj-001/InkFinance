@@ -53,6 +53,34 @@ address ucv
 |`ucv` | address | the fund from which ucv
 
 
+### _getPayeeCountInTopic
+
+
+
+*Declaration:*
+```solidity
+function _getPayeeCountInTopic(
+) internal returns
+(uint256 payeeCount)
+```
+
+
+
+
+### getPayeeInTopic
+
+
+
+*Declaration:*
+```solidity
+function getPayeeInTopic(
+) internal returns
+(struct IPayrollManager.PayrollScheduleMember[] payees)
+```
+
+
+
+
 ### approvePayrollBatch
 
 > after multi-signer voted, how many batchs of payment under a payroll should be paid
@@ -61,6 +89,19 @@ address ucv
 ```solidity
 function approvePayrollBatch(
 ) external
+```
+
+
+
+
+### _approvePayrollBatch
+
+
+
+*Declaration:*
+```solidity
+function _approvePayrollBatch(
+) internal
 ```
 
 

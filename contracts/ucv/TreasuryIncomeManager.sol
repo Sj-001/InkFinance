@@ -4,23 +4,39 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../bases/BaseVerify.sol";
 
-import "../interfaces/IAuditReporter.sol";
+import "../interfaces/ITreasuryIncomeManager.sol";
 import "../interfaces/IDeploy.sol";
-
+import "../interfaces/IDutyControl.sol";
+import "../libraries/defined/DutyID.sol";
 
 import "hardhat/console.sol";
 
-contract AuditReporter is IAuditReporter, BaseVerify {
+error NotAuthrizedToCommitReport(address msgSender);
 
+contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
+    event IncomeReport(
+        address indexed dao,
+        address indexed operator,
+        bytes data
+    );
+
+    address private _dao;
 
     function init(
         address dao_,
         address config_,
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
-
+        _dao = dao_;
+        console.log("initialized ----- ");
     }
 
+    function commitReport(address dao, bytes memory data) public {
+        if (!IDutyControl(_dao).hasDuty(_msgSender(), DutyID.INCOME_AUDITOR)) {
+            revert NotAuthrizedToCommitReport(_msgSender());
+        }
+        emit IncomeReport(dao, msg.sender, data);
+    }
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)

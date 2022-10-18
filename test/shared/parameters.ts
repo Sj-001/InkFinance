@@ -7,7 +7,7 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-import {PROPOSAL_HANDLER_KEY, PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY } from '../shared/fixtures';  
+import {INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY,PROPOSAL_HANDLER_KEY, PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY } from '../shared/fixtures';  
 const {loadFixture, deployContract} = waffle;
 
 
@@ -179,7 +179,7 @@ export function buildOffchainProposal() {
         return proposal;
 }
 
-export function buildTreasurySetupProposal() {
+export function buildTreasurySetupProposal(operator:string, signer:string, auditor:string) {
 
     var agents = []
     // agent - related duties
@@ -214,16 +214,16 @@ export function buildTreasurySetupProposal() {
     // different roles
     // treasury operator 
     var treasuryOperator = [];
-    treasuryOperator[0] = "0xf46B1E93aF2Bf497b07726108A539B478B31e64C";
-    treasuryOperator[1] = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+    treasuryOperator[0] = operator;
+
     var treasuryOperatorBytes = web3.eth.abi.encodeParameter("address[]", treasuryOperator);
     // // treasury signer
     var treasurySigner = [];
-    treasurySigner[0] = "0x6c555518C66e7152a282330853aBf6F83a7FD19a";
+    treasurySigner[0] = signer;
     var treasurySignerBytes = web3.eth.abi.encodeParameter("address[]", treasurySigner);
     // treasury auditor
     var treasuryAuditor = [];
-    treasuryAuditor[0] = "0x7e2FFA4eF972500020f1fa85ca6b453E931F51aA";
+    treasuryAuditor[0] = auditor;
     var treasuryAuditorBytes = web3.eth.abi.encodeParameter("address[]", treasuryAuditor);
 
     kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["operators", keccak256(toUtf8Bytes("address")), treasuryOperatorBytes]);
@@ -243,7 +243,7 @@ export function buildTreasurySetupProposal() {
 }
 
 
-export function buildPayrollSetupProposal(erc20Address:string) {
+export function buildPayrollSetupProposal(erc20Address:string, topicID:string) {
 
     var agents = []
     agents[0] = PAYROLL_SETUP_AGENT_KEY;
@@ -256,7 +256,7 @@ export function buildPayrollSetupProposal(erc20Address:string) {
         "key":  "ucvKey",
         "typeID": PAYROLL_UCV_KEY,
         // "typeID": keccak256(toUtf8Bytes("typeID")),
-        "data": THE_TREASURY_COMMITTEE_KEY,
+        "data": PAYROLL_UCV_KEY,
         "desc": "0x0002",
     }; 
 
@@ -320,7 +320,50 @@ export function buildPayrollSetupProposal(erc20Address:string) {
     // 0x0000000000000000000000000000000000000000000000000000000000000000
     var proposal = {
         "agents" : agents,
-        "topicID" : "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "topicID" : topicID,
+        "crossChainProtocal":toUtf8Bytes(""),
+        "metadata" : headers,
+        "kvData" : kvData
+    }
+
+    return proposal;
+}
+
+
+export function buildIncomeManagementSetupProposal(topicID:string) {
+
+    var agents = []
+    agents[0] = INCOME_MANAGER_SETUP_AGENT_KEY;
+    
+    // agents[1] = toUtf8Bytes("");
+    var headers = [];
+
+    // setup member and schedule and payments.
+    headers[0] = {
+        "key":  "incomeManagerKey",
+        "typeID": TREASURY_INCOME_MANAGER_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": TREASURY_INCOME_MANAGER_KEY,
+        "desc": "0x0002",
+    }; 
+    
+
+    var kvData = [];
+    var timestamp = Date.now();
+    var sec = Math.floor(timestamp / 1000);
+    console.log("now time ################################################################# ", sec);
+
+    var startTimeBytes = web3.eth.abi.encodeParameter("uint256", (sec - 100));
+    var periodBytes = web3.eth.abi.encodeParameter("uint256",5 );
+
+
+    kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["auditStartTime", keccak256(toUtf8Bytes("uint256")), startTimeBytes]) ;
+    kvData[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["auditPeriod", keccak256(toUtf8Bytes("uint256")), periodBytes]) ;
+
+    // the topic is for reading Auditor
+    var proposal = {
+        "agents" : agents,
+        "topicID" : topicID,
         "crossChainProtocal":toUtf8Bytes(""),
         "metadata" : headers,
         "kvData" : kvData
@@ -359,7 +402,6 @@ export function buildPayrollPayProposal(topicID:string, managerAddress:string) {
     // include vote rule, require all the "signer to vote pass"
     // console.log("start member bytes encode:");
     // var memberItemTuple = 'tuple(address, address, uint256, string)[]';
-    var memberListBytes = "0x00";
     // console.log("member bytes:", memberListBytes);
 
 

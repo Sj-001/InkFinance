@@ -11,6 +11,32 @@
     "type": "constructor"
   },
   {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "randomSalt",
+        "type": "bool"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "typeID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "factoryKey",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "msgSender",
+        "type": "address"
+      }
+    ],
+    "name": "FailedToGeneraateAddress",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "TheFactoryKeyIsNotExist",
     "type": "error"

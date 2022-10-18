@@ -5,18 +5,9 @@ import "../interfaces/IProposalInfo.sol";
 import "../interfaces/IPayrollManager.sol";
 
 library ProposalHelper {
-
-    function getPayeeMembers(IProposalInfo.Proposal storage self) 
+    function getPayeeMembers(IProposalInfo.Proposal storage self)
         internal
-        view 
+        view
         returns (IPayrollManager.PayrollScheduleMember[] memory payees)
-    {
-        
-        
-    }
-
-
-
-
-
+    {}
 }

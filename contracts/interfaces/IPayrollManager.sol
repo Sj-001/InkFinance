@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "./IUCVController.sol";
 
 interface IPayrollManager {
-
     struct PayrollScheduleMember {
         address memberAddress;
         address token;

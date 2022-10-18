@@ -96,7 +96,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     }
 
     /// @inheritdoc IVoteHandler
-    function getVoteSummary(VoteIdentity calldata identity)
+    function getVoteSummary(VoteIdentity memory identity)
         public
         view
         virtual

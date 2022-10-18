@@ -41,51 +41,21 @@ contract TreasuryCommittee is BaseCommittee {
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
         proposalID = proposalHandler.newProposal(proposal, commit, data);
 
-        bytes32 flowID = IAgentHandler(getParentDAO()).getAgentFlowID(
-            proposal.agents[0]
-        );
-
-        IProposalHandler.CommitteeInfo[] memory infos = IDAO(getParentDAO())
-            .getFlowSteps(flowID);
-        // valid committee
-        // require(stepInfo.committee == address(this), "sys err");
-        VoteIdentity memory identity;
-        identity.proposalID = proposalID;
-        // identity.step = infos[0].step;
-
-        // identity.
-        // _vote(identity, true, 1, false, "", "");
-
-        // //// deal vote process info
-        // VoteInfo storage voteInfo = _voteInfos[voteID];
-        // voteInfo.status = VoteStatus.AGREE;
-        // voteInfo.identity.proposalID = proposalID;
-        // voteInfo.identity.step = stepInfo.step;
-        // // just one votes
-        // voteInfo.totalVotes = 1;
-        // voteInfo.agreeVotes = 1;
-        // voteInfo.agreeVoterNum = 1;
-
-        // //// deal vote detail info
-        // //default agree
-        // mapping(address => PersonVoteDetail)
-        //     storage detail = _proposalVoteDetail[voteID][true];
-        // PersonVoteDetail storage sentinel = detail[LChainLink.SENTINEL_ADDR];
-        // sentinel.link._init();
-        // PersonVoteDetail storage voteDetail = detail[_msgSender()];
-
-        // voteDetail.link._addItemLink(
-        //     sentinel.link,
-        //     detail[sentinel.link._getNextAddr()].link,
-        //     _msgSender()
+        // bytes32 flowID = IAgentHandler(getParentDAO()).getAgentFlowID(
+        //     proposal.agents[0]
         // );
-        // voteDetail.voteCount = 1;
-        // console.log("making proposal");
-        // IDAO(getParentDAO()).tallyVotes
-        console.log("I'm treasury committee:", address(this));
 
-        bool passOrNot = true;
-        proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
+        // IProposalHandler.CommitteeInfo[] memory infos = IDAO(getParentDAO())
+        //     .getFlowSteps(flowID);
+        // // valid committee
+        // // require(stepInfo.committee == address(this), "sys err");
+        // VoteIdentity memory identity;
+        // identity.proposalID = proposalID;
+
+        // console.log("I'm treasury committee:", address(this));
+
+        // bool passOrNot = true;
+        // proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
 
     function vote(
@@ -102,11 +72,67 @@ contract TreasuryCommittee is BaseCommittee {
         }
 
         _vote(identity, agree, count, true, feedback, data);
+
+        // if any signer disageee, the proposal will be denied.
+        if (!agree) {
+            bool passOrNot = false;
+            IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+            proposalHandler.decideProposal(
+                identity.proposalID,
+                passOrNot,
+                data
+            );
+        }
+        //
+        _tally(identity);
+    }
+
+    function _tally(VoteIdentity memory identity) internal {
+        // verify
+        IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+
+        uint256 signerCount = _getSignerCount(identity.proposalID);
+
+        VoteInfo memory voteInfo = getVoteSummary(identity);
+
+        uint256 voteMembers = voteInfo.agreeVoterNum;
+
+        bool allSignerVoted = (signerCount == voteMembers);
+
+        if (allSignerVoted) {
+            console.log("tally votes ---------- passed !!!!! ");
+
+            bool passOrNot = true;
+            proposalHandler.decideProposal(identity.proposalID, passOrNot, "");
+        }
+    }
+
+    function _getSignerCount(bytes32 proposalID)
+        internal
+        view
+        returns (uint256 signers)
+    {
+        bytes32 topicID = IProposalHandler(getParentDAO()).getProposalTopic(
+            proposalID
+        );
+        (, bytes memory dataBytes) = IProposalHandler(getParentDAO())
+            .getTopicKVdata(topicID, "signer");
+
+        console.log("signer bytes:");
+        console.logBytes(dataBytes);
+
+        address[] memory signerAddresses = abi.decode(dataBytes, (address[]));
+
+        signers = signerAddresses.length;
     }
 
     /// @inheritdoc ICommittee
-    function tallyVotes(VoteIdentity calldata, bytes memory) external override {
-        //
+    function tallyVotes(VoteIdentity calldata, bytes memory)
+        external
+        pure
+        override
+    {
+        revert NotAllowToOperate();
     }
 
     /// @inheritdoc IDeploy

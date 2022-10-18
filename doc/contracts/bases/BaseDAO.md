@@ -182,8 +182,12 @@ Duty Related
 ```solidity
 function addDuty(
 address dutyID
-) external
+) external onlyAgent
 ```
+*Modifiers:*
+| Modifier |
+| --- |
+| onlyAgent |
 
 *Args:*
 | Arg | Type | Description |
@@ -821,7 +825,9 @@ function setupFlowInfo(
 ```solidity
 function setupPayrollUCV(
 bytes32 proposalID,
-address controller
+address controller,
+bytes32 ucvKey,
+bytes32 managerKey
 ) external
 ```
 
@@ -830,6 +836,8 @@ address controller
 | --- | --- | --- |
 |`proposalID` | bytes32 | the ucv based on which proposal
 |`controller` | address | the contract controller address
+|`ucvKey` | bytes32 | the ucv deploy key
+|`managerKey` | bytes32 | the manager deploy key
 
 
 ### payrollPaymentApprove

@@ -79,7 +79,12 @@ interface IDAO is
     /// @param controller the contract controller address
     /// @param ucvKey the ucv deploy key
     /// @param managerKey the manager deploy key
-    function setupPayrollUCV(bytes32 proposalID, address controller, bytes32 ucvKey, bytes32 managerKey) external;
+    function setupPayrollUCV(
+        bytes32 proposalID,
+        address controller,
+        bytes32 ucvKey,
+        bytes32 managerKey
+    ) external;
 
     /// @notice when payroll pay propal passed, agent call will call this function to approve the paymenta
     function payrollPaymentApprove(

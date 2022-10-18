@@ -21,6 +21,8 @@ import * as PayrollUCVManagerABI from "../../artifacts/contracts/ucv/PayrollUCVM
 import * as ProposalHandlerABI from "../../artifacts/contracts/proposal/ProposalHandler.sol/ProposalHandler.json";
 
 import * as PayrollUCVABI from "../../artifacts/contracts/ucv/PayrollUCV.sol/PayrollUCV.json";
+import * as IncomeManagerSetupAgentABI from "../../artifacts/contracts/agents/IncomeManagerSetupAgent.sol/IncomeManagerSetupAgent.json";
+import * as TreasuryIncomeManagerABI from "../../artifacts/contracts/ucv/TreasuryIncomeManager.sol/TreasuryIncomeManager.json";
 
 
 const {loadFixture, deployContract} = waffle;
@@ -50,7 +52,6 @@ console.log("UCVTypeID=", UCVTypeID);
 console.log("UCVManagerTypeID=", keccak256(toUtf8Bytes("UCVManagerTypeID")));
 const UCVManagerTypeID = "0x9dbd9f87f8d58402d143fb49ec60ec5b8c4fa567e418b41a6249fd125a267101";
 console.log("UCVManagerTypeID=", UCVTypeID);
-
 
 console.log("PropoalHandlerTypeID=", keccak256(toUtf8Bytes("PropoalHandlerTypeID")));
 const PropoalHandlerTypeID = "0x1858c200a95d03e2d42c3cf57541f3bc9a8c8471b5f80b7c26e756d34fbced97";
@@ -95,7 +96,13 @@ console.log("PAYROLL_UCV_MANAGER_KEY=", PAYROLL_UCV_MANAGER_KEY);
 const PROPOSAL_HANDLER_KEY = "0xb2398891ec8f5bab18552ac978b2f975052c12e4d8f0a942c7154ba6e0758e5f";
 console.log("PROPOSAL_HANDLER_KEY=", PROPOSAL_HANDLER_KEY);
 
-export {PROPOSAL_HANDLER_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
+const INCOME_MANAGER_SETUP_AGENT_KEY = "0xcec8d2431799add509550588e4952385367c7958a96a6b2da6f930e3a92d5bb0";
+console.log("INCOME_MANAGER_SETUP_AGENT_KEY=", INCOME_MANAGER_SETUP_AGENT_KEY);
+
+const TREASURY_INCOME_MANAGER_KEY = "0x86fec7bdac1c666265086eb15fc9444c124badd56d9bac9524f254189e56a632";
+console.log("TREASURY_INCOME_MANAGER_KEY=", TREASURY_INCOME_MANAGER_KEY);
+
+export {INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY, PROPOSAL_HANDLER_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
 
 /**
  * Ink Default DutyIDs
@@ -117,6 +124,7 @@ const AUDITOR_DUTYID = "0x7f014c5b03a1a6fcf5a57ebc1689669c0315c27f4755c182dbd0f3
 
 console.log("TREASURY_PAYROLL_SETUP_DUTYID=", keccak256(toUtf8Bytes("dutyID.TREASURY_PAYROLL_SETUP")));
 const TREASURY_PAYROLL_SETUP_DUTYID = "0xf579da1548edf1a4b47140c7e8df0e1e9f881c48184756b7f660e33bbc767607";
+
 
 export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
 
@@ -175,6 +183,13 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     await proposalHandlerImpl.deployed();
     console.log("ProposalHandler Address=", proposalHandlerImpl.address);
 
+    const incomeManagerSetupAgentImpl = await deployContract(signers[0], IncomeManagerSetupAgentABI, []);
+    await incomeManagerSetupAgentImpl.deployed();
+    console.log("IncomeManagerSetupAgent Address=", incomeManagerSetupAgentImpl.address);
+
+    const treasuryIncomeManagerImpl = await deployContract(signers[0], TreasuryIncomeManagerABI, []);
+    await treasuryIncomeManagerImpl.deployed();
+    console.log("treasuryIncomeManager Address=", treasuryIncomeManagerImpl.address);
 
     console.log("init keys:");
 
@@ -200,16 +215,22 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     console.log("payrollUCVKey=", payrollUCVKey);
 
     var payrollSetupAgent = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "PayrollSetupAgent");
-    console.log("payrollSetupAgent=", payrollSetupAgent);
+    console.log("payrollSetupAgentKey=", payrollSetupAgent);
 
     var payrollExecuteAgent = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "PayrollExecuteAgent");
-    console.log("payrollExecuteAgent=", payrollExecuteAgent);
+    console.log("payrollExecuteAgentKey=", payrollExecuteAgent);
 
     var payrollUCVManager = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "PayrollUCVManager");
-    console.log("payrollUCVManager=", payrollUCVManager);
+    console.log("payrollUCVManagerKey=", payrollUCVManager);
 
     var proposalHandler = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "ProposalHandler");
-    console.log("ProposalHandler=", proposalHandler);
+    console.log("ProposalHandlerKey=", proposalHandler);
+ 
+    var incomeManagerSetupAgent = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "IncomeManagerSetupAgent");
+    console.log("IncomeManagerSetupAgentKey=", incomeManagerSetupAgent);
+
+    var treasuryIncomeManager = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "TreasuryIncomeManager");
+    console.log("TreasuryIncomeManagerKey=", treasuryIncomeManager);
 
 
     var keyValues = [];
@@ -224,6 +245,8 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     keyValues[8] = {"keyPrefix":"ADMIN", "keyName":"PayrollExecuteAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollExecuteAgentImpl.address)}
     keyValues[9] = {"keyPrefix":"ADMIN", "keyName":"PayrollUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await payrollUCVManagerImpl.address)}
     keyValues[10] = {"keyPrefix":"ADMIN", "keyName":"ProposalHandler", "typeID":keccak256(toUtf8Bytes("address")), "data": (await proposalHandlerImpl.address)}
+    keyValues[11] = {"keyPrefix":"ADMIN", "keyName":"IncomeManagerSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await incomeManagerSetupAgentImpl.address)}
+    keyValues[12] = {"keyPrefix":"ADMIN", "keyName":"TreasuryIncomeManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await treasuryIncomeManagerImpl.address)}
     
     await configManager.batchSetKV(INK_CONFIG_DOMAIN, keyValues);
 

@@ -40,8 +40,10 @@ contract TreasuryManagerAgent is BaseAgent {
 
         // valid related address，include operator ｜ multisigner ｜ auditor
 
-        (, dataBytes) = IProposalHandler(_dao)
-            .getProposalKvData(proposalID, "operators");
+        (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
+            proposalID,
+            "operators"
+        );
         address[] memory operators = abi.decode(dataBytes, (address[]));
 
         console.log(
@@ -49,8 +51,10 @@ contract TreasuryManagerAgent is BaseAgent {
             operators[0]
         );
 
-        (, dataBytes) = IProposalHandler(_dao)
-            .getProposalKvData(proposalID, "signer");
+        (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
+            proposalID,
+            "signer"
+        );
 
         address[] memory signers = abi.decode(dataBytes, (address[]));
         console.log(
@@ -58,8 +62,10 @@ contract TreasuryManagerAgent is BaseAgent {
             signers[0]
         );
 
-        (, dataBytes) = IProposalHandler(_dao)
-            .getProposalKvData(proposalID, "auditor");
+        (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
+            proposalID,
+            "auditor"
+        );
         address[] memory auditors = abi.decode(dataBytes, (address[]));
         console.log(
             "auditor address ::::::::::::::::::::::::::::::::: ",
@@ -113,17 +119,13 @@ contract TreasuryManagerAgent is BaseAgent {
             "controllerAddress"
         );
 
-
         (typeID, memberBytes) = IProposalHandler(_dao).getProposalKvData(
             proposalID,
             "operators"
         );
 
         // const OPERATOR_DUTYID = "0x7fc29d7165e16fd9e059fc2637218a216a838baf76410a896bd9789802186cd4";
-        _setMemberDuties(
-            DutyID.OPERATOR,
-            memberBytes
-        );
+        _setMemberDuties(DutyID.OPERATOR, memberBytes);
 
         // const SIGNER_DUTYID = "0x461cab96cf4e8d93f044537dc0accaa1fa44a556bed2df44eb88ea471c2c186f";
         (typeID, memberBytes) = IProposalHandler(_dao).getProposalKvData(
@@ -131,10 +133,7 @@ contract TreasuryManagerAgent is BaseAgent {
             "signer"
         );
 
-        _setMemberDuties(
-            DutyID.SIGNER,
-            memberBytes
-        );
+        _setMemberDuties(DutyID.SIGNER, memberBytes);
         // address[] memory signers = abi.decode(signerBytes, (address[]));
         // console.log("signer address ::::::::::::::::::::::::::::::::: ", signers[0]);
         // const AUDITOR_DUTYID = "0x7f014c5b03a1a6fcf5a57ebc1689669c0315c27f4755c182dbd0f35a51a754eb";
@@ -143,10 +142,7 @@ contract TreasuryManagerAgent is BaseAgent {
             "auditor"
         );
 
-        _setMemberDuties(
-            DutyID.INCOME_AUDITOR,
-            memberBytes
-        );
+        _setMemberDuties(DutyID.INCOME_AUDITOR, memberBytes);
         // address[] memory auditors = abi.decode(auditorBytes, (address[]));
         // console.log("auditor address ::::::::::::::::::::::::::::::::: ", auditors[0]);
     }
@@ -156,7 +152,6 @@ contract TreasuryManagerAgent is BaseAgent {
     {
         address[] memory members = abi.decode(memberBytes, (address[]));
         for (uint256 i = 0; i < members.length; i++) {
-
             console.log("_setMemberDuties :", members[i]);
             IDAO(_dao).addDuty(members[i], dutyID);
         }
@@ -179,10 +174,9 @@ contract TreasuryManagerAgent is BaseAgent {
 
     function _buildPayrollSetupFlow(bytes32 committeeKey)
         internal
-        view 
+        view
         returns (IProposalHandler.FlowInfo memory flowInfo)
     {
-
         flowInfo.flowID = keccak256("financial-payroll-setup");
 
         console.log("financial-payroll-setup:");
@@ -195,11 +189,11 @@ contract TreasuryManagerAgent is BaseAgent {
         );
         // treasury committee
         theTreasuryCommittee.addressConfigKey = committeeKey;
+        theTreasuryCommittee.committeeName = "Treasury Committee";
+
         bytes32[] memory dutys = new bytes32[](3);
         // make financial proposl(create payroll)
-        dutys[
-            0
-        ] = DutyID.OPERATOR;
+        dutys[0] = DutyID.OPERATOR;
         dutys[1] = DutyID.SIGNER;
         dutys[2] = DutyID.INCOME_AUDITOR;
 
@@ -210,7 +204,8 @@ contract TreasuryManagerAgent is BaseAgent {
     }
 
     function _buildPayrollPayFlow(bytes32 committeeKey)
-        internal view 
+        internal
+        view
         returns (IProposalHandler.FlowInfo memory flowInfo)
     {
         flowInfo.flowID = keccak256("financial-payroll-pay");
@@ -234,7 +229,6 @@ contract TreasuryManagerAgent is BaseAgent {
 
         flowInfo.committees = new IProposalHandler.CommitteeCreateInfo[](1);
         flowInfo.committees[0] = theTreasuryCommittee;
-
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}

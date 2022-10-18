@@ -20,7 +20,7 @@ async function deploy(){
 //  factory address: 0xA43b0F8f1aE6bF55843401dd490a92d4959D6cE8
 
   const factoryManagerFactory = await ethers.getContractFactory("FactoryManager");
-  const factoryManager = await factoryManagerFactory.attach("0x7Fa52BE7394456dc20Bb9227810254290D5a2B34");
+  const factoryManager = await factoryManagerFactory.attach("0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
 //   await factoryManager.deployed();
 
   //init factory manager key
