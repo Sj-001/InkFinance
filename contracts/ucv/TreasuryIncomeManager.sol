@@ -35,7 +35,7 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     }
 
     function commitReport(uint256 reportID, bytes memory data) public {
-        if (!IDutyControl(_dao).hasDuty(_msgSender(), DutyID.INCOME_AUDITOR)) {
+        if (!IDutyControl(_dao).hasDuty(_msgSender(), DutyID.AUDITOR)) {
             revert NotAuthrizedToCommitReport(_msgSender());
         }
 

@@ -195,7 +195,7 @@ contract TreasuryManagerAgent is BaseAgent {
         // make financial proposl(create payroll)
         dutys[0] = DutyID.OPERATOR;
         dutys[1] = DutyID.SIGNER;
-        dutys[2] = DutyID.INCOME_AUDITOR;
+        dutys[2] = DutyID.AUDITOR;
 
         theTreasuryCommittee.dutyIDs = abi.encode(dutys);
 
@@ -222,7 +222,7 @@ contract TreasuryManagerAgent is BaseAgent {
         bytes32[] memory duties = new bytes32[](3);
         duties[0] = DutyID.OPERATOR;
         duties[1] = DutyID.SIGNER;
-        duties[2] = DutyID.INCOME_AUDITOR;
+        duties[2] = DutyID.AUDITOR;
         // make financial proposl(create payroll)
 
         theTreasuryCommittee.dutyIDs = abi.encode(duties);
