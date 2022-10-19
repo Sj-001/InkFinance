@@ -34,7 +34,10 @@ interface IDutyControl {
     /// @dev find out how many users have this duty
     /// @param dutyID target duty
     /// @param owners amount of the duty owner
-    function getDutyOwners(bytes32 dutyID) external returns (uint256 owners);
+    function getDutyOwners(bytes32 dutyID)
+        external
+        view
+        returns (uint256 owners);
 
     /// @dev get duty holder's address by index, this used to enumerate all user‘s have this duty
     /// @param dutyID target duty

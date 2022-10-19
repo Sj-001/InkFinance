@@ -12,6 +12,7 @@ import "../libraries/defined/DutyID.sol";
 import "hardhat/console.sol";
 
 error NotAuthrizedToCommitReport(address msgSender);
+error ThisReportIsAlreadCommitted(uint256 reportID);
 
 contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     event IncomeReport(
@@ -22,6 +23,8 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
 
     address private _dao;
 
+    mapping(uint256 => uint256) committedReport;
+
     function init(
         address dao_,
         address config_,
@@ -31,11 +34,16 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
         console.log("initialized ----- ");
     }
 
-    function commitReport(address dao, bytes memory data) public {
+    function commitReport(uint256 reportID, bytes memory data) public {
         if (!IDutyControl(_dao).hasDuty(_msgSender(), DutyID.INCOME_AUDITOR)) {
             revert NotAuthrizedToCommitReport(_msgSender());
         }
-        emit IncomeReport(dao, msg.sender, data);
+
+        if (committedReport[reportID] > 0) {
+            revert ThisReportIsAlreadCommitted(reportID);
+        }
+
+        emit IncomeReport(_dao, msg.sender, data);
     }
 
     /// @inheritdoc IERC165

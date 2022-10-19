@@ -14,58 +14,19 @@
 
 ## 4.Functions
 
-### init
+### constructor
 
 
 
 *Declaration:*
 ```solidity
-function init(
-) external returns
-(bytes callbackEvent)
+function constructor(
+) public InkERC20
 ```
-
-
-
-
-### getTypeID
-
-
-
-*Declaration:*
-```solidity
-function getTypeID(
-) external returns
-(bytes32 typeID)
-```
-
-
-
-
-### getVersion
-
-
-
-*Declaration:*
-```solidity
-function getVersion(
-) external returns
-(uint256 version)
-```
-
-
-
-
-### supportsInterface
-
-
-
-*Declaration:*
-```solidity
-function supportsInterface(
-) external returns
-(bool)
-```
+*Modifiers:*
+| Modifier |
+| --- |
+| InkERC20 |
 
 
 

@@ -142,7 +142,7 @@ contract TreasuryManagerAgent is BaseAgent {
             "auditor"
         );
 
-        _setMemberDuties(DutyID.INCOME_AUDITOR, memberBytes);
+        _setMemberDuties(DutyID.AUDITOR, memberBytes);
         // address[] memory auditors = abi.decode(auditorBytes, (address[]));
         // console.log("auditor address ::::::::::::::::::::::::::::::::: ", auditors[0]);
     }

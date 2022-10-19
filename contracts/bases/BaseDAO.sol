@@ -11,6 +11,8 @@ import "../interfaces/IPayrollManager.sol";
 
 import "./BaseVerify.sol";
 import "../utils/BytesUtils.sol";
+import "../tokens/InkBadgeERC20.sol";
+
 import "../libraries/defined/DutyID.sol";
 import "../libraries/defined/FactoryKeyTypeID.sol";
 import "hardhat/console.sol";
@@ -101,6 +103,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     /// @notice staking engine address
     address private _stakingAddr;
+
+    address private _badge;
 
     /// @notice global config manager addres
     /// @dev get contract implementation through the key
@@ -379,8 +383,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
 
         // if(bytes(initData.badgeName).length != 0){
-        //   _badge = InkBadgeERC20Factory(IAddressRegistry(addrRegistry).getAddress(AddressID.InkBadgeERC20Factory)).CreateBadge(initData.badgeName, initData.badgeName, initData.badgeTotal, admin);
-        //   emit EBadge(_badge, initData.name, initData.badgeTotal);
+        //     _badge = _createBadge(initData.badgeName, initData.badgeName, initData.badgeTotal, admin_);
+        //     emit NewBadgeCreated(_badge, initData.name, initData.badgeTotal);
         // }
 
         // CallbackData memory callbackData;
@@ -409,8 +413,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             initData.daoLogo,
             block.timestamp
         );
-
-        return bytes("");
     }
 
     /// @inheritdoc IDutyControl
@@ -473,9 +475,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// @inheritdoc IDutyControl
     function getDutyOwners(bytes32 dutyID)
         external
+        view
         override
         returns (uint256 owners)
-    {}
+    {
+        owners = _dutyMembers[dutyID].length();
+    }
 
     /// @inheritdoc IDutyControl
     function getDutyOwnerByIndex(bytes32 dutyID, uint256 index)
@@ -1247,5 +1252,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         console.log(expiration);
 
         return lastTime + expiration;
+    }
+
+    function _createBadge(
+        string memory name,
+        string memory symbol,
+        uint256 total,
+        address target
+    ) internal returns (address addr) {
+        return address(new InkBadgeERC20(name, symbol, total, target));
     }
 }

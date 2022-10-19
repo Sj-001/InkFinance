@@ -91,7 +91,7 @@ contract TreasuryCommittee is BaseCommittee {
         // verify
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
 
-        uint256 signerCount = _getSignerCount(identity.proposalID);
+        uint256 signerCount = _getSignerCount();
 
         VoteInfo memory voteInfo = getVoteSummary(identity);
 
@@ -107,23 +107,8 @@ contract TreasuryCommittee is BaseCommittee {
         }
     }
 
-    function _getSignerCount(bytes32 proposalID)
-        internal
-        view
-        returns (uint256 signers)
-    {
-        bytes32 topicID = IProposalHandler(getParentDAO()).getProposalTopic(
-            proposalID
-        );
-        (, bytes memory dataBytes) = IProposalHandler(getParentDAO())
-            .getTopicKVdata(topicID, "signer");
-
-        console.log("signer bytes:");
-        console.logBytes(dataBytes);
-
-        address[] memory signerAddresses = abi.decode(dataBytes, (address[]));
-
-        signers = signerAddresses.length;
+    function _getSignerCount() internal view returns (uint256 signers) {
+        signers = IDutyControl(getParentDAO()).getDutyOwners(DutyID.SIGNER);
     }
 
     /// @inheritdoc ICommittee

@@ -11,6 +11,17 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "reportID",
+        "type": "uint256"
+      }
+    ],
+    "name": "ThisReportIsAlreadCommitted",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -51,9 +62,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "dao",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "reportID",
+        "type": "uint256"
       },
       {
         "internalType": "bytes",

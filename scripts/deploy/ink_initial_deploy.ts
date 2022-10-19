@@ -107,8 +107,11 @@ async function deploy(){
   console.log("");
 
   console.log("duty id ------------------------------------------------------------------ ")
-  console.log("PROPOSER_DUTYID=", keccak256(toUtf8Bytes("PROPOSER_DUTYID")));
-  console.log("VOTER_DUTYID=", keccak256(toUtf8Bytes("VOTER_DUTYID")));
+  console.log("PROPOSER=", keccak256(toUtf8Bytes("dutyID.PROPOSER")));
+  console.log("VOTER=", keccak256(toUtf8Bytes("dutyID.VOTER")));
+  console.log("SIGNER=", keccak256(toUtf8Bytes("dutyID.SIGNER")));
+  console.log("OPERATOR=", keccak256(toUtf8Bytes("dutyID.OPERATOR")));
+  console.log("AUDITOR=", keccak256(toUtf8Bytes("dutyID.AUDITOR")));
   console.log("");
 
   /// init template

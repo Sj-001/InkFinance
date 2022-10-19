@@ -1001,4 +1001,18 @@ function getVoteExpirationTime(
 
 
 
+### _createBadge
+
+
+
+*Declaration:*
+```solidity
+function _createBadge(
+) internal returns
+(address addr)
+```
+
+
+
+
 ## 5.Events

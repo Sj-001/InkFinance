@@ -26,6 +26,7 @@ contract DutyControl is IDutyControl {
     /// @inheritdoc IDutyControl
     function getDutyOwners(bytes32 dutyID)
         external
+        view
         override
         returns (uint256 owners)
     {}

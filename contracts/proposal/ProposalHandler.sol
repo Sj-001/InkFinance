@@ -390,12 +390,18 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             );
         }
 
+        console.logBytes32("proposalID::::");
+        console.logBytes32(p.proposalID);
+
         p.topicID = proposal.topicID;
         for (uint256 i = 0; i < proposal.metadata.length; i++) {
             ItemValue memory itemValue;
             itemValue.typeID = proposal.metadata[i].typeID;
             itemValue.data = proposal.metadata[i].data;
             p.metadata[proposal.metadata[i].key] = itemValue;
+
+            console.log("key: ", proposal.metadata[i].key);
+            console.logBytes(proposal.metadata[i].data);
         }
 
         p.kvData._init();

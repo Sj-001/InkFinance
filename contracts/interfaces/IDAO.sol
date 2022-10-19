@@ -45,6 +45,8 @@ interface IDAO is
         bytes32[] duties;
     }
 
+    event NewBadgeCreated(address token, string name, uint256 total);
+
     // /// @dev let agent call any DAO method
     // /// @param contractAddress ask DAO to call the contractAddress
     // /// @param functionSignature the function signatures

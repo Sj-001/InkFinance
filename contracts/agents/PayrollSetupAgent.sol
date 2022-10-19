@@ -69,19 +69,20 @@ contract PayrollSetupAgent is BaseAgent {
             proposalID,
             "ucvManagerKey"
         );
+
         bytes32 ucvManagerKey = abi.decode(bytesData, (bytes32));
-        _setupPayrollUCV(topicID, msg.sender, ucvKey, ucvManagerKey);
+        _setupPayrollUCV(proposalID, msg.sender, ucvKey, ucvManagerKey);
     }
 
     function _setupPayrollUCV(
-        bytes32 topicID,
+        bytes32 proposalID,
         address controllerAddress,
         bytes32 ucvKey,
         bytes32 managerKey
     ) internal {
         console.log("start payroll ucv manager create");
         IDAO(getAgentDAO()).setupPayrollUCV(
-            topicID,
+            proposalID,
             controllerAddress,
             ucvKey,
             managerKey

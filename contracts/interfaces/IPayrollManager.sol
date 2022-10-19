@@ -40,7 +40,9 @@ interface IPayrollManager {
     /// @param availableTimes how many times could claim under this payroll
     /// @param firstClaimTime first claimable time
     event NewPayrollSetup(
+        bytes32 indexed proposalID,
         bytes32 indexed topicID,
+        string payrollCategory,
         uint256 claimPeriod,
         uint256 availableTimes,
         uint256 firstClaimTime
@@ -49,7 +51,11 @@ interface IPayrollManager {
     /// @notice once the multisigner role vote and pass the proposal(pay the batch under payroll), this event will be emit
     /// @param topicID target proposalID's topicID
     /// @param batch the batch under the payroll
-    event ApprovePayrollBatch(bytes32 indexed topicID, uint256 indexed batch);
+    event ApprovePayrollBatch(
+        bytes32 proposalID,
+        bytes32 indexed topicID,
+        uint256 indexed batch
+    );
 
     /// @notice once add member under a payroll, this event will be emit
     /// @param topicID passed payroll proposalID's topicID
@@ -67,12 +73,12 @@ interface IPayrollManager {
 
     /// @notice create a new payroll based on a proposal
     /// @dev only agent could call this
-    /// @param topicID the payroll manager would load data from that proposal(topic) and create the payroll instance
+    /// @param proposalID the payroll manager would load data from that proposal(topic) and create the payroll instance
     /// @param ucv the fund from which ucv
-    function setupPayroll(bytes32 topicID, address ucv) external;
+    function setupPayroll(bytes32 proposalID, address ucv) external;
 
     /// @dev after multi-signer voted, how many batchs of payment under a payroll should be paid
-    function approvePayrollBatch(bytes32 topicID, uint256 batches) external;
+    function approvePayrollBatch(bytes32 proposalID, uint256 batches) external;
 
     /// @dev claim payroll from the UCV contract and everytime claimed amount is approved batch(not claimed before) multiply once time payment
     function claimPayroll(bytes32 topicID) external;

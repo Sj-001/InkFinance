@@ -269,9 +269,9 @@ export function buildPayrollSetupProposal(erc20Address:string, topicID:string) {
     };
 
     headers[2] = {
-        "key":  "controllerAddress",
+        "key":  "SubCategory",
         "typeID": keccak256(toUtf8Bytes("typeID")),
-        "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+        "data": web3.eth.abi.encodeParameter("string", "helloSubcategory" ),
         "desc": "0x0002",
     };
 
@@ -320,7 +320,7 @@ export function buildPayrollSetupProposal(erc20Address:string, topicID:string) {
     // 0x0000000000000000000000000000000000000000000000000000000000000000
     var proposal = {
         "agents" : agents,
-        "topicID" : topicID,
+        "topicID" : "0x0000000000000000000000000000000000000000000000000000000000000000",
         "crossChainProtocal":toUtf8Bytes(""),
         "metadata" : headers,
         "kvData" : kvData

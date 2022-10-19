@@ -3,6 +3,12 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      },
+      {
         "indexed": true,
         "internalType": "bytes32",
         "name": "topicID",
@@ -24,8 +30,20 @@
       {
         "indexed": true,
         "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
         "name": "topicID",
         "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "payrollCategory",
+        "type": "string"
       },
       {
         "indexed": false,
@@ -164,12 +182,12 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "topicID",
+        "name": "proposalID",
         "type": "bytes32"
       },
       {
         "internalType": "uint256",
-        "name": "approvedTimes",
+        "name": "approveID",
         "type": "uint256"
       }
     ],
@@ -320,7 +338,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "topicID",
+        "name": "proposalID",
         "type": "bytes32"
       },
       {

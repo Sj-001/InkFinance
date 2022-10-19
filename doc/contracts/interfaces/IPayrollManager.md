@@ -23,7 +23,7 @@ create a new payroll based on a proposal
 *Declaration:*
 ```solidity
 function setupPayroll(
-bytes32 topicID,
+bytes32 proposalID,
 address ucv
 ) external
 ```
@@ -31,7 +31,7 @@ address ucv
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`topicID` | bytes32 | the payroll manager would load data from that proposal(topic) and create the payroll instance
+|`proposalID` | bytes32 | the payroll manager would load data from that proposal(topic) and create the payroll instance
 |`ucv` | address | the fund from which ucv
 
 
@@ -115,8 +115,8 @@ when a new payroll has been setup, this event will be emit.
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
 |`topicID` | bytes32 | :white_check_mark: | based on which proposal's topicID
-|`claimPeriod` | uint256 |  | claim period between each batch
-|`availableTimes` | uint256 |  | how many times could claim under this payroll
+|`claimPeriod` | bytes32 | :white_check_mark: | claim period between each batch
+|`availableTimes` | string |  | how many times could claim under this payroll
 |`firstClaimTime` | uint256 |  | first claimable time
 ### ApprovePayrollBatch
 once the multisigner role vote and pass the proposal(pay the batch under payroll), this event will be emit
@@ -127,8 +127,8 @@ once the multisigner role vote and pass the proposal(pay the batch under payroll
 *Params:*
 | Param | Type | Indexed | Description |
 | --- | --- | :---: | --- |
-|`topicID` | bytes32 | :white_check_mark: | target proposalID's topicID
-|`batch` | uint256 | :white_check_mark: | the batch under the payroll
+|`topicID` | bytes32 |  | target proposalID's topicID
+|`batch` | bytes32 | :white_check_mark: | the batch under the payroll
 ### PayrollMemberAdded
 once add member under a payroll, this event will be emit
 

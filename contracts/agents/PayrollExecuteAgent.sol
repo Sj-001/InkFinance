@@ -11,6 +11,14 @@ import "../utils/BytesUtils.sol";
 
 /// @title execute a payroll schedule, like make a proposal about a payroll, once the proposal has been passed, everyone could claim the token under that payroll
 contract PayrollExecuteAgent is BaseAgent {
+    /// @dev when Payroll
+    event PayrollPayentApprove(
+        address dao,
+        bytes32 topicID,
+        bytes32 proposalID,
+        uint256 paymentID
+    );
+
     using BytesUtils for bytes;
 
     bytes32 private FLOW_ID = keccak256("financial-payroll-pay");
@@ -119,7 +127,7 @@ contract PayrollExecuteAgent is BaseAgent {
         address managerAddress = abi.decode(timeBytes, (address));
 
         IDAO(getAgentDAO()).payrollPaymentApprove(
-            topicID,
+            proposalID,
             approveTimes,
             managerAddress
         );

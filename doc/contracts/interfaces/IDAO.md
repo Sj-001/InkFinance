@@ -146,3 +146,9 @@ event
 
 
 
+### NewBadgeCreated
+
+
+
+
+

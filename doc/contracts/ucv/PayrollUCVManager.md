@@ -37,7 +37,7 @@ create a new payroll based on a proposal
 *Declaration:*
 ```solidity
 function setupPayroll(
-bytes32 topicID,
+bytes32 proposalID,
 address ucv
 ) external daoOnly
 ```
@@ -49,7 +49,7 @@ address ucv
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
-|`topicID` | bytes32 | the payroll manager would load data from that proposal(topic) and create the payroll instance
+|`proposalID` | bytes32 | the payroll manager would load data from that proposal(topic) and create the payroll instance
 |`ucv` | address | the fund from which ucv
 
 

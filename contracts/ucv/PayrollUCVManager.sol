@@ -69,22 +69,25 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
     /// @dev todo todo DAO only
     /// @inheritdoc IPayrollManager
-    function setupPayroll(bytes32 topicID, address ucv)
+    function setupPayroll(bytes32 proposalID, address ucv)
         external
         override
         daoOnly
     {
-        _payrollUCVs[topicID] = ucv;
+        _payrollUCVs[proposalID] = ucv;
 
         console.log(
             "set up payroll ------------------------------------------------------------------------------------------------------------------------------------------------------------------ "
         );
 
         console.log("dao is:", _dao);
-        console.log("topicID is:");
-        console.logBytes32(topicID);
+        console.log("proposalID is:");
+        console.logBytes32(proposalID);
 
         IProposalHandler proposalHandler = IProposalHandler(_dao);
+
+        bytes32 topicID = proposalHandler.getProposalTopic(proposalID);
+
         bytes32 typeID;
         bytes memory bytesData;
         (typeID, bytesData) = proposalHandler.getTopicKVdata(
@@ -113,8 +116,25 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         console.log("payroll schedule setup:");
         console.logBytes32(topicID);
 
+        (typeID, bytesData) = proposalHandler.getProposalMetadata(
+            proposalID,
+            "SubCategory"
+        );
+        console.log("subcategory bytes:");
+        console.logBytes(bytesData);
+
+        string memory subCategory = abi.decode(bytesData, (string));
+        console.log("sub category:", subCategory);
+
         // emit event
-        emit NewPayrollSetup(topicID, period, claimTimes, startTime);
+        emit NewPayrollSetup(
+            proposalID,
+            topicID,
+            subCategory,
+            period,
+            claimTimes,
+            startTime
+        );
 
         // start get payee topic:
         console.log("start get payee topic");
@@ -144,8 +164,11 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                 bytes("")
             );
         }
-        // approved once
-        _approvePayrollBatch(topicID, 1);
+
+        if (startTime <= block.timestamp) {
+            // approved once
+            _approvePayrollBatch(proposalID, 1);
+        }
     }
 
     function _getPayeeCountInTopic(bytes32 topicID)
@@ -234,20 +257,22 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
     // agent only
 
     /// @inheritdoc IPayrollManager
-    function approvePayrollBatch(bytes32 topicID, uint256 approvedTimes)
+    function approvePayrollBatch(bytes32 proposalID, uint256 approveID)
         external
         override
     {
-        _approvePayrollBatch(topicID, approvedTimes);
+        _approvePayrollBatch(proposalID, approveID);
     }
 
-    function _approvePayrollBatch(bytes32 topicID, uint256 approvedTimes)
+    function _approvePayrollBatch(bytes32 proposalID, uint256 approvedTimes)
         internal
     {
+        bytes32 topicID = IProposalHandler(_dao).getProposalTopic(proposalID);
+
         PayrollSchedule storage schedule = _schedules[topicID];
         schedule.approvedTimes = schedule.approvedTimes + approvedTimes;
 
-        emit ApprovePayrollBatch(topicID, approvedTimes);
+        emit ApprovePayrollBatch(proposalID, topicID, approvedTimes);
     }
 
     /// @inheritdoc IPayrollManager
