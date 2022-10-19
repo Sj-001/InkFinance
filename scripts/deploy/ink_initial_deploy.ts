@@ -82,9 +82,23 @@ async function deploy(){
 
   //init factory manager key
   console.log("useful constant ################################################################################################################## ")
-  console.log("deploy key ------------------------------------------------------------------ ")
+  
+  
+  
+  
   console.log("domain: ", admin);
   console.log("");
+  
+  
+  console.log("duty id ------------------------------------------------------------------ ")
+  console.log("PROPOSER=", keccak256(toUtf8Bytes("dutyID.PROPOSER")));
+  console.log("VOTER=", keccak256(toUtf8Bytes("dutyID.VOTER")));
+  console.log("SIGNER=", keccak256(toUtf8Bytes("dutyID.SIGNER")));
+  console.log("OPERATOR=", keccak256(toUtf8Bytes("dutyID.OPERATOR")));
+  console.log("AUDITOR=", keccak256(toUtf8Bytes("dutyID.AUDITOR")));
+  console.log("");
+
+  console.log("deploy key ------------------------------------------------------------------ ")
   console.log("the board committee key:", await configManager.buildConfigKey(admin, "ADMIN", "TheBoardCommittee"));
   console.log("the public committee key:", await configManager.buildConfigKey(admin, "ADMIN", "ThePublicCommittee"));
   console.log("the treasury committee key:", await configManager.buildConfigKey(admin, "ADMIN", "TreasuryCommittee"));
@@ -106,13 +120,7 @@ async function deploy(){
   console.log("CommitteeTypeID=", keccak256(toUtf8Bytes("CommitteeTypeID")));
   console.log("");
 
-  console.log("duty id ------------------------------------------------------------------ ")
-  console.log("PROPOSER=", keccak256(toUtf8Bytes("dutyID.PROPOSER")));
-  console.log("VOTER=", keccak256(toUtf8Bytes("dutyID.VOTER")));
-  console.log("SIGNER=", keccak256(toUtf8Bytes("dutyID.SIGNER")));
-  console.log("OPERATOR=", keccak256(toUtf8Bytes("dutyID.OPERATOR")));
-  console.log("AUDITOR=", keccak256(toUtf8Bytes("dutyID.AUDITOR")));
-  console.log("");
+
 
   /// init template
   var keyValues : any = [];

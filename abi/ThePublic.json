@@ -120,6 +120,12 @@
         "internalType": "bytes32",
         "name": "topicID",
         "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "decideTime",
+        "type": "uint256"
       }
     ],
     "name": "ProposalDecide",

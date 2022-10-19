@@ -988,7 +988,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                 address(this),
                 info.proposalID,
                 agree,
-                bytes32(0x0)
+                bytes32(0x0),
+                block.timestamp
             );
             return;
         }
@@ -1016,7 +1017,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             agree,
             IProposalHandler(_proposalHandlerAddress).getProposalTopic(
                 info.proposalID
-            )
+            ),
+            block.timestamp
         );
     }
 

@@ -20,5 +20,5 @@ library DutyID {
 
     // keccak256("dutyID.AUDITOR")
     bytes32 internal constant AUDITOR =
-        0x4c7900c6ad2f5c62580b1f634ac85890fe05eabbc693c59592d09e45c76ba646;
+        0x7f014c5b03a1a6fcf5a57ebc1689669c0315c27f4755c182dbd0f35a51a754eb;
 }

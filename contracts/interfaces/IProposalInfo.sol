@@ -28,7 +28,8 @@ interface IProposalInfo {
         address indexed dao,
         bytes32 indexed proposalID,
         bool indexed agree,
-        bytes32 topicID
+        bytes32 topicID,
+        uint256 decideTime
     );
 
     /// @dev once propsal decided this event will be emit
