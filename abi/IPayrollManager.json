@@ -29,38 +29,32 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
+        "internalType": "address",
+        "name": "dao",
+        "type": "address"
       },
       {
         "indexed": true,
-        "internalType": "bytes32",
-        "name": "topicID",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "payrollCategory",
-        "type": "string"
-      },
-      {
-        "indexed": false,
         "internalType": "uint256",
-        "name": "claimPeriod",
+        "name": "scheduleID",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "availableTimes",
+        "name": "startTime",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "firstClaimTime",
+        "name": "period",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "claimTimes",
         "type": "uint256"
       }
     ],
@@ -72,9 +66,9 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "bytes32",
-        "name": "topicID",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "scheduleID",
+        "type": "uint256"
       },
       {
         "indexed": true,
@@ -83,10 +77,10 @@
         "type": "address"
       },
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "claimedBatchs",
-        "type": "uint256"
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -96,9 +90,15 @@
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "claimedBatches",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "lastPayID",
+        "type": "uint256"
       }
     ],
     "name": "PayrollClaimed",
@@ -109,14 +109,14 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "bytes32",
-        "name": "topicID",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "scheduleID",
+        "type": "uint256"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "memberAddr",
+        "name": "payeeAddress",
         "type": "address"
       },
       {
@@ -138,33 +138,40 @@
         "type": "bytes"
       }
     ],
-    "name": "PayrollMemberAdded",
+    "name": "PayrollPayeeAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "scheduleID",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "payID",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "signer",
+        "type": "address"
+      }
+    ],
+    "name": "PayrollSign",
     "type": "event"
   },
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
-      },
-      {
         "internalType": "uint256",
-        "name": "batches",
+        "name": "scheduleID",
         "type": "uint256"
-      }
-    ],
-    "name": "approvePayrollBatch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "topicID",
-        "type": "bytes32"
       }
     ],
     "name": "claimPayroll",
@@ -175,9 +182,9 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "topicID",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "scheduleID",
+        "type": "uint256"
       },
       {
         "internalType": "address",
@@ -188,19 +195,24 @@
     "name": "getClaimableAmount",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "leftTimes",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "leftAmount",
-        "type": "uint256"
-      },
-      {
         "internalType": "address",
         "name": "token",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "batches",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastPayID",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -209,9 +221,14 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "scheduleID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "startPayID",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -219,24 +236,36 @@
         "type": "uint256"
       }
     ],
-    "name": "getPayrollBatch",
+    "name": "getPayIDs",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "batch",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "approved",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct IPayrollManager.PayrollBatchInfo[]",
-        "name": "batchs",
-        "type": "tuple[]"
+        "internalType": "uint256[][]",
+        "name": "payIDs",
+        "type": "uint256[][]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "scheduleID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "payID",
+        "type": "uint256"
+      }
+    ],
+    "name": "isPayIDSigned",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "isSigned",
+        "type": "bool"
       }
     ],
     "stateMutability": "nonpayable",
@@ -245,17 +274,45 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "startTime",
+        "type": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "ucv",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "period",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "claimTimes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "payeeInfo",
+        "type": "bytes[]"
       }
     ],
     "name": "setupPayroll",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "scheduleID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "payID",
+        "type": "uint256"
+      }
+    ],
+    "name": "signPayID",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

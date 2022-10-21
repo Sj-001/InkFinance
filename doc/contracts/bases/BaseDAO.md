@@ -622,6 +622,23 @@ function getFlowSteps(
 
 
 
+### setupCommittee
+
+
+
+*Declaration:*
+```solidity
+function setupCommittee(
+) external onlyAgent
+```
+*Modifiers:*
+| Modifier |
+| --- |
+| onlyAgent |
+
+
+
+
 ### _setupCommittees
 
 
@@ -838,23 +855,6 @@ bytes32 managerKey
 |`controller` | address | the contract controller address
 |`ucvKey` | bytes32 | the ucv deploy key
 |`managerKey` | bytes32 | the manager deploy key
-
-
-### payrollPaymentApprove
-
-> only agent
-
-*Declaration:*
-```solidity
-function payrollPaymentApprove(
-) external onlyAgent
-```
-*Modifiers:*
-| Modifier |
-| --- |
-| onlyAgent |
-
-
 
 
 ### getUCVs

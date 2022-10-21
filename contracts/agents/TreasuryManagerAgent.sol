@@ -81,26 +81,10 @@ contract TreasuryManagerAgent is BaseAgent {
             "TreasuryManagerAgent exec --------------------------------------------------------------------------------- "
         );
 
-        //////////////////// get platform addr
-        // IAddressRegistry addrRegistry = BaseVerify(address(this)).addrRegistry();
-
-        // IProposalRegistry proposalRegistry = IProposalRegistry(
-        //     addrRegistry.getAddress(AddressID.PROPOSAL_REGISTRY)
-        // );
-
-        //////////////////// create treasury
-        // TreasuryCommittee.InitData memory tInitData;
-        // Committee.BaseInitData memory bInitData;
-        // bInitData.name = "treasury-committee";
-        // bInitData.describe = "";
-        // tInitData.baseInitData = abi.encode(bInitData);
-        // TreasuryCommittee tAddr = new TreasuryCommittee();
-        // tAddr.init(address(this), address(addrRegistry), abi.encode(tInitData));
-
         // //////////////////// treasury init member
         bytes32 typeID;
         bytes memory memberBytes;
-
+        bytes memory bytesData;
         bytes memory committeeKey;
         bytes memory controllerAddressBytes;
 
@@ -112,7 +96,7 @@ contract TreasuryManagerAgent is BaseAgent {
             "committeeKey"
         );
 
-        _setupFlowInfo(committeeKey.toBytes32());
+        // _setupFlowInfo(committeeKey.toBytes32());
 
         (typeID, controllerAddressBytes) = proposalHandler.getProposalMetadata(
             proposalID,
@@ -145,6 +129,39 @@ contract TreasuryManagerAgent is BaseAgent {
         _setMemberDuties(DutyID.AUDITOR, memberBytes);
         // address[] memory auditors = abi.decode(auditorBytes, (address[]));
         // console.log("auditor address ::::::::::::::::::::::::::::::::: ", auditors[0]);
+
+        // setup committee
+        bytes32[] memory duties = new bytes32[](3);
+        duties[0] = DutyID.OPERATOR;
+        duties[1] = DutyID.SIGNER;
+        duties[2] = DutyID.AUDITOR;
+        bytes memory dutyIDs = abi.encode(duties);
+        IDAO(_dao).setupCommittee(
+            "Treasury Committee",
+            committeeKey.toBytes32(),
+            dutyIDs
+        );
+
+        // setup payroll & payroll ucv
+        (typeID, bytesData) = proposalHandler.getProposalMetadata(
+            proposalID,
+            "ucvKey"
+        );
+        address ucvAddress = IDAO(_dao).deployByKey(
+            typeID,
+            bytesData.toBytes32(),
+            abi.encode("")
+        );
+
+        (typeID, bytesData) = proposalHandler.getProposalMetadata(
+            proposalID,
+            "ucvManagerKey"
+        );
+        IDAO(_dao).deployByKey(
+            typeID,
+            bytesData.toBytes32(),
+            abi.encode(ucvAddress)
+        );
     }
 
     function _setMemberDuties(bytes32 dutyID, bytes memory memberBytes)
@@ -157,21 +174,22 @@ contract TreasuryManagerAgent is BaseAgent {
         }
     }
 
-    function _setupFlowInfo(bytes32 committeeKey) internal {
-        IProposalHandler.FlowInfo
-            memory payrollSetupflowInfo = _buildPayrollSetupFlow(committeeKey);
+    // function _setupFlowInfo(bytes32 committeeKey) internal {
+    //     IProposalHandler.FlowInfo
+    //         memory payrollSetupflowInfo = _buildPayrollSetupFlow(committeeKey);
 
-        console.log(
-            "start to generate payroll flow ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-        );
+    //     console.log(
+    //         "start to generate payroll flow ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    //     );
 
-        IDAO(getAgentDAO()).setupFlowInfo(payrollSetupflowInfo);
+    //     IDAO(getAgentDAO()).setupFlowInfo(payrollSetupflowInfo);
 
-        IProposalHandler.FlowInfo
-            memory payrollSignflowInfo = _buildPayrollPayFlow(committeeKey);
-        IDAO(getAgentDAO()).setupFlowInfo(payrollSignflowInfo);
-    }
+    //     IProposalHandler.FlowInfo
+    //         memory payrollSignflowInfo = _buildPayrollPayFlow(committeeKey);
+    //     IDAO(getAgentDAO()).setupFlowInfo(payrollSignflowInfo);
+    // }
 
+    /*
     function _buildPayrollSetupFlow(bytes32 committeeKey)
         internal
         view
@@ -230,6 +248,7 @@ contract TreasuryManagerAgent is BaseAgent {
         flowInfo.committees = new IProposalHandler.CommitteeCreateInfo[](1);
         flowInfo.committees[0] = theTreasuryCommittee;
     }
+    */
 
     function getTypeID() external view override returns (bytes32 typeID) {}
 

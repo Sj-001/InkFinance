@@ -88,13 +88,6 @@ interface IDAO is
         bytes32 managerKey
     ) external;
 
-    /// @notice when payroll pay propal passed, agent call will call this function to approve the paymenta
-    function payrollPaymentApprove(
-        bytes32 proposalID,
-        uint256 approveTimes,
-        address managerAddress
-    ) external;
-
     function deployByKey(
         bytes32 typeID,
         bytes32 contractKey,
@@ -107,4 +100,10 @@ interface IDAO is
         external
         view
         returns (DAOCommitteeWithDuty[] memory committeeDuties);
+
+    function setupCommittee(
+        string memory name,
+        bytes32 deployKey,
+        bytes memory dutyIDs
+    ) external;
 }

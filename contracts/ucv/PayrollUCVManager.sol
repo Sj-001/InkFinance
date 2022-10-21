@@ -2,364 +2,375 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 
 import "../bases/BaseUCVManager.sol";
 import "../interfaces/IPayrollManager.sol";
 import "../interfaces/IDAO.sol";
 import "../interfaces/IUCV.sol";
-
-import "../utils/ProposalHelper.sol";
+import "../libraries/defined/DutyID.sol";
 
 import "hardhat/console.sol";
 
-contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
-    using Strings for uint256;
-    using EnumerableSet for EnumerableSet.AddressSet;
-    using EnumerableSet for EnumerableSet.UintSet;
-    using ProposalHelper for IProposalInfo.Proposal;
+error TheAccountIsNotAuthroized(address account);
+error PayIDIsIllegal(uint256 inputPayID, uint256 availablePayID);
+error AlreadySigned();
+error HaveToSignThePreviousPay();
+error ThePayeeIsAlreadyExist(address payee);
+error ThePayeeNeedToClaimThePreviousPaymentFirst(address payee);
+error ThePayeeIsNotInThePayroll(address payee);
+error ThisPayrollScheduleDoesNotExist(uint256 scheduleID);
 
-    event Withdraw(
-        uint256 indexed id,
-        address indexed addr,
-        uint256 indexed hasTimeID,
-        uint256 total,
-        address coin
-    );
+contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
+    // using Strings for uint256;
+    using EnumerableSet for EnumerableSet.AddressSet;
 
     struct PayrollSchedule {
-        // member addr -> member.
-        // mapping(address => PayrollScheduleMember) members;
-        uint256 claimPeriod;
-        uint256 availableTimes;
-        uint256 startTime;
-        uint256 approvedTimes;
+        EnumerableSet.AddressSet payees;
+        mapping(address => PaymentInfo) payeePaymentInfo;
+        /// @dev PayID=>(SignerAddress=>Signed:1)
+        mapping(uint256 => mapping(address => uint256)) paymentSigns;
+        mapping(address => PaymentInfo) removedPayeePaymentInfo;
     }
 
-    mapping(bytes32 => address) private _payrollUCVs;
+    uint256 public constant FIRST_PAY_ID = 1;
+
+    /// @dev how many payroll has been set
+    uint256 private _payrollCount;
+
+    address private _ucv;
 
     // payroll item
-    // PropsalID(payroll setup Proposal)=>ScheduleInfo
-    mapping(bytes32 => PayrollSchedule) private _schedules;
+    // ScheduleID=>PayrollSchedule
+    mapping(uint256 => PayrollSchedule) private _schedules;
 
-    // PropsalID(payroll setup Proposal)=>Removed member address
-    mapping(bytes32 => EnumerableSet.AddressSet) private _removedMembers;
+    mapping(uint256 => PayrollSettings) private _payrollSetting;
 
-    // PropsalID(payroll setup Proposal)=>the time to removed member address from the payroll
-    mapping(bytes32 => mapping(address => uint256)) private _removedMoment;
+    /// @dev calculate pay id for schedule, as for the unlimited claim times, use limit to calculate possible time
+    /// @return payIDs payIDs[0][0] = payID(1,2,3,4....), payIDs[0][1] = actual claimable time
+    function getPayIDs(
+        uint256 scheduleID,
+        uint256 startPayID,
+        uint256 limit
+    ) external view override returns (uint256[][] memory payIDs) {
+        PayrollSettings memory setting = _payrollSetting[scheduleID];
+        /// @dev availableTimes == 0, means unlimited claim times
 
-    // PropsalID(payroll setup Proposal)=>the times the user claimed from the payroll
-    mapping(bytes32 => mapping(address => uint256)) private _userClaims;
+        if (setting.payTimes > 0 && setting.payTimes < startPayID) {
+            return payIDs;
+        }
 
-    /// @dev proposalID=>payrollBatch=>1=vote passed, 0=not voted yet.
-    mapping(bytes32 => mapping(uint256 => uint256))
-        private _payrollBatchVoteInfo;
+        uint256 payIDArraySize = limit;
+
+        if (setting.payTimes > 0 && setting.payTimes >= startPayID) {
+            if (limit > setting.payTimes) {
+                payIDArraySize = setting.payTimes;
+            }
+            payIDs = new uint256[][](payIDArraySize);
+            return payIDs;
+        }
+
+        /// @dev availableTime == 0, means unlimited claim
+        payIDs = new uint256[][](payIDArraySize);
+
+        console.log("here:", payIDs.length);
+
+        for (uint256 i = 0; i < payIDs.length; i++) {
+            payIDs[i] = new uint256[](2);
+            payIDs[i][0] = startPayID + i;
+            payIDs[i][1] =
+                setting.startTime +
+                setting.claimPeriod *
+                (startPayID + i);
+        }
+    }
+
+    /// @dev according to the start timestamp, calculated the lastest payID, which could be sign and claimed
+    function getLatestPayID(uint256 scheduleID, uint256 startTimestamp)
+        public
+        view
+        returns (uint256 latestPayID)
+    {
+        PayrollSettings memory setting = _payrollSetting[scheduleID];
+        if (startTimestamp <= setting.startTime) {
+            return 0;
+        }
+        latestPayID =
+            ((startTimestamp - setting.startTime - 1) / setting.claimPeriod) +
+            1;
+        if (setting.payTimes > 0) {
+            // means it's limited time payment
+            if (latestPayID > setting.payTimes) {
+                latestPayID = setting.payTimes;
+            }
+        }
+    }
 
     function init(
         address dao_,
         address config_,
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
+        super.init(config_);
+
         _dao = dao_;
         // @dev init controller and manager address
-        address controller = abi.decode(data_, (address));
-        bytes memory initData = abi.encode(controller, address(this));
-        // console.log("here ucv address is:", _ucv);
+        _ucv = abi.decode(data_, (address));
+        console.log("payroll ucv manager has been initialized");
     }
 
-    /// @dev todo todo DAO only
-    /// @inheritdoc IPayrollManager
-    function setupPayroll(bytes32 proposalID, address ucv)
-        external
-        override
-        daoOnly
-    {
-        _payrollUCVs[proposalID] = ucv;
+    function setupPayroll(
+        uint256 startTime,
+        uint256 period,
+        uint256 claimTimes,
+        bytes[] memory payeeInfo
+    ) external override {
+        if (!IDutyControl(_dao).hasDuty(msg.sender, DutyID.OPERATOR)) {
+            revert TheAccountIsNotAuthroized(msg.sender);
+        }
 
-        console.log(
-            "set up payroll ------------------------------------------------------------------------------------------------------------------------------------------------------------------ "
-        );
+        _payrollCount++;
 
-        console.log("dao is:", _dao);
-        console.log("proposalID is:");
-        console.logBytes32(proposalID);
+        PayrollSettings storage setting = _payrollSetting[_payrollCount];
+        setting.scheduleID = _payrollCount;
+        setting.claimPeriod = period;
+        setting.payTimes = claimTimes;
+        setting.startTime = startTime == 0 ? block.timestamp : startTime;
 
-        IProposalHandler proposalHandler = IProposalHandler(_dao);
+        _addSchedulePayee(setting.scheduleID, payeeInfo, false);
 
-        bytes32 topicID = proposalHandler.getProposalTopic(proposalID);
-
-        bytes32 typeID;
-        bytes memory bytesData;
-        (typeID, bytesData) = proposalHandler.getTopicKVdata(
-            topicID,
-            "startTime"
-        );
-
-        uint256 startTime = abi.decode(bytesData, (uint256));
-
-        (typeID, bytesData) = proposalHandler.getTopicKVdata(topicID, "period");
-        uint256 period = abi.decode(bytesData, (uint256));
-
-        (typeID, bytesData) = proposalHandler.getTopicKVdata(
-            topicID,
-            "claimTimes"
-        );
-
-        uint256 claimTimes = abi.decode(bytesData, (uint256));
-
-        PayrollSchedule storage schedule = _schedules[topicID];
-        schedule.startTime = startTime;
-        schedule.availableTimes = claimTimes;
-        schedule.claimPeriod = period;
-        schedule.approvedTimes = 0;
-
-        console.log("payroll schedule setup:");
-        console.logBytes32(topicID);
-
-        (typeID, bytesData) = proposalHandler.getProposalMetadata(
-            proposalID,
-            "SubCategory"
-        );
-        console.log("subcategory bytes:");
-        console.logBytes(bytesData);
-
-        string memory subCategory = abi.decode(bytesData, (string));
-        console.log("sub category:", subCategory);
-
-        // emit event
         emit NewPayrollSetup(
-            proposalID,
-            topicID,
-            subCategory,
+            _dao,
+            setting.scheduleID,
+            startTime,
             period,
-            claimTimes,
-            startTime
+            claimTimes
         );
+    }
 
-        // start get payee topic:
-        console.log("start get payee topic");
-
-        PayrollScheduleMember[] memory payees = getPayeeInTopic(topicID);
-
-        console.log("payee members", payees.length);
-
-        (typeID, bytesData) = proposalHandler.getTopicKVdata(
-            topicID,
-            "members"
-        );
-
-        PayrollScheduleMember[] memory payrollMembers = abi.decode(
-            bytesData,
-            (PayrollScheduleMember[])
-        );
-
-        console.log(payrollMembers.length);
-
-        for (uint256 i = 0; i < payrollMembers.length; i++) {
-            emit PayrollMemberAdded(
-                topicID,
-                payrollMembers[i].memberAddress,
-                payrollMembers[i].token,
-                payrollMembers[i].oncePay,
-                bytes("")
-            );
+    function addSchedulePayee(uint256 scheduleID, bytes[] memory payees)
+        public
+    {
+        PayrollSettings storage setting = _payrollSetting[_payrollCount];
+        if (setting.scheduleID == 0) {
+            revert ThisPayrollScheduleDoesNotExist(scheduleID);
         }
+        _addSchedulePayee(scheduleID, payees, true);
+    }
 
-        if (startTime <= block.timestamp) {
-            // approved once
-            _approvePayrollBatch(proposalID, 1);
+    function _addSchedulePayee(
+        uint256 scheduleID,
+        bytes[] memory payees,
+        bool addAfterPayroll
+    ) private {
+        PayrollSchedule storage sc = _schedules[scheduleID];
+
+        for (uint256 i = 0; i < payees.length; i++) {
+            (
+                address payee,
+                address token,
+                uint256 oncePay,
+                bytes memory desc
+            ) = abi.decode(payees[i], (address, address, uint256, bytes));
+
+            address payeeAddress = payee;
+
+            if (sc.payees.contains(payeeAddress)) {
+                revert ThePayeeIsAlreadyExist(payeeAddress);
+            }
+
+            if (sc.removedPayeePaymentInfo[payeeAddress].oncePay > 0) {
+                revert ThePayeeNeedToClaimThePreviousPaymentFirst(payeeAddress);
+            }
+
+            sc.payees.add(payeeAddress);
+            PaymentInfo storage paymentInfo = sc.payeePaymentInfo[payeeAddress];
+            paymentInfo.token = token;
+            paymentInfo.oncePay = oncePay;
+
+            if (addAfterPayroll) {
+                paymentInfo.addedTimestamp = block.timestamp;
+            }
+
+            emit PayrollPayeeAdded(
+                scheduleID,
+                payeeAddress,
+                paymentInfo.token,
+                paymentInfo.oncePay,
+                desc
+            );
         }
     }
 
-    function _getPayeeCountInTopic(bytes32 topicID)
-        internal
-        returns (uint256 payeeCount)
-    {
-        IProposalHandler proposalHandler = IProposalHandler(_dao);
-        bytes32 typeID;
-        bytes memory bytesData;
-        // 2000 should also be a variable
+    function signPayID(uint256 scheduleID, uint256 payID) external override {
+        _checkAvailableToSign(scheduleID, payID, msg.sender);
+        PayrollSchedule storage sc = _schedules[scheduleID];
+        sc.paymentSigns[payID][msg.sender] = 1;
+        emit PayrollSign(scheduleID, payID, msg.sender);
+    }
 
-        uint256 keepNoneLimit = 5;
-        uint256 currentNone = 0;
-        for (uint256 i = 0; i < 2000; i++) {
-            string memory keyIs = string(
-                abi.encodePacked("payee-", i.toString())
-            );
-            console.log("the key is: ", keyIs);
+    function _checkAvailableToSign(
+        uint256 scheduleID,
+        uint256 payID,
+        address signer
+    ) internal {
+        // require duty
+        if (!IDutyControl(_dao).hasDuty(signer, DutyID.SIGNER)) {
+            revert TheAccountIsNotAuthroized(signer);
+        }
 
-            (typeID, bytesData) = proposalHandler.getTopicKVdata(
-                topicID,
-                keyIs
-            );
+        uint256 latestAvailablePayID = getLatestPayID(
+            scheduleID,
+            block.timestamp
+        );
+        if (payID <= 0 && payID > latestAvailablePayID) {
+            revert PayIDIsIllegal(payID, latestAvailablePayID);
+        }
 
-            if (bytesData.length > 0) {
-                currentNone = 0;
-                payeeCount++;
-            } else {
-                currentNone++;
-                if (currentNone >= keepNoneLimit) {
-                    break;
-                }
+        PayrollSchedule storage schedule = _schedules[scheduleID];
+        if (schedule.paymentSigns[payID][signer] == 1) {
+            revert AlreadySigned();
+        }
+
+        // make sure sign the payID time by time
+        if (payID > FIRST_PAY_ID) {
+            // check if the signer signed previous payID
+            if (schedule.paymentSigns[payID - 1][signer] == 0) {
+                revert HaveToSignThePreviousPay();
             }
         }
     }
 
-    function getPayeeInTopic(bytes32 topicID)
-        internal
-        returns (PayrollScheduleMember[] memory payees)
-    {
-        IProposalHandler proposalHandler = IProposalHandler(_dao);
-        bytes32 typeID;
-        bytes memory bytesData;
-        // 2000 should also be a variable
-        payees = new PayrollScheduleMember[](_getPayeeCountInTopic(topicID));
-
-        uint256 keepNoneLimit = 5;
-        uint256 currentNone = 0;
-
-        uint256 payeeIndex = 0;
-
-        for (uint256 i = 0; i < 2000; i++) {
-            string memory keyIs = string(
-                abi.encodePacked("payee-", i.toString())
-            );
-            console.log("the key is: ", keyIs);
-
-            (typeID, bytesData) = proposalHandler.getTopicKVdata(
-                topicID,
-                keyIs
-            );
-
-            if (bytesData.length > 0) {
-                currentNone = 0;
-                (
-                    address payee,
-                    address token,
-                    uint256 amount,
-                    string memory describe
-                ) = abi.decode(bytesData, (address, address, uint256, string));
-                console.log("Payroll UCV Manager:::::::", payee);
-
-                payees[payeeIndex].memberAddress = payee;
-                payees[payeeIndex].token = token;
-                payees[payeeIndex].oncePay = amount;
-                payees[payeeIndex].scheduleType = describe;
-            } else {
-                currentNone++;
-                if (currentNone >= keepNoneLimit) {
-                    break;
-                }
-            }
-        }
-    }
-
-    // agent only
-
-    /// @inheritdoc IPayrollManager
-    function approvePayrollBatch(bytes32 proposalID, uint256 approveID)
+    function isPayIDSigned(uint256 scheduleID, uint256 payID)
         external
+        view
         override
+        returns (bool isSigned)
     {
-        _approvePayrollBatch(proposalID, approveID);
+        isSigned = _isPayIDSigned(scheduleID, payID);
     }
 
-    function _approvePayrollBatch(bytes32 proposalID, uint256 approvedTimes)
+    function _isPayIDSigned(uint256 scheduleID, uint256 payID)
         internal
+        view
+        returns (bool allSignerSigned)
     {
-        bytes32 topicID = IProposalHandler(_dao).getProposalTopic(proposalID);
+        PayrollSchedule storage sc = _schedules[scheduleID];
+        uint256 signerCount = IDutyControl(_dao).getDutyOwners(DutyID.SIGNER);
+        allSignerSigned = false;
+        for (uint256 i = 0; i < signerCount; i++) {
+            // just make sure everyone signed
+            address signer = IDutyControl(_dao).getDutyOwnerByIndex(
+                DutyID.SIGNER,
+                i
+            );
 
-        PayrollSchedule storage schedule = _schedules[topicID];
-        schedule.approvedTimes = schedule.approvedTimes + approvedTimes;
-
-        emit ApprovePayrollBatch(proposalID, topicID, approvedTimes);
+            if (sc.paymentSigns[payID][signer] == 0) {
+                return false;
+            }
+        }
+        allSignerSigned = true;
     }
 
     /// @inheritdoc IPayrollManager
-    function claimPayroll(bytes32 topicID) external override {
-        // calculate amount
+    function claimPayroll(uint256 scheduleID) external override {
+        PayrollSchedule storage schedule = _schedules[scheduleID];
+        // make sure it's member
         (
-            uint256 leftTimes,
-            uint256 leftAmount,
-            address token
-        ) = _getClaimableAmount(topicID, msg.sender);
+            address token,
+            uint256 amount,
+            uint256 claimBatches,
+            uint256 lastPayID
+        ) = _getClaimableAmount(scheduleID, msg.sender);
 
-        IUCV(_payrollUCVs[topicID]).transferTo(
-            msg.sender,
-            token,
-            leftAmount,
-            abi.encode("")
-        );
+        if (amount > 0) {
+            PaymentInfo storage paymentInfo = schedule.payeePaymentInfo[
+                msg.sender
+            ];
+            paymentInfo.lastClaimedPayID = lastPayID;
+            emit PayrollClaimed(
+                scheduleID,
+                msg.sender,
+                token,
+                amount,
+                claimBatches,
+                lastPayID
+            );
+        }
 
-        emit PayrollClaimed(topicID, msg.sender, leftTimes, leftAmount, token);
-        _userClaims[topicID][msg.sender] += leftTimes;
+        // IUCV(_payrollUCVs[topicID]).transferTo(
+        //     msg.sender,
+        //     token,
+        //     leftAmount,
+        //     abi.encode("")
+        // );
     }
 
     /// @inheritdoc IPayrollManager
-    function getClaimableAmount(bytes32 proposalID, address claimer)
+    function getClaimableAmount(uint256 scheduleID, address claimer)
         external
         view
         override
         returns (
-            uint256 leftTimes,
-            uint256 leftAmount,
-            address token
+            address token,
+            uint256 amount,
+            uint256 batches,
+            uint256 lastPayID
         )
     {
-        return _getClaimableAmount(proposalID, claimer);
+        return _getClaimableAmount(scheduleID, claimer);
     }
 
-    function _getClaimableAmount(bytes32 topicID, address claimer)
+    function _getClaimableAmount(uint256 scheduleID, address claimer)
         internal
         view
         returns (
-            uint256 leftTimes,
-            uint256 leftAmount,
-            address token
+            address token,
+            uint256 amount,
+            uint256 batches,
+            uint256 lastPayID
         )
     {
-        console.log("_getClaimableAmount:");
-        console.logBytes32(topicID);
+        PayrollSchedule storage schedule = _schedules[scheduleID];
+        if (!schedule.payees.contains(claimer)) {
+            revert ThePayeeIsNotInThePayroll(claimer);
+        }
 
-        PayrollSchedule storage schedule = _schedules[topicID];
-        IProposalHandler proposalHandler = IProposalHandler(_dao);
+        uint256 payeeLastClaimedID = schedule
+            .payeePaymentInfo[claimer]
+            .lastClaimedPayID;
 
-        (bytes32 typeID, bytes memory memberBytes) = proposalHandler
-            .getTopicKVdata(topicID, "members");
+        uint256 lastSignablePayID = getLatestPayID(scheduleID, block.timestamp);
 
-        PayrollScheduleMember[] memory payrollMembers = abi.decode(
-            memberBytes,
-            (PayrollScheduleMember[])
-        );
+        uint256 lastSignedPayID = 0;
 
-        console.log(payrollMembers.length);
-
-        for (uint256 i = 0; i < payrollMembers.length; i++) {
-            if (payrollMembers[i].memberAddress == claimer) {
-                console.log("exist #### ");
-
-                console.log("approved times", schedule.approvedTimes);
-                // is a member
-                uint256 claimableTime = schedule.approvedTimes -
-                    _userClaims[topicID][claimer];
-                /// @dev make sure if the user has been removed, should calculate based on when he has been removed
-                leftTimes = claimableTime;
-
-                leftAmount = leftTimes * payrollMembers[i].oncePay;
-
-                token = payrollMembers[i].token;
-
+        for (uint256 i = lastSignablePayID; i >= FIRST_PAY_ID; i--) {
+            if (_isPayIDSigned(scheduleID, i)) {
+                lastSignedPayID = i;
                 break;
             }
         }
-    }
 
-    /// @inheritdoc IPayrollManager
-    function getPayrollBatch(bytes32 proposalID, uint256 limit)
-        external
-        override
-        returns (PayrollBatchInfo[] memory batchs)
-    {}
+        uint256 claimBatches = 0;
+        if (lastSignedPayID > 0 && lastSignedPayID > payeeLastClaimedID) {
+            claimBatches = lastSignedPayID - payeeLastClaimedID;
+        }
+
+        if (claimBatches > 0) {
+            return (
+                schedule.payeePaymentInfo[claimer].token,
+                schedule.payeePaymentInfo[claimer].oncePay * claimBatches,
+                claimBatches,
+                lastSignedPayID
+            );
+        }
+
+        return (
+            schedule.payeePaymentInfo[claimer].token,
+            0,
+            0,
+            lastSignedPayID
+        );
+    }
 
     function getTypeID() external override returns (bytes32 typeID) {}
 

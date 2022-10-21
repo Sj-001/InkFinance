@@ -485,9 +485,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// @inheritdoc IDutyControl
     function getDutyOwnerByIndex(bytes32 dutyID, uint256 index)
         external
+        view
         override
         returns (address addr)
-    {}
+    {
+        addr = _dutyMembers[dutyID].at(index);
+    }
 
     // which proposal decide the latest key item;
     /// @inheritdoc IProposalHandler
@@ -736,6 +739,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
 
         return infos;
+    }
+
+    function setupCommittee(
+        string memory name,
+        bytes32 deployKey,
+        bytes memory dutyIDs
+    ) external override onlyAgent {
+        _deployCommittees(name, deployKey, dutyIDs);
     }
 
     //////////////////// internal
@@ -1050,6 +1061,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 ucvKey,
         bytes32 managerKey
     ) external override {
+        /*
         console.log("setup ucv ---------------- ");
         bytes memory initData = abi.encode(controller);
 
@@ -1077,18 +1089,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         IPayrollManager(managerAddress).setupPayroll(topicID, deployedUCV);
         // require deploy succeed
         console.log("ucv:", deployedUCV);
-    }
 
-    /// @dev only agent
-    function payrollPaymentApprove(
-        bytes32 proposalID,
-        uint256 approveTimes,
-        address managerAddress
-    ) external override onlyAgent {
-        IPayrollManager(managerAddress).approvePayrollBatch(
-            proposalID,
-            approveTimes
-        );
+        */
     }
 
     function getUCVs() external view returns (address[] memory ucvs) {

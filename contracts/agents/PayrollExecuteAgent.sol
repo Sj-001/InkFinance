@@ -126,11 +126,11 @@ contract PayrollExecuteAgent is BaseAgent {
         );
         address managerAddress = abi.decode(timeBytes, (address));
 
-        IDAO(getAgentDAO()).payrollPaymentApprove(
-            proposalID,
-            approveTimes,
-            managerAddress
-        );
+        // IDAO(getAgentDAO()).payrollPaymentApprove(
+        //     proposalID,
+        //     approveTimes,
+        //     managerAddress
+        // );
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}

@@ -738,7 +738,7 @@
         "type": "address"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1419,29 +1419,6 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "approveTimes",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "managerAddress",
-        "type": "address"
-      }
-    ],
-    "name": "payrollPaymentApprove",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "account",
         "type": "address"
@@ -1484,6 +1461,29 @@
       }
     ],
     "name": "setAgentFlowID",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "deployKey",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "dutyIDs",
+        "type": "bytes"
+      }
+    ],
+    "name": "setupCommittee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

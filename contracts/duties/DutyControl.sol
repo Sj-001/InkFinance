@@ -3,7 +3,8 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IDutyControl.sol";
 
-contract DutyControl is IDutyControl {
+contract DutyControl {
+    /*
     /// @inheritdoc IDutyControl
     function addDuty(address account, bytes32 dutyID) external override {}
 
@@ -37,4 +38,6 @@ contract DutyControl is IDutyControl {
         override
         returns (address addr)
     {}
+
+    */
 }

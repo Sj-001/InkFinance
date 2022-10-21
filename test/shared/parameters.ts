@@ -11,6 +11,28 @@ import {INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY,PROPOSAL_HAN
 const {loadFixture, deployContract} = waffle;
 
 
+export function buildPayees(payee1:string, payee2:string, payee3:string, token:string) {
+
+    /*
+        struct PayeeInfo {
+            address addr;
+            address coin;
+            uint256 oncePay;
+            bytes desc;
+    }
+    */
+
+
+    var payees = [];
+    payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "bytes"], [payee1, token, 100, web3.eth.abi.encodeParameter("string", "desc1" )]);
+    payees[1] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "bytes"], [payee2, token, 100, web3.eth.abi.encodeParameter("string", "desc1" )]);
+    payees[2] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "bytes"], [payee3, token, 100, web3.eth.abi.encodeParameter("string", "desc1" )]);
+
+
+    
+    return payees;
+}
+
 
 export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:number) {
         /* 
@@ -196,9 +218,18 @@ export function buildTreasurySetupProposal(operator:string, signer:string, audit
     };
     
     headers[1] = {
-        "key":  "controllerAddress",
-        "typeID": keccak256(toUtf8Bytes("typeID")),
-        "data": "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+        "key":  "ucvKey",
+        "typeID": PAYROLL_UCV_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": PAYROLL_UCV_KEY,
+        "desc": "0x0002",
+    }; 
+
+    headers[2] = {
+        "key":  "ucvManagerKey",
+        "typeID": PAYROLL_UCV_MANAGER_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": PAYROLL_UCV_MANAGER_KEY,
         "desc": "0x0002",
     };
 
@@ -300,7 +331,7 @@ export function buildPayrollSetupProposal(erc20Address:string, topicID:string) {
 
     var startTimeBytes = web3.eth.abi.encodeParameter("uint256", (sec - 100));
     var periodBytes = web3.eth.abi.encodeParameter("uint256",5 );
-    var claimTimesByte = web3.eth.abi.encodeParameter("uint256",100);
+    var claimTimesByte = web3.eth.abi.encodeParameter("uint256",1);
 
 
 

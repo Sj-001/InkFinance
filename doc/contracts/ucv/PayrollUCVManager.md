@@ -10,9 +10,47 @@
 
 ## 2.Globals
 
+> Note this contains internal vars as well due to a bug in the docgen procedure
+
+| Var | Type |
+| --- | --- |
+| FIRST_PAY_ID | uint256 |
+
 ## 3.Modifiers
 
 ## 4.Functions
+
+### getPayIDs
+
+> calculate pay id for schedule, as for the unlimited claim times, use limit to calculate possible time
+
+
+*Declaration:*
+```solidity
+function getPayIDs(
+) external returns
+(uint256[][] payIDs)
+```
+
+
+*Returns:*
+| Arg | Description |
+| --- | --- |
+|`payIDs` | payIDs[0][0] = payID(1,2,3,4....), payIDs[0][1] = actual claimable time
+
+### getLatestPayID
+
+> according to the start timestamp, calculated the lastest payID, which could be sign and claimed
+
+*Declaration:*
+```solidity
+function getLatestPayID(
+) public returns
+(uint256 latestPayID)
+```
+
+
+
 
 ### init
 
@@ -29,79 +67,80 @@ function init(
 
 
 ### setupPayroll
-create a new payroll based on a proposal
 
-> todo todo DAO only
 
 
 *Declaration:*
 ```solidity
 function setupPayroll(
-bytes32 proposalID,
-address ucv
-) external daoOnly
-```
-*Modifiers:*
-| Modifier |
-| --- |
-| daoOnly |
-
-*Args:*
-| Arg | Type | Description |
-| --- | --- | --- |
-|`proposalID` | bytes32 | the payroll manager would load data from that proposal(topic) and create the payroll instance
-|`ucv` | address | the fund from which ucv
-
-
-### _getPayeeCountInTopic
-
-
-
-*Declaration:*
-```solidity
-function _getPayeeCountInTopic(
-) internal returns
-(uint256 payeeCount)
-```
-
-
-
-
-### getPayeeInTopic
-
-
-
-*Declaration:*
-```solidity
-function getPayeeInTopic(
-) internal returns
-(struct IPayrollManager.PayrollScheduleMember[] payees)
-```
-
-
-
-
-### approvePayrollBatch
-
-> after multi-signer voted, how many batchs of payment under a payroll should be paid
-
-*Declaration:*
-```solidity
-function approvePayrollBatch(
 ) external
 ```
 
 
 
 
-### _approvePayrollBatch
+### addSchedulePayee
 
 
 
 *Declaration:*
 ```solidity
-function _approvePayrollBatch(
+function addSchedulePayee(
+) public
+```
+
+
+
+
+### signPayID
+
+
+
+*Declaration:*
+```solidity
+function signPayID(
+) external
+```
+
+
+
+
+### _checkAvailableToSign
+
+
+
+*Declaration:*
+```solidity
+function _checkAvailableToSign(
 ) internal
+```
+
+
+
+
+### isPayIDSigned
+
+
+
+*Declaration:*
+```solidity
+function isPayIDSigned(
+) external returns
+(bool isSigned)
+```
+
+
+
+
+### _isPayIDSigned
+
+
+
+*Declaration:*
+```solidity
+function _isPayIDSigned(
+) internal returns
+(bool allSignerSigned)
 ```
 
 
@@ -128,7 +167,7 @@ function claimPayroll(
 ```solidity
 function getClaimableAmount(
 ) external returns
-(uint256 leftTimes, uint256 leftAmount, address token)
+(address token, uint256 amount, uint256 batches, uint256 lastPayID)
 ```
 
 
@@ -142,21 +181,7 @@ function getClaimableAmount(
 ```solidity
 function _getClaimableAmount(
 ) internal returns
-(uint256 leftTimes, uint256 leftAmount, address token)
-```
-
-
-
-
-### getPayrollBatch
-
-> return payroll batches
-
-*Declaration:*
-```solidity
-function getPayrollBatch(
-) external returns
-(struct IPayrollManager.PayrollBatchInfo[] batchs)
+(address token, uint256 amount, uint256 batches, uint256 lastPayID)
 ```
 
 
@@ -196,9 +221,3 @@ function getVersion(
 |`version` | the version number of the deployed contract
 
 ## 5.Events
-### Withdraw
-
-
-
-
-

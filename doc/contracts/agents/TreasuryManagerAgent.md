@@ -95,47 +95,6 @@ function _setMemberDuties(
 
 
 
-### _setupFlowInfo
-
-
-
-*Declaration:*
-```solidity
-function _setupFlowInfo(
-) internal
-```
-
-
-
-
-### _buildPayrollSetupFlow
-
-
-
-*Declaration:*
-```solidity
-function _buildPayrollSetupFlow(
-) internal returns
-(struct IProposalHandler.FlowInfo flowInfo)
-```
-
-
-
-
-### _buildPayrollPayFlow
-
-
-
-*Declaration:*
-```solidity
-function _buildPayrollPayFlow(
-) internal returns
-(struct IProposalHandler.FlowInfo flowInfo)
-```
-
-
-
-
 ### getTypeID
 
 

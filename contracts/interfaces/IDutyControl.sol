@@ -45,5 +45,6 @@ interface IDutyControl {
     /// @return addr the address at that index
     function getDutyOwnerByIndex(bytes32 dutyID, uint256 index)
         external
+        view
         returns (address addr);
 }

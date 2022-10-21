@@ -18,7 +18,7 @@
 | VOTER | bytes32 |
 | SIGNER | bytes32 |
 | OPERATOR | bytes32 |
-| INCOME_AUDITOR | bytes32 |
+| AUDITOR | bytes32 |
 
 ## 3.Modifiers
 

@@ -94,19 +94,6 @@ bytes32 managerKey
 |`managerKey` | bytes32 | the manager deploy key
 
 
-### payrollPaymentApprove
-when payroll pay propal passed, agent call will call this function to approve the paymenta
-
-
-*Declaration:*
-```solidity
-function payrollPaymentApprove(
-) external
-```
-
-
-
-
 ### deployByKey
 
 
@@ -138,6 +125,19 @@ function getDAOCommittees(
 | Arg | Description |
 | --- | --- |
 |`committeeDuties` | return the committee's dutyID as array
+
+### setupCommittee
+
+
+
+*Declaration:*
+```solidity
+function setupCommittee(
+) external
+```
+
+
+
 
 ## 5.Events
 ### NewDAOCreated

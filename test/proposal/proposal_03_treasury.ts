@@ -58,7 +58,7 @@ describe("proposal related test", function () {
 
         await theBoard.newProposal(proposal, true, "0x00");
 
-
+        
         console.log("committee infos:", await masterDAO.getDAOCommittees());
 
         var proposalID = await masterDAO.getProposalIDByIndex(0);
@@ -66,7 +66,6 @@ describe("proposal related test", function () {
         console.log("first proposal id: ", proposalID);
         await voteProposalByThePublic(await masterDAO.address, proposalID);
 
-        
         // once decide, 
         await tallyVotesByThePublic(await masterDAO.address,  proposalID);
         
@@ -77,10 +76,8 @@ describe("proposal related test", function () {
         console.log("dao committees: ", await masterDAO.getDAOCommittees());
 
 
-
         var treasurySetupProposalID = await masterDAO.getProposalIDByIndex(0);
         console.log("treasury setup proposal", treasurySetupProposalID)
-
 
 
         var treasurySetupPropoalTopicID = await masterDAO.getProposalTopic(treasurySetupProposalID);
@@ -90,45 +87,33 @@ describe("proposal related test", function () {
         await makeSetupPayrollProposal(committeeAddress, erc20Address, treasurySetupPropoalTopicID);
 
 
-
         var payrollSetupProposalID = await masterDAO.getProposalIDByIndex(1);
         console.log("payroll setup proposal", payrollSetupProposalID)
 
-        
-
+    
         var payrollSetupPropoalTopicID = await masterDAO.getProposalTopic(payrollSetupProposalID);
         console.log("treasury setup proposal topic:: ", payrollSetupPropoalTopicID);
 
-
         await votePayrollSetupProposal(payrollSetupProposalID, keccak256(toUtf8Bytes("generate payroll setup")), committeeAddress)
-
 
         var payManager = await masterDAO.getUCVManagers();
         console.log("ucv managers: ", await payManager);
         
 
-        
         var payrollUCVManagerFactory = await ethers.getContractFactory("PayrollUCVManager");
         var payrollUCVManager = await payrollUCVManagerFactory.attach(payManager[0]);
 
 
         await makePayrollPayProposal(payrollSetupPropoalTopicID, committeeAddress, payManager[0]);
 
-
-        
         var payrollProposalID = await masterDAO.getProposalIDByIndex(2);
         console.log("payroll proposal id: ", payrollProposalID);
 
         
         var payrollProposalSummary = await masterDAO.getProposalSummary(payrollProposalID);
         console.log("payroll proposal status:: ", payrollProposalSummary.status);
+        
 
-
-        /*
-    
-        console.log("claim information:", await payrollUCVManager.getClaimableAmount(payrollTopicID, "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"))
-        //await makePayrollPayProposal(payrollTopicID, committeeAddress);
-        */
 
     });
 

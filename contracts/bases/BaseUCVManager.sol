@@ -1,9 +1,10 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+import "./BaseVerify.sol";
 
 import "../interfaces/IDeploy.sol";
 
-abstract contract BaseUCVManager is IDeploy {
+abstract contract BaseUCVManager is IDeploy, BaseVerify {
     address internal _dao;
 
     modifier daoOnly() {
