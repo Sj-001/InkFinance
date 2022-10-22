@@ -72,17 +72,47 @@ describe("proposal related test", function () {
         // console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
         console.log("treasury committee address:", committeeAddress);
         
-
         await setupPayroll(masterDAO.address, erc20Address);
 
+        await signPayroll(masterDAO.address, erc20Address);
 
-
-
-
+        await claimPayroll(masterDAO.address, erc20Address);
         
 
     });
 
+    async function claimPayroll(daoAddress:string, token:string) {
+        const signers = await ethers.getSigners();
+
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
+        
+
+        var ucvManagerAddress = await masterDAO.getDeployedContractByKey(PAYROLL_UCV_MANAGER_KEY);
+
+        var ucvManagerFactory = await ethers.getContractFactory("PayrollUCVManager");
+        var ucvManager = await ucvManagerFactory.attach(ucvManagerAddress);
+
+        
+        console.log("check how many token could claim: ", await ucvManager.getClaimableAmount(1, signers[0].address));
+    }
+
+
+    async function signPayroll(daoAddress:string, token:string) {
+        const signers = await ethers.getSigners();
+
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
+        
+
+        var ucvManagerAddress = await masterDAO.getDeployedContractByKey(PAYROLL_UCV_MANAGER_KEY);
+
+        var ucvManagerFactory = await ethers.getContractFactory("PayrollUCVManager");
+        var ucvManager = await ucvManagerFactory.attach(ucvManagerAddress);
+
+        await ucvManager.signPayID(1, 1);
+        console.log("check is signed: ", await ucvManager.isPayIDSigned(1,1));
+    }
 
 
     async function setupPayroll(daoAddress:string, token:string) {
@@ -106,17 +136,12 @@ describe("proposal related test", function () {
         var payees = buildPayees(signers[0].address, signers[1].address, signers[2].address, token)
         await ucvManager.setupPayroll(startTime, period, payTimes, payees);
 
-        
+
         var results = await ucvManager.getPayIDs(1, 1, 10);
 
-
-
-
-
+        console.log("payIDs: ", results);
     }
     
-    
-
 
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
         

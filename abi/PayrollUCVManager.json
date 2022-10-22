@@ -515,7 +515,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "claimTimes",
+        "name": "payTimes",
         "type": "uint256"
       },
       {

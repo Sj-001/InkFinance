@@ -121,7 +121,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
     function setupPayroll(
         uint256 startTime,
         uint256 period,
-        uint256 claimTimes,
+        uint256 payTimes,
         bytes[] memory payeeInfo
     ) external override {
         if (!IDutyControl(_dao).hasDuty(msg.sender, DutyID.OPERATOR)) {
@@ -133,7 +133,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         PayrollSettings storage setting = _payrollSetting[_payrollCount];
         setting.scheduleID = _payrollCount;
         setting.claimPeriod = period;
-        setting.payTimes = claimTimes;
+        setting.payTimes = payTimes;
         setting.startTime = startTime == 0 ? block.timestamp : startTime;
 
         _addSchedulePayee(setting.scheduleID, payeeInfo, false);
@@ -143,7 +143,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             setting.scheduleID,
             startTime,
             period,
-            claimTimes
+            payTimes
         );
     }
 
