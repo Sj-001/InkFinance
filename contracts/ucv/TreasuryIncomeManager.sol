@@ -18,7 +18,8 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     event IncomeReport(
         address indexed dao,
         address indexed operator,
-        bytes data
+        bytes data,
+        uint256 commitTime
     );
 
     address private _dao;
@@ -32,6 +33,9 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     ) external override returns (bytes memory callbackEvent) {
         _dao = dao_;
         console.log("initialized ----- ");
+
+
+
     }
 
     function commitReport(uint256 reportID, bytes memory data) public {
@@ -43,7 +47,7 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
             revert ThisReportIsAlreadCommitted(reportID);
         }
 
-        emit IncomeReport(_dao, msg.sender, data);
+        emit IncomeReport(_dao, msg.sender, data, block.timestamp);
     }
 
     /// @inheritdoc IERC165

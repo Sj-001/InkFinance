@@ -41,6 +41,12 @@
       },
       {
         "indexed": false,
+        "internalType": "bytes",
+        "name": "payrollInfo",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "startTime",
         "type": "uint256"
@@ -273,6 +279,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "payrollInfo",
+        "type": "bytes"
+      },
       {
         "internalType": "uint256",
         "name": "startTime",

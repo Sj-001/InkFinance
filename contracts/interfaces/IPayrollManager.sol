@@ -46,12 +46,14 @@ interface IPayrollManager {
     /// @notice when a new payroll has been setup, this event will be emit.
     /// @param dao based on which dao
     /// @param scheduleID payroll's ID
+    /// @param payrollInfo payroll's title|description, etc.
     /// @param startTime first claimable time
     /// @param period period between echo claim
     /// @param claimTimes  how many times could claim under this payroll
     event NewPayrollSetup(
         address indexed dao,
         uint256 indexed scheduleID,
+        bytes payrollInfo,
         uint256 startTime,
         uint256 period,
         uint256 claimTimes
@@ -66,6 +68,7 @@ interface IPayrollManager {
         uint256 indexed batch
     );
 
+    /// @notice once the multisigner role sign, this event will pass
     event PayrollSign(
         uint256 indexed scheduleID,
         uint256 indexed payID,
@@ -92,6 +95,7 @@ interface IPayrollManager {
     /// @param period the fund from which ucv
     /// @param payeeInfo the fund from which ucv
     function setupPayroll(
+        bytes memory payrollInfo,
         uint256 startTime,
         uint256 period,
         uint256 claimTimes,

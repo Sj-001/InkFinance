@@ -119,6 +119,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
     }
 
     function setupPayroll(
+        bytes memory payrollInfo,
         uint256 startTime,
         uint256 period,
         uint256 payTimes,
@@ -141,6 +142,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         emit NewPayrollSetup(
             _dao,
             setting.scheduleID,
+            payrollInfo,
             startTime,
             period,
             payTimes

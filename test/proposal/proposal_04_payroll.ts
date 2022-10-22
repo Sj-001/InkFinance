@@ -134,7 +134,7 @@ describe("proposal related test", function () {
         var payTimes = 0;
 
         var payees = buildPayees(signers[0].address, signers[1].address, signers[2].address, token)
-        await ucvManager.setupPayroll(startTime, period, payTimes, payees);
+        await ucvManager.setupPayroll("0x00", startTime, period, payTimes, payees);
 
 
         var results = await ucvManager.getPayIDs(1, 1, 10);
