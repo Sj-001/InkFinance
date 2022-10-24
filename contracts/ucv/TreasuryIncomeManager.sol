@@ -19,6 +19,7 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     event IncomeReport(
         address indexed dao,
         address indexed operator,
+        uint256 reportID,
         bytes data,
         uint256 commitTime
     );
@@ -104,7 +105,7 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
             revert ThisReportIsAlreadCommitted(reportID);
         }
 
-        emit IncomeReport(_dao, msg.sender, data, block.timestamp);
+        emit IncomeReport(_dao, msg.sender, reportID, data, block.timestamp);
     }
 
     /// @inheritdoc IERC165
