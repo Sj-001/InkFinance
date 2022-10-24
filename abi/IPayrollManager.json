@@ -270,6 +270,35 @@
         "internalType": "uint256",
         "name": "payID",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "signer",
+        "type": "address"
+      }
+    ],
+    "name": "getSignTime",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "signTime",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "scheduleID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "payID",
+        "type": "uint256"
       }
     ],
     "name": "isPayIDSigned",

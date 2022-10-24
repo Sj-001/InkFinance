@@ -214,7 +214,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
     function signPayID(uint256 scheduleID, uint256 payID) external override {
         _checkAvailableToSign(scheduleID, payID, msg.sender);
         PayrollSchedule storage sc = _schedules[scheduleID];
-        sc.paymentSigns[payID][msg.sender] = 1;
+        sc.paymentSigns[payID][msg.sender] = block.timestamp;
         emit PayrollSign(scheduleID, payID, msg.sender);
     }
 
@@ -237,7 +237,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         }
 
         PayrollSchedule storage schedule = _schedules[scheduleID];
-        if (schedule.paymentSigns[payID][signer] == 1) {
+        if (schedule.paymentSigns[payID][signer] > 0) {
             revert AlreadySigned();
         }
 
@@ -381,14 +381,11 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             lastSignedPayID
         );
     }
-    
-    function isSigned(uint256 scheduleID, uint256 payID, address signer) external view override returns (bool isSigned) {
+
+    /// @inheritdoc IPayrollManager
+    function getSignTime(uint256 scheduleID, uint256 payID, address signer) external view override returns (uint256 signTime) {
         PayrollSchedule storage schedule = _schedules[scheduleID];
-        if (schedule.paymentSigns[payID][signer] == 1) {
-            isSigned = true;
-        } else {
-            isSigned = false;
-        }
+        return schedule.paymentSigns[payID][signer];
     }
 
     function getTypeID() external override returns (bytes32 typeID) {}

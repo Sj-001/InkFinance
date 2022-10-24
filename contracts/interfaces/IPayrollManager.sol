@@ -134,5 +134,6 @@ interface IPayrollManager {
         external
         returns (bool isSigned);
 
-    function isSigned(uint256 scheduleID, uint256 payID, address signer) external view returns (bool isSigned);
+    /// @notice if the signer not signed, return 0
+    function getSignTime(uint256 scheduleID, uint256 payID, address signer) external view returns (uint256 signTime);
 }
