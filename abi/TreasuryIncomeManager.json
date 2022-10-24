@@ -38,6 +38,12 @@
       },
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "reportID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "bytes",
         "name": "data",
         "type": "bytes"

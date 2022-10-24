@@ -141,7 +141,7 @@ describe("proposal related test", function () {
 
         var startTime = sec - 60 * 60 * 24;
         var period = 60 * 60;
-        var payTimes = 1;
+        var payTimes = 10;
 
         var payees = buildPayees(signers[0].address, signers[1].address, signers[2].address, token)
         await ucvManager.setupPayroll("0x00", 1, startTime, period, payTimes, payees);
@@ -149,7 +149,12 @@ describe("proposal related test", function () {
 
         var results = await ucvManager.getPayIDs(1, 1, 10);
 
-        console.log("payIDs: ", results);
+        console.log("start date:", new Date(startTime * 1000))
+        for(var i=0;i<results.length;i++) {
+            console.log("payID:", results[i][0], ", actual pay time:", new Date(results[i][1] * 1000));
+        }
+
+        // console.log("payIDs: ", results);
     }
     
 

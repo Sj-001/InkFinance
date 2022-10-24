@@ -152,8 +152,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     EnumerableSet.AddressSet private _ucvSet;
 
-    EnumerableSet.AddressSet private _ucvManager;
-
     modifier ensureGovEnough() {
         require(
             _govToken.balanceOf(_ownerAddress) > _govTokenAmountRequirement,
@@ -225,7 +223,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         bytes32 flowID = _getProposalFlow(proposalID);
 
-        // bytes32 flowID = _getProposalFlow(proposalID);
 
         console.log("_getProposalFlow");
         console.logBytes32(flowID);
@@ -672,41 +669,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     {
         address agentAddress = _agents[agentID];
         flowID = IAgent(agentAddress).getAgentFlow();
-        /*
-        if (
-            agentID ==
-            0xe5a30123c30286e56f6ea569f1ac6b59ea461ceabf0b46dfb50c7eadb91c28c1
-        ) {
-            return keccak256("financial-payroll-setup");
-        }
-
-        if (
-            agentID ==
-            0xce8413630ab56be005a97f0ae8be1835fb972819fa4327995eb9568c76252d28
-        ) {
-            return keccak256("financial-payroll-pay");
-        }
-        _agents[agentID];
-        */
     }
 
-    function _getFlowID(bytes32 agentID, bytes32 proposalID)
-        internal
-        returns (bytes32 flowID)
-    {
-        console.log("_getFlowID agentID:");
-        console.logBytes32(agentID);
-
-        if (
-            agentID ==
-            0x0000000000000000000000000000000000000000000000000000000000000000
-        ) {
-            // using default flow
-            flowID = _getProposalFlow(proposalID);
-        } else {
-            flowID = _getAgentFlowID(agentID);
-        }
-    }
 
     /// @inheritdoc IAgentHandler
     function execTx(TxInfo[] memory txs) external override {}
@@ -896,9 +860,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         ProposalProgress storage info = _proposalInfo[proposalID];
         committeeInfo = info.nextCommittee;
 
-        console.log("1 new proposal step:");
-        console.logBytes32(info.nextCommittee.step);
-        console.log("1 next committee :", info.nextCommittee.committee);
+        // console.log("1 new proposal step:");
+        // console.logBytes32(info.nextCommittee.step);
+        // console.log("1 next committee :", info.nextCommittee.committee);
     }
 
     /// @dev verify if the committee is the next committee
@@ -1054,56 +1018,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
-    /// @inheritdoc IDAO
-    function setupPayrollUCV(
-        bytes32 topicID,
-        address controller,
-        bytes32 ucvKey,
-        bytes32 managerKey
-    ) external override {
-        /*
-        console.log("setup ucv ---------------- ");
-        bytes memory initData = abi.encode(controller);
 
-        // generate ucv
-        address deployedUCV = _deployByFactoryKey(
-            false,
-            FactoryKeyTypeID.UCV_TYPE_ID,
-            ucvKey,
-            initData
-        );
-
-        address managerAddress = _deployByFactoryKey(
-            false,
-            FactoryKeyTypeID.UCV_MANAGER_TYPE_ID,
-            managerKey,
-            initData
-        );
-
-        if (deployedUCV != address(0)) {
-            _ucvSet.add(deployedUCV);
-            // stored ucv manager
-            _ucvManager.add(managerAddress);
-        }
-
-        IPayrollManager(managerAddress).setupPayroll(topicID, deployedUCV);
-        // require deploy succeed
-        console.log("ucv:", deployedUCV);
-
-        */
-    }
-
-    function getUCVs() external view returns (address[] memory ucvs) {
-        ucvs = _ucvSet.values();
-    }
-
-    function getUCVManagers()
-        external
-        view
-        returns (address[] memory managers)
-    {
-        managers = _ucvManager.values();
-    }
 
     function _setFlowStep(FlowInfo memory flow) internal {
         // _factoryAddress;
@@ -1245,16 +1160,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         ProposalProgress storage info = _proposalInfo[proposalID];
         uint256 lastTime = info.lastOperationTimestamp;
 
-        uint256 expiration;
         if (data.length != 0) {
             expiration = abi.decode(data, (uint256));
         } else {
             return uint256(int256(-1));
         }
-        console.log("getVoteExpirationTime:");
-        console.log(lastTime);
-        console.log(expiration);
-
         return lastTime + expiration;
     }
 

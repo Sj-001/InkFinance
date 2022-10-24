@@ -77,12 +77,12 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     ) internal view returns (address _calculatedAddress) {
         bytes32 salt = _getSalt(randomSalt, typeID, contractKey, msgSender);
 
-        console.log("predict salt is --- ");
-        console.logBytes32(salt);
-        console.log(randomSalt);
-        console.logBytes32(typeID);
-        console.logBytes32(contractKey);
-        console.log(msgSender);
+        // console.log("predict salt is --- ");
+        // console.logBytes32(salt);
+        // console.log(randomSalt);
+        // console.logBytes32(typeID);
+        // console.logBytes32(contractKey);
+        // console.log(msgSender);
 
         address generatedContract = Clones.predictDeterministicAddress(
             address(proxy),
@@ -120,10 +120,10 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         // require(false, "before predict ");
 
-        console.log("KEY IS:");
-        console.logBytes32(factoryKey);
-        console.log("DATA IS:");
-        console.logBytes(addressBytes);
+        // console.log("KEY IS:");
+        // console.logBytes32(factoryKey);
+        // console.log("DATA IS:");
+        // console.logBytes(addressBytes);
 
         if (addressBytes.length == 0) {
             revert TheFactoryKeyIsNotExist();
@@ -175,10 +175,9 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         }
 
         console.log("generated address:", generatedContract);
-
         InkBeacon inkBeacon = new InkBeacon(implementAddress, _config);
         // miss proxy init
-        console.log("start call proxy init");
+        // console.log("start call proxy init");
         InkProxy(payable(generatedContract)).init(
             _config,
             address(inkBeacon),
@@ -196,10 +195,10 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             block.timestamp
         );
 
-        console.log("add to storage", generatedContract);
+        // console.log("add to storage", generatedContract);
         _deployedContracts[factoryKey].add(generatedContract);
 
-        console.log("deploy end");
+        // console.log("deploy end");
         return generatedContract;
     }
 

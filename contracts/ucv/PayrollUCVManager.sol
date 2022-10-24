@@ -19,6 +19,8 @@ error ThePayeeIsAlreadyExist(address payee);
 error ThePayeeNeedToClaimThePreviousPaymentFirst(address payee);
 error ThePayeeIsNotInThePayroll(address payee);
 error ThisPayrollScheduleDoesNotExist(uint256 scheduleID);
+error StartPayIDWrong();
+
 
 contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
@@ -54,8 +56,15 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         uint256 startPayID,
         uint256 limit
     ) external view override returns (uint256[][] memory payIDs) {
+
+
+        if (startPayID < FIRST_PAY_ID) {
+            revert StartPayIDWrong();
+        }
+
         PayrollSettings memory setting = _payrollSetting[scheduleID];
         /// @dev availableTimes == 0, means unlimited claim times
+
 
         if (setting.payTimes > 0 && setting.payTimes < startPayID) {
             return payIDs;
@@ -76,7 +85,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             payIDs[i][1] =
                 setting.startTime +
                 setting.claimPeriod *
-                (startPayID + i);
+                (startPayID + i - 1);
         }
     }
 
@@ -371,6 +380,15 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             0,
             lastSignedPayID
         );
+    }
+    
+    function isSigned(uint256 scheduleID, uint256 payID, address signer) external view override returns (bool isSigned) {
+        PayrollSchedule storage schedule = _schedules[scheduleID];
+        if (schedule.paymentSigns[payID][signer] == 1) {
+            isSigned = true;
+        } else {
+            isSigned = false;
+        }
     }
 
     function getTypeID() external override returns (bytes32 typeID) {}

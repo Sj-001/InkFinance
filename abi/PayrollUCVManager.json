@@ -26,6 +26,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "StartPayIDWrong",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",

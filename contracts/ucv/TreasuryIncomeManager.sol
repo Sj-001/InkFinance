@@ -84,7 +84,7 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
             auditIDs[i][1] =
                 _startTimestamp +
                 _auditPeriod *
-                (startID + i);
+                (startID + i - 1);
         }
     }
 

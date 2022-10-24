@@ -76,18 +76,6 @@ interface IDAO is
         view
         returns (CommitteeInfo[] memory infos);
 
-    /// @dev setup a new payroll UCV
-    /// @param proposalID the ucv based on which proposal
-    /// @param controller the contract controller address
-    /// @param ucvKey the ucv deploy key
-    /// @param managerKey the manager deploy key
-    function setupPayrollUCV(
-        bytes32 proposalID,
-        address controller,
-        bytes32 ucvKey,
-        bytes32 managerKey
-    ) external;
-
     function deployByKey(
         bytes32 typeID,
         bytes32 contractKey,
