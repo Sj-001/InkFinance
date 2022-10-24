@@ -97,6 +97,59 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "startID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "limit",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAuditIDs",
+    "outputs": [
+      {
+        "internalType": "uint256[][]",
+        "name": "auditIDs",
+        "type": "uint256[][]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "currentTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_startTimestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_auditPeriod",
+        "type": "uint256"
+      }
+    ],
+    "name": "getLatestID",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "latestPayID",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getTypeID",
     "outputs": [

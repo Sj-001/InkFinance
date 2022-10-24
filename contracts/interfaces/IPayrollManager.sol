@@ -46,12 +46,14 @@ interface IPayrollManager {
     /// @notice when a new payroll has been setup, this event will be emit.
     /// @param dao based on which dao
     /// @param scheduleID payroll's ID
+    /// @param payrollType 0=scheduled 1=one time 2=direct pay
     /// @param payrollInfo payroll's title|description, etc.
     /// @param startTime first claimable time
     /// @param period period between echo claim
     /// @param claimTimes  how many times could claim under this payroll
     event NewPayrollSetup(
         address indexed dao,
+        uint256 indexed payrollType,
         uint256 indexed scheduleID,
         bytes payrollInfo,
         uint256 startTime,
@@ -96,6 +98,7 @@ interface IPayrollManager {
     /// @param payeeInfo the fund from which ucv
     function setupPayroll(
         bytes memory payrollInfo,
+        uint256 payrollType,
         uint256 startTime,
         uint256 period,
         uint256 claimTimes,

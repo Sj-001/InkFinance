@@ -44,15 +44,28 @@ contract IncomeManagerSetupAgent is BaseAgent {
         bytes memory bytesData;
 
         IProposalHandler proposalHandler = IProposalHandler(getAgentDAO());
+        (typeID, bytesData) = proposalHandler.getProposalKvData(
+            proposalID,
+            "auditStartTime"
+        );
+
+        uint256 startTime = abi.decode(bytesData, (uint256));
+
+        
+        (typeID, bytesData) = proposalHandler.getProposalKvData(
+            proposalID,
+            "auditPeriod"
+        );
+        uint256 period = abi.decode(bytesData, (uint256));
+
+        bytes memory timeData = abi.encode(startTime, period);
+
         (typeID, bytesData) = proposalHandler.getProposalMetadata(
             proposalID,
             "incomeManagerKey"
         );
 
-        console.log("bytes data");
-        console.logBytes(bytesData);
-
-        IDAO(getAgentDAO()).deployByKey(typeID, bytesData.toBytes32(), "");
+        IDAO(getAgentDAO()).deployByKey(typeID, bytesData.toBytes32(), timeData);
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}

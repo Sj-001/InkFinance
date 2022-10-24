@@ -67,6 +67,16 @@ describe("proposal related test", function () {
         // // once decide, 
         await tallyVotes(await masterDAO.address, proposalID);
         
+
+        // var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
+        // var theVoteCommittee = await theBoard.attach(committeeInfo.committee);
+
+        console.log("proposal detail the vote committee :", await masterDAO.getProposalSummary(proposalID));
+        // var voteIdentity = {"proposalID":proposalID, "step":committeeInfo.step};
+
+        // console.log("vote detail info:", await theVoteCommittee.getVoteDetail(voteIdentity, true, "0x0000000000000000000000000000000000000000", 10));
+
+
         var committeeAddress = await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0);
 
         // console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
@@ -131,10 +141,10 @@ describe("proposal related test", function () {
 
         var startTime = sec - 60 * 60 * 24;
         var period = 60 * 60;
-        var payTimes = 0;
+        var payTimes = 1;
 
         var payees = buildPayees(signers[0].address, signers[1].address, signers[2].address, token)
-        await ucvManager.setupPayroll("0x00", startTime, period, payTimes, payees);
+        await ucvManager.setupPayroll("0x00", 1, startTime, period, payTimes, payees);
 
 
         var results = await ucvManager.getPayIDs(1, 1, 10);

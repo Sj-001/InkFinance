@@ -21,6 +21,7 @@ error ThePayeeIsNotInThePayroll(address payee);
 error ThisPayrollScheduleDoesNotExist(uint256 scheduleID);
 
 contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
+
     // using Strings for uint256;
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -31,6 +32,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         mapping(uint256 => mapping(address => uint256)) paymentSigns;
         mapping(address => PaymentInfo) removedPayeePaymentInfo;
     }
+
 
     uint256 public constant FIRST_PAY_ID = 1;
 
@@ -60,20 +62,14 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         }
 
         uint256 payIDArraySize = limit;
-
-        if (setting.payTimes > 0 && setting.payTimes >= startPayID) {
-            if (limit > setting.payTimes) {
-                payIDArraySize = setting.payTimes;
-            }
-            payIDs = new uint256[][](payIDArraySize);
-            return payIDs;
+        if (limit > setting.payTimes) {
+            payIDArraySize = setting.payTimes;
         }
 
         /// @dev availableTime == 0, means unlimited claim
         payIDs = new uint256[][](payIDArraySize);
 
         console.log("here:", payIDs.length);
-
         for (uint256 i = 0; i < payIDs.length; i++) {
             payIDs[i] = new uint256[](2);
             payIDs[i][0] = startPayID + i;
@@ -120,11 +116,13 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
     function setupPayroll(
         bytes memory payrollInfo,
+        uint256 payrollType,
         uint256 startTime,
         uint256 period,
         uint256 payTimes,
         bytes[] memory payeeInfo
     ) external override {
+        
         if (!IDutyControl(_dao).hasDuty(msg.sender, DutyID.OPERATOR)) {
             revert TheAccountIsNotAuthroized(msg.sender);
         }
@@ -141,6 +139,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         emit NewPayrollSetup(
             _dao,
+            payrollType,
             setting.scheduleID,
             payrollInfo,
             startTime,

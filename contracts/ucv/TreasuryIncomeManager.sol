@@ -15,6 +15,7 @@ error NotAuthrizedToCommitReport(address msgSender);
 error ThisReportIsAlreadCommitted(uint256 reportID);
 
 contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
+
     event IncomeReport(
         address indexed dao,
         address indexed operator,
@@ -23,6 +24,11 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     );
 
     address private _dao;
+
+    uint256 private _startTimestamp;
+    uint256 private _auditPeriod;
+
+    uint256 private _proposalID;
 
     mapping(uint256 => uint256) committedReport;
 
@@ -33,9 +39,60 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     ) external override returns (bytes memory callbackEvent) {
         _dao = dao_;
         console.log("initialized ----- ");
+        
+        (_startTimestamp, _auditPeriod) = abi.decode(data_,(uint256, uint256));
+        console.log("start time",_startTimestamp);
+        console.log("period time",_auditPeriod);
+    }
 
+    function getLatestID(uint256 currentTime, uint256 _startTimestamp, uint256 _auditPeriod)
+        public
+        view
+        returns (uint256 latestPayID)
+    {
 
+        latestPayID =
+            ((currentTime - _startTimestamp - 1) / _auditPeriod) +
+            1;
+    }
 
+    function _getAuditIDs(
+        uint256 startID,
+        uint256 limit,
+        uint256 startTimestamp,
+        uint256 auditPeriod
+    ) internal view returns (uint256[][] memory auditIDs) {
+
+        console.log("start: ",_startTimestamp);
+        console.log("period: ", _auditPeriod);
+
+        uint256 auditIDArraySize = limit;
+        uint256 lastAuditID = getLatestID(block.timestamp, startTimestamp, auditPeriod);
+        
+        auditIDArraySize = lastAuditID - startID;
+
+        if (auditIDArraySize > limit) {
+            auditIDArraySize = limit;
+        }
+        /// @dev availableTime == 0, means unlimited claim
+        auditIDs = new uint256[][](auditIDArraySize);
+
+        for (uint256 i = 0; i < auditIDs.length; i++) {
+            auditIDs[i] = new uint256[](2);
+            auditIDs[i][0] = startID + i;
+            auditIDs[i][1] =
+                _startTimestamp +
+                _auditPeriod *
+                (startID + i);
+        }
+    }
+
+    function getAuditIDs(
+        uint256 startID,
+        uint256 limit
+    ) external view override returns (uint256[][] memory auditIDs) {
+
+        auditIDs = _getAuditIDs(startID, limit, _startTimestamp, _auditPeriod);
     }
 
     function commitReport(uint256 reportID, bytes memory data) public {

@@ -384,8 +384,8 @@ export function buildIncomeManagementSetupProposal(topicID:string) {
     var sec = Math.floor(timestamp / 1000);
     console.log("now time ################################################################# ", sec);
 
-    var startTimeBytes = web3.eth.abi.encodeParameter("uint256", (sec - 100));
-    var periodBytes = web3.eth.abi.encodeParameter("uint256",5 );
+    var startTimeBytes = web3.eth.abi.encodeParameter("uint256", (sec - 60*60*24));
+    var periodBytes = web3.eth.abi.encodeParameter("uint256", 60*60 );
 
 
     kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["auditStartTime", keccak256(toUtf8Bytes("uint256")), startTimeBytes]) ;

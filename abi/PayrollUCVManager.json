@@ -130,6 +130,12 @@
       {
         "indexed": true,
         "internalType": "uint256",
+        "name": "payrollType",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
         "name": "scheduleID",
         "type": "uint256"
       },
@@ -513,6 +519,11 @@
         "internalType": "bytes",
         "name": "payrollInfo",
         "type": "bytes"
+      },
+      {
+        "internalType": "uint256",
+        "name": "payrollType",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",

@@ -316,6 +316,13 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         bool passOrNot = _calculateVoteResults(identity);
         console.log("pass or not", passOrNot);
 
+        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
+        if (passOrNot) {
+            voteInfo.status = VoteStatus.AGREE;
+        } else {
+            voteInfo.status = VoteStatus.DENY;
+        }
+        
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
 
@@ -344,7 +351,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         //     nextInfo.step != identity.step ||
         //     nextInfo.committee != address(this)
         // ) {
-        //     return false;
+        //     return false;，
         // }
 
         return true;

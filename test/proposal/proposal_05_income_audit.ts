@@ -9,7 +9,7 @@ import { ConfigManager } from '../../typechain/ConfigManager'
 import { FactoryManagerFixture, InkERC20Fixture } from '../shared/fixtures'; 
 
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
-import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
+import { TREASURY_INCOME_MANAGER_KEY, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
 import { buildIncomeManagementSetupProposal, buildMasterDAOInitData, buildOffchainProposal, buildPayrollPayProposal, buildPayrollSetupProposal, buildTreasurySetupProposal } from '../shared/parameters'; 
 
@@ -95,55 +95,36 @@ describe("proposal related test", function () {
         await tallyVotesByThePublic(await masterDAO.address,  proposalID);
 
 
-        
+        await commitReport(masterDAO.address);
 
     });
 
 
 
-    async function makePayrollPayProposal (topicID:string, committeeAddress:string, managerAddress:string ) {
-        // treasury committee has been setup.
-        // now prepare to setup payroll
+    async function commitReport(daoAddress:string) {
+        const signers = await ethers.getSigners();
 
-        var payrollPayProposal = buildPayrollPayProposal(topicID, managerAddress);
-
-        var treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
-
-        var treasuryCommittee = treasuryCommitteeFactory.attach(committeeAddress);
-        
-        // make proposal and require voteing
-        await treasuryCommittee.newProposal(payrollPayProposal, true, toUtf8Bytes(""));        
-    }
-
-    
-
-    
-    async function votePayrollSetupProposal ( proposalID:string, step:string, committeeAddress:string ) {
-        
-        console.log("proposalID", proposalID);
-        console.log("committeeAddress", committeeAddress);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
-        var theTreasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
-        var theTreasuryCommittee = await theTreasuryCommitteeFactory.attach(committeeAddress);
-        var voteIdentity = {"proposalID":proposalID, "step":step};
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
         
-        await theTreasuryCommittee.vote(voteIdentity, true, 10, "", "0x00");
+
+        var treasuryIncomeManagerAddress = await masterDAO.getDeployedContractByKey(TREASURY_INCOME_MANAGER_KEY);
+
+        var treasuryIncomeFactory = await ethers.getContractFactory("TreasuryIncomeManager");
+        var treasuryIncomeManager = await treasuryIncomeFactory.attach(treasuryIncomeManagerAddress);
+        
+        var timestamp = Date.now();
+        var sec = Math.floor(timestamp / 1000);
+
+        // var startTime = sec - 60 * 60 * 24;
+        // var period = 60 * 60;
+        var startID = 1;
+        var limit = 10;
+
+        console.log(await treasuryIncomeManager.getAuditIDs(startID, limit));
+
     }
 
-
-    
-
-    async function votePayrollScheduleSignProposal ( proposalID:string, step:string, committeeAddress:string ) {
-        
-        console.log("proposalID", proposalID);
-        console.log("committeeAddress", committeeAddress);
-        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
-        var theTreasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
-        var theCommittee = await theTreasuryCommitteeFactory.attach(committeeAddress);
-        var voteIdentity = {"proposalID":proposalID, "step":step};
-
-        await theCommittee.vote(voteIdentity, true, 10, "", "0x00");
-    }
 
 
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
