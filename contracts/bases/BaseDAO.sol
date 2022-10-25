@@ -225,10 +225,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         bytes32 flowID = _getProposalFlow(proposalID);
 
-
-        console.log("_getProposalFlow");
-        console.logBytes32(flowID);
-
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[flowID];
 
         bytes32 firstStep = steps[_SENTINEL_ID].nextStep;
@@ -361,15 +357,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _minEffectiveVoteWallets = initData.minEffectiveVoteWallets;
         _minPledgeRequired = initData.minPledgeRequired;
         _defaultFlowIDIndex = initData.defaultFlowIDIndex;
-        console.log("when init the _defaultFlowID is", _defaultFlowIDIndex);
+
         (, bytes memory factoryAddressBytes) = configManager.getKV(
             initData.factoryManagerKey
         );
-
-        console.log("factory key:");
-        console.logBytes(factoryAddressBytes);
         _factoryAddress = factoryAddressBytes.toAddress();
-        console.log("turned address:", _factoryAddress);
 
         _setupCommittees(initData.committees);
 
@@ -381,19 +373,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             _setFlowStep(initData.flows[i]);
         }
 
-
-
         if(bytes(initData.badgeName).length != 0){
             _badge = _createBadge(initData.inkBadgeKey, initData.badgeName, initData.badgeTotal, admin_);
             emit NewBadgeCreated(_badge, initData.name, initData.badgeTotal);
         }
-
-        // CallbackData memory callbackData;
-        // callbackData.addr = address(this);
-        // callbackData.admin = admin_;
-        // callbackData.govTokenAddr = address(govToken);
-        // callbackData.name = name;
-        // return abi.encode(callbackData);
 
         _proposalHandlerAddress = _deployByFactoryKey(
             false,
@@ -401,7 +384,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             initData.proposalHandlerKey,
             ""
         );
-        // console.log("proposal address::: ", _proposalHandlerAddress);
 
         // initial dutyID
         _addDuty(admin_, DutyID.PROPOSER);
@@ -626,9 +608,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _decideProposal(proposalID, msg.sender, agree, data);
     }
 
-    //////////////////// flush index
-    // dao查看该topicID上次刷新到的位置(lastIndexedProposalID, lastIndexedKey), 来继续进行, 所以权限问题.
-    /// @inheritdoc IProposalHandler
     function flushTopicIndex(bytes32 topicID, uint256 operateNum)
         external
         override
@@ -740,7 +719,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             deployKey,
             initData
         );
-
         // // valid typeID
         // address committeeAddress = turnBytesToAddress(committeeAddressBytes);
         // console.log("committee address:", committeeAddress);
@@ -790,7 +768,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     if (!isGoodToExecute) {
                         revert AgentCannotBeExecute();
                     }
-                    console.log("agent address is ", agentContractAddress);
+
                     _agents[agents[i]] = agentContractAddress;
                 } else {
                     revert GenerateContractByKeyFailure();
@@ -822,9 +800,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 proposalFlowID = IProposalHandler(_proposalHandlerAddress)
             .getProposalFlow(proposalID);
 
-        console.log("_getProposalFlow:");
-        console.logBytes32(proposalFlowID);
-
         if (proposalFlowID > 0) {
             bool support = false;
             for (
@@ -843,7 +818,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                 revert FlowIsNotSupport(_defaultFlowIDIndex, proposalFlowID);
             }
         } else {
-            console.log("get default flow: ", _defaultFlowIDIndex);
             flowID = _defaultFlows[_defaultFlowIDIndex];
         }
     }
@@ -863,10 +837,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     {
         ProposalProgress storage info = _proposalInfo[proposalID];
         committeeInfo = info.nextCommittee;
-
-        // console.log("1 new proposal step:");
-        // console.logBytes32(info.nextCommittee.step);
-        // console.log("1 next committee :", info.nextCommittee.committee);
     }
 
     /// @dev verify if the committee is the next committee
@@ -900,17 +870,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 contractKey,
         bytes memory initData
     ) internal returns (address deployedAddress) {
-        // console.log("");
-        // console.log(
-        //     "START TO GENRATE ############################################################################################################"
-        // );
-
         if (
             randomSalt == false &&
             _deployedContractdByKey[contractKey] != address(0)
         ) {
             // deploy only once
-
             return _deployedContractdByKey[contractKey];
         }
 
@@ -921,21 +885,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             contractKey,
             initData
         );
-        // console.log("before call:");
-        // console.logBytes32(typeID);
-        // console.logBytes32(contractKey);
 
         (bool _success, bytes memory _returnedBytes) = address(_factoryAddress)
             .call(deployCall);
 
-        console.log("deploy by key:");
-        console.log(_success);
-        console.logBytes(_returnedBytes);
-
-        // console.log(
-        //     "DEPLOY END ############################################################################################################"
-        // );
-        // console.log("is success:", _success);
 
         if (_success) {
             deployedAddress = turnBytesToAddress(_returnedBytes);
@@ -1022,8 +975,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
-
-
     function _setFlowStep(FlowInfo memory flow) internal {
         // _factoryAddress;
         require(flow.committees.length < MAX_STEP_NUM, "too many steps");
@@ -1033,7 +984,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         // init sentinel.
         steps[_SENTINEL_ID].nextStep = flow.committees[0].step;
-
         if (flow.committees[0].step != 0x00) {
             // no action required,
             for (uint256 j = 0; j < flow.committees.length; j++) {
