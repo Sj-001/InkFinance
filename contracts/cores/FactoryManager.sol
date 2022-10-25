@@ -34,7 +34,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     // using LChainLink for LChainLink.Link;
     using BytesUtils for bytes;
 
-    /// @dev only for test
+    /// @dev only for testnp
     using EnumerableSet for EnumerableSet.AddressSet;
 
     struct DeployableContract {
@@ -119,7 +119,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             .getKV(factoryKey);
 
         // require(false, "before predict ");
-
         // console.log("KEY IS:");
         // console.logBytes32(factoryKey);
         // console.log("DATA IS:");
@@ -219,6 +218,23 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     {
         return _deployedContracts[contractID].at(index);
     }
+
+
+    function clone(bytes32 factoryKey, bytes calldata initData) external override returns (address _newContract) {
+        (bytes32 _typeID, bytes memory addressBytes) = IConfigManager(_config)
+            .getKV(factoryKey);
+
+        if (addressBytes.length == 0) {
+            revert TheFactoryKeyIsNotExist();
+        }
+
+        address implementAddress = addressBytes.toAddress();
+        _newContract = Clones.clone(implementAddress);
+
+        IDeploy(_newContract).init(address(0), _config, initData);
+
+    }
+    
 
     function getDeployedAddressCount(bytes32 contractID)
         public

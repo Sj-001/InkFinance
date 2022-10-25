@@ -19,6 +19,8 @@ import * as PayrollExecuteAgentABI from "../../artifacts/contracts/agents/Payrol
 import * as PayrollSetupAgentABI from "../../artifacts/contracts/agents/PayrollSetupAgent.sol/PayrollSetupAgent.json";
 import * as PayrollUCVManagerABI from "../../artifacts/contracts/ucv/PayrollUCVManager.sol/PayrollUCVManager.json";
 import * as ProposalHandlerABI from "../../artifacts/contracts/proposal/ProposalHandler.sol/ProposalHandler.json";
+import * as InkBadgeERC20ABI from "../../artifacts/contracts/tokens/InkBadgeERC20.sol/InkBadgeERC20.json";
+
 
 import * as PayrollUCVABI from "../../artifacts/contracts/ucv/PayrollUCV.sol/PayrollUCV.json";
 import * as IncomeManagerSetupAgentABI from "../../artifacts/contracts/agents/IncomeManagerSetupAgent.sol/IncomeManagerSetupAgent.json";
@@ -102,7 +104,11 @@ console.log("INCOME_MANAGER_SETUP_AGENT_KEY=", INCOME_MANAGER_SETUP_AGENT_KEY);
 const TREASURY_INCOME_MANAGER_KEY = "0x86fec7bdac1c666265086eb15fc9444c124badd56d9bac9524f254189e56a632";
 console.log("TREASURY_INCOME_MANAGER_KEY=", TREASURY_INCOME_MANAGER_KEY);
 
-export {INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY, PROPOSAL_HANDLER_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
+
+const INK_BADGE_KEY = "0x13515aecc01c430c059366623341389d823cb17a03398215f194736dadafb430";
+console.log("INK_BADGE_KEY=", INK_BADGE_KEY);
+
+export {INK_BADGE_KEY, INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY, PROPOSAL_HANDLER_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
 
 /**
  * Ink Default DutyIDs
@@ -191,6 +197,11 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     await treasuryIncomeManagerImpl.deployed();
     console.log("treasuryIncomeManager Address=", treasuryIncomeManagerImpl.address);
 
+
+    const inkBadgeKeyImpl = await deployContract(signers[0], InkBadgeERC20ABI, []);
+    await inkBadgeKeyImpl.deployed();
+    console.log("inkBadgeKeyImpl Address=", inkBadgeKeyImpl.address);
+
     console.log("init keys:");
 
     var factoryManagerFactoryKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "FactoryManager");
@@ -232,6 +243,8 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     var treasuryIncomeManager = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "TreasuryIncomeManager");
     console.log("TreasuryIncomeManagerKey=", treasuryIncomeManager);
 
+    var inkBadgeERC20Key = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "InkBadgeERC20");
+    console.log("inkBadgeERC20Key=", inkBadgeERC20Key);
 
     var keyValues = [];
     keyValues[0] = {"keyPrefix":"ADMIN", "keyName":"FactoryManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await factoryManager.address)}
@@ -247,6 +260,7 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     keyValues[10] = {"keyPrefix":"ADMIN", "keyName":"ProposalHandler", "typeID":keccak256(toUtf8Bytes("address")), "data": (await proposalHandlerImpl.address)}
     keyValues[11] = {"keyPrefix":"ADMIN", "keyName":"IncomeManagerSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await incomeManagerSetupAgentImpl.address)}
     keyValues[12] = {"keyPrefix":"ADMIN", "keyName":"TreasuryIncomeManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await treasuryIncomeManagerImpl.address)}
+    keyValues[13] = {"keyPrefix":"ADMIN", "keyName":"InkBadgeERC20", "typeID":keccak256(toUtf8Bytes("address")), "data": (await inkBadgeKeyImpl.address)}
     
     await configManager.batchSetKV(INK_CONFIG_DOMAIN, keyValues);
 
@@ -261,7 +275,8 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
 export async function InkERC20Fixture(_wallets: Wallet[], _mockProvider: MockProvider) {
 
     const signers = await ethers.getSigners();
-    const inkERC20 = await deployContract(signers[0], InkERC20ABI, ["InkERC20", ""]);
+    const inkERC20 = await deployContract(signers[0], InkERC20ABI, []);
+    await inkERC20.init("InkERC20", "InkERC20")
     await inkERC20.deployed();
 
     return {inkERC20};

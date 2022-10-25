@@ -65,6 +65,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         address stakingAddr;
         string badgeName;
         uint256 badgeTotal;
+        // address badgeAddress;
         string daoLogo;
         uint256 minPledgeRequired;
         uint256 minEffectiveVotes;
@@ -73,6 +74,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         uint256 defaultFlowIDIndex;
         FlowInfo[] flows;
         bytes32 proposalHandlerKey;
+        bytes32 inkBadgeKey;
         bytes[] committees;
     }
 
@@ -379,10 +381,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             _setFlowStep(initData.flows[i]);
         }
 
-        // if(bytes(initData.badgeName).length != 0){
-        //     _badge = _createBadge(initData.badgeName, initData.badgeName, initData.badgeTotal, admin_);
-        //     emit NewBadgeCreated(_badge, initData.name, initData.badgeTotal);
-        // }
+
+
+        if(bytes(initData.badgeName).length != 0){
+            _badge = _createBadge(initData.inkBadgeKey, initData.badgeName, initData.badgeTotal, admin_);
+            emit NewBadgeCreated(_badge, initData.name, initData.badgeTotal);
+        }
 
         // CallbackData memory callbackData;
         // callbackData.addr = address(this);
@@ -1168,12 +1172,15 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         return lastTime + expiration;
     }
 
-    function _createBadge(
+    function _createBadge (
+
+        bytes32 badgeKey,
         string memory name,
-        string memory symbol,
         uint256 total,
         address target
     ) internal returns (address addr) {
-        return address(new InkBadgeERC20(name, symbol, total, target));
+
+        bytes memory initData = abi.encode(name, target, total);
+        return IFactoryManager(_factoryAddress).clone(badgeKey, initData);
     }
 }

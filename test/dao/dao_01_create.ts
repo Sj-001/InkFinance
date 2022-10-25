@@ -49,7 +49,7 @@ describe("contract dao test", function () {
 
         console.log("first dao address:", masterDAO.address);
         
-        console.log("committee infos:", await masterDAO.getDAOCommittees(signers[0].address));
+        console.log("committee infos:", await masterDAO.getDAOCommittees());
 
         
     });
