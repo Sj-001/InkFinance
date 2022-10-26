@@ -80,6 +80,11 @@ async function deploy(){
   const treasuryIncomeManagerImpl = await treasuryIncomeManagerFactory.deploy();
   await treasuryIncomeManagerImpl.deployed();
 
+  const inkBadgeERC20Factory = await ethers.getContractFactory("InkBadgeERC20");
+  const inkBadgeERC20Impl = await inkBadgeERC20Factory.deploy();
+  await inkBadgeERC20Impl.deployed();
+
+
   //init factory manager key
   console.log("useful constant ################################################################################################################## ")
   
@@ -112,6 +117,7 @@ async function deploy(){
   console.log("the proposal handler key:", await configManager.buildConfigKey(admin, "ADMIN", "ProposalHandler"));
   console.log("the income agent key:", await configManager.buildConfigKey(admin, "ADMIN", "IncomeManagerSetupAgent"));
   console.log("the income manager key:", await configManager.buildConfigKey(admin, "ADMIN", "TreasuryIncomeManager"));
+  console.log("the ink badge erc20 key:", await configManager.buildConfigKey(admin, "ADMIN", "InkBadgeERC20"));
 
   console.log("contract type ------------------------------------------------------------------ ")
   console.log("FactoryTypeID=", keccak256(toUtf8Bytes("FactoryTypeID")));
@@ -137,6 +143,7 @@ async function deploy(){
   keyValues[10] = {"keyPrefix":"ADMIN", "keyName":"ProposalHandler", "typeID":keccak256(toUtf8Bytes("address")), "data": (await proposalHandlerImpl.address)}
   keyValues[11] = {"keyPrefix":"ADMIN", "keyName":"IncomeManagerSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await incomeManagerSetupAgentImpl.address)}
   keyValues[12] = {"keyPrefix":"ADMIN", "keyName":"TreasuryIncomeManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await treasuryIncomeManagerImpl.address)}
+  keyValues[13] = {"keyPrefix":"ADMIN", "keyName":"InkBadgeERC20", "typeID":keccak256(toUtf8Bytes("address")), "data": (await inkBadgeERC20Impl.address)}
   
   await configManager.batchSetKV(admin, keyValues);
 
