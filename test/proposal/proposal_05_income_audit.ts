@@ -121,11 +121,15 @@ describe("proposal related test", function () {
         var startID = 1;
         var limit = 10;
 
+        console.log("test::");
         console.log(await treasuryIncomeManager.getAuditIDs(startID, limit));
 
         console.log(await treasuryIncomeManager.isCommittedReport(1, signers[0].address));
         console.log(await treasuryIncomeManager.commitReport(1, web3.eth.abi.encodeParameter("uint256", 1)));
         console.log(await treasuryIncomeManager.isCommittedReport(1, signers[0].address));
+
+
+        console.log(await treasuryIncomeManager.getInitData());
 
     }
 

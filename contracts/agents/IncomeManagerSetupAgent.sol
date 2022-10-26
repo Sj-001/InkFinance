@@ -31,6 +31,33 @@ contract IncomeManagerSetupAgent is BaseAgent {
         console.log(
             "IncomeManagerSetupAgent pre exec ------------------------------------------------------ "
         );
+
+       bytes32 typeID;
+        bytes memory bytesData;
+
+        IProposalHandler proposalHandler = IProposalHandler(getAgentDAO());
+        (typeID, bytesData) = proposalHandler.getProposalKvData(
+            proposalID,
+            "auditStartTime"
+        );
+
+        uint256 startTime = abi.decode(bytesData, (uint256));
+        if (startTime == 0) {
+            return false;
+        }
+
+        
+        (typeID, bytesData) = proposalHandler.getProposalKvData(
+            proposalID,
+            "auditPeriod"
+        );
+
+        
+        uint256 period = abi.decode(bytesData, (uint256));
+        if (period == 0) {
+            return false;
+        }
+
         success = true;
     }
 
@@ -56,6 +83,8 @@ contract IncomeManagerSetupAgent is BaseAgent {
             proposalID,
             "auditPeriod"
         );
+
+
         uint256 period = abi.decode(bytesData, (uint256));
 
         bytes memory timeData = abi.encode(startTime, period);

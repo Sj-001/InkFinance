@@ -49,16 +49,28 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
         console.log("period time",_auditPeriod);
     }
 
+
+    function getInitData() public view returns(uint256, uint256, uint256) {
+        return (getLatestID(block.timestamp, _startTimestamp, _auditPeriod), _startTimestamp, _auditPeriod);
+    }
+
     function getLatestID(uint256 currentTime, uint256 _startTimestamp, uint256 _auditPeriod)
         public
         view
         returns (uint256 latestPayID)
     {
 
-        latestPayID =
+        if ((currentTime - _startTimestamp - 1) > 0 ) {
+            latestPayID =
             ((currentTime - _startTimestamp - 1) / _auditPeriod) +
             1;
+        } else {
+            latestPayID = 0;
+        }
+
+
     }
+
 
     function _getAuditIDs(
         uint256 startID,
@@ -66,18 +78,29 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
         uint256 startTimestamp,
         uint256 auditPeriod
     ) internal view returns (uint256[][] memory auditIDs) {
-
-        console.log("start: ",_startTimestamp);
-        console.log("period: ", _auditPeriod);
-
+        console.log("_get audit ids:");
         uint256 auditIDArraySize = limit;
         uint256 lastAuditID = getLatestID(block.timestamp, startTimestamp, auditPeriod);
-        
-        auditIDArraySize = lastAuditID - startID;
+        console.log("lastAuditID: ", lastAuditID);
+
+        if (lastAuditID == 0) {
+            return auditIDs;
+        }
+
+        if (lastAuditID == startID) {
+            auditIDArraySize = 1;   
+        } else {
+            auditIDArraySize = lastAuditID - startID + 1;
+        }
 
         if (auditIDArraySize > limit) {
             auditIDArraySize = limit;
-        }
+        } 
+
+        console.log("start: ",_startTimestamp);
+        console.log("period: ", _auditPeriod);
+        console.log("auditIDArraySize: ", auditIDArraySize);
+
         /// @dev availableTime == 0, means unlimited claim
         auditIDs = new uint256[][](auditIDArraySize);
 
