@@ -387,6 +387,7 @@ export function buildIncomeManagementSetupProposal(topicID:string) {
 
     // var startTimeBytes = web3.eth.abi.encodeParameter("uint256", (sec - 60*60*24));
     var startTimeBytes = web3.eth.abi.encodeParameter("uint256", (sec - 110));
+
     // var periodBytes = web3.eth.abi.encodeParameter("uint256", 60*60 );
     var periodBytes = web3.eth.abi.encodeParameter("uint256", 100 );
 

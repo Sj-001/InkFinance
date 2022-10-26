@@ -68,9 +68,15 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
             return 1;
         }
 
-        latestPayID =
+        if ((currentTime - _startTimestamp - 1) > 0 ) {
+            latestPayID =
             ((currentTime - _startTimestamp - 1) / _auditPeriod) +
             1;
+        } else {
+            latestPayID = 0;
+        }
+
+
     }
 
 
