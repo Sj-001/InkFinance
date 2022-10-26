@@ -226,6 +226,30 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "reportID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "msgSender",
+        "type": "address"
+      }
+    ],
+    "name": "isCommittedReport",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "committed",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes4",
         "name": "interfaceId",
         "type": "bytes4"

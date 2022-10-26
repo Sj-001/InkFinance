@@ -9,6 +9,7 @@ error OnlyDAOCouldOperate(address expectedDAO, address actualOperator);
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice inteface which defined how to deal with the vote process
 interface IProposalHandler is IProposalInfo {
+
     /// @dev created for ProposalHelper to form data easily
     struct TypeData {
         bytes32 typeID;
@@ -54,6 +55,7 @@ interface IProposalHandler is IProposalInfo {
     /// @param lastOperationTimestamp last committee operate time
     /// @param committees all the committees in the flow
     struct ProposalProgress {
+        
         bytes32 proposalID;
         // flowID is used to distinguish different processes in dao.
         bytes32 flowID;

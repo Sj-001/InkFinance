@@ -31,6 +31,9 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
 
     uint256 private _proposalID;
 
+
+    mapping(uint256 => mapping(address => uint256)) _auditRecords;
+
     mapping(uint256 => uint256) committedReport;
 
     function init(
@@ -97,16 +100,24 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     }
 
     function commitReport(uint256 reportID, bytes memory data) public {
+
         if (!IDutyControl(_dao).hasDuty(_msgSender(), DutyID.AUDITOR)) {
             revert NotAuthrizedToCommitReport(_msgSender());
         }
 
-        if (committedReport[reportID] > 0) {
+        if (isCommittedReport(reportID, msg.sender)) {
             revert ThisReportIsAlreadCommitted(reportID);
         }
 
+        _auditRecords[reportID][msg.sender] = 1;
         emit IncomeReport(_dao, msg.sender, reportID, data, block.timestamp);
     }
+
+
+    function isCommittedReport(uint256 reportID, address msgSender) public view returns (bool committed) {
+        committed = (_auditRecords[reportID][msgSender] == 1);
+    }
+
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)

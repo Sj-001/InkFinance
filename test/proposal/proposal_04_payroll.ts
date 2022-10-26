@@ -154,6 +154,7 @@ describe("proposal related test", function () {
             console.log("payID:", results[i][0], ", actual pay time:", new Date(results[i][1] * 1000));
         }
 
+        console.log("sign time:", await ucvManager.getSignTime(1,1, signers[1].address));
         // console.log("payIDs: ", results);
     }
     

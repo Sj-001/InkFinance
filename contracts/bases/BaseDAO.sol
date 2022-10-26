@@ -210,9 +210,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes calldata data
     ) public override returns (bytes32 proposalID) {
         /* EnsureGovEnough */
-        console.log(
-            "test member ####################################################### : "
-        );
 
         proposalID = IProposalHandler(_proposalHandlerAddress).newProposal(
             proposal,
@@ -222,6 +219,22 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         /// @dev create agent and check parameters
         _setupAgents(proposalID, proposal.agents, data);
+
+        _setupProposalFlow(proposalID, proposal.agents);
+
+        /// for test
+        _proposalsArray.add(proposalID);
+
+        // emit event
+        emit NewProposal(
+            proposalID,
+            proposal.metadata,
+            proposal.kvData,
+            block.timestamp
+        );
+    }
+
+    function _setupProposalFlow(bytes32 proposalID, bytes32[] memory agents) internal {
 
         bytes32 flowID = _getProposalFlow(proposalID);
 
@@ -238,17 +251,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         info.nextCommittee.step = firstStep;
         info.nextCommittee.committee = steps[firstStep].committee;
         info.lastOperationTimestamp = block.timestamp;
-        info.agents = proposal.agents;
-        /// for test
-        _proposalsArray.add(proposalID);
-
-        // emit event
-        emit NewProposal(
-            proposalID,
-            proposal.metadata,
-            proposal.kvData,
-            block.timestamp
-        );
+        info.agents = agents;
     }
 
     /// @inheritdoc IDAO
@@ -975,6 +978,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
+
     function _setFlowStep(FlowInfo memory flow) internal {
         // _factoryAddress;
         require(flow.committees.length < MAX_STEP_NUM, "too many steps");
@@ -1063,6 +1067,15 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             );
             _execFinish(info, agree);
         }
+
+        /*
+        if !flowHandler.hasNextFlow(proposalID) { 
+            flowHandler.moveToNextFlow(proposalID)
+        } else {
+            flowhandler.flowFinished()
+            ProposalHandler.decide()
+        }
+        */
     }
 
     /// @inheritdoc IERC165
@@ -1092,7 +1105,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         view
         override
         returns (bool isAllow)
-    {}
+    {
+        isAllow = false;
+        if (_badge != address(0)) {
+            isAllow = IERC20(_badge).balanceOf(account) > 0;
+        } else {
+            isAllow = true;
+        }
+    }
 
     function changeProposal(
         bytes32 proposalID,

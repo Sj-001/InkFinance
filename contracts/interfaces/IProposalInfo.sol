@@ -7,6 +7,10 @@ import "../libraries/LEnumerableMetadata.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice struct and events definations related to proposal
 interface IProposalInfo {
+
+    
+
+
     /// @notice when new proposal generated, this event will be emit
     event NewProposal(
         bytes32 indexed proposalID,
