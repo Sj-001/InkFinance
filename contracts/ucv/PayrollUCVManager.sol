@@ -22,6 +22,7 @@ error ThisPayrollScheduleDoesNotExist(uint256 scheduleID);
 error StartPayIDWrong();
 
 
+
 contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
     // using Strings for uint256;
@@ -123,6 +124,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         console.log("payroll ucv manager has been initialized");
     }
 
+    /// @inheritdoc IPayrollManager
     function setupPayroll(
         bytes memory payrollInfo,
         uint256 payrollType,
@@ -157,6 +159,12 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         );
     }
 
+    
+    function getPayInfo(uint256 scheduleID, address payee) external view returns(PaymentInfo memory info) {
+        info = _schedules[scheduleID].payeePaymentInfo[payee];
+    }
+
+
     function addSchedulePayee(uint256 scheduleID, bytes[] memory payees)
         public
     {
@@ -172,6 +180,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         bytes[] memory payees,
         bool addAfterPayroll
     ) private {
+
         PayrollSchedule storage sc = _schedules[scheduleID];
 
         for (uint256 i = 0; i < payees.length; i++) {
@@ -211,11 +220,12 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         }
     }
 
+    /// @inheritdoc IPayrollManager
     function signPayID(uint256 scheduleID, uint256 payID) external override {
         _checkAvailableToSign(scheduleID, payID, msg.sender);
         PayrollSchedule storage sc = _schedules[scheduleID];
         sc.paymentSigns[payID][msg.sender] = block.timestamp;
-        emit PayrollSign(scheduleID, payID, msg.sender);
+        emit PayrollSign(scheduleID, payID, msg.sender, block.timestamp);
     }
 
     function _checkAvailableToSign(
@@ -250,6 +260,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         }
     }
 
+    /// @inheritdoc IPayrollManager
     function isPayIDSigned(uint256 scheduleID, uint256 payID)
         external
         view

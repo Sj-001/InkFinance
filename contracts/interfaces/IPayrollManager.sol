@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./IUCVController.sol";
 
 interface IPayrollManager {
+    
     struct PaymentInfo {
         /// @dev which token to pay
         address token;
@@ -61,20 +62,14 @@ interface IPayrollManager {
         uint256 claimTimes
     );
 
-    /// @notice once the multisigner role vote and pass the proposal(pay the batch under payroll), this event will be emit
-    /// @param topicID target proposalID's topicID
-    /// @param batch the batch under the payroll
-    event ApprovePayrollBatch(
-        bytes32 proposalID,
-        bytes32 indexed topicID,
-        uint256 indexed batch
-    );
+
 
     /// @notice once the multisigner role sign, this event will pass
     event PayrollSign(
         uint256 indexed scheduleID,
         uint256 indexed payID,
-        address indexed signer
+        address indexed signer,
+        uint256 signTime
     );
 
     /// @notice once add member under a payroll, this event will be emit
