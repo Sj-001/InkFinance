@@ -159,7 +159,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         );
     }
 
-    
+
     function getPayInfo(uint256 scheduleID, address payee) external view returns(PaymentInfo memory info) {
         info = _schedules[scheduleID].payeePaymentInfo[payee];
     }
@@ -211,6 +211,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             }
 
             emit PayrollPayeeAdded(
+                _dao,
                 scheduleID,
                 payeeAddress,
                 paymentInfo.token,
@@ -225,7 +226,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         _checkAvailableToSign(scheduleID, payID, msg.sender);
         PayrollSchedule storage sc = _schedules[scheduleID];
         sc.paymentSigns[payID][msg.sender] = block.timestamp;
-        emit PayrollSign(scheduleID, payID, msg.sender, block.timestamp);
+        emit PayrollSign(_dao, scheduleID, payID, msg.sender, block.timestamp);
     }
 
     function _checkAvailableToSign(
@@ -309,6 +310,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             ];
             paymentInfo.lastClaimedPayID = lastPayID;
             emit PayrollClaimed(
+                _dao,
                 scheduleID,
                 msg.sender,
                 token,

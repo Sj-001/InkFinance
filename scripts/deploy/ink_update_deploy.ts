@@ -23,10 +23,10 @@ async function deploy(){
   factory address: 0x33806C358917641D85fA1d5dCB3f41DF2F375482
   */
   const configManagerFactory = await ethers.getContractFactory("ConfigManager");
-  const configManager = await configManagerFactory.attach("0xAEaddCF9B30134A0bE7F5363ec5a984a67782ca4");
+  const configManager = await configManagerFactory.attach("0xa6859cb0AfCB3b2B50E50655CdB9673EE34A1a77");
 
   const factoryManagerFactory = await ethers.getContractFactory("FactoryManager");
-  const factoryManager = await factoryManagerFactory.attach("0xc6547720012174069a0337a769B3143e31b98F91");
+  const factoryManager = await factoryManagerFactory.attach("0xBE436c748320E8810A74D9391f53d7FAc2908AAD");
 
   
 

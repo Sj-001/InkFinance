@@ -53,6 +53,12 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "dao",
+        "type": "address"
+      },
+      {
+        "indexed": true,
         "internalType": "uint256",
         "name": "scheduleID",
         "type": "uint256"
@@ -96,6 +102,12 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "dao",
+        "type": "address"
+      },
+      {
+        "indexed": true,
         "internalType": "uint256",
         "name": "scheduleID",
         "type": "uint256"
@@ -133,6 +145,12 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "dao",
+        "type": "address"
+      },
+      {
+        "indexed": true,
         "internalType": "uint256",
         "name": "scheduleID",
         "type": "uint256"
@@ -144,7 +162,7 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "address",
         "name": "signer",
         "type": "address"
