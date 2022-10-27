@@ -90,31 +90,6 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "topicID",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "batch",
-        "type": "uint256"
-      }
-    ],
-    "name": "ApprovePayrollBatch",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
         "internalType": "uint8",
         "name": "version",
         "type": "uint8"
@@ -272,6 +247,12 @@
         "internalType": "address",
         "name": "signer",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "signTime",
+        "type": "uint256"
       }
     ],
     "name": "PayrollSign",
@@ -421,6 +402,57 @@
         "internalType": "uint256[][]",
         "name": "payIDs",
         "type": "uint256[][]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "scheduleID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "payee",
+        "type": "address"
+      }
+    ],
+    "name": "getPayInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "oncePay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastClaimedPayID",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "addedTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "removedTimestamp",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IPayrollManager.PaymentInfo",
+        "name": "info",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",

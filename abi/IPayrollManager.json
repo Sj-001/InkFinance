@@ -3,31 +3,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "proposalID",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "topicID",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "batch",
-        "type": "uint256"
-      }
-    ],
-    "name": "ApprovePayrollBatch",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "address",
         "name": "dao",
@@ -173,6 +148,12 @@
         "internalType": "address",
         "name": "signer",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "signTime",
+        "type": "uint256"
       }
     ],
     "name": "PayrollSign",
