@@ -36,6 +36,7 @@ interface IPayrollManager {
     /// @param token which token has been claimed
     /// @param lastPayID lastPayID
     event PayrollClaimed(
+        address indexed dao,
         uint256 indexed scheduleID,
         address indexed claimAddress,
         address token,
@@ -66,9 +67,10 @@ interface IPayrollManager {
 
     /// @notice once the multisigner role sign, this event will pass
     event PayrollSign(
+        address indexed dao,        
         uint256 indexed scheduleID,
         uint256 indexed payID,
-        address indexed signer,
+        address signer,
         uint256 signTime
     );
 
@@ -79,6 +81,7 @@ interface IPayrollManager {
     /// @param oncePay how many token paid once
     /// @param desc extra infomation
     event PayrollPayeeAdded(
+        address indexed dao,        
         uint256 indexed scheduleID,
         address indexed payeeAddress,
         address token,
