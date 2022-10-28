@@ -56,6 +56,19 @@ function setupFlowInfo(
 
 
 
+### setupUCV
+
+
+
+*Declaration:*
+```solidity
+function setupUCV(
+) external
+```
+
+
+
+
 ### getFlowSteps
 
 > ge flow steps
@@ -68,30 +81,6 @@ function getFlowSteps(
 ```
 
 
-
-
-### setupPayrollUCV
-
-> setup a new payroll UCV
-
-
-*Declaration:*
-```solidity
-function setupPayrollUCV(
-bytes32 proposalID,
-address controller,
-bytes32 ucvKey,
-bytes32 managerKey
-) external
-```
-
-*Args:*
-| Arg | Type | Description |
-| --- | --- | --- |
-|`proposalID` | bytes32 | the ucv based on which proposal
-|`controller` | address | the contract controller address
-|`ucvKey` | bytes32 | the ucv deploy key
-|`managerKey` | bytes32 | the manager deploy key
 
 
 ### deployByKey

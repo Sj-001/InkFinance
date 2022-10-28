@@ -19,6 +19,7 @@
 | SIGNER | bytes32 |
 | OPERATOR | bytes32 |
 | AUDITOR | bytes32 |
+| INVESTOR | bytes32 |
 
 ## 3.Modifiers
 

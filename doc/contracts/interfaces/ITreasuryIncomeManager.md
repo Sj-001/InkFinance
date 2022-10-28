@@ -14,4 +14,18 @@
 
 ## 4.Functions
 
+### getAuditIDs
+
+
+
+*Declaration:*
+```solidity
+function getAuditIDs(
+) external returns
+(uint256[][] auditIDs)
+```
+
+
+
+
 ## 5.Events

@@ -131,6 +131,20 @@ function getDeployedAddress(
 
 
 
+### clone
+
+
+
+*Declaration:*
+```solidity
+function clone(
+) external returns
+(address _newContract)
+```
+
+
+
+
 ### getDeployedAddressCount
 
 

@@ -219,8 +219,11 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         return _deployedContracts[contractID].at(index);
     }
 
-
-    function clone(bytes32 factoryKey, bytes calldata initData) external override returns (address _newContract) {
+    function clone(bytes32 factoryKey, bytes calldata initData)
+        external
+        override
+        returns (address _newContract)
+    {
         (bytes32 _typeID, bytes memory addressBytes) = IConfigManager(_config)
             .getKV(factoryKey);
 
@@ -232,9 +235,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         _newContract = Clones.clone(implementAddress);
 
         IDeploy(_newContract).init(address(0), _config, initData);
-
     }
-    
 
     function getDeployedAddressCount(bytes32 contractID)
         public

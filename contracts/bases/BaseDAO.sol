@@ -7,6 +7,7 @@ import "../interfaces/IDAO.sol";
 import "../interfaces/IDeploy.sol";
 import "../interfaces/IFactoryManager.sol";
 import "../interfaces/IAgent.sol";
+import "../interfaces/IUCV.sol";
 import "../interfaces/IPayrollManager.sol";
 
 import "./BaseVerify.sol";
@@ -234,8 +235,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         );
     }
 
-    function _setupProposalFlow(bytes32 proposalID, bytes32[] memory agents) internal {
-
+    function _setupProposalFlow(bytes32 proposalID, bytes32[] memory agents)
+        internal
+    {
         bytes32 flowID = _getProposalFlow(proposalID);
 
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[flowID];
@@ -376,8 +378,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             _setFlowStep(initData.flows[i]);
         }
 
-        if(bytes(initData.badgeName).length != 0){
-            _badge = _createBadge(initData.inkBadgeKey, initData.badgeName, initData.badgeTotal, admin_);
+        if (bytes(initData.badgeName).length != 0) {
+            _badge = _createBadge(
+                initData.inkBadgeKey,
+                initData.badgeName,
+                initData.badgeTotal,
+                admin_
+            );
             emit NewBadgeCreated(_badge, initData.name, initData.badgeTotal);
         }
 
@@ -657,7 +664,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         flowID = IAgent(agentAddress).getAgentFlow();
     }
 
-
     /// @inheritdoc IAgentHandler
     function execTx(TxInfo[] memory txs) external override {}
 
@@ -892,7 +898,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         (bool _success, bytes memory _returnedBytes) = address(_factoryAddress)
             .call(deployCall);
 
-
         if (_success) {
             deployedAddress = turnBytesToAddress(_returnedBytes);
             if (randomSalt == false) {
@@ -978,6 +983,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
+    function setupUCV(address ucv, address ucvManager)
+        external
+        override
+        onlyAgent
+    {
+        IUCV(ucv).setUCVManager(ucvManager);
+    }
 
     function _setFlowStep(FlowInfo memory flow) internal {
         // _factoryAddress;
@@ -1142,14 +1154,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         return lastTime + expiration;
     }
 
-    function _createBadge (
-
+    function _createBadge(
         bytes32 badgeKey,
         string memory name,
         uint256 total,
         address target
     ) internal returns (address addr) {
-
         bytes memory initData = abi.encode(name, target, total);
         return IFactoryManager(_factoryAddress).clone(badgeKey, initData);
     }

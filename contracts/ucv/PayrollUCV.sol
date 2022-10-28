@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "../bases/BaseVerify.sol";
 
 import "../interfaces/IUCV.sol";
+import "../utils/TransferHelper.sol";
 
 error OperateIsNowAllowed();
 
@@ -12,6 +13,8 @@ contract PayrollUCV is IUCV, BaseVerify {
     address private _ucvManager;
     bool private _ucvManagerEnable;
 
+    address private _dao;
+
     /// @dev make sure msgSender is controller or manager, and manager has to be allow to do all the operation
     modifier enableToExecute() {
         if (
@@ -19,6 +22,12 @@ contract PayrollUCV is IUCV, BaseVerify {
             (_msgSender() == _ucvManager && _ucvManagerEnable == true)
         ) revert OperateIsNowAllowed();
         _;
+    }
+
+    event ChainTokenDeposited(address sender, uint256 amount);
+
+    receive() external payable {
+        emit ChainTokenDeposited(msg.sender, msg.value);
     }
 
     modifier onlyController() {
@@ -30,7 +39,17 @@ contract PayrollUCV is IUCV, BaseVerify {
         address dao_,
         address config_,
         bytes calldata data_
-    ) external override returns (bytes memory callbackEvent) {}
+    ) external override returns (bytes memory callbackEvent) {
+        _dao = dao_;
+        // _ucvController =
+    }
+
+    function setUCVManager(address ucvManager_) external override {
+        if (msg.sender != _dao) {
+            revert OperateIsNowAllowed();
+        }
+        _ucvManager = ucvManager_;
+    }
 
     /// @inheritdoc IUCV
     function transferTo(
@@ -38,8 +57,15 @@ contract PayrollUCV is IUCV, BaseVerify {
         address token,
         uint256 value,
         bytes memory data
-    ) external override enableToExecute returns (bool success) {
-        return success;
+    ) external override enableToExecute returns (bool) {
+        if (token != address(0x0)) {
+            IERC20(token).transfer(to, value);
+            // TransferHelper.safeTransfer(token, to, value);
+        } else {
+            payable(to).transfer(value);
+        }
+
+        return true;
     }
 
     /// @inheritdoc IUCV

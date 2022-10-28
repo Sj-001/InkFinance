@@ -14,8 +14,8 @@ import "../libraries/defined/TypeID.sol";
 
 import "hardhat/console.sol";
 
-contract FlowHandler /* is IProcessHandler, IDeploy, BaseVerify */ {
-
+/* is IProcessHandler, IDeploy, BaseVerify */
+contract FlowHandler {
     /*
     using Address for address;
     using BytesUtils for bytes;

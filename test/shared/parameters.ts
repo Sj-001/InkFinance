@@ -202,7 +202,7 @@ export function buildOffchainProposal() {
         return proposal;
 }
 
-export function buildTreasurySetupProposal(operator:string, signer:string, auditor:string) {
+export function buildTreasurySetupProposal(operator:string, signer:string, auditor:string, investor:string) {
 
     var agents = []
     // agent - related duties
@@ -258,9 +258,15 @@ export function buildTreasurySetupProposal(operator:string, signer:string, audit
     treasuryAuditor[0] = auditor;
     var treasuryAuditorBytes = web3.eth.abi.encodeParameter("address[]", treasuryAuditor);
 
+
+    var investors = [];
+    investors[0] = investor;
+    var investorsBytes = web3.eth.abi.encodeParameter("address[]", investors);
+
     kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["operators", keccak256(toUtf8Bytes("address")), treasuryOperatorBytes]);
     kvData[1] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["signer", keccak256(toUtf8Bytes("address")), treasurySignerBytes]);
     kvData[2] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["auditor", keccak256(toUtf8Bytes("address")), treasuryAuditorBytes]);
+    kvData[3] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["investor", keccak256(toUtf8Bytes("address")), investorsBytes]);
 
 
     var proposal = {

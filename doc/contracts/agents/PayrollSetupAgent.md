@@ -75,19 +75,6 @@ bytes32 proposalID
 |`proposalID` | bytes32 | target proposal
 
 
-### _setupPayrollUCV
-
-
-
-*Declaration:*
-```solidity
-function _setupPayrollUCV(
-) internal
-```
-
-
-
-
 ### getTypeID
 
 

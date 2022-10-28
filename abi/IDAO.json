@@ -1197,6 +1197,24 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "ucv",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "ucvManager",
+        "type": "address"
+      }
+    ],
+    "name": "setupUCV",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes4",
         "name": "interfaceId",
         "type": "bytes4"

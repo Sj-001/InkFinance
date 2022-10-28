@@ -41,6 +41,20 @@ bytes32 initData
 | --- | --- |
 |`contractAddr` | according to the factoryKey, genereated new contract address with the same kind proxy contract.
 
+### clone
+
+
+
+*Declaration:*
+```solidity
+function clone(
+) external returns
+(address _newContract)
+```
+
+
+
+
 ## 5.Events
 ### NewContractDeployed
 

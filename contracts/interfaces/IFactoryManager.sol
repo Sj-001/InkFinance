@@ -33,6 +33,7 @@ interface IFactoryManager is IERC165 {
         bytes calldata initData
     ) external returns (address contractAddr);
 
-    
-    function clone(bytes32 factoryKey, bytes calldata initData) external returns (address _newContract);
+    function clone(bytes32 factoryKey, bytes calldata initData)
+        external
+        returns (address _newContract);
 }

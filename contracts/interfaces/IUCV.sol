@@ -21,6 +21,8 @@ interface IUCV is IDeploy {
 
     event UCVManagerDisabled(bool disabled);
 
+    function setUCVManager(address ucvManager) external;
+
     function transferTo(
         address to,
         address token,

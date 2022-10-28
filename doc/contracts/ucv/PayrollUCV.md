@@ -34,6 +34,19 @@ modifier onlyController
 
 ## 4.Functions
 
+### receive
+
+
+
+*Declaration:*
+```solidity
+function receive(
+) external
+```
+
+
+
+
 ### init
 
 
@@ -48,6 +61,19 @@ function init(
 
 
 
+### setUCVManager
+
+
+
+*Declaration:*
+```solidity
+function setUCVManager(
+) external
+```
+
+
+
+
 ### transferTo
 
 
@@ -56,7 +82,7 @@ function init(
 ```solidity
 function transferTo(
 ) external enableToExecute returns
-(bool success)
+(bool)
 ```
 *Modifiers:*
 | Modifier |
@@ -158,3 +184,9 @@ function supportsInterface(
 
 
 ## 5.Events
+### ChainTokenDeposited
+
+
+
+
+

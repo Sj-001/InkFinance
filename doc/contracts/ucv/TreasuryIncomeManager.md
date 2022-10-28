@@ -14,6 +14,7 @@
 
 | Var | Type |
 | --- | --- |
+| _auditRecords | mapping(uint256 => mapping(address => uint256)) |
 | committedReport | mapping(uint256 => uint256) |
 
 ## 3.Modifiers
@@ -34,6 +35,62 @@ function init(
 
 
 
+### getInitData
+
+
+
+*Declaration:*
+```solidity
+function getInitData(
+) public returns
+(uint256, uint256, uint256)
+```
+
+
+
+
+### getLatestID
+
+
+
+*Declaration:*
+```solidity
+function getLatestID(
+) public returns
+(uint256 latestPayID)
+```
+
+
+
+
+### _getAuditIDs
+
+
+
+*Declaration:*
+```solidity
+function _getAuditIDs(
+) internal returns
+(uint256[][] auditIDs)
+```
+
+
+
+
+### getAuditIDs
+
+
+
+*Declaration:*
+```solidity
+function getAuditIDs(
+) external returns
+(uint256[][] auditIDs)
+```
+
+
+
+
 ### commitReport
 
 
@@ -42,6 +99,20 @@ function init(
 ```solidity
 function commitReport(
 ) public
+```
+
+
+
+
+### isCommittedReport
+
+
+
+*Declaration:*
+```solidity
+function isCommittedReport(
+) public returns
+(bool committed)
 ```
 
 

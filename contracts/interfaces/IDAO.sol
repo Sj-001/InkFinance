@@ -70,6 +70,8 @@ interface IDAO is
     /// @dev add a new workflow, noramll call by agent
     function setupFlowInfo(FlowInfo memory flow) external;
 
+    function setupUCV(address ucv, address ucvManager) external;
+
     /// @dev ge flow steps
     function getFlowSteps(bytes32 flowID)
         external

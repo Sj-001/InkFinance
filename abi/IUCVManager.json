@@ -2,20 +2,29 @@
   {
     "inputs": [
       {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
-    ],
-    "name": "supportsInterface",
-    "outputs": [
+        "internalType": "string",
+        "name": "incomeItem",
+        "type": "string"
+      },
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "remark",
+        "type": "string"
       }
     ],
-    "stateMutability": "view",
+    "name": "depositToUCV",
+    "outputs": [],
+    "stateMutability": "payable",
     "type": "function"
   }
 ]

@@ -15,7 +15,6 @@ error NotAuthrizedToCommitReport(address msgSender);
 error ThisReportIsAlreadCommitted(uint256 reportID);
 
 contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
-
     event IncomeReport(
         address indexed dao,
         address indexed operator,
@@ -31,7 +30,6 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
 
     uint256 private _proposalID;
 
-
     mapping(uint256 => mapping(address => uint256)) _auditRecords;
 
     mapping(uint256 => uint256) committedReport;
@@ -43,23 +41,33 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     ) external override returns (bytes memory callbackEvent) {
         _dao = dao_;
         console.log("initialized ----- ");
-        
-        (_startTimestamp, _auditPeriod) = abi.decode(data_,(uint256, uint256));
-        console.log("start time",_startTimestamp);
-        console.log("period time",_auditPeriod);
+
+        (_startTimestamp, _auditPeriod) = abi.decode(data_, (uint256, uint256));
+        console.log("start time", _startTimestamp);
+        console.log("period time", _auditPeriod);
     }
 
-
-    function getInitData() public view returns(uint256, uint256, uint256) {
-        return (getLatestID(block.timestamp, _startTimestamp, _auditPeriod), _startTimestamp, _auditPeriod);
-    }
-
-    function getLatestID(uint256 currentTime, uint256 _startTimestamp, uint256 _auditPeriod)
+    function getInitData()
         public
         view
-        returns (uint256 latestPayID)
+        returns (
+            uint256,
+            uint256,
+            uint256
+        )
     {
-        
+        return (
+            getLatestID(block.timestamp, _startTimestamp, _auditPeriod),
+            _startTimestamp,
+            _auditPeriod
+        );
+    }
+
+    function getLatestID(
+        uint256 currentTime,
+        uint256 _startTimestamp,
+        uint256 _auditPeriod
+    ) public view returns (uint256 latestPayID) {
         if (currentTime - _startTimestamp - 1 <= 0) {
             return 0;
         }
@@ -68,17 +76,14 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
             return 1;
         }
 
-        if ((currentTime - _startTimestamp - 1) > 0 ) {
+        if ((currentTime - _startTimestamp - 1) > 0) {
             latestPayID =
-            ((currentTime - _startTimestamp - 1) / _auditPeriod) +
-            1;
+                ((currentTime - _startTimestamp - 1) / _auditPeriod) +
+                1;
         } else {
             latestPayID = 0;
         }
-
-
     }
-
 
     function _getAuditIDs(
         uint256 startID,
@@ -88,7 +93,11 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
     ) internal view returns (uint256[][] memory auditIDs) {
         console.log("_get audit ids:");
         uint256 auditIDArraySize = limit;
-        uint256 lastAuditID = getLatestID(block.timestamp, startTimestamp, auditPeriod);
+        uint256 lastAuditID = getLatestID(
+            block.timestamp,
+            startTimestamp,
+            auditPeriod
+        );
         console.log("lastAuditID: ", lastAuditID);
 
         if (lastAuditID == 0) {
@@ -96,16 +105,16 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
         }
 
         if (lastAuditID == startID) {
-            auditIDArraySize = 1;   
+            auditIDArraySize = 1;
         } else {
             auditIDArraySize = lastAuditID - startID + 1;
         }
 
         if (auditIDArraySize > limit) {
             auditIDArraySize = limit;
-        } 
+        }
 
-        console.log("start: ",_startTimestamp);
+        console.log("start: ", _startTimestamp);
         console.log("period: ", _auditPeriod);
         console.log("auditIDArraySize: ", auditIDArraySize);
 
@@ -115,23 +124,20 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
         for (uint256 i = 0; i < auditIDs.length; i++) {
             auditIDs[i] = new uint256[](2);
             auditIDs[i][0] = startID + i;
-            auditIDs[i][1] =
-                _startTimestamp +
-                _auditPeriod *
-                (startID + i - 1);
+            auditIDs[i][1] = _startTimestamp + _auditPeriod * (startID + i - 1);
         }
     }
 
-    function getAuditIDs(
-        uint256 startID,
-        uint256 limit
-    ) external view override returns (uint256[][] memory auditIDs) {
-
+    function getAuditIDs(uint256 startID, uint256 limit)
+        external
+        view
+        override
+        returns (uint256[][] memory auditIDs)
+    {
         auditIDs = _getAuditIDs(startID, limit, _startTimestamp, _auditPeriod);
     }
 
     function commitReport(uint256 reportID, bytes memory data) public {
-
         if (!IDutyControl(_dao).hasDuty(_msgSender(), DutyID.AUDITOR)) {
             revert NotAuthrizedToCommitReport(_msgSender());
         }
@@ -144,11 +150,13 @@ contract TreasuryIncomeManager is ITreasuryIncomeManager, BaseVerify {
         emit IncomeReport(_dao, msg.sender, reportID, data, block.timestamp);
     }
 
-
-    function isCommittedReport(uint256 reportID, address msgSender) public view returns (bool committed) {
+    function isCommittedReport(uint256 reportID, address msgSender)
+        public
+        view
+        returns (bool committed)
+    {
         committed = (_auditRecords[reportID][msgSender] == 1);
     }
-
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)

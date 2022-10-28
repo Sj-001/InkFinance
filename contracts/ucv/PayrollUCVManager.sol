@@ -2,11 +2,13 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../bases/BaseUCVManager.sol";
 import "../interfaces/IPayrollManager.sol";
 import "../interfaces/IDAO.sol";
 import "../interfaces/IUCV.sol";
+
 import "../libraries/defined/DutyID.sol";
 
 import "hardhat/console.sol";
@@ -20,11 +22,10 @@ error ThePayeeNeedToClaimThePreviousPaymentFirst(address payee);
 error ThePayeeIsNotInThePayroll(address payee);
 error ThisPayrollScheduleDoesNotExist(uint256 scheduleID);
 error StartPayIDWrong();
-
-
+error DepositeError();
+error TheMemberIsNotInvestors(address payee);
 
 contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
-
     // using Strings for uint256;
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -36,13 +37,14 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         mapping(address => PaymentInfo) removedPayeePaymentInfo;
     }
 
-
     uint256 public constant FIRST_PAY_ID = 1;
 
     /// @dev how many payroll has been set
     uint256 private _payrollCount;
 
     address private _ucv;
+
+    bytes32 private _treasurySetupProposal;
 
     // payroll item
     // ScheduleID=>PayrollSchedule
@@ -57,15 +59,12 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         uint256 startPayID,
         uint256 limit
     ) external view override returns (uint256[][] memory payIDs) {
-
-
         if (startPayID < FIRST_PAY_ID) {
             revert StartPayIDWrong();
         }
 
         PayrollSettings memory setting = _payrollSetting[scheduleID];
         /// @dev availableTimes == 0, means unlimited claim times
-
 
         if (setting.payTimes > 0 && setting.payTimes < startPayID) {
             return payIDs;
@@ -78,7 +77,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         /// @dev availableTime == 0, means unlimited claim
         payIDs = new uint256[][](payIDArraySize);
-
         console.log("here:", payIDs.length);
         for (uint256 i = 0; i < payIDs.length; i++) {
             payIDs[i] = new uint256[](2);
@@ -120,7 +118,8 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         _dao = dao_;
         // @dev init controller and manager address
-        _ucv = abi.decode(data_, (address));
+        (_ucv, _treasurySetupProposal) = abi.decode(data_, (address, bytes32));
+
         console.log("payroll ucv manager has been initialized");
     }
 
@@ -133,7 +132,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         uint256 payTimes,
         bytes[] memory payeeInfo
     ) external override {
-        
         if (!IDutyControl(_dao).hasDuty(msg.sender, DutyID.OPERATOR)) {
             revert TheAccountIsNotAuthroized(msg.sender);
         }
@@ -144,6 +142,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         setting.scheduleID = _payrollCount;
         setting.claimPeriod = period;
         setting.payTimes = payTimes;
+        setting.payrollType = payrollType;
         setting.startTime = startTime == 0 ? block.timestamp : startTime;
 
         _addSchedulePayee(setting.scheduleID, payeeInfo, false);
@@ -159,11 +158,13 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         );
     }
 
-
-    function getPayInfo(uint256 scheduleID, address payee) external view returns(PaymentInfo memory info) {
+    function getPayInfo(uint256 scheduleID, address payee)
+        external
+        view
+        returns (PaymentInfo memory info)
+    {
         info = _schedules[scheduleID].payeePaymentInfo[payee];
     }
-
 
     function addSchedulePayee(uint256 scheduleID, bytes[] memory payees)
         public
@@ -180,7 +181,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         bytes[] memory payees,
         bool addAfterPayroll
     ) private {
-
         PayrollSchedule storage sc = _schedules[scheduleID];
 
         for (uint256 i = 0; i < payees.length; i++) {
@@ -192,6 +192,8 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             ) = abi.decode(payees[i], (address, address, uint256, bytes));
 
             address payeeAddress = payee;
+
+            _validPayeeType(scheduleID, payeeAddress);
 
             if (sc.payees.contains(payeeAddress)) {
                 revert ThePayeeIsAlreadyExist(payeeAddress);
@@ -221,12 +223,60 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         }
     }
 
+    function _validPayeeType(uint256 scheduleID, address payee) internal view {
+        PayrollSettings memory setting = _payrollSetting[scheduleID];
+
+        if (setting.payrollType == 2) {
+            // transfer to manager;
+            // make sure it's manager
+            bytes32 typeID;
+            bytes memory memberBytes;
+            (typeID, memberBytes) = IProposalHandler(_dao).getProposalKvData(
+                _treasurySetupProposal,
+                "investor"
+            );
+            address[] memory members = abi.decode(memberBytes, (address[]));
+            bool exist = false;
+            for (uint256 i = 0; i < members.length; i++) {
+                if (members[i] == payee) {
+                    exist = true;
+                    break;
+                }
+            }
+
+            if (!exist) {
+                revert TheMemberIsNotInvestors(payee);
+            }
+        }
+        if (setting.payrollType == 3) {
+            // transfer to vault;
+            // make sure it's contract
+        }
+    }
+
     /// @inheritdoc IPayrollManager
     function signPayID(uint256 scheduleID, uint256 payID) external override {
         _checkAvailableToSign(scheduleID, payID, msg.sender);
         PayrollSchedule storage sc = _schedules[scheduleID];
         sc.paymentSigns[payID][msg.sender] = block.timestamp;
+
+        _checkDirectPay(scheduleID);
+
         emit PayrollSign(_dao, scheduleID, payID, msg.sender, block.timestamp);
+    }
+
+    function _checkDirectPay(uint256 scheduleID) internal {
+        PayrollSettings memory setting = _payrollSetting[scheduleID];
+        if (setting.payrollType == 2 || setting.payrollType == 3) {
+            if (_isPayIDSigned(scheduleID, 1)) {
+                address[] memory scheduleMembers = _schedules[scheduleID]
+                    .payees
+                    .values();
+                for (uint256 i = 0; i < scheduleMembers.length; i++) {
+                    _transferSchedulePay(scheduleID, scheduleMembers[i]);
+                }
+            }
+        }
     }
 
     function _checkAvailableToSign(
@@ -293,8 +343,9 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         allSignerSigned = true;
     }
 
-    /// @inheritdoc IPayrollManager
-    function claimPayroll(uint256 scheduleID) external override {
+    function _transferSchedulePay(uint256 scheduleID, address receiver)
+        internal
+    {
         PayrollSchedule storage schedule = _schedules[scheduleID];
         // make sure it's member
         (
@@ -302,30 +353,32 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             uint256 amount,
             uint256 claimBatches,
             uint256 lastPayID
-        ) = _getClaimableAmount(scheduleID, msg.sender);
+        ) = _getClaimableAmount(scheduleID, receiver);
 
         if (amount > 0) {
             PaymentInfo storage paymentInfo = schedule.payeePaymentInfo[
                 msg.sender
             ];
             paymentInfo.lastClaimedPayID = lastPayID;
+
+            IUCV(_ucv).transferTo(receiver, token, amount, bytes(""));
+
             emit PayrollClaimed(
                 _dao,
                 scheduleID,
-                msg.sender,
+                receiver,
                 token,
                 amount,
                 claimBatches,
-                lastPayID
+                lastPayID,
+                block.timestamp
             );
         }
+    }
 
-        // IUCV(_payrollUCVs[topicID]).transferTo(
-        //     msg.sender,
-        //     token,
-        //     leftAmount,
-        //     abi.encode("")
-        // );
+    /// @inheritdoc IPayrollManager
+    function claimPayroll(uint256 scheduleID) external override {
+        _transferSchedulePay(scheduleID, msg.sender);
     }
 
     /// @inheritdoc IPayrollManager
@@ -396,9 +449,45 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
     }
 
     /// @inheritdoc IPayrollManager
-    function getSignTime(uint256 scheduleID, uint256 payID, address signer) external view override returns (uint256 signTime) {
+    function getSignTime(
+        uint256 scheduleID,
+        uint256 payID,
+        address signer
+    ) external view override returns (uint256 signTime) {
         PayrollSchedule storage schedule = _schedules[scheduleID];
         return schedule.paymentSigns[payID][signer];
+    }
+
+    /// @inheritdoc IUCVManager
+    function depositToUCV(
+        string memory incomeItem,
+        address token,
+        uint256 amount,
+        string memory remark
+    ) external payable override {
+        if (token == address(0)) {
+            if (amount != msg.value) {
+                revert DepositeError();
+            }
+        }
+
+        if (token != address(0x0)) {
+            IERC20(token).transferFrom(msg.sender, _ucv, amount);
+        } else {
+            console.log("my balance:", address(this).balance);
+            payable(_ucv).transfer(amount);
+        }
+
+        emit VaultDeposit(
+            _dao,
+            _ucv,
+            token,
+            incomeItem,
+            amount,
+            msg.sender,
+            remark,
+            block.timestamp
+        );
     }
 
     function getTypeID() external override returns (bytes32 typeID) {}

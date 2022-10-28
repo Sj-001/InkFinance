@@ -10,7 +10,6 @@ import "hardhat/console.sol";
 
 /// @title set up a payroll schedule
 contract PayrollSetupAgent is BaseAgent {
-    
     using BytesUtils for bytes;
 
     bytes32 public FLOW_ID = keccak256("financial-payroll-setup");

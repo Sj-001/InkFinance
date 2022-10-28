@@ -14,6 +14,19 @@
 
 ## 4.Functions
 
+### setUCVManager
+
+
+
+*Declaration:*
+```solidity
+function setUCVManager(
+) external
+```
+
+
+
+
 ### transferTo
 
 

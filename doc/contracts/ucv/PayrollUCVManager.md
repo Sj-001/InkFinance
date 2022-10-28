@@ -67,13 +67,38 @@ function init(
 
 
 ### setupPayroll
+create a new payroll, only operator could do this
 
 
 
 *Declaration:*
 ```solidity
 function setupPayroll(
+bytes startTime,
+uint256 claimTimes,
+uint256 period,
+uint256 payeeInfo
 ) external
+```
+
+*Args:*
+| Arg | Type | Description |
+| --- | --- | --- |
+|`startTime` | bytes | the payroll manager would load data from that proposal(topic) and create the payroll instance
+|`claimTimes` | uint256 | the fund from which ucv
+|`period` | uint256 | the fund from which ucv
+|`payeeInfo` | uint256 | the fund from which ucv
+
+
+### getPayInfo
+
+
+
+*Declaration:*
+```solidity
+function getPayInfo(
+) external returns
+(struct IPayrollManager.PaymentInfo info)
 ```
 
 
@@ -92,14 +117,40 @@ function addSchedulePayee(
 
 
 
-### signPayID
+### _validPayeeType
 
 
 
 *Declaration:*
 ```solidity
+function _validPayeeType(
+) internal
+```
+
+
+
+
+### signPayID
+
+> after multi-signer voted, how many batchs of payment under a payroll should be paid
+
+*Declaration:*
+```solidity
 function signPayID(
 ) external
+```
+
+
+
+
+### _checkDirectPay
+
+
+
+*Declaration:*
+```solidity
+function _checkDirectPay(
+) internal
 ```
 
 
@@ -119,7 +170,7 @@ function _checkAvailableToSign(
 
 
 ### isPayIDSigned
-
+check the pay has been signed by all the signers
 
 
 *Declaration:*
@@ -141,6 +192,19 @@ function isPayIDSigned(
 function _isPayIDSigned(
 ) internal returns
 (bool allSignerSigned)
+```
+
+
+
+
+### _transferSchedulePay
+
+
+
+*Declaration:*
+```solidity
+function _transferSchedulePay(
+) internal
 ```
 
 
@@ -182,6 +246,33 @@ function getClaimableAmount(
 function _getClaimableAmount(
 ) internal returns
 (address token, uint256 amount, uint256 batches, uint256 lastPayID)
+```
+
+
+
+
+### getSignTime
+if the signer not signed, return 0
+
+
+*Declaration:*
+```solidity
+function getSignTime(
+) external returns
+(uint256 signTime)
+```
+
+
+
+
+### depositToUCV
+
+
+
+*Declaration:*
+```solidity
+function depositToUCV(
+) external
 ```
 
 

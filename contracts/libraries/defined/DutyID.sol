@@ -21,4 +21,8 @@ library DutyID {
     // keccak256("dutyID.AUDITOR")
     bytes32 internal constant AUDITOR =
         0x7f014c5b03a1a6fcf5a57ebc1689669c0315c27f4755c182dbd0f35a51a754eb;
+
+    // keccak256("dutyID.InvestmentManager")
+    bytes32 internal constant INVESTOR =
+        0x1390b27e6a5b27b7b5a53fb7a4cd07990eb7a2e29f06fa68c29b387bcccece29;
 }

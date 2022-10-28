@@ -130,11 +130,20 @@ contract TreasuryManagerAgent is BaseAgent {
         // address[] memory auditors = abi.decode(auditorBytes, (address[]));
         // console.log("auditor address ::::::::::::::::::::::::::::::::: ", auditors[0]);
 
+        (typeID, memberBytes) = IProposalHandler(_dao).getProposalKvData(
+            proposalID,
+            "investor"
+        );
+
+        _setMemberDuties(DutyID.INVESTOR, memberBytes);
+
         // setup committee
-        bytes32[] memory duties = new bytes32[](3);
+        bytes32[] memory duties = new bytes32[](4);
         duties[0] = DutyID.OPERATOR;
         duties[1] = DutyID.SIGNER;
         duties[2] = DutyID.AUDITOR;
+        duties[3] = DutyID.INVESTOR;
+
         bytes memory dutyIDs = abi.encode(duties);
         IDAO(_dao).setupCommittee(
             "Treasury Committee",
@@ -147,21 +156,25 @@ contract TreasuryManagerAgent is BaseAgent {
             proposalID,
             "ucvKey"
         );
+        // deploy ucv
         address ucvAddress = IDAO(_dao).deployByKey(
             typeID,
             bytesData.toBytes32(),
-            abi.encode("")
+            abi.encode(address(0))
         );
 
         (typeID, bytesData) = proposalHandler.getProposalMetadata(
             proposalID,
             "ucvManagerKey"
         );
-        IDAO(_dao).deployByKey(
+        // deploy ucv manager
+        address ucvManager = IDAO(_dao).deployByKey(
             typeID,
             bytesData.toBytes32(),
-            abi.encode(ucvAddress)
+            abi.encode(ucvAddress, proposalID)
         );
+
+        IDAO(_dao).setupUCV(ucvAddress, ucvManager);
     }
 
     function _setMemberDuties(bytes32 dutyID, bytes memory memberBytes)

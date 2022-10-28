@@ -1,10 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./IUCVController.sol";
+import "./IUCVManager.sol";
 
-interface IPayrollManager {
-    
+interface IPayrollManager is IUCVManager {
     struct PaymentInfo {
         /// @dev which token to pay
         address token;
@@ -25,6 +24,7 @@ interface IPayrollManager {
         uint256 startTime;
         uint256 claimPeriod;
         uint256 payTimes;
+        uint256 payrollType;
     }
 
     /// @notice when user claim payroll, this event will be emit
@@ -42,13 +42,14 @@ interface IPayrollManager {
         address token,
         uint256 total,
         uint256 claimedBatches,
-        uint256 lastPayID
+        uint256 lastPayID,
+        uint256 claimTime
     );
 
     /// @notice when a new payroll has been setup, this event will be emit.
     /// @param dao based on which dao
     /// @param scheduleID payroll's ID
-    /// @param payrollType 0=scheduled 1=one time 2=direct pay
+    /// @param payrollType 0=scheduled 1=one time 2=direct pay investor, 3=direct pay vault
     /// @param payrollInfo payroll's title|description, etc.
     /// @param startTime first claimable time
     /// @param period period between echo claim
@@ -63,11 +64,21 @@ interface IPayrollManager {
         uint256 claimTimes
     );
 
-
+    /// @dev token = address(0) means chain gas token
+    event VaultDeposit(
+        address indexed dao,
+        address indexed ucv,
+        address indexed token,
+        string itemName,
+        uint256 depositeAmount,
+        address depositer,
+        string depositDesc,
+        uint256 depositeTime
+    );
 
     /// @notice once the multisigner role sign, this event will pass
     event PayrollSign(
-        address indexed dao,        
+        address indexed dao,
         uint256 indexed scheduleID,
         uint256 indexed payID,
         address signer,
@@ -81,7 +92,7 @@ interface IPayrollManager {
     /// @param oncePay how many token paid once
     /// @param desc extra infomation
     event PayrollPayeeAdded(
-        address indexed dao,        
+        address indexed dao,
         uint256 indexed scheduleID,
         address indexed payeeAddress,
         address token,
@@ -133,5 +144,9 @@ interface IPayrollManager {
         returns (bool isSigned);
 
     /// @notice if the signer not signed, return 0
-    function getSignTime(uint256 scheduleID, uint256 payID, address signer) external view returns (uint256 signTime);
+    function getSignTime(
+        uint256 scheduleID,
+        uint256 payID,
+        address signer
+    ) external view returns (uint256 signTime);
 }

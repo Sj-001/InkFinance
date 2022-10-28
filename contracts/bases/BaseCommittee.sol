@@ -322,7 +322,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         } else {
             voteInfo.status = VoteStatus.DENY;
         }
-        
+
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
 

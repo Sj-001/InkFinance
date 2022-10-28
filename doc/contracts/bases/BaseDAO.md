@@ -98,6 +98,19 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
+### _setupProposalFlow
+
+
+
+*Declaration:*
+```solidity
+function _setupProposalFlow(
+) internal
+```
+
+
+
+
 ### getDAOCommittees
 return all commitees and it's dutyIDs
 
@@ -581,20 +594,6 @@ function _getAgentFlowID(
 
 
 
-### _getFlowID
-
-
-
-*Declaration:*
-```solidity
-function _getFlowID(
-) internal returns
-(bytes32 flowID)
-```
-
-
-
-
 ### execTx
 
 
@@ -833,54 +832,19 @@ function setupFlowInfo(
 
 
 
-### setupPayrollUCV
-
-> setup a new payroll UCV
-
-
-*Declaration:*
-```solidity
-function setupPayrollUCV(
-bytes32 proposalID,
-address controller,
-bytes32 ucvKey,
-bytes32 managerKey
-) external
-```
-
-*Args:*
-| Arg | Type | Description |
-| --- | --- | --- |
-|`proposalID` | bytes32 | the ucv based on which proposal
-|`controller` | address | the contract controller address
-|`ucvKey` | bytes32 | the ucv deploy key
-|`managerKey` | bytes32 | the manager deploy key
-
-
-### getUCVs
+### setupUCV
 
 
 
 *Declaration:*
 ```solidity
-function getUCVs(
-) external returns
-(address[] ucvs)
+function setupUCV(
+) external onlyAgent
 ```
-
-
-
-
-### getUCVManagers
-
-
-
-*Declaration:*
-```solidity
-function getUCVManagers(
-) external returns
-(address[] managers)
-```
+*Modifiers:*
+| Modifier |
+| --- |
+| onlyAgent |
 
 
 
