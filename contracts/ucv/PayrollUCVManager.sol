@@ -474,8 +474,13 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         if (token != address(0x0)) {
             IERC20(token).transferFrom(msg.sender, _ucv, amount);
         } else {
+
             console.log("my balance:", address(this).balance);
-            payable(_ucv).transfer(amount);
+            (bool succeed, ) = payable(_ucv).call{value: msg.value}("");
+
+            if (!succeed) {
+                revert DepositeError();
+            }
         }
 
         emit VaultDeposit(
@@ -488,6 +493,14 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             remark,
             block.timestamp
         );
+    }
+
+
+    function _send(address payable _to) public payable {
+        // Call returns a boolean value indicating success or failure.
+        // This is the current recommended method to use.
+        (bool sent, bytes memory data) = _to.call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
     }
 
     function getTypeID() external override returns (bytes32 typeID) {}

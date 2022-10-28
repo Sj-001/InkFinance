@@ -122,7 +122,12 @@ describe("proposal related test", function () {
         
         await ucvManager.depositToUCV("item1", token, tokenAmount, "remark");
 
-        // await ucvManager.depositToUCV("item2", "0x0000000000000000000000000000000000000000", ethAmount, "remark",{value: ethAmount});
+        await ucvManager.depositToUCV("item2", "0x0000000000000000000000000000000000000000", ethAmount, "remark",{value: ethAmount});
+
+        // const transactionHash = await signers[0].sendTransaction({
+        //     to: ucvAddress,
+        //     value: ethAmount, // Sends exactly 1.0 ether
+        //   });
 
         console.log("after deposit chain token balance:", await ethers.provider.getBalance(ucvAddress))
 
