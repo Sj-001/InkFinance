@@ -53,6 +53,19 @@
   },
   {
     "inputs": [],
+    "name": "isExecuted",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "executed",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "isUniqueInDAO",
     "outputs": [
       {

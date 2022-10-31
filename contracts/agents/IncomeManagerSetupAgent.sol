@@ -13,6 +13,8 @@ contract IncomeManagerSetupAgent is BaseAgent {
 
     address private _dao;
 
+
+
     function init(
         address dao_,
         address config_,
@@ -95,6 +97,12 @@ contract IncomeManagerSetupAgent is BaseAgent {
             bytesData.toBytes32(),
             timeData
         );
+
+        _executed = true;
+    }
+
+    function isExecuted() external view override returns (bool executed) {
+        executed = _executed;
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}

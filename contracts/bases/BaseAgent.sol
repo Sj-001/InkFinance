@@ -11,6 +11,7 @@ abstract contract BaseAgent is IDeploy, IAgent, IProposalInfo, BaseVerify {
     /// @notice the description of the agent;
     string private _description;
 
+    bool internal _executed;
     /// @dev
     address private _parentDAO;
 
@@ -40,5 +41,9 @@ abstract contract BaseAgent is IDeploy, IAgent, IProposalInfo, BaseVerify {
 
     function getAgentFlow() external virtual override returns (bytes32 flowID) {
         return 0x0;
+    }
+
+    function isExecuted() external virtual view  override returns (bool executed) {
+        executed = _executed;
     }
 }

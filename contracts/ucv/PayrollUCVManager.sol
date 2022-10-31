@@ -65,14 +65,23 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         PayrollSettings memory setting = _payrollSetting[scheduleID];
         /// @dev availableTimes == 0, means unlimited claim times
-
         if (setting.payTimes > 0 && setting.payTimes < startPayID) {
             return payIDs;
+        }
+        
+        uint256 latestID = getLatestPayID(scheduleID, block.timestamp);
+        uint256 idLength = 0;
+        if (latestID - startPayID > 0) {
+            idLength = latestID - startPayID + 1;
         }
 
         uint256 payIDArraySize = limit;
         if (limit > setting.payTimes) {
             payIDArraySize = setting.payTimes;
+        }
+
+        if (payIDArraySize > idLength) {
+            payIDArraySize = idLength;
         }
 
         /// @dev availableTime == 0, means unlimited claim

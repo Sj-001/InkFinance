@@ -754,7 +754,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             ) {
                 address existAgents = _agents[agents[i]];
                 if (
-                    existAgents != address(0) &&
+                    existAgents != address(0) && 
+                    IAgent(existAgents).isExecuted() == true && 
                     IAgent(existAgents).isUniqueInDAO() == true
                 ) {
                     revert AgentCanBeCreatedOnlyOnceInDAO(agents[i]);

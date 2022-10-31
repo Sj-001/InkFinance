@@ -17,6 +17,8 @@ interface IAgent is IAgentInfo {
     /// @return success true means works
     function preExec(bytes32 proposalID) external returns (bool success);
 
+    function isExecuted() external view returns (bool executed);
+
     /// @dev do run the proposal decision
     /// @param proposalID target proposal
     function exec(bytes32 proposalID) external;

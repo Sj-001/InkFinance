@@ -196,7 +196,7 @@ describe("proposal related test", function () {
         var timestamp = Date.now();
         var sec = Math.floor(timestamp / 1000);
 
-        var startTime = sec - 60 * 60 * 24;
+        var startTime = sec - 60 * 60 * 5;
         var period = 60 * 60;
         var payTimes = 10;
 
