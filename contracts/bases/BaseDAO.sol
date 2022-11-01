@@ -235,12 +235,23 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         );
     }
 
+
+
+    
+    function getBadge() external view returns(address badge) {
+        badge = _badge;
+    }
+
     function _setupProposalFlow(bytes32 proposalID, bytes32[] memory agents)
         internal
     {
         bytes32 flowID = _getProposalFlow(proposalID);
 
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[flowID];
+
+
+        console.log("flowID --*************** ");
+        console.logBytes32(flowID);
 
         bytes32 firstStep = steps[_SENTINEL_ID].nextStep;
         if (firstStep == bytes32(0x0)) {
@@ -249,6 +260,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         ProposalProgress storage info = _proposalInfo[proposalID];
         info.proposalID = proposalID;
+        info.flowID = flowID;
         // decicde next step and which commit is handle the process
         info.nextCommittee.step = firstStep;
         info.nextCommittee.committee = steps[firstStep].committee;
@@ -822,6 +834,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 proposalFlowID = IProposalHandler(_proposalHandlerAddress)
             .getProposalFlow(proposalID);
 
+
         if (proposalFlowID > 0) {
             bool support = false;
             for (
@@ -979,10 +992,17 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         internal
     {
         if (!breakFlow) {
+            
             bytes32 flowID = info.flowID;
+
+            console.log("flow ID");
+            console.logBytes32(flowID);
+
             StepLinkInfo storage nowStep = _flowSteps[flowID][
                 info.nextCommittee.step
             ];
+
+
             info.nextCommittee.step = nowStep.nextStep;
             info.nextCommittee.committee = _flowSteps[flowID][nowStep.nextStep]
                 .committee;
@@ -1015,7 +1035,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         steps[_SENTINEL_ID].nextStep = flow.committees[0].step;
         if (flow.committees[0].step != 0x00) {
             // no action required,
+            console.log("flow ID");
+            console.logBytes32(flow.flowID);
+
             for (uint256 j = 0; j < flow.committees.length; j++) {
+                console.log("has steps:", j);
+
                 CommitteeCreateInfo memory committeeInfo = flow.committees[j];
                 require(
                     committeeInfo.step != bytes32(0x0) &&
@@ -1038,6 +1063,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     steps[committeeInfo.step].nextStep = bytes32(0x0);
                 }
             }
+
+
+
+
+        
         } else {
             console.log(
                 "no action required #############################################################################################################################################################################################################################################################################################################################################################################################################################"
@@ -1084,6 +1114,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _appendFinishStep(info);
         _setNextStep(info, !agree);
 
+        console.log("next committee", info.nextCommittee.committee);
         if (info.nextCommittee.committee == address(0x0)) {
             IProposalHandler(_proposalHandlerAddress).decideProposal(
                 info.proposalID,

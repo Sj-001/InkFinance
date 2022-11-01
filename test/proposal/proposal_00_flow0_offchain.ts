@@ -74,7 +74,6 @@ describe("proposal_00_flow0_offchain", function () {
         // once decide, 
         await tallyVotesByThePublic(await masterDAO.address,  proposalID);
 
-
         await masterDAO.execProposalMessage(proposalID, web3.eth.abi.encodeParameter("string", "we did it!"));
         
         
