@@ -714,6 +714,19 @@
   },
   {
     "inputs": [],
+    "name": "getBadge",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "badge",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getDAOCommittees",
     "outputs": [
       {
