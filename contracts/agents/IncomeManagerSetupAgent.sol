@@ -13,8 +13,6 @@ contract IncomeManagerSetupAgent is BaseAgent {
 
     address private _dao;
 
-
-
     function init(
         address dao_,
         address config_,

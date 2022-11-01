@@ -513,6 +513,19 @@ function decideProposal(
 
 
 
+### execProposalMessage
+
+
+
+*Declaration:*
+```solidity
+function execProposalMessage(
+) external
+```
+
+
+
+
 ### flushTopicIndex
 
 

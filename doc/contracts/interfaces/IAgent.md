@@ -68,6 +68,20 @@ bytes32 proposalID
 | --- | --- |
 |`success` | true means works
 
+### isExecuted
+
+
+
+*Declaration:*
+```solidity
+function isExecuted(
+) external returns
+(bool executed)
+```
+
+
+
+
 ### exec
 
 > do run the proposal decision

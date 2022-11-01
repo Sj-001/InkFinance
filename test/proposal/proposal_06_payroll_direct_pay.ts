@@ -82,7 +82,7 @@ describe("proposal related test", function () {
         // console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
         console.log("treasury committee address:", committeeAddress);
         
-        await depositBalanceToUCV(masterDAO.address, erc20Address);
+        // await depositBalanceToUCV(masterDAO.address, erc20Address);
 
         await setupAndSignVaultDirectPay(masterDAO.address, erc20Address);
 

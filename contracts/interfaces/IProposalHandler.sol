@@ -67,6 +67,16 @@ interface IProposalHandler is IProposalInfo {
         CommitteeInfo[] committees;
     }
 
+    event ExecuteOffchainMessage(
+        bytes32 indexed topicID,
+        address indexed addr,
+        bytes32 indexed execProposalID,
+        address dao,
+        bytes32 nowProposalID,
+        bytes message,
+        uint256 executeTime
+    );
+
     function getTallyVoteRules(bytes32 proposalID)
         external
         view
@@ -187,4 +197,9 @@ interface IProposalHandler is IProposalInfo {
     //////////////////// flush index
     // dao查看该topicID上次刷新到的位置(lastIndexedProposalID, lastIndexedKey), 来继续进行, 所以权限问题.
     function flushTopicIndex(bytes32 topicID, uint256 operateNum) external;
+
+    /// @dev off-chain proposal only
+    /// @notice when off-chain proposal passed, dao admin could upload some text approve the proposal has been executed.
+    function execProposalMessage(bytes32 proposalID, bytes memory messages)
+        external;
 }

@@ -165,7 +165,7 @@ export function buildOffchainProposal() {
         headers[1] = {
             "key":  "MinEffectiveVoteWallets",
             "typeID": keccak256(toUtf8Bytes("type.UINT256")),
-            "data": web3.eth.abi.encodeParameter("uint256", 99),
+            "data": web3.eth.abi.encodeParameter("uint256", 1),
             "desc": toUtf8Bytes(""),
         };
 

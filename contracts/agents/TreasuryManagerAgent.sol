@@ -175,7 +175,7 @@ contract TreasuryManagerAgent is BaseAgent {
         );
 
         IDAO(_dao).setupUCV(ucvAddress, ucvManager);
-        
+
         _executed = true;
     }
 
@@ -188,7 +188,6 @@ contract TreasuryManagerAgent is BaseAgent {
             IDAO(_dao).addDuty(members[i], dutyID);
         }
     }
-
 
     // function _setupFlowInfo(bytes32 committeeKey) internal {
     //     IProposalHandler.FlowInfo

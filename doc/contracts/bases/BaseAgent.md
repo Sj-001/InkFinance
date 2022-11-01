@@ -10,6 +10,12 @@
 
 ## 2.Globals
 
+> Note this contains internal vars as well due to a bug in the docgen procedure
+
+| Var | Type |
+| --- | --- |
+| _executed | bool |
+
 ## 3.Modifiers
 ### onlyCallFromDAO
 
@@ -78,6 +84,20 @@ function getAgentDAO(
 function getAgentFlow(
 ) external returns
 (bytes32 flowID)
+```
+
+
+
+
+### isExecuted
+
+
+
+*Declaration:*
+```solidity
+function isExecuted(
+) external returns
+(bool executed)
 ```
 
 

@@ -618,6 +618,18 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _decideProposal(proposalID, msg.sender, agree, data);
     }
 
+    function execProposalMessage(bytes32 proposalID, bytes memory messages)
+        external
+        override
+    {
+        require(_ownerAddress == _msgSender(), "not dao admin");
+
+        IProposalHandler(_proposalHandlerAddress).execProposalMessage(
+            proposalID,
+            messages
+        );
+    }
+
     function flushTopicIndex(bytes32 topicID, uint256 operateNum)
         external
         override
@@ -754,8 +766,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             ) {
                 address existAgents = _agents[agents[i]];
                 if (
-                    existAgents != address(0) && 
-                    IAgent(existAgents).isExecuted() == true && 
+                    existAgents != address(0) &&
+                    IAgent(existAgents).isExecuted() == true &&
                     IAgent(existAgents).isUniqueInDAO() == true
                 ) {
                     revert AgentCanBeCreatedOnlyOnceInDAO(agents[i]);

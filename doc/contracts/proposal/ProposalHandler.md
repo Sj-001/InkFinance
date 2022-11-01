@@ -278,6 +278,37 @@ function getTallyVoteRules(
 
 
 
+### _getTopicInfo
+
+
+
+*Declaration:*
+```solidity
+function _getTopicInfo(
+) internal returns
+(struct IProposalInfo.Topic topic)
+```
+
+
+
+
+### execProposalMessage
+
+
+
+*Declaration:*
+```solidity
+function execProposalMessage(
+) external onlyDAO
+```
+*Modifiers:*
+| Modifier |
+| --- |
+| onlyDAO |
+
+
+
+
 ### syncProposalKvDataToTopic
 
 

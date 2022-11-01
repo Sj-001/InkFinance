@@ -68,7 +68,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         if (setting.payTimes > 0 && setting.payTimes < startPayID) {
             return payIDs;
         }
-        
+
         uint256 latestID = getLatestPayID(scheduleID, block.timestamp);
         uint256 idLength = 0;
         if (latestID - startPayID > 0) {
@@ -483,7 +483,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         if (token != address(0x0)) {
             IERC20(token).transferFrom(msg.sender, _ucv, amount);
         } else {
-
             console.log("my balance:", address(this).balance);
             (bool succeed, ) = payable(_ucv).call{value: msg.value}("");
 
@@ -503,7 +502,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             block.timestamp
         );
     }
-
 
     function _send(address payable _to) public payable {
         // Call returns a boolean value indicating success or failure.

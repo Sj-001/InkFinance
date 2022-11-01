@@ -235,4 +235,24 @@ function flushTopicIndex(
 
 
 
+### execProposalMessage
+when off-chain proposal passed, dao admin could upload some text approve the proposal has been executed.
+> off-chain proposal only
+
+
+*Declaration:*
+```solidity
+function execProposalMessage(
+) external
+```
+
+
+
+
 ## 5.Events
+### ExecuteOffchainMessage
+
+
+
+
+

@@ -47,6 +47,19 @@ function receive(
 
 
 
+### fallback
+
+
+
+*Declaration:*
+```solidity
+function fallback(
+) external
+```
+
+
+
+
 ### init
 
 

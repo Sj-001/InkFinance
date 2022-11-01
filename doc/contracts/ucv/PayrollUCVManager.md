@@ -278,6 +278,19 @@ function depositToUCV(
 
 
 
+### _send
+
+
+
+*Declaration:*
+```solidity
+function _send(
+) public
+```
+
+
+
+
 ### getTypeID
 
 

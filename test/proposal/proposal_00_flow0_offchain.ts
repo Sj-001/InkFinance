@@ -33,25 +33,28 @@ describe("proposal_00_flow0_offchain", function () {
         const signers = await ethers.getSigners();
 
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
-        const {inkERC20} = await loadFixture(InkERC20Fixture);        
+        const {inkERC20} = await loadFixture(InkERC20Fixture);
         var erc20Address = inkERC20.address;
 
         // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 2);
         await factoryManager.deploy(true, DAOTypeID, MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
         var masterDAO = await masterDAOFactory.attach(firstDAOAddress);        
         var offchainProposal = buildOffchainProposal();
-        var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
-        
+
+        var theBoardAddress = await masterDAO.getDeployedContractByKey(THE_BOARD_COMMITTEE_KEY);
+
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
-        var theBoard = theBoardFactory.attach(flowSteps[0].committee);
-        
+        // var theBoard = theBoardFactory.attach(flowSteps[0].committee);
+        var theBoard = theBoardFactory.attach(theBoardAddress);
         await theBoard.newProposal(offchainProposal, true, "0x00");
+        
         var proposalID = await masterDAO.getProposalIDByIndex(0);
 
+        
         var proposalSummery = await masterDAO.getProposalSummary(proposalID);
 
         console.log(await masterDAO.getTallyVoteRules(proposalID));
@@ -68,7 +71,13 @@ describe("proposal_00_flow0_offchain", function () {
 
         console.log("committee infos:", await masterDAO.getDAOCommittees());
 
+        // once decide, 
+        await tallyVotesByThePublic(await masterDAO.address,  proposalID);
 
+
+        await masterDAO.execProposalMessage(proposalID, web3.eth.abi.encodeParameter("string", "we did it!"));
+        
+        
     });
     
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
@@ -87,8 +96,42 @@ describe("proposal_00_flow0_offchain", function () {
 
         console.log("is legal operation: ", await theVoteCommittee.allowOperate(voteIdentity, signers[0].address))
         
-        await theVoteCommittee.vote(voteIdentity, true, 10, "", "0x00");
+        await theVoteCommittee.vote(voteIdentity, true, 10000, "", "0x00");
 
     }
 
+
+    async function tallyVotes (daoAddress:string, proposalID:string ) {
+
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
+
+        var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
+
+        var theVoteCommitteeFactory = await ethers.getContractFactory("TheBoard");
+        var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
+
+        console.log("vote detail the vote committee :", committeeInfo);
+        var voteIdentity = {"proposalID":proposalID, "step":committeeInfo.step};
+        
+        await theVoteCommittee.tallyVotes(voteIdentity, "0x00");
+        
+    }
+
+    async function tallyVotesByThePublic (daoAddress:string, proposalID:string ) {
+
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
+
+        var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
+
+        var theVoteCommitteeFactory = await ethers.getContractFactory("ThePublic");
+        var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
+
+        console.log("vote detail the vote committee :", committeeInfo);
+        var voteIdentity = {"proposalID":proposalID, "step":committeeInfo.step};
+        
+        await theVoteCommittee.tallyVotes(voteIdentity, "0x00");
+        
+    }
 })

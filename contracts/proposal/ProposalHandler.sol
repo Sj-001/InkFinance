@@ -264,6 +264,46 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         }
     }
 
+    function _getTopicInfo(bytes32 topicID)
+        internal
+        view
+        returns (Topic memory topic)
+    {
+        TopicProposal storage r = _topics[topicID];
+
+        topic.topicID = r.topicID;
+        topic.proposalIDs = r.proposalIDs;
+
+        return topic;
+    }
+
+    function execProposalMessage(bytes32 proposalID, bytes memory messages)
+        external
+        override
+        onlyDAO
+    {
+        Proposal storage p = _proposals[proposalID];
+
+        require(p.proposalID == proposalID, "not exist");
+        require(p.status == ProposalStatus.AGREE, "not succ proposal");
+
+        Topic memory topic = _getTopicInfo(p.topicID);
+
+        bytes32 nowProposalID = topic.proposalIDs[topic.proposalIDs.length - 1];
+
+        console.log("execute succeed");
+
+        emit ExecuteOffchainMessage(
+            topic.topicID,
+            _msgSender(),
+            proposalID,
+            _dao,
+            nowProposalID,
+            messages,
+            block.timestamp
+        );
+    }
+
     // function _setTopicID(Proposal storage p) private {
     //     (, bytes memory data) = p.metadata._get(MetadataKeyID.TOPIC_ID);
     //     if (data.length == 0) {

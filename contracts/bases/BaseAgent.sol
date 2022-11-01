@@ -43,7 +43,13 @@ abstract contract BaseAgent is IDeploy, IAgent, IProposalInfo, BaseVerify {
         return 0x0;
     }
 
-    function isExecuted() external virtual view  override returns (bool executed) {
+    function isExecuted()
+        external
+        view
+        virtual
+        override
+        returns (bool executed)
+    {
         executed = _executed;
     }
 }

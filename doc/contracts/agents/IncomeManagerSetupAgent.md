@@ -73,6 +73,20 @@ bytes32 proposalID
 |`proposalID` | bytes32 | target proposal
 
 
+### isExecuted
+
+
+
+*Declaration:*
+```solidity
+function isExecuted(
+) external returns
+(bool executed)
+```
+
+
+
+
 ### getTypeID
 
 
