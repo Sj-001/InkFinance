@@ -4,11 +4,11 @@ pragma solidity ^0.8.0;
 library DutyID {
     // keccak256("dutyID.PROPOSER")
     bytes32 internal constant PROPOSER =
-        0x9afdbb55ddad3caca5623549b679d24148f7f60fec3d2cfc768e32e5f012096e;
+        0x4575c11fbfaf5400e74dbe9f6f86279ce134d6214445926cc50dccd877e75fa2;
 
     // keccak256("dutyID.VOTER")
     bytes32 internal constant VOTER =
-        0xf579da1548edf1a4b47140c7e8df0e1e9f881c48184756b7f660e33bbc767607;
+        0x241f6fe66d0c676e71b48b26e0b0ddb2dede4dca4534df353a6391c3d6d695e2;
 
     // keccak256("dutyID.SIGNER")
     bytes32 internal constant SIGNER =
@@ -22,7 +22,7 @@ library DutyID {
     bytes32 internal constant AUDITOR =
         0x7f014c5b03a1a6fcf5a57ebc1689669c0315c27f4755c182dbd0f35a51a754eb;
 
-    // keccak256("dutyID.InvestmentManager")
+    // keccak256("dutyID.INVESTOR")
     bytes32 internal constant INVESTOR =
-        0x1390b27e6a5b27b7b5a53fb7a4cd07990eb7a2e29f06fa68c29b387bcccece29;
+        0xfbc390bb4ea3b52619dc9b8204861b1badcad7b3f4969737509cb97638b81fb0;
 }
