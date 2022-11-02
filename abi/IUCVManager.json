@@ -2,29 +2,14 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "incomeItem",
-        "type": "string"
-      },
-      {
         "internalType": "address",
-        "name": "token",
+        "name": "ucv",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "remark",
-        "type": "string"
       }
     ],
-    "name": "depositToUCV",
+    "name": "setUCV",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

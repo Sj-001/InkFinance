@@ -151,32 +151,41 @@ contract TreasuryManagerAgent is BaseAgent {
             dutyIDs
         );
 
-        // setup payroll & payroll ucv
-        (typeID, bytesData) = proposalHandler.getProposalMetadata(
-            proposalID,
-            "ucvKey"
-        );
-        // deploy ucv
-        address ucvAddress = IDAO(_dao).deployByKey(
-            typeID,
-            bytesData.toBytes32(),
-            abi.encode(address(0))
-        );
+
 
         (typeID, bytesData) = proposalHandler.getProposalMetadata(
             proposalID,
             "ucvManagerKey"
         );
+
         // deploy ucv manager
         address ucvManager = IDAO(_dao).deployByKey(
             typeID,
             bytesData.toBytes32(),
-            abi.encode(ucvAddress, proposalID)
+            abi.encode(proposalID)
+        );
+
+
+
+        // setup payroll & payroll ucv
+        (typeID, bytesData) = proposalHandler.getProposalMetadata(
+            proposalID,
+            "ucvKey"
+        );
+
+
+
+
+        // deploy ucv
+        address ucvAddress = IDAO(_dao).deployByKey(
+            typeID,
+            bytesData.toBytes32(),
+            abi.encode(ucvManager)
         );
 
         IDAO(_dao).setupUCV(ucvAddress, ucvManager);
-
         _executed = true;
+        
     }
 
     function _setMemberDuties(bytes32 dutyID, bytes memory memberBytes)

@@ -64,17 +64,6 @@ interface IPayrollManager is IUCVManager {
         uint256 claimTimes
     );
 
-    /// @dev token = address(0) means chain gas token
-    event VaultDeposit(
-        address indexed dao,
-        address indexed ucv,
-        address indexed token,
-        string itemName,
-        uint256 depositeAmount,
-        address depositer,
-        string depositDesc,
-        uint256 depositeTime
-    );
 
     /// @notice once the multisigner role sign, this event will pass
     event PayrollSign(

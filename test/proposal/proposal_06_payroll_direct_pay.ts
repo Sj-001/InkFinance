@@ -38,7 +38,7 @@ describe("proposal related test", function () {
         var erc20Address = inkERC20.address;
 
         // // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 2);
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
         await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
@@ -82,7 +82,7 @@ describe("proposal related test", function () {
         // console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
         console.log("treasury committee address:", committeeAddress);
         
-        // await depositBalanceToUCV(masterDAO.address, erc20Address);
+        await depositBalanceToUCV(masterDAO.address, erc20Address);
 
         await setupAndSignVaultDirectPay(masterDAO.address, erc20Address);
 
@@ -105,6 +105,7 @@ describe("proposal related test", function () {
         // const erc20 = await ethers.getContractAt("IERC20", token);
         const erc20 = await ethers.getContractAt("InkERC20", token);
         const ucvManager = await ethers.getContractAt("PayrollUCVManager", ucvManagerAddress);
+        const ucv = await ethers.getContractAt("PayrollUCV", ucvAddress);
 
 
         console.log("previous chain token balance:",  await ethers.provider.getBalance(signers[0].address));
@@ -118,11 +119,11 @@ describe("proposal related test", function () {
         console.log("signer chain token balance: ", await erc20.balanceOf(signers[0].address));
         console.log("signer token balance: ", await erc20.balanceOf(signers[0].address));
 
-        await erc20.approve(ucvManagerAddress, tokenAmount);
+        await erc20.approve(ucvAddress, tokenAmount);
         
-        await ucvManager.depositToUCV("item1", token, tokenAmount, "remark");
+        await ucv.depositToUCV("item1", token, tokenAmount, "remark");
 
-        await ucvManager.depositToUCV("item2", "0x0000000000000000000000000000000000000000", ethAmount, "remark",{value: ethAmount});
+        await ucv.depositToUCV("item2", "0x0000000000000000000000000000000000000000", ethAmount, "remark",{value: ethAmount});
 
         // const transactionHash = await signers[0].sendTransaction({
         //     to: ucvAddress,

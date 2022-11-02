@@ -235,12 +235,12 @@ export function buildTreasurySetupProposal(operator:string, signer:string, audit
     };
 
 
-    headers[3] = {
-        "key":  "VoteFlow",
-        "typeID": keccak256(toUtf8Bytes("type.BYTES32")),
-        "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
-        "desc": toUtf8Bytes(""),
-    };
+    // headers[3] = {
+    //     "key":  "VoteFlow",
+    //     "typeID": keccak256(toUtf8Bytes("type.BYTES32")),
+    //     "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+    //     "desc": toUtf8Bytes(""),
+    // };
 
     // kvData[0] = {
     //     "key":  "key",

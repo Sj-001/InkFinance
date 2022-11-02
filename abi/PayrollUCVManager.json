@@ -6,11 +6,6 @@
   },
   {
     "inputs": [],
-    "name": "DepositeError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "HaveToSignThePreviousPay",
     "type": "error"
   },
@@ -299,61 +294,6 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "dao",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "ucv",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "itemName",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "depositeAmount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "depositer",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "depositDesc",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "depositeTime",
-        "type": "uint256"
-      }
-    ],
-    "name": "VaultDeposit",
-    "type": "event"
-  },
-  {
     "inputs": [],
     "name": "FIRST_PAY_ID",
     "outputs": [
@@ -421,34 +361,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "incomeItem",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "remark",
-        "type": "string"
-      }
-    ],
-    "name": "depositToUCV",
-    "outputs": [],
-    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -713,6 +625,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "ucv_",
+        "type": "address"
+      }
+    ],
+    "name": "setUCV",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

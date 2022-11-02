@@ -22,7 +22,7 @@ error ThePayeeNeedToClaimThePreviousPaymentFirst(address payee);
 error ThePayeeIsNotInThePayroll(address payee);
 error ThisPayrollScheduleDoesNotExist(uint256 scheduleID);
 error StartPayIDWrong();
-error DepositeError();
+
 error TheMemberIsNotInvestors(address payee);
 
 contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
@@ -126,8 +126,8 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         super.init(config_);
 
         _dao = dao_;
-        // @dev init controller and manager address
-        (_ucv, _treasurySetupProposal) = abi.decode(data_, (address, bytes32));
+        // @dev init proposal
+        (_treasurySetupProposal) = abi.decode(data_, (bytes32));
 
         console.log("payroll ucv manager has been initialized");
     }
@@ -467,40 +467,14 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         return schedule.paymentSigns[payID][signer];
     }
 
-    /// @inheritdoc IUCVManager
-    function depositToUCV(
-        string memory incomeItem,
-        address token,
-        uint256 amount,
-        string memory remark
-    ) external payable override {
-        if (token == address(0)) {
-            if (amount != msg.value) {
-                revert DepositeError();
-            }
+    function setUCV(address ucv_) external override {
+
+        if (msg.sender != _dao) {
+            revert TheAccountIsNotAuthroized(msg.sender);
         }
 
-        if (token != address(0x0)) {
-            IERC20(token).transferFrom(msg.sender, _ucv, amount);
-        } else {
-            console.log("my balance:", address(this).balance);
-            (bool succeed, ) = payable(_ucv).call{value: msg.value}("");
+        _ucv = ucv_;
 
-            if (!succeed) {
-                revert DepositeError();
-            }
-        }
-
-        emit VaultDeposit(
-            _dao,
-            _ucv,
-            token,
-            incomeItem,
-            amount,
-            msg.sender,
-            remark,
-            block.timestamp
-        );
     }
 
     function _send(address payable _to) public payable {

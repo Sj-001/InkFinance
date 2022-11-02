@@ -66,10 +66,13 @@ describe("proposal related test", function () {
 
         await theBoard.newProposal(proposal, true, "0x00");
 
+
+
         console.log("committee infos:", await masterDAO.getDAOCommittees());
 
         var proposalID = await masterDAO.getProposalIDByIndex(0);
-    
+        
+        console.log("proposal flow:", await masterDAO.getProposalFlow(proposalID))
 
         await voteProposalByThePublic(await masterDAO.address, proposalID);
 

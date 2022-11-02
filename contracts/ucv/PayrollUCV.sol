@@ -7,8 +7,23 @@ import "../interfaces/IUCV.sol";
 import "../utils/TransferHelper.sol";
 
 error OperateIsNowAllowed();
+error DepositeError();
 
 contract PayrollUCV is IUCV, BaseVerify {
+
+
+    /// @dev token = address(0) means chain gas token
+    event VaultDeposit(
+        address indexed dao,
+        address indexed token,
+        string itemName,
+        uint256 depositeAmount,
+        address depositer,
+        string depositDesc,
+        uint256 depositeTime
+    );
+
+
     address private _ucvController;
     address private _ucvManager;
     bool private _ucvManagerEnable;
@@ -43,7 +58,7 @@ contract PayrollUCV is IUCV, BaseVerify {
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
         _dao = dao_;
-        // _ucvController =
+        _ucvManager = abi.decode(data_, (address));
     }
 
     function setUCVManager(address ucvManager_) external override {
@@ -60,7 +75,9 @@ contract PayrollUCV is IUCV, BaseVerify {
         uint256 value,
         bytes memory data
     ) external override enableToExecute returns (bool) {
+
         if (token != address(0x0)) {
+
             IERC20(token).transfer(to, value);
             // TransferHelper.safeTransfer(token, to, value);
         } else {
@@ -68,6 +85,33 @@ contract PayrollUCV is IUCV, BaseVerify {
         }
 
         return true;
+    }
+
+        /// @inheritdoc IUCV
+    function depositToUCV(
+        string memory incomeItem,
+        address token,
+        uint256 amount,
+        string memory remark
+    ) external payable override {
+
+        if (token == address(0)) {
+            if (amount != msg.value) {
+                revert DepositeError();
+            }
+        } else {
+            IERC20(token).transferFrom(msg.sender, address(this), amount);
+        }
+
+        emit VaultDeposit(
+            _dao,
+            token,
+            incomeItem,
+            amount,
+            msg.sender,
+            remark,
+            block.timestamp
+        );
     }
 
     /// @inheritdoc IUCV

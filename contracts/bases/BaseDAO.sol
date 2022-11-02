@@ -1025,7 +1025,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         override
         onlyAgent
     {
-        IUCV(ucv).setUCVManager(ucvManager);
+        IUCVManager(ucvManager).setUCV(ucv);
     }
 
     function _setFlowStep(FlowInfo memory flow) internal {

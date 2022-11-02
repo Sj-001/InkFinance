@@ -34,4 +34,14 @@ interface IUCV is IDeploy {
 
     /// @dev get the UCV manager address
     function getManager() external view returns (address ucvManager);
+
+
+    function depositToUCV(
+        string memory incomeItem,
+        address token,
+        uint256 amount,
+        string memory remark
+    ) external payable;
+    
+        
 }
