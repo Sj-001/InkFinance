@@ -166,10 +166,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     modifier onlyAgent() {
         address[] memory agentAddress;
         bool exist = false;
-        console.log("compare agent:");
+        // console.log("compare agent:");
         for (uint256 i = 0; i < _agentKeys.length(); i++) {
-            console.log(_msgSender());
-            console.log(_agents[_agentKeys.at(i)]);
+            // console.log(_msgSender());
+            // console.log(_agents[_agentKeys.at(i)]);
             if (_msgSender() == _agents[_agentKeys.at(i)]) {
                 exist = true;
                 break;
@@ -235,10 +235,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         );
     }
 
-
-
-    
-    function getBadge() external view returns(address badge) {
+    function getBadge() external view returns (address badge) {
         badge = _badge;
     }
 
@@ -248,7 +245,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 flowID = _getProposalFlow(proposalID);
 
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[flowID];
-
 
         console.log("flowID --*************** ");
         console.logBytes32(flowID);
@@ -834,7 +830,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 proposalFlowID = IProposalHandler(_proposalHandlerAddress)
             .getProposalFlow(proposalID);
 
-
         if (proposalFlowID > 0) {
             bool support = false;
             for (
@@ -872,6 +867,17 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     {
         ProposalProgress storage info = _proposalInfo[proposalID];
         committeeInfo = info.nextCommittee;
+    }
+
+    function getVoteCommitteeInfo(bytes32 proposalID)
+        external
+        view
+        override
+        returns (address committee, bytes32 step)
+    {
+        ProposalProgress storage info = _proposalInfo[proposalID];
+        committee = info.nextCommittee.committee;
+        step = info.nextCommittee.step;
     }
 
     /// @dev verify if the committee is the next committee
@@ -992,16 +998,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         internal
     {
         if (!breakFlow) {
-            
             bytes32 flowID = info.flowID;
 
-            console.log("flow ID");
+            console.log("flow ID ");
             console.logBytes32(flowID);
 
             StepLinkInfo storage nowStep = _flowSteps[flowID][
                 info.nextCommittee.step
             ];
-
 
             info.nextCommittee.step = nowStep.nextStep;
             info.nextCommittee.committee = _flowSteps[flowID][nowStep.nextStep]
@@ -1063,11 +1067,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     steps[committeeInfo.step].nextStep = bytes32(0x0);
                 }
             }
-
-
-
-
-        
         } else {
             console.log(
                 "no action required #############################################################################################################################################################################################################################################################################################################################################################################################################################"
@@ -1116,6 +1115,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         console.log("next committee", info.nextCommittee.committee);
         if (info.nextCommittee.committee == address(0x0)) {
+            console.log("trigger final decision ------------------ ");
             IProposalHandler(_proposalHandlerAddress).decideProposal(
                 info.proposalID,
                 agree,

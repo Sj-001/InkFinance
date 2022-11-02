@@ -113,7 +113,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         bytes32 factoryKey,
         bytes calldata initData
     ) internal returns (address _newContract) {
-        console.log("deploy start ##### ");
+        // console.log("deploy start ##### ");
 
         (bytes32 _typeID, bytes memory addressBytes) = IConfigManager(_config)
             .getKV(factoryKey);
@@ -139,12 +139,12 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             msg.sender
         );
         // require(false, "here predict ");
-        console.log("predict address", afterDeployedAddressPredict);
+        // console.log("predict address", afterDeployedAddressPredict);
 
         if (
             _deployedContracts[factoryKey].contains(afterDeployedAddressPredict)
         ) {
-            console.log("already deployed before <ALREADY>");
+            // console.log("already deployed before <ALREADY>");
             return afterDeployedAddressPredict;
         }
 
@@ -155,7 +155,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         // require(false, toAsciiString(implementAddress));
 
-        console.log("implement address:", implementAddress);
+        // console.log("implement address:", implementAddress);
 
         bytes32 salt = _getSalt(randomSalt, _typeID, factoryKey, msg.sender);
 
@@ -173,7 +173,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             );
         }
 
-        console.log("generated address:", generatedContract);
+        // console.log("generated address:", generatedContract);
         InkBeacon inkBeacon = new InkBeacon(implementAddress, _config);
         // miss proxy init
         // console.log("start call proxy init");

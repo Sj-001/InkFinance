@@ -98,6 +98,20 @@ bytes data
 | --- | --- |
 |`proposalID` | generated proposal id
 
+### getBadge
+
+
+
+*Declaration:*
+```solidity
+function getBadge(
+) external returns
+(address badge)
+```
+
+
+
+
 ### _setupProposalFlow
 
 
@@ -742,6 +756,20 @@ function turnBytesToAddress(
 function getNextVoteCommitteeInfo(
 ) external returns
 (struct IProposalHandler.CommitteeInfo committeeInfo)
+```
+
+
+
+
+### getVoteCommitteeInfo
+
+
+
+*Declaration:*
+```solidity
+function getVoteCommitteeInfo(
+) external returns
+(address committee, bytes32 step)
 ```
 
 

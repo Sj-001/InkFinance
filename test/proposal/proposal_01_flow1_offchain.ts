@@ -1,4 +1,4 @@
-
+import chai from "chai";
 import {Wallet, Contract} from "ethers";
 import {MockProvider} from "ethereum-waffle";
 import {keccak256, toUtf8Bytes } from 'ethers/lib/utils';
@@ -13,7 +13,7 @@ import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY,
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
 import { buildMasterDAOInitData, buildPayrollPayProposal, buildPayrollSetupProposal, buildTreasurySetupProposal } from '../shared/parameters'; 
 
-
+const { expect } = chai;
 import {defaultAbiCoder} from '@ethersproject/abi';
 
 // const {
@@ -50,39 +50,47 @@ describe("proposal related test", function () {
         var proposal = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address);
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
-        
+        // console.log("proposal:", proposal);
 
-        console.log("proposal:", proposal);
-
-        var theBoardAddress = await masterDAO.getDeployedContractByKey("0x9386c0f239c958604010fb0d19f447c347da25b93a863f07e6c4a1a5eca03672");
+        var theBoardAddress = await masterDAO.getDeployedContractByKey(THE_BOARD_COMMITTEE_KEY);
         var theBoardFactory = await ethers.getContractFactory("TheBoard");
         // var theBoard = theBoardFactory.attach(flowSteps[0].committee);
         var theBoard = theBoardFactory.attach(theBoardAddress);
 
         await theBoard.newProposal(proposal, true, "0x00");
 
-        
         console.log("committee infos:", await masterDAO.getDAOCommittees());
 
         var proposalID = await masterDAO.getProposalIDByIndex(0);
     
-        console.log("first proposal id: ", proposalID);
+
         await voteProposalByThePublic(await masterDAO.address, proposalID);
 
-        // once decide, 
         await tallyVotesByThePublic(await masterDAO.address,  proposalID);
+
+        var proposalSummery = await masterDAO.getProposalSummary(proposalID);
+
+        console.log("summery:", proposalSummery);
+
+        expect(proposalSummery.status).to.be.equal(0);
+
 
         await voteProposalByTheBoard(await masterDAO.address, proposalID);
 
-        // once decide, 
         await tallyVotesByTheBoard(await masterDAO.address,  proposalID);
 
+        // console.log("first proposal id: ", proposalID);
+        // console.log("proposal summery:", proposalSummery);
 
-        var committeeAddress = await masterDAO.getDeployedContractByKey(THE_TREASURY_COMMITTEE_KEY);
 
-        console.log("treasury committee:", committeeAddress);
+        proposalSummery = await masterDAO.getProposalSummary(proposalID);
+        expect(proposalSummery.status).to.be.equal(1);
 
-        console.log("dao committees: ", await masterDAO.getDAOCommittees());
+        // var committeeAddress = await masterDAO.getDeployedContractByKey(THE_TREASURY_COMMITTEE_KEY);
+
+        // console.log("treasury committee:", committeeAddress);
+
+        // console.log("dao committees: ", await masterDAO.getDAOCommittees());
 
 
         
@@ -101,14 +109,15 @@ describe("proposal related test", function () {
 
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
         var masterDAO = await masterDAOFactory.attach(daoAddress);
-        var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
-        console.log("voteProposalByThePublic vote committee info:", await committeeInfo);
-        // var theVoteCommitteeFactory = await ethers.getContractFactory("TheBoard");
-        // var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
-        const theVoteCommittee = await ethers.getContractAt("ICommittee", committeeInfo.committee);
-        var voteIdentity = {"proposalID":proposalID, "step": committeeInfo.step};
+
+        var thePublicAddress = await masterDAO.getDeployedContractByKey(THE_PUBLIC_COMMITTEE_KEY);
+
+        console.log("voteProposalByThePublic vote committee info:", await thePublicAddress);
+
+        const theVoteCommittee = await ethers.getContractAt("ThePublic", thePublicAddress);
+        var voteIdentity = {"proposalID":proposalID, "step": "0x0000000000000000000000000000000000000000000000000000000000000000"};
         
-        await theVoteCommittee.vote(voteIdentity, true, 10, "", "0x00");
+        await theVoteCommittee.vote(voteIdentity, true, 1000, "", "0x00");
 
     }
 
@@ -118,13 +127,15 @@ describe("proposal related test", function () {
 
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
         var masterDAO = await masterDAOFactory.attach(daoAddress);
-        var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
-        console.log("voteProposalByTheBoard vote committee info:", await committeeInfo);
-        // var theVoteCommitteeFactory = await ethers.getContractFactory("TheBoard");
-        // var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
-        const theVoteCommittee = await ethers.getContractAt("ICommittee", committeeInfo.committee);
-        var voteIdentity = {"proposalID":proposalID, "step": committeeInfo.step};
+
+        var theBoardAddress = await masterDAO.getDeployedContractByKey(THE_BOARD_COMMITTEE_KEY);
+
+        console.log("voteProposalByTheBoard vote committee info:", await theBoardAddress);
+
+        const theVoteCommittee = await ethers.getContractAt("TheBoard", theBoardAddress);
+        var voteIdentity = {"proposalID":proposalID, "step": "0x0000000000000000000000000000000000000000000000000000000000000000"};
         
+
         await theVoteCommittee.vote(voteIdentity, true, 10, "", "0x00");
 
     }
@@ -179,7 +190,7 @@ describe("proposal related test", function () {
         var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
 
         console.log("vote detail the vote committee :", committeeInfo);
-        var voteIdentity = {"proposalID":proposalID, "step":committeeInfo.step};
+        var voteIdentity = {"proposalID":proposalID, "step":"0x0000000000000000000000000000000000000000000000000000000000000000"};
         
         await theVoteCommittee.tallyVotes(voteIdentity, "0x00");
         
@@ -197,7 +208,7 @@ describe("proposal related test", function () {
         var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
 
         console.log("vote detail the vote committee :", committeeInfo);
-        var voteIdentity = {"proposalID":proposalID, "step":committeeInfo.step};
+        var voteIdentity = {"proposalID":proposalID, "step":"0x0000000000000000000000000000000000000000000000000000000000000000"};
         
         await theVoteCommittee.tallyVotes(voteIdentity, "0x00");
         

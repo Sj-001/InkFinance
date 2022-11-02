@@ -144,10 +144,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     {
         bytes32 proposalID = _getTopicKeyProposal(topicID, key);
 
-        // console.log("get topic key value");
-        // console.logBytes32(topicID);
-        // console.logBytes32(proposalID);
-
         // if (!_isProposalExist(proposalID)) {
         //     return (typeID, data);
         // }
@@ -212,10 +208,10 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         );
 
         if (typeID == TypeID.BYTES32) {
-            console.log("Proposal Handler");
+            // console.log("Proposal Handler");
 
             bytes32 value = abi.decode(voteFlow, (bytes32));
-            console.logBytes32(value);
+            // console.logBytes32(value);
             if (value > 0) {
                 flowID = value;
             }
@@ -430,8 +426,8 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             );
         }
 
-        console.logBytes32("proposalID::::");
-        console.logBytes32(p.proposalID);
+        // console.logBytes32("proposalID::::");
+        // console.logBytes32(p.proposalID);
 
         p.topicID = proposal.topicID;
         for (uint256 i = 0; i < proposal.metadata.length; i++) {
@@ -440,8 +436,8 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             itemValue.data = proposal.metadata[i].data;
             p.metadata[proposal.metadata[i].key] = itemValue;
 
-            console.log("key: ", proposal.metadata[i].key);
-            console.logBytes(proposal.metadata[i].data);
+            // console.log("key: ", proposal.metadata[i].key);
+            // console.logBytes(proposal.metadata[i].data);
         }
 
         p.kvData._init();
@@ -460,6 +456,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         bytes calldata data
     ) external override onlyDAO {
         Proposal storage proposal = _proposals[proposalID];
+
         if (agree == false) {
             proposal.status = ProposalStatus.DENY;
         } else {

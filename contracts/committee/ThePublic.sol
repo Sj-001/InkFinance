@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IProposalHandler.sol";
 import "../bases/BaseCommittee.sol";
+import "../libraries/defined/DutyID.sol";
 import "hardhat/console.sol";
 
 contract ThePublic is BaseCommittee {
@@ -46,6 +47,9 @@ contract ThePublic is BaseCommittee {
         public
         override
     {
+        if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
+            revert YouDoNotHaveDutyToOperate();
+        }
         _tallyVotes(identity, data);
     }
 

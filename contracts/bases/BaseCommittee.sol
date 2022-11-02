@@ -227,17 +227,14 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         uint256 idx = 0;
         address currentVoter = detail[startVoter].link._getNextAddr();
 
-        console.log("current: ", currentVoter);
-
         while (idx < pageSize && !LChainLink._isEmpty(currentVoter)) {
-            console.log("start loop");
-
             PersonVoteDetail storage voteDetail = detail[currentVoter];
 
             voteDetails[idx].voter = currentVoter;
             voteDetails[idx].count = voteDetail.voteCount;
 
             currentVoter = detail[currentVoter].link._getNextAddr();
+
             idx++;
         }
 
@@ -309,12 +306,10 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     function _tallyVotes(VoteIdentity calldata identity, bytes memory data)
         internal
     {
-        console.log("parent dao:", getParentDAO());
         // @todo verify duty
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
         // @todo verify if it's expired.
         bool passOrNot = _calculateVoteResults(identity);
-        console.log("pass or not", passOrNot);
 
         VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
         if (passOrNot) {
@@ -342,6 +337,14 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         VoteIdentity memory identity
     ) internal view returns (bool) {
         if (proposal.status != IProposalInfo.ProposalStatus.PENDING) {
+            return false;
+        }
+
+        (address committee, ) = IProcessHandler(_parentDAO)
+            .getVoteCommitteeInfo(proposal.proposalID);
+        console.log("current committee is: ", committee);
+        if (committee != address(this)) {
+            console.log("wrong step ################################# ");
             return false;
         }
 

@@ -24,7 +24,6 @@ contract TheBoard is BaseCommittee {
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
         _init(dao_, config_, data_);
-
         // InitData memory initData = abi.decode(data_, (InitData));
         // makeProposalLockVotes = initData.makeProposalLockVotes;
         // _init(admin, addrRegistry, initData.baseInitData);
@@ -38,14 +37,15 @@ contract TheBoard is BaseCommittee {
         bool commit,
         bytes calldata data
     ) external override returns (bytes32 proposalID) {
-        console.log("parent dao:", getParentDAO());
         // valid have dutyID to create the proposal
+        if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
+            revert YouDoNotHaveDutyToOperate();
+        }
+
         // valid the right step
         // valid the status of the proposal
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
         proposalID = proposalHandler.newProposal(proposal, commit, data);
-        console.log("making proposal:");
-        console.logBytes32(proposalID);
     }
 
     /// @inheritdoc IVoteHandler
@@ -69,6 +69,9 @@ contract TheBoard is BaseCommittee {
         external
         override
     {
+        if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
+            revert YouDoNotHaveDutyToOperate();
+        }
         _tallyVotes(identity, data);
     }
 

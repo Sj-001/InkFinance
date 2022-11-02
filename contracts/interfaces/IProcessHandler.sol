@@ -1,5 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+import "./IProposalInfo.sol";
 
 /// @title IProcessHandler
 /// @author InkTech <tech-support@inkfinance.xyz>
@@ -13,4 +14,9 @@ interface IProcessHandler {
         external
         view
         returns (uint256 expiration);
+
+    function getVoteCommitteeInfo(bytes32 proposalID)
+        external
+        view
+        returns (address committee, bytes32 step);
 }

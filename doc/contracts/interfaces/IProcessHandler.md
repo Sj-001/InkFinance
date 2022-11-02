@@ -31,4 +31,18 @@ function getVoteExpirationTime(
 
 
 
+### getVoteCommitteeInfo
+
+
+
+*Declaration:*
+```solidity
+function getVoteCommitteeInfo(
+) external returns
+(address committee, bytes32 step)
+```
+
+
+
+
 ## 5.Events
