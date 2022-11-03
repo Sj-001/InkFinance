@@ -205,6 +205,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _proposalID = _proposalsArray.at(index);
     }
 
+    
+    function getMinPledgeRequired() external view returns(uint256) {
+        return _minPledgeRequired;
+    }
+
     /// @inheritdoc IProposalHandler
     function newProposal(
         NewProposalInfo calldata proposal,
