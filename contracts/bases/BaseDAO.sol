@@ -205,7 +205,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _proposalID = _proposalsArray.at(index);
     }
 
-    
+
     function getMinPledgeRequired() external view returns(uint256) {
         return _minPledgeRequired;
     }
@@ -304,7 +304,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             uint256 minEffectiveWallets
         )
     {
-        minAgreeRatio = 60;
+        minAgreeRatio = 5 * 1e17;
         minEffectiveVotes = _minEffectiveVotes;
         minEffectiveWallets = _minEffectiveVoteWallets;
 
@@ -330,7 +330,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             uint256 minEffectiveWallets
         )
     {
-        minAgreeRatio = 60;
+        minAgreeRatio = 5 * 1e17;
         minEffectiveVotes = _minEffectiveVotes;
         minEffectiveWallets = _minEffectiveVoteWallets;
     }

@@ -47,7 +47,7 @@ describe("proposal related test", function () {
         console.log("dao address:", masterDAO.address);
         // // select one flow of the DAO
 
-        var proposal = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address);
+        var proposal = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address);
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
         
@@ -83,6 +83,9 @@ describe("proposal related test", function () {
         var treasurySetupPropoalTopicID = await masterDAO.getProposalTopic(treasurySetupProposalID);
         console.log("treasury setup proposal topic:: ", treasurySetupPropoalTopicID);
 
+
+
+        /*
         // proposal category = payroll?
         await makeSetupPayrollProposal(committeeAddress, erc20Address, treasurySetupPropoalTopicID);
 
@@ -113,7 +116,7 @@ describe("proposal related test", function () {
         var payrollProposalSummary = await masterDAO.getProposalSummary(payrollProposalID);
         console.log("payroll proposal status:: ", payrollProposalSummary.status);
         
-
+        */
 
     });
 
@@ -182,6 +185,10 @@ describe("proposal related test", function () {
 
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
         
+        const signers = await ethers.getSigners();
+
+        const denySigner = signers[1];
+
         console.log("voteProposalByThePublic proposalID", proposalID);
 
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
@@ -192,8 +199,13 @@ describe("proposal related test", function () {
         // var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
         const theVoteCommittee = await ethers.getContractAt("ICommittee", committeeInfo.committee);
         var voteIdentity = {"proposalID":proposalID, "step": committeeInfo.step};
+
+
+
+        console.log("vote committee address:", committeeInfo.committee);
         
-        await theVoteCommittee.vote(voteIdentity, true, 10, "", "0x00");
+        await theVoteCommittee.vote(voteIdentity, true, 51, "", "0x00");
+        await theVoteCommittee.connect(denySigner).vote(voteIdentity, false, 50, "", "0x00");
 
     }
 

@@ -123,7 +123,7 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         mds[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")), "0x00"]);
 
 
-        var badgeName = "badgeName1";
+        var badgeName = "";
         var badgeTotal = ethers.utils.parseEther("10000000");
         var daoLogo = "daoDefaultLogo";
 

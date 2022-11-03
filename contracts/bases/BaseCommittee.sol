@@ -256,6 +256,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         }
 
         if (_checkDeadline(proposal)) {
+
             return false;
         }
 
@@ -300,6 +301,11 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             agree =
                 (voteInfo.agreeVotes * 1e18) / (voteInfo.totalVotes) >
                 minAgreeRatio;
+
+
+            console.log("######", (voteInfo.agreeVotes * 1e18) / (voteInfo.totalVotes) );
+            console.log("######", minAgreeRatio );
+
         } else {
             agree = false;
         }
