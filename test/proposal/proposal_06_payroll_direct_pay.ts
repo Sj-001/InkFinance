@@ -64,6 +64,8 @@ describe("proposal related test", function () {
         // // console.log("first proposal id: ", proposalID);
         await voteProposalByThePublic(await masterDAO.address, proposalID);
 
+
+    
         // // once decide, 
         await tallyVotes(await masterDAO.address, proposalID);
         
@@ -87,6 +89,9 @@ describe("proposal related test", function () {
         await setupAndSignVaultDirectPay(masterDAO.address, erc20Address);
 
         await setupAndSignInvestmentDirectPay(masterDAO.address, erc20Address);
+
+
+    
 
 
     });

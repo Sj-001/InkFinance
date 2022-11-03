@@ -45,11 +45,18 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         address stakingAddr;
         string badgeName;
         uint256 badgeTotal;
+        // address badgeAddress;
         string daoLogo;
         uint256 minPledgeRequired;
         uint256 minEffectiveVotes;
         uint256 minEffectiveVoteWallets;
+        bytes32 factoryManagerKey;
+        uint256 defaultFlowIDIndex;
         FlowInfo[] flows;
+        bytes32 proposalHandlerKey;
+        bytes32 inkBadgeKey;
+        address badge;
+        bytes[] committees;
         */
         var stakingAddress = erc20Address;
         /*
@@ -133,8 +140,8 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
 
 
 
-        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, bytes[])'];
-        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, committesInfo];
+        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[])'];
+        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, "0x0000000000000000000000000000000000000000", committesInfo];
         var masterDAOInitialData = defaultAbiCoder.encode(tupleSting,
              [tupleData]);
         // console.log("dao init data:", masterDAOInitialData);

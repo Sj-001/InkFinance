@@ -59,9 +59,8 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         bytes calldata data
     ) internal {
         super.init(config_);
-
-        console.log("start to init");
         _parentDAO = dao_;
+
         (string memory name, bytes memory duties) = abi.decode(
             data,
             (string, bytes)
@@ -121,13 +120,14 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     }
 
     function _hasDutyToOperate(bytes32 dutyID, address operator)
-        internal
+        internal view 
         returns (bool hasDutyToOperate)
     {
         hasDutyToOperate = IDutyControl(getParentDAO()).hasDuty(
             operator,
             dutyID
         );
+
     }
 
     /// @dev by default, vote require pledge
@@ -228,6 +228,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         address currentVoter = detail[startVoter].link._getNextAddr();
 
         while (idx < pageSize && !LChainLink._isEmpty(currentVoter)) {
+
             PersonVoteDetail storage voteDetail = detail[currentVoter];
 
             voteDetails[idx].voter = currentVoter;
@@ -258,11 +259,19 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             return false;
         }
 
-        // if(!_checkBadge(proposal, user)){
-        //   return false;
-        // }
+        if(!_hasRequiredVoteBadge(proposal, user)){
+          console.log("no badge");
+          return false;
+        }
 
         return true;
+    }
+
+
+    function _hasRequiredVoteBadge(ProposalSummary memory proposal, address user) internal view returns (bool has) {
+
+        return IDAO(_parentDAO).hasDAOBadges(user);
+
     }
 
     function _calculateVoteResults(VoteIdentity memory identity)
@@ -271,7 +280,6 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     {
         // require(_getVoteExpiration(proposal) < block.timestamp, "vote not end");
         // require(_checkProposalStatus(proposal, identity), "no right proposal");
-
         (
             uint256 minAgreeRatio,
             uint256 minEffectiveVotes,

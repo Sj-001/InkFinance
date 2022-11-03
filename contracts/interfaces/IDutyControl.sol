@@ -28,7 +28,7 @@ interface IDutyControl {
     /// @param dutyID the target duty
     /// @return exist exist or not
     function hasDuty(address account, bytes32 dutyID)
-        external
+        external view 
         returns (bool exist);
 
     /// @dev find out how many users have this duty

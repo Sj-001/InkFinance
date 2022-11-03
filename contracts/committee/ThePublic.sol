@@ -34,12 +34,18 @@ contract ThePublic is BaseCommittee {
         string calldata feedback,
         bytes calldata data
     ) external override {
-        console.log(
-            "public voting ------------------------------------------------------------------------------------ "
-        );
-
         // it's public everyone has duty to vote
         _vote(identity, agree, count, true, feedback, data);
+    }
+
+    /// @inheritdoc IVoteHandler
+    function allowToVote(
+        VoteIdentity calldata identity,
+        address voteUser
+    ) external view override returns (bool) {
+
+        return allowOperate(identity, voteUser);
+    
     }
 
     /// @inheritdoc ICommittee

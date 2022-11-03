@@ -57,6 +57,7 @@ interface IDAO is
     //     bytes memory functionSignature
     // ) external returns (bool success, bytes memory returnedBytes);
 
+    
     /// @dev check the account has badges or not
     function hasDAOBadges(address account)
         external

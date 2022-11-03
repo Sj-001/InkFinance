@@ -76,6 +76,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         FlowInfo[] flows;
         bytes32 proposalHandlerKey;
         bytes32 inkBadgeKey;
+        address badge;
         bytes[] committees;
     }
 
@@ -344,7 +345,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes calldata data
     ) public virtual returns (bytes memory callbackEvent) {
         super.init(config_);
-
+        
+        console.log("PROPOSER ##### ############################################################");
+        console.logBytes32(keccak256("dutyID.PROPOSER"));
         /// board vote
         _defaultFlows.push(
             0x0000000000000000000000000000000000000000000000000000000000000000
@@ -386,14 +389,19 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             _setFlowStep(initData.flows[i]);
         }
 
-        if (bytes(initData.badgeName).length != 0) {
-            _badge = _createBadge(
-                initData.inkBadgeKey,
-                initData.badgeName,
-                initData.badgeTotal,
-                admin_
-            );
-            emit NewBadgeCreated(_badge, initData.name, initData.badgeTotal);
+        if (initData.badge != address(0)) {
+            _badge = initData.badge;
+        } else {
+            // create new badge
+            if (bytes(initData.badgeName).length != 0) {
+                _badge = _createBadge(
+                    initData.inkBadgeKey,
+                    initData.badgeName,
+                    initData.badgeTotal,
+                    admin_
+                );
+                emit NewBadgeCreated(_badge, initData.name, initData.badgeTotal);
+            }
         }
 
         _proposalHandlerAddress = _deployByFactoryKey(
@@ -905,6 +913,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         info.lastOperationTimestamp = block.timestamp;
     }
 
+    
     function _deployByFactoryKey(
         bool randomSalt,
         bytes32 typeID,
@@ -1020,6 +1029,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
+
+
     function setupUCV(address ucv, address ucvManager)
         external
         override
@@ -1092,9 +1103,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             c.committee = committeeAddress;
             c.name = committeeName;
             c.dutyIDs = dutyIDs;
-
-            console.log("all duty ids");
-            console.logBytes(c.dutyIDs);
             _committees.push(c);
         }
     }
@@ -1152,7 +1160,17 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         view
         override
         returns (bool hasBadges)
-    {}
+    {
+        if (_badge == address(0)) {
+            // require no badges
+            return true;
+        }
+        if (IERC20(_badge).balanceOf(account) > 0) {
+            return true;
+        }
+        
+        return false;
+    }
 
     /// @notice verify if the account could vote
     /// @dev if dao dao require the badeges to vote or enought pledged tokens
@@ -1207,4 +1225,5 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes memory initData = abi.encode(name, target, total);
         return IFactoryManager(_factoryAddress).clone(badgeKey, initData);
     }
+
 }
