@@ -47,7 +47,7 @@ describe("proposal related test", function () {
         console.log("dao address:", masterDAO.address);
         // // select one flow of the DAO
 
-        var proposal = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address);
+        var proposal = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address);
         
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
         
@@ -139,7 +139,7 @@ describe("proposal related test", function () {
         var timestamp = Date.now();
         var sec = Math.floor(timestamp / 1000);
 
-        var startTime = sec - 60 * 60 * 24;
+        var startTime = sec;//- 60 * 60 * 24;
         var period = 60 * 60;
         var payTimes = 10;
 
@@ -147,7 +147,7 @@ describe("proposal related test", function () {
         await ucvManager.setupPayroll("0x00", 1, startTime, period, payTimes, payees);
 
 
-        var results = await ucvManager.getPayIDs(1, 1, 10);
+        var results = await ucvManager.getPayIDs(1, 1, 1000);
 
         console.log("start date:", new Date(startTime * 1000))
         for(var i=0;i<results.length;i++) {

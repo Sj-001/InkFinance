@@ -70,8 +70,10 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         }
 
         uint256 latestID = getLatestPayID(scheduleID, block.timestamp);
+
+        console.log("lastest ID:", latestID);
         uint256 idLength = 0;
-        if (latestID - startPayID > 0) {
+        if (latestID - startPayID >= 0) {
             idLength = latestID - startPayID + 1;
         }
 
