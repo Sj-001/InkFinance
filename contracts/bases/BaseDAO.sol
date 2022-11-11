@@ -205,8 +205,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _proposalID = _proposalsArray.at(index);
     }
 
-
-    function getMinPledgeRequired() external view returns(uint256) {
+    function getMinPledgeRequired() external view returns (uint256) {
         return _minPledgeRequired;
     }
 
@@ -350,8 +349,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes calldata data
     ) public virtual returns (bytes memory callbackEvent) {
         super.init(config_);
-        
-        console.log("PROPOSER ##### ############################################################");
+
+        console.log(
+            "PROPOSER ##### ############################################################"
+        );
         console.logBytes32(keccak256("dutyID.PROPOSER"));
         /// board vote
         _defaultFlows.push(
@@ -405,7 +406,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     initData.badgeTotal,
                     admin_
                 );
-                emit NewBadgeCreated(_badge, initData.name, initData.badgeTotal);
+                emit NewBadgeCreated(
+                    _badge,
+                    initData.name,
+                    initData.badgeTotal
+                );
             }
         }
 
@@ -424,6 +429,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             admin_,
             address(initData.govTokenAddr),
             _name,
+            IERC20Metadata(address(initData.govTokenAddr)).name(),
             initData.daoLogo,
             block.timestamp
         );
@@ -918,7 +924,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         info.lastOperationTimestamp = block.timestamp;
     }
 
-    
     function _deployByFactoryKey(
         bool randomSalt,
         bytes32 typeID,
@@ -1033,8 +1038,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     function setupFlowInfo(FlowInfo memory flow) external override onlyAgent {
         _setFlowStep(flow);
     }
-
-
 
     function setupUCV(address ucv, address ucvManager)
         external
@@ -1173,7 +1176,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         if (IERC20(_badge).balanceOf(account) > 0) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -1230,5 +1233,4 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes memory initData = abi.encode(name, target, total);
         return IFactoryManager(_factoryAddress).clone(badgeKey, initData);
     }
-
 }

@@ -74,13 +74,11 @@ interface IVoteHandler {
         uint256 pageSize
     ) external view returns (MemberVoteInfo[] memory voteDetails);
 
-    
     /// @notice provide frontend to make sure if the user could vote at that moment
-    function allowToVote(
-        VoteIdentity calldata identity,
-        address voteUser
-    ) external view returns (bool allowToVote);
-
+    function allowToVote(VoteIdentity calldata identity, address voteUser)
+        external
+        view
+        returns (bool allowToVote);
 
     /// @notice get vote amount of a EOA
     /// @param identity target proposal, include step

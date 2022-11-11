@@ -25,6 +25,7 @@ import * as InkBadgeERC20ABI from "../../artifacts/contracts/tokens/InkBadgeERC2
 import * as PayrollUCVABI from "../../artifacts/contracts/ucv/PayrollUCV.sol/PayrollUCV.json";
 import * as IncomeManagerSetupAgentABI from "../../artifacts/contracts/agents/IncomeManagerSetupAgent.sol/IncomeManagerSetupAgent.json";
 import * as TreasuryIncomeManagerABI from "../../artifacts/contracts/ucv/TreasuryIncomeManager.sol/TreasuryIncomeManager.json";
+import * as MockNFTABI from "../../artifacts/contracts/mock/MockNFT.sol/MockNFT.json";
 
 
 const {loadFixture, deployContract} = waffle;
@@ -284,6 +285,15 @@ export async function InkERC20Fixture(_wallets: Wallet[], _mockProvider: MockPro
     return {inkERC20};
 }
 
+
+export async function MockNFTFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
+
+    const signers = await ethers.getSigners();
+    const mockNFT = await deployContract(signers[0], MockNFTABI, []);
+    await mockNFT.deployed();
+
+    return {mockNFT};
+}
 
 export async function ConfigManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
 

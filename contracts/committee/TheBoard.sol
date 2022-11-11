@@ -64,20 +64,18 @@ contract TheBoard is BaseCommittee {
         _vote(identity, agree, count, true, feedback, data);
     }
 
-    
     /// @inheritdoc IVoteHandler
-    function allowToVote(
-        VoteIdentity calldata identity,
-        address voteUser
-    ) external view override returns (bool) {
-
+    function allowToVote(VoteIdentity calldata identity, address voteUser)
+        external
+        view
+        override
+        returns (bool)
+    {
         if (!_hasDutyToOperate(DutyID.VOTER, voteUser)) {
             return false;
         }
         return allowOperate(identity, voteUser);
-    
     }
-
 
     /// @inheritdoc ICommittee
     function tallyVotes(VoteIdentity calldata identity, bytes memory data)

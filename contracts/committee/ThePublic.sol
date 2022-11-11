@@ -39,13 +39,13 @@ contract ThePublic is BaseCommittee {
     }
 
     /// @inheritdoc IVoteHandler
-    function allowToVote(
-        VoteIdentity calldata identity,
-        address voteUser
-    ) external view override returns (bool) {
-
+    function allowToVote(VoteIdentity calldata identity, address voteUser)
+        external
+        view
+        override
+        returns (bool)
+    {
         return allowOperate(identity, voteUser);
-    
     }
 
     /// @inheritdoc ICommittee

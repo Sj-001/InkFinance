@@ -188,6 +188,18 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "tokenType",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "total",
         "type": "uint256"
       },
@@ -244,6 +256,18 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "oncePay",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenType",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenID",
         "type": "uint256"
       },
       {
@@ -385,6 +409,16 @@
       },
       {
         "internalType": "uint256",
+        "name": "tokenType",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
       },
@@ -495,6 +529,16 @@
           {
             "internalType": "uint256",
             "name": "removedTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenType",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenID",
             "type": "uint256"
           }
         ],

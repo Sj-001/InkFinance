@@ -1,21 +1,27 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+
 import "../bases/BaseVerify.sol";
 
 import "../interfaces/IUCV.sol";
 import "../utils/TransferHelper.sol";
-
+import "hardhat/console.sol";
 error OperateIsNowAllowed();
 error DepositeError();
+error TokenTypeNotSupport(uint256 tokenType);
 
 contract PayrollUCV is IUCV, BaseVerify {
-
+    using EnumerableSet for EnumerableSet.UintSet;
 
     /// @dev token = address(0) means chain gas token
     event VaultDeposit(
         address indexed dao,
         address indexed token,
+        uint256 tokenType,
+        uint256 tokenID,
         string itemName,
         uint256 depositeAmount,
         address depositer,
@@ -23,12 +29,13 @@ contract PayrollUCV is IUCV, BaseVerify {
         uint256 depositeTime
     );
 
-
     address private _ucvController;
     address private _ucvManager;
     bool private _ucvManagerEnable;
 
     address private _dao;
+
+    mapping(address => EnumerableSet.UintSet) private ownedNFTs;
 
     /// @dev make sure msgSender is controller or manager, and manager has to be allow to do all the operation
     modifier enableToExecute() {
@@ -72,29 +79,28 @@ contract PayrollUCV is IUCV, BaseVerify {
     function transferTo(
         address to,
         address token,
+        uint256 tokenType,
+        uint256 tokenID,
         uint256 value,
         bytes memory data
     ) external override enableToExecute returns (bool) {
-
-        if (token != address(0x0)) {
-
-            IERC20(token).transfer(to, value);
-            // TransferHelper.safeTransfer(token, to, value);
+        console.log("do transfer");
+        if (tokenType == 721) {
+            IERC721(token).safeTransferFrom(address(this), to, tokenID, "");
+        } else if (tokenType == 20) {
+            if (token != address(0x0)) {
+                IERC20(token).transfer(to, value);
+                // TransferHelper.safeTransfer(token, to, value);
+            } else {
+                payable(to).transfer(value);
+            }
         } else {
-            payable(to).transfer(value);
+            revert TokenTypeNotSupport(tokenType);
         }
-
         return true;
     }
 
-        /// @inheritdoc IUCV
-    function depositToUCV(
-        string memory incomeItem,
-        address token,
-        uint256 amount,
-        string memory remark
-    ) external payable override {
-
+    function _depositeERC20(address token, uint256 amount) internal {
         if (token == address(0)) {
             if (amount != msg.value) {
                 revert DepositeError();
@@ -102,10 +108,33 @@ contract PayrollUCV is IUCV, BaseVerify {
         } else {
             IERC20(token).transferFrom(msg.sender, address(this), amount);
         }
+    }
 
+    function _depositeERC721(address token, uint256 tokenID) internal {
+        IERC721(token).safeTransferFrom(msg.sender, address(this), tokenID, "");
+    }
+
+    /// @inheritdoc IUCV
+    function depositToUCV(
+        string memory incomeItem,
+        address token,
+        uint256 tokenType,
+        uint256 tokenID,
+        uint256 amount,
+        string memory remark
+    ) external payable override {
+        if (tokenType == 20) {
+            _depositeERC20(token, amount);
+        } else if (tokenType == 721) {
+            _depositeERC721(token, tokenID);
+        } else {
+            revert TokenTypeNotSupport(tokenType);
+        }
         emit VaultDeposit(
             _dao,
             token,
+            tokenType,
+            tokenID,
             incomeItem,
             amount,
             msg.sender,
@@ -141,5 +170,14 @@ contract PayrollUCV is IUCV, BaseVerify {
         return
             interfaceId == type(IUCV).interfaceId ||
             interfaceId == type(IDeploy).interfaceId;
+    }
+
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external override returns (bytes4) {
+        return this.onERC721Received.selector;
     }
 }

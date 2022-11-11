@@ -111,15 +111,14 @@ contract TreasuryCommittee is BaseCommittee {
         signers = IDutyControl(getParentDAO()).getDutyOwners(DutyID.SIGNER);
     }
 
-
     /// @inheritdoc IVoteHandler
-    function allowToVote(
-        VoteIdentity calldata,
-        address
-    ) external pure override returns (bool) {
-
+    function allowToVote(VoteIdentity calldata, address)
+        external
+        pure
+        override
+        returns (bool)
+    {
         return false;
-    
     }
 
     /// @inheritdoc ICommittee

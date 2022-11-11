@@ -151,8 +151,6 @@ contract TreasuryManagerAgent is BaseAgent {
             dutyIDs
         );
 
-
-
         (typeID, bytesData) = proposalHandler.getProposalMetadata(
             proposalID,
             "ucvManagerKey"
@@ -165,16 +163,11 @@ contract TreasuryManagerAgent is BaseAgent {
             abi.encode(proposalID)
         );
 
-
-
         // setup payroll & payroll ucv
         (typeID, bytesData) = proposalHandler.getProposalMetadata(
             proposalID,
             "ucvKey"
         );
-
-
-
 
         // deploy ucv
         address ucvAddress = IDAO(_dao).deployByKey(
@@ -185,7 +178,6 @@ contract TreasuryManagerAgent is BaseAgent {
 
         IDAO(_dao).setupUCV(ucvAddress, ucvManager);
         _executed = true;
-        
     }
 
     function _setMemberDuties(bytes32 dutyID, bytes memory memberBytes)

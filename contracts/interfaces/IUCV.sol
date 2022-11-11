@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+
 import "./IDeploy.sol";
 
 /* 
@@ -16,7 +18,7 @@ UCV must be able to store deposit and payment records,
 with each record containing one metadata string that is supplied by the depositor or collector.
 
 */
-interface IUCV is IDeploy {
+interface IUCV is IDeploy, IERC721Receiver {
     event UCVTransfer(address to, uint256 value, bytes data, uint256 txGas);
 
     event UCVManagerDisabled(bool disabled);
@@ -26,6 +28,8 @@ interface IUCV is IDeploy {
     function transferTo(
         address to,
         address token,
+        uint256 tokenType,
+        uint256 tokenID,
         uint256 value,
         bytes memory data
     ) external returns (bool success);
@@ -35,13 +39,12 @@ interface IUCV is IDeploy {
     /// @dev get the UCV manager address
     function getManager() external view returns (address ucvManager);
 
-
     function depositToUCV(
         string memory incomeItem,
         address token,
+        uint256 tokenType,
+        uint256 tokenID,
         uint256 amount,
         string memory remark
     ) external payable;
-    
-        
 }

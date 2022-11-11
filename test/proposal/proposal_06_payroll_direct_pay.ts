@@ -6,7 +6,7 @@ import { Fixture } from 'ethereum-waffle'
 import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
-import { FactoryManagerFixture, InkERC20Fixture, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY } from '../shared/fixtures'; 
+import { MockNFTFixture ,FactoryManagerFixture, InkERC20Fixture, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY } from '../shared/fixtures'; 
 
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
 import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
@@ -90,6 +90,9 @@ describe("proposal related test", function () {
 
         await setupAndSignInvestmentDirectPay(masterDAO.address, erc20Address);
 
+        await setupAndSignInvestmentDirectPayNFT(masterDAO.address, erc20Address);
+
+
 
     
 
@@ -126,9 +129,9 @@ describe("proposal related test", function () {
 
         await erc20.approve(ucvAddress, tokenAmount);
         
-        await ucv.depositToUCV("item1", token, tokenAmount, "remark");
+        await ucv.depositToUCV("item1", token, 20, 0, tokenAmount, "remark");
 
-        await ucv.depositToUCV("item2", "0x0000000000000000000000000000000000000000", ethAmount, "remark",{value: ethAmount});
+        await ucv.depositToUCV("item2", "0x0000000000000000000000000000000000000000", 20, 0, ethAmount, "remark",{value: ethAmount});
 
         // const transactionHash = await signers[0].sendTransaction({
         //     to: ucvAddress,
@@ -138,6 +141,11 @@ describe("proposal related test", function () {
         console.log("after deposit chain token balance:", await ethers.provider.getBalance(ucvAddress))
 
         console.log("after deposit erc20 token balance:", await erc20.balanceOf(ucvAddress))
+
+
+
+
+
 
     }
 
@@ -164,7 +172,8 @@ describe("proposal related test", function () {
         var payTimes = 1;
  
         var payees = [];
-        payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "bytes"], [signers[1].address, token, 100, web3.eth.abi.encodeParameter("string", "desc1" )]);
+        // payee, token address, token type, token amount, token id
+        payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [signers[1].address, token, 20, 100, 0, web3.eth.abi.encodeParameter("string", "desc1" )]);
         await ucvManager.setupPayroll("0x00", 3, startTime, period, payTimes, payees);
 
         var results = await ucvManager.getPayIDs(1, 1, 10);
@@ -178,7 +187,6 @@ describe("proposal related test", function () {
         // console.log("sign time:", await ucvManager.getSignTime(1,1, signers[1].address));
 
         await ucvManager.signPayID(1,1);
-
 
         console.log("after transfer erc20 token balance:", await erc20.balanceOf(ucvAddress))
 
@@ -207,7 +215,8 @@ describe("proposal related test", function () {
         var payTimes = 10;
 
         var payees = [];
-        payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "bytes"], [signers[0].address, token, 200, web3.eth.abi.encodeParameter("string", "desc1" )]);
+        // payee, token address, token type, token amount, token id
+        payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [signers[0].address, token, 20, 200, 0, web3.eth.abi.encodeParameter("string", "desc1" )]);
         await ucvManager.setupPayroll("0x00", 2, startTime, period, payTimes, payees);
 
 
@@ -230,6 +239,67 @@ describe("proposal related test", function () {
     }
 
 
+    async function setupAndSignInvestmentDirectPayNFT(daoAddress:string, token:string) {
+
+        const signers = await ethers.getSigners();
+
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
+        
+
+        var ucvManagerAddress = await masterDAO.getDeployedContractByKey(PAYROLL_UCV_MANAGER_KEY);
+        var ucvAddress = await masterDAO.getDeployedContractByKey(PAYROLL_UCV_KEY);
+        var ucvManagerFactory = await ethers.getContractFactory("PayrollUCVManager");
+        var ucvManager = await ucvManagerFactory.attach(ucvManagerAddress);
+
+        const ucv = await ethers.getContractAt("PayrollUCV", ucvAddress);
+        // deposit NFT
+        const {mockNFT} = await loadFixture(MockNFTFixture);
+        await mockNFT.mint(10);
+
+        await mockNFT.approve(ucvAddress, 1);
+        await mockNFT.approve(ucvAddress, 2);
+
+        await ucv.depositToUCV("item3", mockNFT.address, 721, 1, 0, "remark");
+        await ucv.depositToUCV("item4", mockNFT.address, 721, 2, 0, "remark");
+
+
+        console.log("ucv token balance:", await mockNFT.balanceOf(ucv.address))
+
+
+        var timestamp = Date.now();
+        var sec = Math.floor(timestamp / 1000);
+
+        var startTime = sec - 60 * 60;
+        var period = 60 * 60;
+        var payTimes = 1;
+
+        var payees = [];
+        // payee, token address, token type, token amount, token id
+        payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [signers[0].address, mockNFT.address, 721, 0, 1,  web3.eth.abi.encodeParameter("string", "desc1" )]);
+        await ucvManager.setupPayroll("0x00", 2, startTime, period, payTimes, payees);
+
+        var results = await ucvManager.getPayIDs(3, 1, 10);
+
+        console.log("start date:", new Date(startTime * 1000))
+        for(var i=0;i<results.length;i++) {
+            console.log("payID:", results[i][0], ", actual pay time:", new Date(results[i][1] * 1000));
+        }
+
+        console.log("before sign erc721 token balance:", await mockNFT.balanceOf(signers[0].address));
+
+        await ucvManager.signPayID(3,1);
+        
+        console.log("after transfer erc721 token balance:", await mockNFT.balanceOf(signers[0].address))
+
+
+
+
+
+
+
+
+    }
 
     
 

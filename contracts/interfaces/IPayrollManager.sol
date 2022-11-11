@@ -16,6 +16,10 @@ interface IPayrollManager is IUCVManager {
         uint256 addedTimestamp;
         /// @dev when the user has been removed from the schedule
         uint256 removedTimestamp;
+        /// @dev tokenType
+        uint256 tokenType;
+        /// @dev only nft
+        uint256 tokenID;
     }
 
     struct PayrollSettings {
@@ -40,6 +44,8 @@ interface IPayrollManager is IUCVManager {
         uint256 indexed scheduleID,
         address indexed claimAddress,
         address token,
+        uint256 tokenType,
+        uint256 tokenID,
         uint256 total,
         uint256 claimedBatches,
         uint256 lastPayID,
@@ -64,7 +70,6 @@ interface IPayrollManager is IUCVManager {
         uint256 claimTimes
     );
 
-
     /// @notice once the multisigner role sign, this event will pass
     event PayrollSign(
         address indexed dao,
@@ -86,6 +91,8 @@ interface IPayrollManager is IUCVManager {
         address indexed payeeAddress,
         address token,
         uint256 oncePay,
+        uint256 tokenType,
+        uint256 tokenID,
         bytes desc
     );
 
@@ -115,6 +122,8 @@ interface IPayrollManager is IUCVManager {
         view
         returns (
             address token,
+            uint256 tokenType,
+            uint256 tokenID,
             uint256 amount,
             uint256 batches,
             uint256 lastPayID

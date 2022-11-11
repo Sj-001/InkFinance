@@ -106,9 +106,11 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         returns (uint256 latestPayID)
     {
         PayrollSettings memory setting = _payrollSetting[scheduleID];
-        if (startTimestamp <= setting.startTime) {
+
+        if (startTimestamp <= setting.startTime + 1) {
             return 0;
         }
+
         latestPayID =
             ((startTimestamp - setting.startTime - 1) / setting.claimPeriod) +
             1;
@@ -198,9 +200,14 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             (
                 address payee,
                 address token,
+                uint256 tokenType,
                 uint256 oncePay,
+                uint256 tokenID,
                 bytes memory desc
-            ) = abi.decode(payees[i], (address, address, uint256, bytes));
+            ) = abi.decode(
+                    payees[i],
+                    (address, address, uint256, uint256, uint256, bytes)
+                );
 
             address payeeAddress = payee;
 
@@ -218,6 +225,8 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             PaymentInfo storage paymentInfo = sc.payeePaymentInfo[payeeAddress];
             paymentInfo.token = token;
             paymentInfo.oncePay = oncePay;
+            paymentInfo.tokenType = tokenType;
+            paymentInfo.tokenID = tokenID;
 
             if (addAfterPayroll) {
                 paymentInfo.addedTimestamp = block.timestamp;
@@ -229,6 +238,8 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                 payeeAddress,
                 paymentInfo.token,
                 paymentInfo.oncePay,
+                tokenType,
+                tokenID,
                 desc
             );
         }
@@ -259,6 +270,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                 revert TheMemberIsNotInvestors(payee);
             }
         }
+
         if (setting.payrollType == 3) {
             // transfer to vault;
             // make sure it's contract
@@ -284,6 +296,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                     .payees
                     .values();
                 for (uint256 i = 0; i < scheduleMembers.length; i++) {
+                    console.log("do pay --- :", scheduleMembers[i]);
                     _transferSchedulePay(scheduleID, scheduleMembers[i]);
                 }
             }
@@ -360,25 +373,35 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         PayrollSchedule storage schedule = _schedules[scheduleID];
         // make sure it's member
         (
-            address token,
             uint256 amount,
             uint256 claimBatches,
             uint256 lastPayID
         ) = _getClaimableAmount(scheduleID, receiver);
 
-        if (amount > 0) {
-            PaymentInfo storage paymentInfo = schedule.payeePaymentInfo[
-                msg.sender
-            ];
+        PaymentInfo storage paymentInfo = schedule.payeePaymentInfo[receiver];
+
+        if (
+            (paymentInfo.tokenType == 20 && amount > 0) ||
+            (paymentInfo.tokenType == 721 && paymentInfo.tokenID >= 0)
+        ) {
             paymentInfo.lastClaimedPayID = lastPayID;
 
-            IUCV(_ucv).transferTo(receiver, token, amount, bytes(""));
+            IUCV(_ucv).transferTo(
+                receiver,
+                paymentInfo.token,
+                paymentInfo.tokenType,
+                paymentInfo.tokenID,
+                amount,
+                bytes("")
+            );
 
             emit PayrollClaimed(
                 _dao,
                 scheduleID,
                 receiver,
-                token,
+                paymentInfo.token,
+                paymentInfo.tokenType,
+                paymentInfo.tokenID,
                 amount,
                 claimBatches,
                 lastPayID,
@@ -399,19 +422,38 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         override
         returns (
             address token,
+            uint256 tokenType,
+            uint256 tokenID,
             uint256 amount,
             uint256 batches,
             uint256 lastPayID
         )
     {
-        return _getClaimableAmount(scheduleID, claimer);
+        PayrollSchedule storage schedule = _schedules[scheduleID];
+        if (!schedule.payees.contains(claimer)) {
+            revert ThePayeeIsNotInThePayroll(claimer);
+        }
+
+        (
+            uint256 amount,
+            uint256 batches,
+            uint256 lastPayID
+        ) = _getClaimableAmount(scheduleID, claimer);
+
+        return (
+            schedule.payeePaymentInfo[claimer].token,
+            schedule.payeePaymentInfo[claimer].tokenType,
+            schedule.payeePaymentInfo[claimer].tokenID,
+            amount,
+            batches,
+            lastPayID
+        );
     }
 
     function _getClaimableAmount(uint256 scheduleID, address claimer)
         internal
         view
         returns (
-            address token,
             uint256 amount,
             uint256 batches,
             uint256 lastPayID
@@ -444,19 +486,17 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         if (claimBatches > 0) {
             return (
-                schedule.payeePaymentInfo[claimer].token,
+                // schedule.payeePaymentInfo[claimer].token,
+                // schedule.payeePaymentInfo[claimer].tokenType,
+                // schedule.payeePaymentInfo[claimer].tokenID,
+
                 schedule.payeePaymentInfo[claimer].oncePay * claimBatches,
                 claimBatches,
                 lastSignedPayID
             );
         }
 
-        return (
-            schedule.payeePaymentInfo[claimer].token,
-            0,
-            0,
-            lastSignedPayID
-        );
+        return (0, 0, lastSignedPayID);
     }
 
     /// @inheritdoc IPayrollManager
@@ -470,13 +510,11 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
     }
 
     function setUCV(address ucv_) external override {
-
         if (msg.sender != _dao) {
             revert TheAccountIsNotAuthroized(msg.sender);
         }
 
         _ucv = ucv_;
-
     }
 
     function _send(address payable _to) public payable {

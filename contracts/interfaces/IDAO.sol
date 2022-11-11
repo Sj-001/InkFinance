@@ -28,6 +28,7 @@ interface IDAO is
         address indexed owner,
         address indexed token,
         string daoName,
+        string govTokenName,
         string daoLogo,
         uint256 createTime
     );
@@ -57,7 +58,6 @@ interface IDAO is
     //     bytes memory functionSignature
     // ) external returns (bool success, bytes memory returnedBytes);
 
-    
     /// @dev check the account has badges or not
     function hasDAOBadges(address account)
         external

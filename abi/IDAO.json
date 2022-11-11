@@ -116,6 +116,12 @@
       {
         "indexed": false,
         "internalType": "string",
+        "name": "govTokenName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
         "name": "daoLogo",
         "type": "string"
       },

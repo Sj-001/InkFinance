@@ -120,14 +120,14 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     }
 
     function _hasDutyToOperate(bytes32 dutyID, address operator)
-        internal view 
+        internal
+        view
         returns (bool hasDutyToOperate)
     {
         hasDutyToOperate = IDutyControl(getParentDAO()).hasDuty(
             operator,
             dutyID
         );
-
     }
 
     /// @dev by default, vote require pledge
@@ -228,7 +228,6 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         address currentVoter = detail[startVoter].link._getNextAddr();
 
         while (idx < pageSize && !LChainLink._isEmpty(currentVoter)) {
-
             PersonVoteDetail storage voteDetail = detail[currentVoter];
 
             voteDetails[idx].voter = currentVoter;
@@ -256,23 +255,22 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         }
 
         if (_checkDeadline(proposal)) {
-
             return false;
         }
 
-        if(!_hasRequiredVoteBadge(proposal, user)){
-          console.log("no badge");
-          return false;
+        if (!_hasRequiredVoteBadge(proposal, user)) {
+            console.log("no badge");
+            return false;
         }
 
         return true;
     }
 
-
-    function _hasRequiredVoteBadge(ProposalSummary memory proposal, address user) internal view returns (bool has) {
-
+    function _hasRequiredVoteBadge(
+        ProposalSummary memory proposal,
+        address user
+    ) internal view returns (bool has) {
         return IDAO(_parentDAO).hasDAOBadges(user);
-
     }
 
     function _calculateVoteResults(VoteIdentity memory identity)
@@ -302,10 +300,11 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
                 (voteInfo.agreeVotes * 1e18) / (voteInfo.totalVotes) >
                 minAgreeRatio;
 
-
-            console.log("######", (voteInfo.agreeVotes * 1e18) / (voteInfo.totalVotes) );
-            console.log("######", minAgreeRatio );
-
+            console.log(
+                "######",
+                (voteInfo.agreeVotes * 1e18) / (voteInfo.totalVotes)
+            );
+            console.log("######", minAgreeRatio);
         } else {
             agree = false;
         }
