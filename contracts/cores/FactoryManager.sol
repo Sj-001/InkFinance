@@ -48,15 +48,12 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     /// @dev only for test
     mapping(bytes32 => EnumerableSet.AddressSet) private _deployedContracts;
 
-
-    mapping(address=>InitialiedBeacon) implement2beacon;
+    mapping(address => InitialiedBeacon) implement2beacon;
 
     /// @dev config address
     address private _config;
 
     uint256 nounce = 0;
-
-    
 
     function supportsInterface(bytes4 interfaceId)
         external
@@ -162,11 +159,10 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
         // console.log("generated address:", generatedContract);
 
-        
+        InitialiedBeacon storage initialied = implement2beacon[
+            implementAddress
+        ];
 
-        InitialiedBeacon storage initialied = implement2beacon[implementAddress];
-
-        
         if (initialied.initialied == 0) {
             initialied.inkBeacon = new InkBeacon(implementAddress, _config);
             initialied.initialied = 1;

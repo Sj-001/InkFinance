@@ -200,6 +200,20 @@ function _checkAllowOperate(
 
 
 
+### _hasRequiredVoteBadge
+
+
+
+*Declaration:*
+```solidity
+function _hasRequiredVoteBadge(
+) internal returns
+(bool has)
+```
+
+
+
+
 ### _calculateVoteResults
 
 

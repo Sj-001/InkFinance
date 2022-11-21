@@ -27,7 +27,7 @@ contract InkProxy is Proxy {
         isProxyAdmin
     {
         _upgradeBeaconToAndCall(beacon, data, false);
-    } 
+    }
 
     //////////////////// init once
     function init2(
@@ -35,22 +35,18 @@ contract InkProxy is Proxy {
         address beacon_,
         bytes memory data_
     ) public payable {
-
         console.log("proxy: my address :: ", address(this));
-        
+
         if (_getAddrRegistry() != address(0x0)) {
-            
             console.log("proxy:  fall back ################# ");
-            
+
             _fallback();
-
         } else {
-
             console.log("proxy:  self init ################# ");
             _selfInit(config_, beacon_, data_);
-        } 
+        }
 
-                    // _selfInit(config_, beacon_, data_);
+        // _selfInit(config_, beacon_, data_);
     }
 
     //////////////////// setting proxy admin

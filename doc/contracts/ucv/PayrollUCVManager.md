@@ -231,7 +231,7 @@ function claimPayroll(
 ```solidity
 function getClaimableAmount(
 ) external returns
-(address token, uint256 amount, uint256 batches, uint256 lastPayID)
+(address token, uint256 tokenType, uint256 tokenID, uint256 amount, uint256 batches, uint256 lastPayID)
 ```
 
 
@@ -245,7 +245,7 @@ function getClaimableAmount(
 ```solidity
 function _getClaimableAmount(
 ) internal returns
-(address token, uint256 amount, uint256 batches, uint256 lastPayID)
+(uint256 amount, uint256 batches, uint256 lastPayID)
 ```
 
 
@@ -265,13 +265,13 @@ function getSignTime(
 
 
 
-### depositToUCV
+### setUCV
 
 
 
 *Declaration:*
 ```solidity
-function depositToUCV(
+function setUCV(
 ) external
 ```
 

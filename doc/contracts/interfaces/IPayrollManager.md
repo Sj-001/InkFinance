@@ -72,7 +72,7 @@ function claimPayroll(
 ```solidity
 function getClaimableAmount(
 ) external returns
-(address token, uint256 amount, uint256 batches, uint256 lastPayID)
+(address token, uint256 tokenType, uint256 tokenID, uint256 amount, uint256 batches, uint256 lastPayID)
 ```
 
 
@@ -153,12 +153,6 @@ when a new payroll has been setup, this event will be emit.
 |`startTime` | uint256 |  | first claimable time
 |`period` | uint256 |  | period between echo claim
 |`claimTimes` | uint256 |  |  how many times could claim under this payroll
-### VaultDeposit
-
-> token = address(0) means chain gas token
-
-
-
 ### PayrollSign
 once the multisigner role sign, this event will pass
 

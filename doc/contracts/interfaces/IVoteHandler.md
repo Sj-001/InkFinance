@@ -92,6 +92,20 @@ uint256 pageSize
 | --- | --- |
 |`voteDetails` | vote informations
 
+### allowToVote
+provide frontend to make sure if the user could vote at that moment
+
+
+*Declaration:*
+```solidity
+function allowToVote(
+) external returns
+(bool allowToVote)
+```
+
+
+
+
 ### getVoteDetailByAccount
 get vote amount of a EOA
 

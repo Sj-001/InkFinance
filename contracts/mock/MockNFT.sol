@@ -37,7 +37,11 @@ contract MockNFT is ERC721Enumerable, Ownable {
         _totalMinted = currentTokenID;
     }
 
-    function listMyNFT(address walletAddress) external view returns (uint256[] memory tokens) {
+    function listMyNFT(address walletAddress)
+        external
+        view
+        returns (uint256[] memory tokens)
+    {
         EnumerableSet.UintSet storage nftSets = ownedNFTs[walletAddress];
         tokens = nftSets.values();
     }

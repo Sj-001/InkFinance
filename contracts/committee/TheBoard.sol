@@ -7,7 +7,6 @@ import "../libraries/defined/DutyID.sol";
 
 import "hardhat/console.sol";
 
-
 error OnlyAllowToVoteOne();
 
 /// @notice the board committee has the highest priority of the DAO
@@ -81,7 +80,6 @@ contract TheBoard is BaseCommittee {
         if (!_hasDutyToOperate(DutyID.VOTER, voteUser)) {
             return false;
         }
-
 
         return allowOperate(identity, voteUser);
     }

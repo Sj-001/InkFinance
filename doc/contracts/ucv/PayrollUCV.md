@@ -105,6 +105,45 @@ function transferTo(
 
 
 
+### _depositeERC20
+
+
+
+*Declaration:*
+```solidity
+function _depositeERC20(
+) internal
+```
+
+
+
+
+### _depositeERC721
+
+
+
+*Declaration:*
+```solidity
+function _depositeERC721(
+) internal
+```
+
+
+
+
+### depositToUCV
+
+
+
+*Declaration:*
+```solidity
+function depositToUCV(
+) external
+```
+
+
+
+
 ### enableUCVManager
 
 
@@ -196,7 +235,27 @@ function supportsInterface(
 
 
 
+### onERC721Received
+
+
+
+*Declaration:*
+```solidity
+function onERC721Received(
+) external returns
+(bytes4)
+```
+
+
+
+
 ## 5.Events
+### VaultDeposit
+
+> token = address(0) means chain gas token
+
+
+
 ### ChainTokenDeposited
 
 

@@ -77,13 +77,13 @@ function updateBeacon(
 
 
 
-### init
+### init2
 
 
 
 *Declaration:*
 ```solidity
-function init(
+function init2(
 ) public
 ```
 

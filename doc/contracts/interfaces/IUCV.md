@@ -68,6 +68,19 @@ function getManager(
 
 
 
+### depositToUCV
+
+
+
+*Declaration:*
+```solidity
+function depositToUCV(
+) external
+```
+
+
+
+
 ## 5.Events
 ### UCVTransfer
 

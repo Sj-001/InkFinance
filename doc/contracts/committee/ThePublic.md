@@ -82,6 +82,20 @@ bytes data
 |`data` | bytes | extra data
 
 
+### allowToVote
+provide frontend to make sure if the user could vote at that moment
+
+
+*Declaration:*
+```solidity
+function allowToVote(
+) external returns
+(bool)
+```
+
+
+
+
 ### tallyVotes
 
 > calculate votes and find out if the proposal is passed

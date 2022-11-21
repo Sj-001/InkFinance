@@ -70,6 +70,20 @@ function getProposalIDByIndex(
 
 
 
+### getMinPledgeRequired
+
+
+
+*Declaration:*
+```solidity
+function getMinPledgeRequired(
+) external returns
+(uint256)
+```
+
+
+
+
 ### newProposal
 makeing a new proposal
 

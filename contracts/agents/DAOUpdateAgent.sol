@@ -8,7 +8,6 @@ import "../interfaces/IPayrollManager.sol";
 import "../utils/BytesUtils.sol";
 import "hardhat/console.sol";
 
-
 contract DAOUpdateAgent is BaseAgent {
     using BytesUtils for bytes;
 
@@ -28,15 +27,12 @@ contract DAOUpdateAgent is BaseAgent {
         override
         returns (bool success)
     {
-
-
         success = true;
     }
 
     /// @inheritdoc IAgent
     function exec(bytes32 proposalID) external override {
         console.log("execute pay manager here");
-
     }
 
     function getTypeID() external view override returns (bytes32 typeID) {}

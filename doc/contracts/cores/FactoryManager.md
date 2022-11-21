@@ -15,6 +15,7 @@ Factory is used to generate DAO instance
 | Var | Type |
 | --- | --- |
 | proxy | contract InkProxy |
+| implement2beacon | mapping(address => struct FactoryManager.InitialiedBeacon) |
 | nounce | uint256 |
 
 ## 3.Modifiers

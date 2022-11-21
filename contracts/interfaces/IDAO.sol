@@ -98,7 +98,6 @@ interface IDAO is
         bytes memory dutyIDs
     ) external;
 
-    /// @notice 
+    /// @notice
     // function updateInfo(uint256 managerPledge, uint256 minimumVote, uint256 minimumWallet, bytes32 voteProcess, bytes memory addedMembers, bytes memory removedMembers) external;
-
 }

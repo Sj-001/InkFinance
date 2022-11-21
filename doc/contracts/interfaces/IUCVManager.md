@@ -14,13 +14,13 @@
 
 ## 4.Functions
 
-### depositToUCV
-
+### setUCV
+set which ucv to manager
 
 
 *Declaration:*
 ```solidity
-function depositToUCV(
+function setUCV(
 ) external
 ```
 
