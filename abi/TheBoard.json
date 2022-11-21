@@ -6,6 +6,11 @@
   },
   {
     "inputs": [],
+    "name": "OnlyAllowToVoteOne",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "YouDoNotHaveDutyToOperate",
     "type": "error"
   },

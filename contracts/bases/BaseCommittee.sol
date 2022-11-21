@@ -330,7 +330,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         } else {
             voteInfo.status = VoteStatus.DENY;
         }
-
+        console.log("tally vote result", passOrNot);
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
 

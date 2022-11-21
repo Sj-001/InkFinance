@@ -50,11 +50,11 @@ describe("proposal related test", function () {
         var proposal = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address);
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
-        proposal.metadata[4] =  {
+        proposal.metadata[3] =  {
             "key":  "VoteFlow",
             "typeID": keccak256(toUtf8Bytes("type.BYTES32")),
-            "data": "0x0000000000000000000000000000000000000000000000000000000000000002",
-            "desc": toUtf8Bytes(""),
+            "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+            "desc": "0x0002",
         };
 
         console.log("proposal:", proposal);
@@ -82,7 +82,7 @@ describe("proposal related test", function () {
 
         console.log("summery:", proposalSummery);
 
-        expect(proposalSummery.status).to.be.equal(1);
+        expect(proposalSummery.status).to.be.equal(2);
 
 
         // await voteProposalByTheBoard(await masterDAO.address, proposalID);
@@ -127,7 +127,7 @@ describe("proposal related test", function () {
         const theVoteCommittee = await ethers.getContractAt("ThePublic", thePublicAddress);
         var voteIdentity = {"proposalID":proposalID, "step": "0x0000000000000000000000000000000000000000000000000000000000000000"};
         
-        await theVoteCommittee.vote(voteIdentity, true, 1000, "", "0x00");
+        await theVoteCommittee.vote(voteIdentity, false, 1000, "", "0x00");
 
     }
 

@@ -60,7 +60,7 @@
         "type": "bytes"
       }
     ],
-    "name": "init",
+    "name": "init2",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"

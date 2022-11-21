@@ -7,6 +7,9 @@ import "../libraries/defined/DutyID.sol";
 
 import "hardhat/console.sol";
 
+
+error OnlyAllowToVoteOne();
+
 /// @notice the board committee has the highest priority of the DAO
 contract TheBoard is BaseCommittee {
     /// @notice when create proposal, how many staked tokens need to be locked.
@@ -61,6 +64,10 @@ contract TheBoard is BaseCommittee {
             revert YouDoNotHaveDutyToOperate();
         }
 
+        if (count > 1) {
+            revert OnlyAllowToVoteOne();
+        }
+
         _vote(identity, agree, count, true, feedback, data);
     }
 
@@ -74,6 +81,8 @@ contract TheBoard is BaseCommittee {
         if (!_hasDutyToOperate(DutyID.VOTER, voteUser)) {
             return false;
         }
+
+
         return allowOperate(identity, voteUser);
     }
 

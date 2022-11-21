@@ -130,6 +130,7 @@ contract PayrollUCV is IUCV, BaseVerify {
         } else {
             revert TokenTypeNotSupport(tokenType);
         }
+        
         emit VaultDeposit(
             _dao,
             token,

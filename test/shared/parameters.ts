@@ -355,7 +355,7 @@ export function buildPayrollSetupProposal(erc20Address:string, topicID:string) {
     var periodBytes = web3.eth.abi.encodeParameter("uint256",5 );
     var claimTimesByte = web3.eth.abi.encodeParameter("uint256",1);
 
-
+    
 
 
 

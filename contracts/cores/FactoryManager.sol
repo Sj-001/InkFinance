@@ -37,7 +37,8 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     /// @dev only for testnp
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    struct DeployableContract {
+    struct InitialiedBeacon {
+        uint256 initialied;
         uint256 disable;
         InkBeacon inkBeacon;
     }
@@ -47,10 +48,15 @@ contract FactoryManager is BaseVerify, IFactoryManager {
     /// @dev only for test
     mapping(bytes32 => EnumerableSet.AddressSet) private _deployedContracts;
 
+
+    mapping(address=>InitialiedBeacon) implement2beacon;
+
     /// @dev config address
     address private _config;
 
     uint256 nounce = 0;
+
+    
 
     function supportsInterface(bytes4 interfaceId)
         external
@@ -63,8 +69,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
 
     constructor(address config_) {
         super.init(config_);
-        console.log("initialize config:");
-        console.log(config_);
         _config = config_;
         proxy = new InkProxy();
     }
@@ -76,14 +80,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         address msgSender
     ) internal view returns (address _calculatedAddress) {
         bytes32 salt = _getSalt(randomSalt, typeID, contractKey, msgSender);
-
-        // console.log("predict salt is --- ");
-        // console.logBytes32(salt);
-        // console.log(randomSalt);
-        // console.logBytes32(typeID);
-        // console.logBytes32(contractKey);
-        // console.log(msgSender);
-
         address generatedContract = Clones.predictDeterministicAddress(
             address(proxy),
             salt
@@ -113,21 +109,14 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         bytes32 factoryKey,
         bytes calldata initData
     ) internal returns (address _newContract) {
-        // console.log("deploy start ##### ");
+        console.log("deploy start ##### ");
 
         (bytes32 _typeID, bytes memory addressBytes) = IConfigManager(_config)
             .getKV(factoryKey);
 
-        // require(false, "before predict ");
-        // console.log("KEY IS:");
-        // console.logBytes32(factoryKey);
-        // console.log("DATA IS:");
-        // console.logBytes(addressBytes);
-
         if (addressBytes.length == 0) {
             revert TheFactoryKeyIsNotExist();
         }
-
         // if (_typeID != typeID) {
         //     revert WrongTypeOfTheFactoryKey();
         // }
@@ -154,11 +143,9 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         address implementAddress = addressBytes.toAddress();
 
         // require(false, toAsciiString(implementAddress));
-
         // console.log("implement address:", implementAddress);
 
         bytes32 salt = _getSalt(randomSalt, _typeID, factoryKey, msg.sender);
-
         address generatedContract = Clones.cloneDeterministic(
             address(proxy),
             salt
@@ -174,15 +161,29 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         }
 
         // console.log("generated address:", generatedContract);
-        InkBeacon inkBeacon = new InkBeacon(implementAddress, _config);
+
+        
+
+        InitialiedBeacon storage initialied = implement2beacon[implementAddress];
+
+        
+        if (initialied.initialied == 0) {
+            initialied.inkBeacon = new InkBeacon(implementAddress, _config);
+            initialied.initialied = 1;
+
+            implement2beacon[implementAddress] = initialied;
+        }
+
+        InkBeacon inkBeacon = implement2beacon[implementAddress].inkBeacon;
+
         // miss proxy init
         // console.log("start call proxy init");
-        InkProxy(payable(generatedContract)).init(
+
+        InkProxy(payable(generatedContract)).init2(
             _config,
             address(inkBeacon),
             ""
         );
-
         IDeploy(generatedContract).init(msg.sender, _config, initData);
 
         emit NewContractDeployed(
@@ -197,7 +198,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         // console.log("add to storage", generatedContract);
         _deployedContracts[factoryKey].add(generatedContract);
 
-        // console.log("deploy end");
+        console.log("deploy end");
         return generatedContract;
     }
 

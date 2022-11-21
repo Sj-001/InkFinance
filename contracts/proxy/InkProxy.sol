@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/StorageSlot.sol";
 
 import "../interfaces/IConfigManager.sol";
+import "hardhat/console.sol";
 
 /// @title InkProxy
 /// @author InkTech <tech-support@inkfinance.xyz>
@@ -26,19 +27,30 @@ contract InkProxy is Proxy {
         isProxyAdmin
     {
         _upgradeBeaconToAndCall(beacon, data, false);
-    }
+    } 
 
     //////////////////// init once
-    function init(
+    function init2(
         address config_,
         address beacon_,
         bytes memory data_
     ) public payable {
+
+        console.log("proxy: my address :: ", address(this));
+        
         if (_getAddrRegistry() != address(0x0)) {
+            
+            console.log("proxy:  fall back ################# ");
+            
             _fallback();
+
         } else {
+
+            console.log("proxy:  self init ################# ");
             _selfInit(config_, beacon_, data_);
-        }
+        } 
+
+                    // _selfInit(config_, beacon_, data_);
     }
 
     //////////////////// setting proxy admin

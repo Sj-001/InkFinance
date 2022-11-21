@@ -34,7 +34,7 @@ describe("nft related test", function () {
 
         const {mockNFT} = await loadFixture(MockNFTFixture);    
 
-        await mockNFT.mint(10);
+        await mockNFT.mint(signers[0].address, 10);
 
         console.log("balance:", await mockNFT.balanceOf(signers[0].address));
         

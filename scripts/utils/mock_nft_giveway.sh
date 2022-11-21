@@ -1,0 +1,1 @@
+npx hardhat run --network ink_dev_eth ./scripts/utils/ink_mock_nft_giveway.ts

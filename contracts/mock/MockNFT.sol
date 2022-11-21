@@ -17,8 +17,8 @@ contract MockNFT is ERC721Enumerable, Ownable {
 
     constructor() ERC721("MockNFT", "MNT") {}
 
-    function mint(uint256 quantity) external {
-        _doMint(msg.sender, quantity);
+    function mint(address owner, uint256 quantity) external {
+        _doMint(owner, quantity);
     }
 
     function _doMint(address purchaseUser, uint256 quantity)
@@ -37,8 +37,7 @@ contract MockNFT is ERC721Enumerable, Ownable {
         _totalMinted = currentTokenID;
     }
 
-    function listMyNFT() external view returns (uint256[] memory tokens) {
-        address walletAddress = msg.sender;
+    function listMyNFT(address walletAddress) external view returns (uint256[] memory tokens) {
         EnumerableSet.UintSet storage nftSets = ownedNFTs[walletAddress];
         tokens = nftSets.values();
     }
