@@ -15,6 +15,7 @@ interface IProcessHandler {
         view
         returns (uint256 expiration);
 
+    /// @notice return the step of proposal
     function getVoteCommitteeInfo(bytes32 proposalID)
         external
         view

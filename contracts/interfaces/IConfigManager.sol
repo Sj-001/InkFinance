@@ -15,7 +15,7 @@ interface IConfigManager is IERC165 {
         address indexed admin
     );
 
-    /// 注: string类型仅用于事件, 合约本地存储用hash后的值.
+
     /// @dev when set admin of some domain's key prefix, this event will be sent
     /// @param domain domain of the key prefix
     /// @param keyPrefix user defined key prefix
@@ -26,11 +26,8 @@ interface IConfigManager is IERC165 {
         address indexed admin
     );
 
-    // 仅有对应管理员可以设置该key, domain == msg.sender 时具有所有权限.
-    // 注: string类型仅用于事件, 合约本地存储用hash后的值.
-    // 先查domain == msg.sender.
-    // 再查该domain下的keyPrefix的管理员 == msg.sender.
-    // 最后查该domain下的 hash(hash("<prefix>"), hash("<key name>")) 的管理员 == msg.sender
+
+    /// @dev once domain admin set value of the key, this event will be emit
     event SetKV(
         address indexed operator,
         address indexed domain,

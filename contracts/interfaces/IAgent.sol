@@ -3,9 +3,12 @@ pragma solidity ^0.8.0;
 
 import "./IAgentInfo.sol";
 
+
+/// @dev Agent is a resolution executor, once proposal passed, the proposal's agent will be in 
+/// charge of execute on-chain business
 interface IAgent is IAgentInfo {
-    // 初始化方法, 传入DAO的地址, 虽然原则上来说, msg.sender就是dao, 但考虑
-    // 其他方式的初始化设定, 可能msg.sender并发dao本身, 比如agent设定agent.
+
+    /// @dev specify agent's dao, it's been execute only once
     function initAgent(address dao) external;
 
     /// @dev get agent description

@@ -18,6 +18,7 @@ import "./BaseVerify.sol";
 import "hardhat/console.sol";
 
 error NotAllowToOperate();
+error CannotTallyVote();
 
 abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     // libs
@@ -273,11 +274,16 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         return IDAO(_parentDAO).hasDAOBadges(user);
     }
 
+
+
+
     function _calculateVoteResults(VoteIdentity memory identity)
         internal
         returns (bool _passedOrNot)
-    {
-        // require(_getVoteExpiration(proposal) < block.timestamp, "vote not end");
+    {   
+
+
+
         // require(_checkProposalStatus(proposal, identity), "no right proposal");
         (
             uint256 minAgreeRatio,
@@ -316,11 +322,22 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         _passedOrNot = agree;
     }
 
-    function _tallyVotes(VoteIdentity calldata identity, bytes memory data)
+    function _tallyVotes(VoteIdentity calldata identity, bytes memory data, bool considerExpired)
         internal
     {
         // @todo verify duty
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+
+        if (considerExpired) {
+
+            if (IProcessHandler(getParentDAO()).getVoteExpirationTime(
+                identity.proposalID
+            ) < block.timestamp ) {
+                revert CannotTallyVote();
+            }
+
+        }
+
         // @todo verify if it's expired.
         bool passOrNot = _calculateVoteResults(identity);
 

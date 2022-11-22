@@ -4,6 +4,7 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import "./IAgentInfo.sol";
 
+
 interface IAgentHandler is IAgentInfo {
     /// Agent Related
     // 获取该DAO中, 该agentID对应的代理地址.

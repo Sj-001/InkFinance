@@ -84,6 +84,13 @@ contract TheBoard is BaseCommittee {
         return allowOperate(identity, voteUser);
     }
 
+
+    /**
+        @todo 
+    
+    
+     */
+
     /// @inheritdoc ICommittee
     function tallyVotes(VoteIdentity calldata identity, bytes memory data)
         external
@@ -92,7 +99,7 @@ contract TheBoard is BaseCommittee {
         if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
-        _tallyVotes(identity, data);
+        _tallyVotes(identity, data, false);
     }
 
     /// @inheritdoc IDeploy

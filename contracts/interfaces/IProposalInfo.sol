@@ -66,12 +66,13 @@ interface IProposalInfo {
         // require vote options
     }
 
-    // 接口返回格式
+    /// @dev topic related proposals
     struct Topic {
         bytes32 topicID;
         bytes32[] proposalIDs;
     }
 
+    /// @dev current proposal status
     struct ProposalSummary {
         ProposalStatus status;
         bytes32 proposalID;
@@ -86,12 +87,14 @@ interface IProposalInfo {
         DENY
     }
 
-    // value的存储结构.
+
     struct ItemValue {
         bytes32 typeID;
         bytes data;
     }
 
+    /// @dev proposal on-chain data
+    /// @param kvData enumerable data
     struct Proposal {
         ProposalStatus status;
         bytes32 proposalID;
@@ -102,7 +105,6 @@ interface IProposalInfo {
         // 避免链上枚举, 消耗gas, 浪费存储.
         // LEnumerableMetadata.MetadataSet headers;
         mapping(string => ItemValue) metadata;
-        // 需要枚举.
         LEnumerableMetadata.MetadataSet kvData;
     }
 

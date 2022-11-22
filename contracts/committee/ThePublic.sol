@@ -56,7 +56,7 @@ contract ThePublic is BaseCommittee {
         if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
-        _tallyVotes(identity, data);
+        _tallyVotes(identity, data, true);
     }
 
     /// @inheritdoc IDeploy
