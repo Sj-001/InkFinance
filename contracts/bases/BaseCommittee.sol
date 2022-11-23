@@ -19,6 +19,7 @@ import "hardhat/console.sol";
 
 error NotAllowToOperate();
 error CannotTallyVote();
+error CannotOperateBecauseOfDutyID(bytes32 dutyID);
 
 abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     // libs
@@ -330,13 +331,19 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
 
         if (considerExpired) {
 
+            console.log("consider expired:", IProcessHandler(getParentDAO()).getVoteExpirationTime(
+                identity.proposalID
+            ));
+
             if (IProcessHandler(getParentDAO()).getVoteExpirationTime(
                 identity.proposalID
-            ) < block.timestamp ) {
+            ) > block.timestamp ) {
                 revert CannotTallyVote();
             }
 
         }
+
+        console.log("vote time expired");
 
         // @todo verify if it's expired.
         bool passOrNot = _calculateVoteResults(identity);

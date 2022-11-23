@@ -34,7 +34,11 @@ contract ThePublic is BaseCommittee {
         string calldata feedback,
         bytes calldata data
     ) external override {
-        // it's public everyone has duty to vote
+
+        if (_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
+            revert CannotOperateBecauseOfDutyID(DutyID.PROPOSER);
+        }
+
         _vote(identity, agree, count, true, feedback, data);
     }
 

@@ -57,6 +57,13 @@ describe("proposal related test", function () {
             "desc": "0x0002",
         };
 
+        proposal.metadata[4] = {
+            "key":  "Expiration",
+            "typeID": keccak256(toUtf8Bytes("type.UINT256")),
+            "data":  web3.eth.abi.encodeParameter("uint256", 1),
+            "desc":  "0x0002",
+        };
+
         console.log("proposal:", proposal);
 
         var theBoardAddress = await masterDAO.getDeployedContractByKey(THE_BOARD_COMMITTEE_KEY);
@@ -114,7 +121,7 @@ describe("proposal related test", function () {
 
 
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
-        
+        const signers = await ethers.getSigners();
         console.log("voteProposalByThePublic proposalID", proposalID);
 
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
@@ -127,7 +134,7 @@ describe("proposal related test", function () {
         const theVoteCommittee = await ethers.getContractAt("ThePublic", thePublicAddress);
         var voteIdentity = {"proposalID":proposalID, "step": "0x0000000000000000000000000000000000000000000000000000000000000000"};
         
-        await theVoteCommittee.vote(voteIdentity, false, 1000, "", "0x00");
+        await theVoteCommittee.connect(signers[1]).vote(voteIdentity, true, 1000, "", "0x00");
 
     }
 

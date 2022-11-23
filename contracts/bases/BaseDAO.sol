@@ -1215,10 +1215,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         ProposalProgress storage info = _proposalInfo[proposalID];
         uint256 lastTime = info.lastOperationTimestamp;
+        console.log("last time:", lastTime);
 
         if (data.length != 0) {
             expiration = abi.decode(data, (uint256));
+            console.log("expir", expiration);
+            
         } else {
+            console.log("not set");
             return uint256(int256(-1));
         }
         return lastTime + expiration;

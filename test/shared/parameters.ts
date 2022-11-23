@@ -357,8 +357,6 @@ export function buildPayrollSetupProposal(erc20Address:string, topicID:string) {
 
     
 
-
-
     kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["members", keccak256(toUtf8Bytes("list")), memberListBytes]) ;
     kvData[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["startTime", keccak256(toUtf8Bytes("uint256")), startTimeBytes]) ;
     kvData[2] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["period", keccak256(toUtf8Bytes("uint256")), periodBytes]) ;

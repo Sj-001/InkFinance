@@ -1,5 +1,16 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "dutyID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "CannotOperateBecauseOfDutyID",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "CannotTallyVote",
     "type": "error"
