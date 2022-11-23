@@ -89,25 +89,25 @@ describe("proposal related test", function () {
 
         console.log("summery:", proposalSummery);
 
-        expect(proposalSummery.status).to.be.equal(2);
+        // expect(proposalSummery.status).to.be.equal(0);
 
 
-        // await voteProposalByTheBoard(await masterDAO.address, proposalID);
+        await voteProposalByTheBoard(await masterDAO.address, proposalID);
 
-        // await tallyVotesByTheBoard(await masterDAO.address,  proposalID);
+        await tallyVotesByTheBoard(await masterDAO.address,  proposalID);
 
-        // // console.log("first proposal id: ", proposalID);
-        // // console.log("proposal summery:", proposalSummery);
+        // console.log("first proposal id: ", proposalID);
+        // console.log("proposal summery:", proposalSummery);
 
 
-        // proposalSummery = await masterDAO.getProposalSummary(proposalID);
-        // expect(proposalSummery.status).to.be.equal(1);
+        proposalSummery = await masterDAO.getProposalSummary(proposalID);
+        expect(proposalSummery.status).to.be.equal(1);
 
-        // var committeeAddress = await masterDAO.getDeployedContractByKey(THE_TREASURY_COMMITTEE_KEY);
+        var committeeAddress = await masterDAO.getDeployedContractByKey(THE_TREASURY_COMMITTEE_KEY);
 
-        // console.log("treasury committee:", committeeAddress);
+        console.log("treasury committee:", committeeAddress);
 
-        // console.log("dao committees: ", await masterDAO.getDAOCommittees());
+        console.log("dao committees: ", await masterDAO.getDAOCommittees());
 
 
         
@@ -153,7 +153,7 @@ describe("proposal related test", function () {
         var voteIdentity = {"proposalID":proposalID, "step": "0x0000000000000000000000000000000000000000000000000000000000000000"};
         
 
-        await theVoteCommittee.vote(voteIdentity, true, 10, "", "0x00");
+        await theVoteCommittee.vote(voteIdentity, true, 1, "", "0x00");
 
     }
 
