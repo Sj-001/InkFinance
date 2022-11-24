@@ -204,7 +204,7 @@ describe("proposal related test", function () {
 
         console.log("vote committee address:", committeeInfo.committee);
         
-        await theVoteCommittee.vote(voteIdentity, true, 51, "", "0x00");
+        await theVoteCommittee.connect(signers[2]).vote(voteIdentity, true, 51, "", "0x00");
         await theVoteCommittee.connect(denySigner).vote(voteIdentity, false, 50, "", "0x00");
 
     }

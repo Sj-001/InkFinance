@@ -255,7 +255,7 @@ describe("proposal related test", function () {
         const ucv = await ethers.getContractAt("PayrollUCV", ucvAddress);
         // deposit NFT
         const {mockNFT} = await loadFixture(MockNFTFixture);
-        await mockNFT.mint(10);
+        await mockNFT.mint(signers[0].address, 10);
 
         await mockNFT.approve(ucvAddress, 1);
         await mockNFT.approve(ucvAddress, 2);
@@ -266,7 +266,7 @@ describe("proposal related test", function () {
 
         console.log("ucv token balance:", await mockNFT.balanceOf(ucv.address))
 
-
+        
         var timestamp = Date.now();
         var sec = Math.floor(timestamp / 1000);
 
@@ -291,8 +291,7 @@ describe("proposal related test", function () {
         await ucvManager.signPayID(3,1);
         
         console.log("after transfer erc721 token balance:", await mockNFT.balanceOf(signers[0].address))
-
-
+        
 
 
 
@@ -316,7 +315,7 @@ describe("proposal related test", function () {
         const theVoteCommittee = await ethers.getContractAt("ICommittee", committeeInfo.committee);
         var voteIdentity = {"proposalID":proposalID, "step": committeeInfo.step};
         
-        await theVoteCommittee.vote(voteIdentity, true, 10, "", "0x00");
+        await theVoteCommittee.vote(voteIdentity, true, 1, "", "0x00");
 
     }
 

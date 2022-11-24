@@ -35,12 +35,30 @@ contract ThePublic is BaseCommittee {
         bytes calldata data
     ) external override {
 
-        if (_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
-            revert CannotOperateBecauseOfDutyID(DutyID.PROPOSER);
+        if (!_allowToVote(identity, _msgSender())) {
+            revert NotAllowToOperate();
         }
 
         _vote(identity, agree, count, true, feedback, data);
     }
+
+
+    function _allowToVote(VoteIdentity calldata identity, address voteUser)
+        internal
+        view
+        returns (bool)
+    {
+        if (_hasDutyToOperate(DutyID.PROPOSER, voteUser)) {
+            revert CannotOperateBecauseOfDutyID(DutyID.PROPOSER);
+        }
+
+        if (_isDeadlineExpired(identity.proposalID)) {
+             revert VoteTimeExpired();
+        }
+
+        return true;
+    }
+
 
     /// @inheritdoc IVoteHandler
     function allowToVote(VoteIdentity calldata identity, address voteUser)
@@ -49,8 +67,11 @@ contract ThePublic is BaseCommittee {
         override
         returns (bool)
     {
-        return allowOperate(identity, voteUser);
+        return _allowToVote(identity, voteUser);
     }
+
+
+
 
     /// @inheritdoc ICommittee
     function tallyVotes(VoteIdentity calldata identity, bytes memory data)

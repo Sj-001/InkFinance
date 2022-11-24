@@ -20,6 +20,7 @@ import "hardhat/console.sol";
 error NotAllowToOperate();
 error CannotTallyVote();
 error CannotOperateBecauseOfDutyID(bytes32 dutyID);
+error VoteTimeExpired();
 
 abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
     // libs
@@ -253,10 +254,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         address user
     ) internal view returns (bool) {
         if (!_checkProposalStatus(proposal, identity)) {
-            return false;
-        }
-
-        if (_checkDeadline(proposal)) {
+            console.log("status");
             return false;
         }
 
@@ -379,7 +377,8 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
 
         (address committee, ) = IProcessHandler(_parentDAO)
             .getVoteCommitteeInfo(proposal.proposalID);
-        console.log("current committee is: ", committee);
+        console.log("supposed committee is: ", committee);
+        console.log("now committee is: ", address(this));
         if (committee != address(this)) {
             console.log("wrong step ################################# ");
             return false;
@@ -407,6 +406,14 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
                 proposal.proposalID
             ) < block.timestamp;
     }
+
+    function _isDeadlineExpired(bytes32 proposalID) internal view returns (bool isExpired) {
+        ProposalSummary memory proposal = IProposalHandler(getParentDAO())
+            .getProposalSummary(proposalID);
+
+        isExpired = _checkDeadline(proposal);
+    }
+
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)

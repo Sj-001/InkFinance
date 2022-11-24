@@ -27,6 +27,11 @@
   },
   {
     "inputs": [],
+    "name": "VoteTimeExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "YouDoNotHaveDutyToOperate",
     "type": "error"
   },

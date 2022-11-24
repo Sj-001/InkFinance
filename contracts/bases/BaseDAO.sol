@@ -848,8 +848,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         bytes32 proposalFlowID = IProposalHandler(_proposalHandlerAddress)
             .getProposalFlow(proposalID);
-
-        if (proposalFlowID > 0) {
+        console.log("proposal flow:");
+        console.logBytes32(proposalFlowID);
+        if (proposalFlowID >= 0) {
             bool support = false;
             for (
                 uint256 i = _defaultFlowIDIndex;
