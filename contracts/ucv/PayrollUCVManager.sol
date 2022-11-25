@@ -70,6 +70,9 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             return payIDs;
         }
 
+        console.log("scheduleID", scheduleID);
+        console.log("block.timestamp", block.timestamp);
+
         uint256 latestID = getLatestPayID(scheduleID, block.timestamp);
 
         console.log("lastest ID:", latestID);
@@ -150,9 +153,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             revert TheAccountIsNotAuthroized(msg.sender);
         }
 
-
-
-
         _payrollCount++;
 
         PayrollSettings storage setting = _payrollSetting[_payrollCount];
@@ -193,6 +193,24 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         _addSchedulePayee(scheduleID, payees, true);
     }
 
+    // function _isGoodToAdd(uint256 scheduleID, bytes memory payee) internal returns(bool isGood) {
+    //     (
+    //         address payee,
+    //         address token,
+    //         uint256 tokenType,
+    //         uint256 oncePay,
+    //         uint256 tokenID,
+    //         bytes memory desc
+    //     ) = abi.decode(
+    //             payee,
+    //             (address, address, uint256, uint256, uint256, bytes)
+    //     );
+    // }
+
+    // function _addPayee(uint256 scheduleID, bytes memory payee) internal returns(bool isGood) {
+
+    // } 
+
     function _addSchedulePayee(
         uint256 scheduleID,
         bytes[] memory payees,
@@ -201,6 +219,12 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         PayrollSchedule storage sc = _schedules[scheduleID];
 
         for (uint256 i = 0; i < payees.length; i++) {
+            
+            // if (_isGoodToAdd(scheduleID, payees[i])) {
+            //     // _addPayee(scheduleID, payees[i]);
+            // }
+
+            
             (
                 address payee,
                 address token,
@@ -212,21 +236,20 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                     payees[i],
                     (address, address, uint256, uint256, uint256, bytes)
                 );
+            
+            
+            _validPayeeType(scheduleID, payee);
 
-            address payeeAddress = payee;
-
-            _validPayeeType(scheduleID, payeeAddress);
-
-            if (sc.payees.contains(payeeAddress)) {
-                revert ThePayeeIsAlreadyExist(payeeAddress);
+            if (sc.payees.contains(payee)) {
+                revert ThePayeeIsAlreadyExist(payee);
             }
 
-            if (sc.removedPayeePaymentInfo[payeeAddress].oncePay > 0) {
-                revert ThePayeeNeedToClaimThePreviousPaymentFirst(payeeAddress);
+            if (sc.removedPayeePaymentInfo[payee].oncePay > 0) {
+                revert ThePayeeNeedToClaimThePreviousPaymentFirst(payee);
             }
 
-            sc.payees.add(payeeAddress);
-            PaymentInfo storage paymentInfo = sc.payeePaymentInfo[payeeAddress];
+            sc.payees.add(payee);
+            PaymentInfo storage paymentInfo = sc.payeePaymentInfo[payee];
             paymentInfo.token = token;
             paymentInfo.oncePay = oncePay;
             paymentInfo.tokenType = tokenType;
@@ -239,14 +262,15 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             emit PayrollPayeeAdded(
                 _dao,
                 scheduleID,
-                payeeAddress,
+                payee,
                 paymentInfo.token,
                 paymentInfo.oncePay,
                 tokenType,
                 tokenID,
                 desc
             );
-        }
+            
+        } 
     }
 
     function _validPayeeType(uint256 scheduleID, address payee) internal view {
@@ -278,10 +302,11 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         if (setting.payrollType == 3) {
             // transfer to vault;
             // make sure it's contract
-            console.log("payee:", payee);
-            if (!IUCV(payee).supportsInterface(type(IUCV).interfaceId)) {
-                revert PayeeNotUCVContract(payee);
-            }
+
+            // console.log("payee:", payee);
+            // if (!IUCV(payee).supportsInterface(type(IUCV).interfaceId)) {
+            //     revert PayeeNotUCVContract(payee);
+            // }
 
 
         }
@@ -422,6 +447,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
     /// @inheritdoc IPayrollManager
     function claimPayroll(uint256 scheduleID) external override {
+        console.log("called????");
         _transferSchedulePay(scheduleID, msg.sender);
     }
 

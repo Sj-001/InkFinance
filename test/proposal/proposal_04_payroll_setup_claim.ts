@@ -48,7 +48,12 @@ describe("proposal related test", function () {
         // // select one flow of the DAO
 
         var proposal = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address);
-        
+        proposal.metadata[3] = {
+            "key":  "Expiration",
+            "typeID": keccak256(toUtf8Bytes("type.UINT256")),
+            "data":  web3.eth.abi.encodeParameter("uint256", 1),
+            "desc":  "0x0002",
+        };
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
         
         var theBoardAddress = await masterDAO.getDeployedContractByKey(THE_BOARD_COMMITTEE_KEY);
@@ -87,6 +92,10 @@ describe("proposal related test", function () {
         await signPayroll(masterDAO.address, erc20Address);
 
         await claimPayroll(masterDAO.address, erc20Address);
+
+
+
+
         
 
     });
@@ -139,9 +148,9 @@ describe("proposal related test", function () {
         var timestamp = Date.now();
         var sec = Math.floor(timestamp / 1000);
 
-        var startTime = sec;//- 60 * 60 * 24;
-        var period = 60 * 60;
-        var payTimes = 10;
+        var startTime = sec -5 ;//- 60 * 60 * 24;
+        var period = 60*60*6;
+        var payTimes = 100000;
 
         var payees = buildPayees(signers[0].address, signers[1].address, signers[2].address, token)
         await ucvManager.setupPayroll("0x00", 1, startTime, period, payTimes, payees);
@@ -156,11 +165,14 @@ describe("proposal related test", function () {
 
         console.log("sign time:", await ucvManager.getSignTime(1,1, signers[1].address));
         // console.log("payIDs: ", results);
+
+        // console.log("sec:", sec);
+        console.log("getLatestPayID:", await ucvManager.getLatestPayID(1, sec));
     }
     
 
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
-        
+        const signers = await ethers.getSigners();
         console.log("voteProposalByThePublic proposalID", proposalID);
 
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
@@ -172,7 +184,7 @@ describe("proposal related test", function () {
         const theVoteCommittee = await ethers.getContractAt("ICommittee", committeeInfo.committee);
         var voteIdentity = {"proposalID":proposalID, "step": committeeInfo.step};
         
-        await theVoteCommittee.vote(voteIdentity, true, 10, "", "0x00");
+        await theVoteCommittee.connect(signers[1]).vote(voteIdentity, true, 10, "", "0x00");
 
     }
 

@@ -216,6 +216,8 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
                 flowID = value;
             }
         }
+        // not set
+        flowID = 0x0000000000000000000000000000000000000000000000000000000000000004;
     }
 
     function getTallyVoteRules(bytes32 proposalID)

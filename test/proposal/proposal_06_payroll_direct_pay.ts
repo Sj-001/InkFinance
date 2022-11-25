@@ -87,10 +87,10 @@ describe("proposal related test", function () {
         await depositBalanceToUCV(masterDAO.address, erc20Address);
 
         await setupAndSignVaultDirectPay(masterDAO.address, erc20Address);
-        
+
         await setupAndSignInvestmentDirectPay(masterDAO.address, erc20Address);
 
-        await setupAndSignInvestmentDirectPayNFT(masterDAO.address, erc20Address);
+        // await setupAndSignInvestmentDirectPayNFT(masterDAO.address, erc20Address);
 
 
 
@@ -125,6 +125,7 @@ describe("proposal related test", function () {
         await erc20.mintTo(signers[0].address, tokenAmount);
 
         console.log("signer chain token balance: ", await erc20.balanceOf(signers[0].address));
+        
         console.log("signer token balance: ", await erc20.balanceOf(signers[0].address));
 
         await erc20.approve(ucvAddress, tokenAmount);
@@ -173,7 +174,7 @@ describe("proposal related test", function () {
  
         var payees = [];
         // payee, token address, token type, token amount, token id
-        payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [signers[1].address, token, 20, 100, 0, web3.eth.abi.encodeParameter("string", "desc1" )]);
+        payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [ucvAddress, token, 20, 100, 0, web3.eth.abi.encodeParameter("string", "desc1" )]);
         await ucvManager.setupPayroll("0x00", 3, startTime, period, payTimes, payees);
 
         var results = await ucvManager.getPayIDs(1, 1, 10);

@@ -24,12 +24,12 @@ export function buildPayees(payee1:string, payee2:string, payee3:string, token:s
 
 
     var payees = [];
-    payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "bytes"], [payee1, token, 100, web3.eth.abi.encodeParameter("string", "desc1" )]);
-    payees[1] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "bytes"], [payee2, token, 100, web3.eth.abi.encodeParameter("string", "desc1" )]);
-    payees[2] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "bytes"], [payee3, token, 100, web3.eth.abi.encodeParameter("string", "desc1" )]);
 
 
-    
+    payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [payee1, token, 20, 100, 0, web3.eth.abi.encodeParameter("string", "desc1" )]);
+    payees[1] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [payee2, token, 20, 100, 0, web3.eth.abi.encodeParameter("string", "desc1" )]);
+    payees[2] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [payee3, token, 20, 100, 0, web3.eth.abi.encodeParameter("string", "desc1" )]);
+
     return payees;
 }
 

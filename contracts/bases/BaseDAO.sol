@@ -850,7 +850,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             .getProposalFlow(proposalID);
         console.log("proposal flow:");
         console.logBytes32(proposalFlowID);
-        if (proposalFlowID >= 0) {
+        if (proposalFlowID == 0x0000000000000000000000000000000000000000000000000000000000000004) {
+            flowID = _defaultFlows[_defaultFlowIDIndex];
+
+        } else {
             bool support = false;
             for (
                 uint256 i = _defaultFlowIDIndex;
@@ -867,8 +870,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             } else {
                 revert FlowIsNotSupport(_defaultFlowIDIndex, proposalFlowID);
             }
-        } else {
-            flowID = _defaultFlows[_defaultFlowIDIndex];
         }
     }
 
