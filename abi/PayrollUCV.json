@@ -69,7 +69,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": true,
         "internalType": "address",
         "name": "to",
         "type": "address"
@@ -77,19 +83,25 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "value",
+        "name": "tokenType",
         "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
+        "internalType": "uint256",
+        "name": "tokenID",
+        "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "txGas",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "transferTime",
         "type": "uint256"
       }
     ],

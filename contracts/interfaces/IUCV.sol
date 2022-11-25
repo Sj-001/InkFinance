@@ -19,7 +19,15 @@ with each record containing one metadata string that is supplied by the deposito
 
 */
 interface IUCV is IDeploy, IERC721Receiver {
-    event UCVTransfer(address to, uint256 value, bytes data, uint256 txGas);
+
+    event UCVTransfer(
+        address indexed token,
+        address indexed to,
+        uint256 tokenType,
+        uint256 tokenID,
+        uint256 amount,
+        uint256 transferTime
+    );
 
     event UCVManagerDisabled(bool disabled);
 

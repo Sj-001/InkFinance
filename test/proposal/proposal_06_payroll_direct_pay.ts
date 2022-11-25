@@ -87,7 +87,7 @@ describe("proposal related test", function () {
         await depositBalanceToUCV(masterDAO.address, erc20Address);
 
         await setupAndSignVaultDirectPay(masterDAO.address, erc20Address);
-
+        
         await setupAndSignInvestmentDirectPay(masterDAO.address, erc20Address);
 
         await setupAndSignInvestmentDirectPayNFT(masterDAO.address, erc20Address);

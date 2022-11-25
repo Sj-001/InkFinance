@@ -22,6 +22,7 @@ error ThePayeeNeedToClaimThePreviousPaymentFirst(address payee);
 error ThePayeeIsNotInThePayroll(address payee);
 error ThisPayrollScheduleDoesNotExist(uint256 scheduleID);
 error StartPayIDWrong();
+error PayeeNotUCVContract(address payee);
 
 error TheMemberIsNotInvestors(address payee);
 
@@ -149,6 +150,9 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             revert TheAccountIsNotAuthroized(msg.sender);
         }
 
+
+
+
         _payrollCount++;
 
         PayrollSettings storage setting = _payrollSetting[_payrollCount];
@@ -274,6 +278,12 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         if (setting.payrollType == 3) {
             // transfer to vault;
             // make sure it's contract
+            console.log("payee:", payee);
+            if (!IUCV(payee).supportsInterface(type(IUCV).interfaceId)) {
+                revert PayeeNotUCVContract(payee);
+            }
+
+
         }
     }
 
