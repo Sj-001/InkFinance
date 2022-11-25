@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../bases/BaseVerify.sol";
 
@@ -15,11 +16,13 @@ error TokenTypeNotSupport(uint256 tokenType);
 
 contract PayrollUCV is IUCV, BaseVerify {
     using EnumerableSet for EnumerableSet.UintSet;
+    using Address for address;
 
     /// @dev token = address(0) means chain gas token
     event VaultDeposit(
         address indexed dao,
         address indexed token,
+        address indexed to,
         uint256 tokenType,
         uint256 tokenID,
         string itemName,
@@ -87,7 +90,7 @@ contract PayrollUCV is IUCV, BaseVerify {
         uint256 value,
         bytes memory data
     ) external override enableToExecute returns (bool) {
-        console.log("do transfer");
+        
         if (tokenType == 721) {
             IERC721(token).safeTransferFrom(address(this), to, tokenID, "");
         } else if (tokenType == 20) {
@@ -101,15 +104,23 @@ contract PayrollUCV is IUCV, BaseVerify {
             revert TokenTypeNotSupport(tokenType);
         }
 
+        if (Address.isContract(to)) {
+            if (IUCV(to).supportsInterface(type(IUCV).interfaceId)) {
+                emit VaultDeposit(
+                    _dao,
+                    token,
+                    to,
+                    tokenType,
+                    tokenID,
+                    "deposit",
+                    value,
+                    address(this),
+                    "",
+                    block.timestamp
+                );
+            }
+        }
 
-        emit UCVTransfer(
-            token,
-            to,
-            tokenType,
-            tokenID,
-            value,
-            block.timestamp
-        );
 
         return true;
     }
@@ -148,6 +159,7 @@ contract PayrollUCV is IUCV, BaseVerify {
         emit VaultDeposit(
             _dao,
             token,
+            address(this),
             tokenType,
             tokenID,
             incomeItem,
