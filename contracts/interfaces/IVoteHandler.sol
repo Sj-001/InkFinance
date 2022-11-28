@@ -32,7 +32,7 @@ interface IVoteHandler {
         uint256 agreeVoterNum;
         uint256 denyVotes;
         uint256 denyVoterNum;
-    } 
+    }
 
     struct MemberVoteInfo {
         address voter;

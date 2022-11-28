@@ -7,12 +7,11 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-import {INK_BADGE_KEY,INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY,PROPOSAL_HANDLER_KEY, PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY } from '../shared/fixtures';  
+import {INVESTMENT_UCV_KEY, INVESTMENT_COMMITTEE_KEY, INVESTMENT_UCV_MANAGER_KEY, INVESTMENT_MANAGER_AGENT_KEY, INK_BADGE_KEY,INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY,PROPOSAL_HANDLER_KEY, PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY } from '../shared/fixtures';  
 const {loadFixture, deployContract} = waffle;
 
 
 export function buildPayees(payee1:string, payee2:string, payee3:string, token:string) {
-
     /*
         struct PayeeInfo {
             address addr;
@@ -22,9 +21,7 @@ export function buildPayees(payee1:string, payee2:string, payee3:string, token:s
     }
     */
 
-
     var payees = [];
-
 
     payees[0] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [payee1, token, 20, 100, 0, web3.eth.abi.encodeParameter("string", "desc1" )]);
     payees[1] = web3.eth.abi.encodeParameters(["address", "address", "uint256", "uint256", "uint256", "bytes"], [payee2, token, 20, 100, 0, web3.eth.abi.encodeParameter("string", "desc1" )]);
@@ -294,6 +291,96 @@ export function buildTreasurySetupProposal(operator:string, signer:string, audit
 
     return proposal;
 }
+
+
+export function buildInvestmentSetupProposal(fundAdmin:string, fundManager:string, fundRiskManager:string, fundLiquidator:string,  fundAuditor:string) {
+
+    var agents = []
+    // agent - related duties
+    agents[0] = INVESTMENT_MANAGER_AGENT_KEY;
+    
+    // agents[1] = toUtf8Bytes("");
+    var headers = [];
+    headers[0] = {
+        "key":  "committeeKey",
+        "typeID": INVESTMENT_COMMITTEE_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": INVESTMENT_COMMITTEE_KEY,
+        "desc": "0x0002",
+    };
+    
+    // headers[1] = {
+    //     "key":  "ucvKey",
+    //     "typeID": INVESTMENT_UCV_KEY,
+    //     // "typeID": keccak256(toUtf8Bytes("typeID")),
+    //     "data": INVESTMENT_UCV_KEY,
+    //     "desc": "0x0002",
+    // }; 
+
+    headers[1] = {
+        "key":  "ucvManagerKey",
+        "typeID": INVESTMENT_UCV_MANAGER_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": INVESTMENT_UCV_MANAGER_KEY,
+        "desc": "0x0002",
+    };
+
+
+    // headers[3] = {
+    //     "key":  "VoteFlow",
+    //     "typeID": keccak256(toUtf8Bytes("type.BYTES32")),
+    //     "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+    //     "desc": toUtf8Bytes(""),
+    // };
+
+    // kvData[0] = {
+    //     "key":  "key",
+    //     "typeID": keccak256(toUtf8Bytes("typeID")),
+    //     "data": "0x0001",
+    //     "desc": "0x0002",
+    // };
+    //kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+
+    var kvData = [];
+    var fundAdmins = [];
+    fundAdmins[0] = fundAdmin;
+    var fundAdminBytes = web3.eth.abi.encodeParameter("address[]", fundAdmins);
+
+    var fundManagers = [];
+    fundManagers[0] = fundManager;
+    var fundManagersBytes = web3.eth.abi.encodeParameter("address[]", fundManagers);
+
+    var fundRiskManagers = [];
+    fundRiskManagers[0] = fundRiskManager;
+    var fundRiskManagersBytes = web3.eth.abi.encodeParameter("address[]", fundRiskManagers);
+
+    var fundLiquidators = [];
+    fundLiquidators[0] = fundLiquidator;
+    var fundLiquidatorsBytes = web3.eth.abi.encodeParameter("address[]", fundLiquidators);
+
+    var fundAuditors = [];
+    fundAuditors[0] = fundAuditor;
+    var fundAuditorBytes = web3.eth.abi.encodeParameter("address[]", fundAuditors);
+
+
+    kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["fundAdmin", keccak256(toUtf8Bytes("address")), fundAdminBytes]);
+    kvData[1] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["fundManager", keccak256(toUtf8Bytes("address")), fundManagersBytes]);
+    kvData[2] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["fundRiskManager", keccak256(toUtf8Bytes("address")), fundRiskManagersBytes]);
+    kvData[3] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["fundLiquidator", keccak256(toUtf8Bytes("address")), fundLiquidatorsBytes]);
+    kvData[4] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["fundAuditor", keccak256(toUtf8Bytes("address")), fundAuditorBytes]);
+
+
+    var proposal = {
+        "agents" : agents,
+        "topicID" : keccak256(toUtf8Bytes("topic")),
+        "crossChainProtocal":toUtf8Bytes(""),
+        "metadata" : headers,
+        "kvData" : kvData
+    }
+
+    return proposal;
+}
+
 
 
 export function buildPayrollSetupProposal(erc20Address:string, topicID:string) {

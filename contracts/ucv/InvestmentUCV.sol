@@ -14,7 +14,7 @@ error OperateIsNowAllowed();
 error DepositeError();
 error TokenTypeNotSupport(uint256 tokenType);
 
-contract PayrollUCV is IUCV, BaseVerify {
+contract InvestmentUCV is IUCV, BaseVerify {
     using EnumerableSet for EnumerableSet.UintSet;
     using Address for address;
 

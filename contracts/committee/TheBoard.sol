@@ -81,10 +81,8 @@ contract TheBoard is BaseCommittee {
             return false;
         }
 
-
         return allowOperate(identity, voteUser);
     }
-
 
     /**
         @todo 

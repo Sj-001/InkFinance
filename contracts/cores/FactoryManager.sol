@@ -107,6 +107,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         bytes calldata initData
     ) internal returns (address _newContract) {
         console.log("deploy start ##### ");
+        console.logBytes32(factoryKey);
 
         (bytes32 _typeID, bytes memory addressBytes) = IConfigManager(_config)
             .getKV(factoryKey);
@@ -140,7 +141,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         address implementAddress = addressBytes.toAddress();
 
         // require(false, toAsciiString(implementAddress));
-        // console.log("implement address:", implementAddress);
+        console.log("implement address:", implementAddress);
 
         bytes32 salt = _getSalt(randomSalt, _typeID, factoryKey, msg.sender);
         address generatedContract = Clones.cloneDeterministic(
@@ -157,7 +158,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             );
         }
 
-        // console.log("generated address:", generatedContract);
+        console.log("generated address:", generatedContract);
 
         InitialiedBeacon storage initialied = implement2beacon[
             implementAddress
@@ -173,7 +174,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         InkBeacon inkBeacon = implement2beacon[implementAddress].inkBeacon;
 
         // miss proxy init
-        // console.log("start call proxy init");
+        console.log("start call proxy init");
 
         InkProxy(payable(generatedContract)).init2(
             _config,
@@ -182,6 +183,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         );
         IDeploy(generatedContract).init(msg.sender, _config, initData);
 
+        console.log("after initial called");
         emit NewContractDeployed(
             typeID,
             factoryKey,

@@ -3,11 +3,9 @@ pragma solidity ^0.8.0;
 
 import "./IAgentInfo.sol";
 
-
-/// @dev Agent is a resolution executor, once proposal passed, the proposal's agent will be in 
+/// @dev Agent is a resolution executor, once proposal passed, the proposal's agent will be in
 /// charge of execute on-chain business
 interface IAgent is IAgentInfo {
-
     /// @dev specify agent's dao, it's been execute only once
     function initAgent(address dao) external;
 

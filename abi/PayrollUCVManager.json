@@ -26,6 +26,17 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "payee",
+        "type": "address"
+      }
+    ],
+    "name": "PayeeNotUCVContract",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "StartPayIDWrong",
     "type": "error"

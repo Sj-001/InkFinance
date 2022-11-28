@@ -45,4 +45,31 @@ contract MockNFT is ERC721Enumerable, Ownable {
         EnumerableSet.UintSet storage nftSets = ownedNFTs[walletAddress];
         tokens = nftSets.values();
     }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override(ERC721) {
+        EnumerableSet.UintSet storage fromSets = ownedNFTs[from];
+        fromSets.remove(tokenId);
+
+        super.transferFrom(from, to, tokenId);
+
+        EnumerableSet.UintSet storage nftSets = ownedNFTs[to];
+        nftSets.add(tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public override(ERC721) {
+        EnumerableSet.UintSet storage fromSets = ownedNFTs[from];
+        fromSets.remove(tokenId);
+        super.safeTransferFrom(from, to, tokenId, data);
+        EnumerableSet.UintSet storage nftSets = ownedNFTs[to];
+        nftSets.add(tokenId);
+    }
 }

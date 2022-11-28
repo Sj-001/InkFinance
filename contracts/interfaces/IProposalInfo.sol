@@ -87,7 +87,6 @@ interface IProposalInfo {
         DENY
     }
 
-
     struct ItemValue {
         bytes32 typeID;
         bytes data;

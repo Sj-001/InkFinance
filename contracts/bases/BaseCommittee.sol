@@ -273,16 +273,10 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         return IDAO(_parentDAO).hasDAOBadges(user);
     }
 
-
-
-
     function _calculateVoteResults(VoteIdentity memory identity)
         internal
         returns (bool _passedOrNot)
-    {   
-
-
-
+    {
         // require(_checkProposalStatus(proposal, identity), "no right proposal");
         (
             uint256 minAgreeRatio,
@@ -321,24 +315,29 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         _passedOrNot = agree;
     }
 
-    function _tallyVotes(VoteIdentity calldata identity, bytes memory data, bool considerExpired)
-        internal
-    {
+    function _tallyVotes(
+        VoteIdentity calldata identity,
+        bytes memory data,
+        bool considerExpired
+    ) internal {
         // @todo verify duty
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
 
         if (considerExpired) {
+            console.log(
+                "consider expired:",
+                IProcessHandler(getParentDAO()).getVoteExpirationTime(
+                    identity.proposalID
+                )
+            );
 
-            console.log("consider expired:", IProcessHandler(getParentDAO()).getVoteExpirationTime(
-                identity.proposalID
-            ));
-
-            if (IProcessHandler(getParentDAO()).getVoteExpirationTime(
-                identity.proposalID
-            ) > block.timestamp ) {
+            if (
+                IProcessHandler(getParentDAO()).getVoteExpirationTime(
+                    identity.proposalID
+                ) > block.timestamp
+            ) {
                 revert CannotTallyVote();
             }
-
         }
 
         console.log("vote time expired");
@@ -407,13 +406,16 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             ) < block.timestamp;
     }
 
-    function _isDeadlineExpired(bytes32 proposalID) internal view returns (bool isExpired) {
+    function _isDeadlineExpired(bytes32 proposalID)
+        internal
+        view
+        returns (bool isExpired)
+    {
         ProposalSummary memory proposal = IProposalHandler(getParentDAO())
             .getProposalSummary(proposalID);
 
         isExpired = _checkDeadline(proposal);
     }
-
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)

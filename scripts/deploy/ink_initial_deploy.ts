@@ -80,20 +80,35 @@ async function deploy(){
   const treasuryIncomeManagerImpl = await treasuryIncomeManagerFactory.deploy();
   await treasuryIncomeManagerImpl.deployed();
 
+
   const inkBadgeERC20Factory = await ethers.getContractFactory("InkBadgeERC20");
   const inkBadgeERC20Impl = await inkBadgeERC20Factory.deploy();
   await inkBadgeERC20Impl.deployed();
 
 
+  const investmentCommitteeFactory = await ethers.getContractFactory("InvestmentCommittee");
+  const investmentCommitteeImpl = await investmentCommitteeFactory.deploy();
+  await investmentCommitteeImpl.deployed();
+
+  const investmentManagementSetupAgentFactory = await ethers.getContractFactory("InvestmentManagementSetupAgent");
+  const investmentManagementSetupAgentImpl = await investmentManagementSetupAgentFactory.deploy();
+  await investmentManagementSetupAgentImpl.deployed();
+
+
+  const InvestmentUCVManagerFactory = await ethers.getContractFactory("InvestmentUCVManager");
+  const investmentUCVManagerImpl = await InvestmentUCVManagerFactory.deploy();
+  await investmentUCVManagerImpl.deployed();
+
+
+  const InvestmentUCVFactory = await ethers.getContractFactory("InvestmentUCV");
+  const investmentUCVImpl = await InvestmentUCVFactory.deploy();
+  await investmentUCVImpl.deployed();
+
   //init factory manager key
   console.log("useful constant ################################################################################################################## ")
-  
-  
-  
-  
+
   console.log("domain: ", admin);
   console.log("");
-  
   
   console.log("duty id ------------------------------------------------------------------ ")
   console.log("PROPOSER=", keccak256(toUtf8Bytes("dutyID.PROPOSER")));
@@ -101,6 +116,12 @@ async function deploy(){
   console.log("SIGNER=", keccak256(toUtf8Bytes("dutyID.SIGNER")));
   console.log("OPERATOR=", keccak256(toUtf8Bytes("dutyID.OPERATOR")));
   console.log("AUDITOR=", keccak256(toUtf8Bytes("dutyID.AUDITOR")));
+  console.log("FUND_ADMIN=", keccak256(toUtf8Bytes("dutyID.FUND_ADMIN")));
+  console.log("FUND_MANAGER=", keccak256(toUtf8Bytes("dutyID.FUND_MANAGER")));
+  console.log("FUND_RISK_MANAGER=", keccak256(toUtf8Bytes("dutyID.FUND_RISK_MANAGER")));
+  console.log("FUND_LIQUIDATOR=", keccak256(toUtf8Bytes("dutyID.FUND_LIQUIDATOR")));
+  console.log("FUND_AUDITOR=", keccak256(toUtf8Bytes("dutyID.FUND_AUDITOR")));
+
   console.log("");
 
   console.log("deploy key ------------------------------------------------------------------ ")
@@ -118,6 +139,11 @@ async function deploy(){
   console.log("the income agent key:", await configManager.buildConfigKey(admin, "ADMIN", "IncomeManagerSetupAgent"));
   console.log("the income manager key:", await configManager.buildConfigKey(admin, "ADMIN", "TreasuryIncomeManager"));
   console.log("the ink badge erc20 key:", await configManager.buildConfigKey(admin, "ADMIN", "InkBadgeERC20"));
+  console.log("the investment committee key:", await configManager.buildConfigKey(admin, "ADMIN", "InvestmentCommittee"));
+  console.log("the investment committee setup agent key:", await configManager.buildConfigKey(admin, "ADMIN", "InvestmentManagementSetupAgent"));
+  console.log("the investment manager key:", await configManager.buildConfigKey(admin, "ADMIN", "InvestmentUCVManager"));
+  console.log("the investment ucv key:", await configManager.buildConfigKey(admin, "ADMIN", "InvestmentUCV"));
+
 
   console.log("contract type ------------------------------------------------------------------ ")
   console.log("FactoryTypeID=", keccak256(toUtf8Bytes("FactoryTypeID")));
@@ -144,7 +170,12 @@ async function deploy(){
   keyValues[11] = {"keyPrefix":"ADMIN", "keyName":"IncomeManagerSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await incomeManagerSetupAgentImpl.address)}
   keyValues[12] = {"keyPrefix":"ADMIN", "keyName":"TreasuryIncomeManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await treasuryIncomeManagerImpl.address)}
   keyValues[13] = {"keyPrefix":"ADMIN", "keyName":"InkBadgeERC20", "typeID":keccak256(toUtf8Bytes("address")), "data": (await inkBadgeERC20Impl.address)}
+  keyValues[14] = {"keyPrefix":"ADMIN", "keyName":"InvestmentCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentCommitteeImpl.address)}
+  keyValues[15] = {"keyPrefix":"ADMIN", "keyName":"InvestmentManagementSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentManagementSetupAgentImpl.address)}
+  keyValues[16] = {"keyPrefix":"ADMIN", "keyName":"InvestmentUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentUCVManagerImpl.address)}
+  keyValues[17] = {"keyPrefix":"ADMIN", "keyName":"InvestmentUCV", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentUCVImpl.address)}
   
+
   await configManager.batchSetKV(admin, keyValues);
 
   console.log("deployed address ##################################################################################################################")

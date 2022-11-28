@@ -15,7 +15,6 @@ interface IConfigManager is IERC165 {
         address indexed admin
     );
 
-
     /// @dev when set admin of some domain's key prefix, this event will be sent
     /// @param domain domain of the key prefix
     /// @param keyPrefix user defined key prefix
@@ -25,7 +24,6 @@ interface IConfigManager is IERC165 {
         string indexed keyPrefix,
         address indexed admin
     );
-
 
     /// @dev once domain admin set value of the key, this event will be emit
     event SetKV(

@@ -28,6 +28,12 @@ import * as TreasuryIncomeManagerABI from "../../artifacts/contracts/ucv/Treasur
 import * as MockNFTABI from "../../artifacts/contracts/mock/MockNFT.sol/MockNFT.json";
 
 
+import * as InvestmentCommitteeABI from "../../artifacts/contracts/committee/InvestmentCommittee.sol/InvestmentCommittee.json";
+import * as InvestmentManagementSetupAgentABI from "../../artifacts/contracts/agents/InvestmentManagementSetupAgent.sol/InvestmentManagementSetupAgent.json";
+import * as InvestmentUCVManagerABI from "../../artifacts/contracts/ucv/InvestmentUCVManager.sol/InvestmentUCVManager.json";
+import * as InvestmentUCVABI from "../../artifacts/contracts/ucv/InvestmentUCV.sol/InvestmentUCV.json";
+
+
 const {loadFixture, deployContract} = waffle;
 
 // dutyID(Role)
@@ -59,6 +65,7 @@ console.log("UCVManagerTypeID=", UCVTypeID);
 console.log("PropoalHandlerTypeID=", keccak256(toUtf8Bytes("PropoalHandlerTypeID")));
 const PropoalHandlerTypeID = "0x1858c200a95d03e2d42c3cf57541f3bc9a8c8471b5f80b7c26e756d34fbced97";
 console.log("PropoalHandlerTypeID=", PropoalHandlerTypeID);
+
 
 export {FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID}
 
@@ -108,7 +115,21 @@ console.log("TREASURY_INCOME_MANAGER_KEY=", TREASURY_INCOME_MANAGER_KEY);
 const INK_BADGE_KEY = "0x13515aecc01c430c059366623341389d823cb17a03398215f194736dadafb430";
 console.log("INK_BADGE_KEY=", INK_BADGE_KEY);
 
-export {INK_BADGE_KEY, INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY, PROPOSAL_HANDLER_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
+
+const INVESTMENT_COMMITTEE_KEY = "0x128c601ded2f395d087de562a578db0e73fc46b360dde2b5093b28c81deade32";
+console.log("INVESTMENT_COMMITTEE_KEY=", INVESTMENT_COMMITTEE_KEY);
+
+const INVESTMENT_MANAGER_AGENT_KEY = "0x986dd96b10fac4725bd057b03ee9de22de28933f8982377ec8616294f33dc98a";
+console.log("INVESTMENT_MANAGER_AGENT_KEY=", INVESTMENT_MANAGER_AGENT_KEY);
+
+const INVESTMENT_UCV_MANAGER_KEY = "0x2a1ed8f8d88a6a8257b92610148fb5c918216b78059c61f0df956430bd0d5991";
+console.log("INVESTMENT_UCV_MANAGER_KEY=", INVESTMENT_UCV_MANAGER_KEY);
+
+const INVESTMENT_UCV_KEY = "0xc3713271b025b85e649024366f30f97023c4647ef08cdc3af700069283841c1e";
+console.log("INVESTMENT_UCV_KEY=", INVESTMENT_UCV_KEY);
+
+
+export {INVESTMENT_COMMITTEE_KEY, INVESTMENT_UCV_MANAGER_KEY, INVESTMENT_UCV_KEY, INVESTMENT_MANAGER_AGENT_KEY, INK_BADGE_KEY, INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY, PROPOSAL_HANDLER_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_SETUP_AGENT_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY}
 
 
 console.log("DUTY_ID: ####### ######################################################################")
@@ -132,6 +153,26 @@ const AUDITOR_DUTYID = "0x7f014c5b03a1a6fcf5a57ebc1689669c0315c27f4755c182dbd0f3
 
 console.log("IINVESTOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.INVESTOR")));
 const INVESTMENT_MANAGER_DUTYID = "0xfbc390bb4ea3b52619dc9b8204861b1badcad7b3f4969737509cb97638b81fb0";
+
+
+console.log("FUND_ADMIN_DUTYID=", keccak256(toUtf8Bytes("dutyID.FUND_ADMIN")));
+const FUND_ADMIN_DUTYID = "0xb75d7773ce9de3cac72d14cb2c729061aadc554a64d0c817461ca96ed1c371cc";
+
+
+console.log("FUND_MANAGER_DUTYID=", keccak256(toUtf8Bytes("dutyID.FUND_MANAGER")));
+const FUND_MANAGER_DUTYID = "0x8560d55e9d80cf71a32b13f2f90e14e78fb5cf9fe10bdee0d2dcb98ff74736e9";
+
+
+console.log("FUND_RISK_MANAGER_DUTYID=", keccak256(toUtf8Bytes("dutyID.FUND_RISK_MANAGER")));
+const FUND_RISK_MANAGER_DUTYID = "0x01331b55733ae070ed3856e4bfdcc4ecdc7d1f4839e980c658dd4e7983271f84";
+
+
+console.log("FUND_LIQUIDATOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.FUND_LIQUIDATOR")));
+const FUND_LIQUIDATOR_DUTYID = "0x8fddb24da2ad50c84cbc7274875caf404a835b89c6694666b5e74523abde0ce8";
+
+
+console.log("FUND_AUDITOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.FUND_AUDITOR")));
+const FUND_AUDITOR_DUTYID = "0xbec75964fc7b92f671de9c0fe87cc5194cb0c8193f09af9794c0140ec4585600";
 
 
 
@@ -205,6 +246,26 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     await inkBadgeKeyImpl.deployed();
     console.log("inkBadgeKeyImpl Address=", inkBadgeKeyImpl.address);
 
+    const investmentCommitteeImpl = await deployContract(signers[0], InvestmentCommitteeABI, []);
+    await investmentCommitteeImpl.deployed();
+    console.log("investmentCommitteeImpl Address=", investmentCommitteeImpl.address);
+
+
+    const investmentManagementSetupAgentImpl = await deployContract(signers[0], InvestmentManagementSetupAgentABI, []);
+    await investmentManagementSetupAgentImpl.deployed();
+    console.log("InvestmentManagementSetupAgentImpl Address=", investmentManagementSetupAgentImpl.address);
+
+
+    const investmentUCVManagerImpl = await deployContract(signers[0], InvestmentUCVManagerABI, []);
+    await investmentUCVManagerImpl.deployed();
+    console.log("investmentUCVManagerImpl Address=", investmentUCVManagerImpl.address);
+
+    const investmentUCVImpl = await deployContract(signers[0], InvestmentUCVABI, []);
+    await investmentUCVImpl.deployed();
+    console.log("investmentUCVImpl Address=", investmentUCVImpl.address);
+
+
+
     console.log("init keys:");
 
     var factoryManagerFactoryKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "FactoryManager");
@@ -249,6 +310,20 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     var inkBadgeERC20Key = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "InkBadgeERC20");
     console.log("inkBadgeERC20Key=", inkBadgeERC20Key);
 
+
+    var investmentCommitteeKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "InvestmentCommittee");
+    console.log("investmentCommitteeKey=", investmentCommitteeKey);
+
+    var investmentManagementSetupAgentKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "InvestmentManagementSetupAgent");
+    console.log("investmentManagementSetupAgentKey=", investmentManagementSetupAgentKey);
+
+    var investmentUCVManagerKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "InvestmentUCVManager");
+    console.log("investmentUCVManagerKey=", investmentUCVManagerKey);
+
+    var investmentUCVKey = await configManager.buildConfigKey(INK_CONFIG_DOMAIN, "ADMIN", "InvestmentUCV");
+    console.log("investmentUCVKey=", investmentUCVKey);
+
+
     var keyValues = [];
     keyValues[0] = {"keyPrefix":"ADMIN", "keyName":"FactoryManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await factoryManager.address)}
     keyValues[1] = {"keyPrefix":"ADMIN", "keyName":"TheBoardCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await theBoardCommitteeImpl.address)}
@@ -264,6 +339,10 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
     keyValues[11] = {"keyPrefix":"ADMIN", "keyName":"IncomeManagerSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await incomeManagerSetupAgentImpl.address)}
     keyValues[12] = {"keyPrefix":"ADMIN", "keyName":"TreasuryIncomeManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await treasuryIncomeManagerImpl.address)}
     keyValues[13] = {"keyPrefix":"ADMIN", "keyName":"InkBadgeERC20", "typeID":keccak256(toUtf8Bytes("address")), "data": (await inkBadgeKeyImpl.address)}
+    keyValues[14] = {"keyPrefix":"ADMIN", "keyName":"InvestmentCommittee", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentCommitteeImpl.address)}
+    keyValues[15] = {"keyPrefix":"ADMIN", "keyName":"InvestmentManagementSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentManagementSetupAgentImpl.address)}
+    keyValues[16] = {"keyPrefix":"ADMIN", "keyName":"InvestmentUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentUCVManagerImpl.address)}
+    keyValues[17] = {"keyPrefix":"ADMIN", "keyName":"InvestmentUCV", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentUCVImpl.address)}
     
     await configManager.batchSetKV(INK_CONFIG_DOMAIN, keyValues);
 

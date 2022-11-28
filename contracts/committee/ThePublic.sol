@@ -34,14 +34,12 @@ contract ThePublic is BaseCommittee {
         string calldata feedback,
         bytes calldata data
     ) external override {
-
         if (!_allowToVote(identity, _msgSender())) {
             revert NotAllowToOperate();
         }
 
         _vote(identity, agree, count, true, feedback, data);
     }
-
 
     function _allowToVote(VoteIdentity calldata identity, address voteUser)
         internal
@@ -53,12 +51,11 @@ contract ThePublic is BaseCommittee {
         }
 
         if (_isDeadlineExpired(identity.proposalID)) {
-             revert VoteTimeExpired();
+            revert VoteTimeExpired();
         }
 
         return true;
     }
-
 
     /// @inheritdoc IVoteHandler
     function allowToVote(VoteIdentity calldata identity, address voteUser)
@@ -69,9 +66,6 @@ contract ThePublic is BaseCommittee {
     {
         return _allowToVote(identity, voteUser);
     }
-
-
-
 
     /// @inheritdoc ICommittee
     function tallyVotes(VoteIdentity calldata identity, bytes memory data)

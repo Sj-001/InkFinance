@@ -23,7 +23,6 @@ interface ICommittee is IProposalInfo, IVoteHandler, IERC165 {
     //     view
     //     returns (PledgeInfo memory pledgeInfo);
 
-
     /// @notice makeing a new proposal
     /// @dev Committee doesn't create propsal, DAO is the contract creating proposal, the committee just maintain the relationship between the propsal and committee and creator.
     /// @param proposal content of the proposal

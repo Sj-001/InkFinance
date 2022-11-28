@@ -25,4 +25,19 @@ library DutyID {
     // keccak256("dutyID.INVESTOR")
     bytes32 internal constant INVESTOR =
         0xfbc390bb4ea3b52619dc9b8204861b1badcad7b3f4969737509cb97638b81fb0;
+
+    bytes32 internal constant FUND_ADMIN =
+        0xb75d7773ce9de3cac72d14cb2c729061aadc554a64d0c817461ca96ed1c371cc;
+
+    bytes32 internal constant FUND_MANAGER =
+        0x8560d55e9d80cf71a32b13f2f90e14e78fb5cf9fe10bdee0d2dcb98ff74736e9;
+
+    bytes32 internal constant FUND_RISK_MANAGER =
+        0x01331b55733ae070ed3856e4bfdcc4ecdc7d1f4839e980c658dd4e7983271f84;
+
+    bytes32 internal constant FUND_LIQUIDATOR =
+        0x8fddb24da2ad50c84cbc7274875caf404a835b89c6694666b5e74523abde0ce8;
+
+    bytes32 internal constant FUND_AUDITOR =
+        0xbec75964fc7b92f671de9c0fe87cc5194cb0c8193f09af9794c0140ec4585600;
 }

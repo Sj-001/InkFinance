@@ -16,9 +16,6 @@ error SystemError();
 error NotAllowedToOperate();
 error AgentCannotBeExecute();
 
-
-
-
 interface IDAO is
     IProposalHandler,
     IDutyControl,
@@ -95,12 +92,11 @@ interface IDAO is
         view
         returns (DAOCommitteeWithDuty[] memory committeeDuties);
 
-
     /// @dev create committee
     /// @param name committee's name
     /// @param deployKey the deploy key of the committee
     /// @param dutyIDs committee's dutyID
-     function setupCommittee(
+    function setupCommittee(
         string memory name,
         bytes32 deployKey,
         bytes memory dutyIDs

@@ -209,7 +209,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
     // function _addPayee(uint256 scheduleID, bytes memory payee) internal returns(bool isGood) {
 
-    // } 
+    // }
 
     function _addSchedulePayee(
         uint256 scheduleID,
@@ -219,12 +219,10 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         PayrollSchedule storage sc = _schedules[scheduleID];
 
         for (uint256 i = 0; i < payees.length; i++) {
-            
             // if (_isGoodToAdd(scheduleID, payees[i])) {
             //     // _addPayee(scheduleID, payees[i]);
             // }
 
-            
             (
                 address payee,
                 address token,
@@ -236,8 +234,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                     payees[i],
                     (address, address, uint256, uint256, uint256, bytes)
                 );
-            
-            
+
             _validPayeeType(scheduleID, payee);
 
             if (sc.payees.contains(payee)) {
@@ -269,8 +266,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                 tokenID,
                 desc
             );
-            
-        } 
+        }
     }
 
     function _validPayeeType(uint256 scheduleID, address payee) internal view {
@@ -304,11 +300,9 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             // make sure it's contract
 
             // console.log("payee:", payee);
-            // if (!IUCV(payee).supportsInterface(type(IUCV).interfaceId)) {
-            //     revert PayeeNotUCVContract(payee);
-            // }
-
-
+            if (!IUCV(payee).supportsInterface(type(IUCV).interfaceId)) {
+                revert PayeeNotUCVContract(payee);
+            }
         }
     }
 

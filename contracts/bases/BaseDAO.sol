@@ -169,8 +169,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bool exist = false;
         // console.log("compare agent:");
         for (uint256 i = 0; i < _agentKeys.length(); i++) {
-            // console.log(_msgSender());
-            // console.log(_agents[_agentKeys.at(i)]);
+            console.log(_msgSender());
+            console.log(_agents[_agentKeys.at(i)]);
             if (_msgSender() == _agents[_agentKeys.at(i)]) {
                 exist = true;
                 break;
@@ -850,9 +850,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             .getProposalFlow(proposalID);
         console.log("proposal flow:");
         console.logBytes32(proposalFlowID);
-        if (proposalFlowID == 0x0000000000000000000000000000000000000000000000000000000000000004) {
+        if (
+            proposalFlowID ==
+            0x0000000000000000000000000000000000000000000000000000000000000004
+        ) {
             flowID = _defaultFlows[_defaultFlowIDIndex];
-
         } else {
             bool support = false;
             for (
@@ -1222,7 +1224,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         if (data.length != 0) {
             expiration = abi.decode(data, (uint256));
             console.log("expir", expiration);
-            
         } else {
             console.log("not set");
             return uint256(int256(-1));
