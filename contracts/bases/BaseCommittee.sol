@@ -273,6 +273,31 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         return IDAO(_parentDAO).hasDAOBadges(user);
     }
 
+    function _calculateVoteResults(VoteIdentity memory identity, bool ignoreBaseRule)
+        internal
+        returns (bool _passedOrNot)
+    {
+
+        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
+
+        bool agree;
+
+        if (
+            voteInfo.agreeVoterNum > voteInfo.denyVoterNum
+        ) {
+            agree = true;
+        } else {
+            agree = false;
+        }
+        if (agree) {
+            voteInfo.status = VoteStatus.AGREE;
+        } else {
+            voteInfo.status = VoteStatus.DENY;
+        }
+        _passedOrNot = agree;
+    }
+
+
     function _calculateVoteResults(VoteIdentity memory identity)
         internal
         returns (bool _passedOrNot)
@@ -339,8 +364,6 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
                 revert CannotTallyVote();
             }
         }
-
-        console.log("vote time expired");
 
         // @todo verify if it's expired.
         bool passOrNot = _calculateVoteResults(identity);

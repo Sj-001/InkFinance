@@ -11,6 +11,7 @@ error OnlyAllowToVoteOne();
 
 /// @notice the board committee has the highest priority of the DAO
 contract TheBoard is BaseCommittee {
+    using LVoteIdentityHelper for VoteIdentity;
     /// @notice when create proposal, how many staked tokens need to be locked.
     uint256 private _minPledgeRequired;
 
@@ -98,7 +99,27 @@ contract TheBoard is BaseCommittee {
         if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
-        _tallyVotes(identity, data, false);
+        IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
+        if (
+            IProcessHandler(getParentDAO()).getVoteExpirationTime(
+                identity.proposalID
+            ) > block.timestamp
+        ) {
+            revert CannotTallyVote();
+        }
+
+        // @todo verify if it's expired.
+        bool passOrNot = _calculateVoteResults(identity, true);
+
+        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
+        if (passOrNot) {
+            voteInfo.status = VoteStatus.AGREE;
+        } else {
+            voteInfo.status = VoteStatus.DENY;
+        }
+        
+        console.log("tally vote result", passOrNot);
+        proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
 
     /// @inheritdoc IDeploy

@@ -48,7 +48,12 @@ describe("proposal related test", function () {
         // // select one flow of the DAO
 
         var proposal = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address);
-
+        proposal.metadata[3] = {
+            "key":  "Expiration",
+            "typeID": keccak256(toUtf8Bytes("type.UINT256")),
+            "data":  web3.eth.abi.encodeParameter("uint256", 2),
+            "desc":  "0x0002",
+        };
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
         
         var theBoardAddress = await masterDAO.getDeployedContractByKey("0x9386c0f239c958604010fb0d19f447c347da25b93a863f07e6c4a1a5eca03672");
