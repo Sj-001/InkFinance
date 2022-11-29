@@ -12,7 +12,8 @@ interface IProposalInfo {
         bytes32 indexed proposalID,
         KVItem[] metadata,
         bytes[] kvData,
-        uint256 createTime
+        uint256 createTime,
+        address proposer
     );
 
     /// @notice when kvData has been add to the proposal this event will be emit

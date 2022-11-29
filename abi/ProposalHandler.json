@@ -125,6 +125,12 @@
         "internalType": "uint256",
         "name": "createTime",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "proposer",
+        "type": "address"
       }
     ],
     "name": "NewProposal",
@@ -846,6 +852,11 @@
         "internalType": "bool",
         "name": "commit",
         "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "proposer",
+        "type": "address"
       },
       {
         "internalType": "bytes",

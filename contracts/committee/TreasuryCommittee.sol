@@ -23,16 +23,20 @@ contract TreasuryCommittee is BaseCommittee {
         // makeProposalLockVotes = initData.makeProposalLockVotes;
         // _init(admin, addrRegistry, initData.baseInitData);
         // _memberSetting(admin, 1);
-        console.log("TreasuryCommittee. called initial ");
+        // console.log("TreasuryCommittee. called initial ");
         return callbackEvent;
     }
 
     /// @inheritdoc ICommittee
     function newProposal(
-        NewProposalInfo calldata proposal,
-        bool commit,
-        bytes calldata data
+        NewProposalInfo calldata,
+        bool,
+        bytes calldata
     ) external override returns (bytes32 proposalID) {
+
+        revert NotAllowToOperate();
+
+        /*
         if (!_hasDutyToOperate(DutyID.OPERATOR, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
@@ -56,6 +60,7 @@ contract TreasuryCommittee is BaseCommittee {
 
         // bool passOrNot = true;
         // proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
+        */
     }
 
     function vote(

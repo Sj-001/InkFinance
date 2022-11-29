@@ -213,6 +213,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     function newProposal(
         NewProposalInfo calldata proposal,
         bool commit,
+        address proposer,
         bytes calldata data
     ) public override returns (bytes32 proposalID) {
         /* EnsureGovEnough */
@@ -220,6 +221,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         proposalID = IProposalHandler(_proposalHandlerAddress).newProposal(
             proposal,
             commit,
+            proposer,
             data
         );
 
@@ -236,7 +238,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             proposalID,
             proposal.metadata,
             proposal.kvData,
-            block.timestamp
+            block.timestamp,
+            proposer
         );
     }
 
@@ -998,9 +1001,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     0x0000000000000000000000000000000000000000000000000000000000000000
                 ) {
                     address agentAddress = _agents[agents[i]];
-
-                    console.log("agentAddress", agentAddress);
-
                     IAgent(agentAddress).exec(info.proposalID);
                 }
             }
@@ -1061,12 +1061,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         // init sentinel.
         steps[_SENTINEL_ID].nextStep = flow.committees[0].step;
         if (flow.committees[0].step != 0x00) {
-            // no action required,
-            console.log("flow ID");
-            console.logBytes32(flow.flowID);
 
             for (uint256 j = 0; j < flow.committees.length; j++) {
-                console.log("has steps:", j);
 
                 CommitteeCreateInfo memory committeeInfo = flow.committees[j];
                 require(
@@ -1135,7 +1131,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         console.log("next committee", info.nextCommittee.committee);
         if (info.nextCommittee.committee == address(0x0)) {
-            console.log("trigger final decision ------------------ ");
             IProposalHandler(_proposalHandlerAddress).decideProposal(
                 info.proposalID,
                 agree,
@@ -1143,7 +1138,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             );
             _execFinish(info, agree);
         }
-
         /*
         if !flowHandler.hasNextFlow(proposalID) { 
             flowHandler.moveToNextFlow(proposalID)
@@ -1219,13 +1213,9 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         ProposalProgress storage info = _proposalInfo[proposalID];
         uint256 lastTime = info.lastOperationTimestamp;
-        console.log("last time:", lastTime);
-
         if (data.length != 0) {
             expiration = abi.decode(data, (uint256));
-            console.log("expir", expiration);
         } else {
-            console.log("not set");
             return uint256(int256(-1));
         }
         return lastTime + expiration;

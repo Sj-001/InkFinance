@@ -117,11 +117,13 @@ interface IProposalHandler is IProposalInfo {
     /// @dev making a new proposal and generate proposal records in the DAO
     /// @param proposal content of the proposal
     /// @param commit if proposal content is huge, the frontend could set commit as False, and submit multiple times
+    /// @param proposer who make the proposal
     /// @param data support data, decide by case
     /// @return proposalID generated proposal id
     function newProposal(
         NewProposalInfo calldata proposal,
         bool commit,
+        address proposer,
         bytes calldata data
     ) external returns (bytes32 proposalID);
 

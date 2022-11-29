@@ -70,6 +70,12 @@
         "internalType": "uint256",
         "name": "createTime",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "proposer",
+        "type": "address"
       }
     ],
     "name": "NewProposal",
@@ -629,17 +635,17 @@
           }
         ],
         "internalType": "struct IProposalInfo.NewProposalInfo",
-        "name": "proposal",
+        "name": "",
         "type": "tuple"
       },
       {
         "internalType": "bool",
-        "name": "commit",
+        "name": "",
         "type": "bool"
       },
       {
         "internalType": "bytes",
-        "name": "data",
+        "name": "",
         "type": "bytes"
       }
     ],

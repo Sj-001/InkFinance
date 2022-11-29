@@ -48,7 +48,7 @@ contract TheBoard is BaseCommittee {
         // valid the right step
         // valid the status of the proposal
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
-        proposalID = proposalHandler.newProposal(proposal, commit, data);
+        proposalID = proposalHandler.newProposal(proposal, commit, _msgSender(), data);
     }
 
     /// @inheritdoc IVoteHandler

@@ -63,10 +63,11 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     function newProposal(
         NewProposalInfo calldata proposal,
         bool commit,
+        address proposer,
         bytes calldata data
     ) public override onlyDAO returns (bytes32 proposalID) {
         /* EnsureGovEnough */
-        proposalID = _newProposal(proposal, commit, data);
+        proposalID = _newProposal(proposal, commit, proposer, data);
     }
 
     /// @inheritdoc IProposalHandler
@@ -408,6 +409,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     function _newProposal(
         NewProposalInfo memory proposal,
         bool commit,
+        address proposer,
         bytes memory data
     ) internal returns (bytes32 proposalID) {
         bytes32[] memory agents = proposal.agents;
