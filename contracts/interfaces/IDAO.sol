@@ -22,8 +22,8 @@ interface IDAO is
     IAgentHandler,
     IProcessHandler
 {
-    /// event
 
+    
     event NewDAOCreated(
         address indexed owner,
         address indexed token,
@@ -48,16 +48,6 @@ interface IDAO is
 
     event NewBadgeCreated(address token, string name, uint256 total);
 
-    // /// @dev let agent call any DAO method
-    // /// @param contractAddress ask DAO to call the contractAddress
-    // /// @param functionSignature the function signatures
-    // /// @return success if the call succeed
-    // /// @return returnedBytes the returned bytes from the contract function call
-    // function callFromDAO(
-    //     address contractAddress,
-    //     bytes memory functionSignature
-    // ) external returns (bool success, bytes memory returnedBytes);
-
     /// @dev check the account has badges or not
     function hasDAOBadges(address account)
         external
@@ -71,14 +61,16 @@ interface IDAO is
     /// @dev add a new workflow, noramll call by agent
     function setupFlowInfo(FlowInfo memory flow) external;
 
+    /// @dev after ucv manager created, call this method set ucv's manager
     function setupUCV(address ucv, address ucvManager) external;
 
-    /// @dev ge flow steps
+    /// @dev get flow steps
     function getFlowSteps(bytes32 flowID)
         external
         view
         returns (CommitteeInfo[] memory infos);
 
+    /// @dev deploy 
     function deployByKey(
         bytes32 typeID,
         bytes32 contractKey,

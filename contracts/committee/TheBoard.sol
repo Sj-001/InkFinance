@@ -85,11 +85,6 @@ contract TheBoard is BaseCommittee {
         return allowOperate(identity, voteUser);
     }
 
-    /**
-        @todo 
-    
-    
-     */
 
     /// @inheritdoc ICommittee
     function tallyVotes(VoteIdentity calldata identity, bytes memory data)

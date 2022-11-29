@@ -13,18 +13,22 @@ contract IncomeManagerSetupAgent is BaseAgent {
 
     address private _dao;
 
+
+    /// @inheritdoc IDeploy
     function init(
         address dao_,
         address config_,
-        bytes calldata data
-    ) public virtual override returns (bytes memory callbackEvent) {
+        bytes calldata
+    ) public virtual override returns (bytes memory) {
         super.init(config_);
         _dao = dao_;
+        
     }
 
     /// @inheritdoc IAgent
     function preExec(bytes32 proposalID)
         external
+        view
         override
         returns (bool success)
     {
@@ -58,9 +62,10 @@ contract IncomeManagerSetupAgent is BaseAgent {
 
     /// @inheritdoc IAgent
     function exec(bytes32 proposalID) external override onlyCallFromDAO {
-        console.log(
-            "IncomeManagerSetupAgent exec --------------------------------------------------------------------------------- "
-        );
+
+        if ( _executed == true) {
+            revert TheAgentIsAlreadyExecuted();
+        }
 
         bytes32 typeID;
         bytes memory bytesData;
@@ -81,7 +86,6 @@ contract IncomeManagerSetupAgent is BaseAgent {
         uint256 period = abi.decode(bytesData, (uint256));
 
         bytes memory timeData = abi.encode(startTime, period);
-
         (typeID, bytesData) = proposalHandler.getProposalMetadata(
             proposalID,
             "incomeManagerKey"
@@ -93,6 +97,7 @@ contract IncomeManagerSetupAgent is BaseAgent {
             timeData
         );
 
+        /// @dev avoid execute twice
         _executed = true;
     }
 
@@ -100,9 +105,13 @@ contract IncomeManagerSetupAgent is BaseAgent {
         executed = _executed;
     }
 
-    function getTypeID() external view override returns (bytes32 typeID) {}
+    function getTypeID() external pure override returns (bytes32 typeID) {
+        
+    }
 
-    function getVersion() external view override returns (uint256 version) {}
+    function getVersion() external pure override returns (uint256 version) {
+        version = 1;
+    }
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)

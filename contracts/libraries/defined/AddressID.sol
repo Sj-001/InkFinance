@@ -19,7 +19,6 @@ library AddressID {
     bytes32 internal constant InkBadgeERC20Factory =
         0x2abd799a8b295d39b3f061556093e19cb6777d7346a4a772b80c051d642f1725;
 
-    // ExecuteAgent 地址定义.
     // prefix = keccak256("addressid.ExecuteAgent")
     // agent = keccak256(abi.encode(prefix, agent name));
     bytes32 internal constant EXECUTED_AGENT_PREFIX =

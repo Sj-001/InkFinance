@@ -26,7 +26,7 @@ interface IIdentity is IERC165 {
         mapping(address => mapping(bytes32 => Value)) kvs;
     }
 
-    // 仅能设置到msg.sender地址下的作用域中.
+    
     function batchSetUserKVs(UserKV[] memory kvs) external;
 
     function getUserKV(address zone, bytes32 key)

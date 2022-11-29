@@ -5,6 +5,10 @@ import "./IAgentInfo.sol";
 
 /// @dev Agent is a resolution executor, once proposal passed, the proposal's agent will be in
 /// charge of execute on-chain business
+
+error TheAgentIsAlreadyExecuted();
+error MemberRequired(string);
+
 interface IAgent is IAgentInfo {
     /// @dev specify agent's dao, it's been execute only once
     function initAgent(address dao) external;
