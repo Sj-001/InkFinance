@@ -7,7 +7,9 @@ import "../interfaces/IDAO.sol";
 import "../libraries/defined/DutyID.sol";
 import "../utils/BytesUtils.sol";
 import "hardhat/console.sol";
-
+/// @title InvestmentManagementSetupAgent
+/// @author InkTech <tech-support@inkfinance.xyz>
+/// @notice InvestmentManagementSetupAgent is delegate setup investment committee & member's duty
 contract InvestmentManagementSetupAgent is BaseAgent {
     using BytesUtils for bytes;
 
@@ -25,7 +27,6 @@ contract InvestmentManagementSetupAgent is BaseAgent {
         bytes calldata data
     ) public virtual override returns (bytes memory callbackEvent) {
         super.init(config_);
-        console.log("init1234");
         _dao = dao_;
     }
 

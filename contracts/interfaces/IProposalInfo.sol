@@ -101,26 +101,20 @@ interface IProposalInfo {
         bytes32[] agents;
         uint256 nextExecAgentIdx;
         bytes32 crossChainProtocol;
-        // 避免链上枚举, 消耗gas, 浪费存储.
         // LEnumerableMetadata.MetadataSet headers;
         mapping(string => ItemValue) metadata;
         LEnumerableMetadata.MetadataSet kvData;
     }
 
-    // topic中的key落到proposal中的最新位置, 用于加速查询, 类似做索引.
     struct TopicKey2Proposal {
         bytes32 proposalID;
         uint256 proposalIdx;
     }
 
-    // topic存储结构.
+
     struct TopicProposal {
         bytes32 topicID;
-        // 记录所有通过的proposal.
         bytes32[] proposalIDs;
-        // 缓存索引系统, proposal通过后, 需要调用索引刷新, 来针对每个key, 存储该值最终的proposalID.
-        // 获取proposalID后, 即可通过proposal获取该key对应的值.
-        // 刷新缓存时, 可能遇到proposal内的content过多, 此时需要人工介入分段刷新.
         // keyid => latest proposal
         mapping(bytes32 => TopicKey2Proposal) key2Proposal;
         bytes32 lastIndexedProposalID;

@@ -28,9 +28,6 @@ contract IncomeManagerSetupAgent is BaseAgent {
         override
         returns (bool success)
     {
-        console.log(
-            "IncomeManagerSetupAgent pre exec ------------------------------------------------------ "
-        );
 
         bytes32 typeID;
         bytes memory bytesData;

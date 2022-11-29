@@ -8,6 +8,7 @@ import "../libraries/defined/DutyID.sol";
 import "hardhat/console.sol";
 
 contract InvestmentCommittee is BaseCommittee {
+    
     struct InitData {
         address[] members;
         bytes baseInitData;

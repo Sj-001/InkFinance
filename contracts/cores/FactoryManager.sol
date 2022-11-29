@@ -29,7 +29,7 @@ error FailedToGeneraateAddress(
 
 /// @title FactoryManager
 /// @author InkTech <tech-support@inkfinance.xyz>
-/// @notice Factory is used to generate DAO instance
+/// @notice Factory is used to generate Contract instance
 contract FactoryManager is BaseVerify, IFactoryManager {
     // using LChainLink for LChainLink.Link;
     using BytesUtils for bytes;

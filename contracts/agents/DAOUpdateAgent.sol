@@ -8,6 +8,9 @@ import "../interfaces/IPayrollManager.sol";
 import "../utils/BytesUtils.sol";
 import "hardhat/console.sol";
 
+/// @title DAOUpdateAgent
+/// @author InkTech <tech-support@inkfinance.xyz>
+/// @notice DAOUpdateAgent is a delegate to update DAO's base info.
 contract DAOUpdateAgent is BaseAgent {
     using BytesUtils for bytes;
 

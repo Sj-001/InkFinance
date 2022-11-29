@@ -194,8 +194,6 @@ interface IProposalHandler is IProposalInfo {
         uint256 pageSize
     ) external view returns (string[] memory keys);
 
-    //////////////////// flush index
-    // dao查看该topicID上次刷新到的位置(lastIndexedProposalID, lastIndexedKey), 来继续进行, 所以权限问题.
     function flushTopicIndex(bytes32 topicID, uint256 operateNum) external;
 
     /// @dev off-chain proposal only
