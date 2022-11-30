@@ -28,6 +28,86 @@ const {loadFixture, deployContract} = waffle;
 
 describe("proposal related test", function () {
 
+
+it("test setup treasury for direct pay", async function () {
+
+        const signers = await ethers.getSigners();
+        console.log("########################current signer:", signers[0].address);
+        
+        const {factoryManager} = await loadFixture(FactoryManagerFixture);
+        const {inkERC20} = await loadFixture(InkERC20Fixture);        
+        var erc20Address = inkERC20.address;
+
+        // // select/create a DAO
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
+        await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
+
+        var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = masterDAOFactory.attach(firstDAOAddress);
+        console.log("dao address:", masterDAO.address);
+        // // select one flow of the DAO
+
+        var proposal = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address);
+        proposal.metadata[3] = {
+            "key":  "Expiration",
+            "typeID": keccak256(toUtf8Bytes("type.UINT256")),
+            "data":  web3.eth.abi.encodeParameter("uint256", 1),
+            "desc":  "0x0002",
+        };
+
+        // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
+        
+        var theBoardAddress = await masterDAO.getDeployedContractByKey(THE_BOARD_COMMITTEE_KEY);
+
+        var theBoardFactory = await ethers.getContractFactory("TheBoard");
+        // var theBoard = theBoardFactory.attach(flowSteps[0].committee);
+        var theBoard = theBoardFactory.attach(theBoardAddress);
+
+        await theBoard.newProposal(proposal, true, "0x00");
+
+        var proposalID = await masterDAO.getProposalIDByIndex(0);
+        
+        // // console.log("first proposal id: ", proposalID);
+        await voteProposalByThePublic(await masterDAO.address, proposalID);
+
+
+    
+        // // once decide, 
+        await tallyVotes(await masterDAO.address, proposalID);
+        
+
+        // var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
+        // var theVoteCommittee = await theBoard.attach(committeeInfo.committee);
+
+        console.log("proposal detail the vote committee :", await masterDAO.getProposalSummary(proposalID));
+        // var voteIdentity = {"proposalID":proposalID, "step":committeeInfo.step};
+
+        // console.log("vote detail info:", await theVoteCommittee.getVoteDetail(voteIdentity, true, "0x0000000000000000000000000000000000000000", 10));
+
+
+        var committeeAddress = await factoryManager.getDeployedAddress(THE_TREASURY_COMMITTEE_KEY,0);
+
+        // console.log("treasury committee amount:", await factoryManager.getDeployedAddressCount(THE_TREASURY_COMMITTEE_KEY));
+        console.log("treasury committee address:", committeeAddress);
+        
+        await depositBalanceToUCV(masterDAO.address, erc20Address);
+
+        await setupAndSignVaultDirectPay(masterDAO.address, erc20Address);
+
+        await setupAndSignInvestmentDirectPay(masterDAO.address, erc20Address);
+
+        // await setupAndSignInvestmentDirectPayNFT(masterDAO.address, erc20Address);
+
+
+
+    
+
+
+    });
+
+
+
     it("test setup treasury for direct pay", async function () {
 
         const signers = await ethers.getSigners();

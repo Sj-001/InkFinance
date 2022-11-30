@@ -53,7 +53,7 @@ describe("proposal related test", function () {
         proposal.metadata[3] =  {
             "key":  "VoteFlow",
             "typeID": keccak256(toUtf8Bytes("type.BYTES32")),
-            "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+            "data": "0x0000000000000000000000000000000000000000000000000000000000000002",
             "desc": "0x0002",
         };
 
@@ -75,11 +75,13 @@ describe("proposal related test", function () {
 
 
 
+        /*
         console.log("committee infos:", await masterDAO.getDAOCommittees());
 
         var proposalID = await masterDAO.getProposalIDByIndex(0);
         
         console.log("proposal flow:", await masterDAO.getProposalFlow(proposalID))
+
 
         await voteProposalByThePublic(await masterDAO.address, proposalID);
 
@@ -109,7 +111,7 @@ describe("proposal related test", function () {
 
         console.log("dao committees: ", await masterDAO.getDAOCommittees());
 
-
+        */
         
 
 

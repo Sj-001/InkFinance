@@ -215,6 +215,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             // console.logBytes32(value);
             if (value > 0) {
                 flowID = value;
+                return flowID;
             }
         }
         // not set
