@@ -1,11 +1,6 @@
 [
   {
     "inputs": [],
-    "name": "CannotTallyVote",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "NotAllowToOperate",
     "type": "error"
   },

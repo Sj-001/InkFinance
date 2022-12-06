@@ -26,7 +26,6 @@ interface IIdentity is IERC165 {
         mapping(address => mapping(bytes32 => Value)) kvs;
     }
 
-    
     function batchSetUserKVs(UserKV[] memory kvs) external;
 
     function getUserKV(address zone, bytes32 key)

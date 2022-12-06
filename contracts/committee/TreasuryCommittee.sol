@@ -33,7 +33,6 @@ contract TreasuryCommittee is BaseCommittee {
         bool,
         bytes calldata
     ) external override returns (bytes32 proposalID) {
-
         revert NotAllowToOperate();
 
         /*

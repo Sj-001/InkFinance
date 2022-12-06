@@ -112,7 +112,6 @@ interface IProposalInfo {
         uint256 proposalIdx;
     }
 
-
     struct TopicProposal {
         bytes32 topicID;
         bytes32[] proposalIDs;

@@ -9,7 +9,6 @@ import "../utils/BytesUtils.sol";
 import "hardhat/console.sol";
 
 contract TreasuryManagerAgent is BaseAgent {
-
     using BytesUtils for bytes;
 
     string internal constant _MD_SIGNERS = "Signers";
@@ -47,7 +46,6 @@ contract TreasuryManagerAgent is BaseAgent {
         );
         address[] memory operators = abi.decode(dataBytes, (address[]));
 
-
         (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
             proposalID,
             "signer"
@@ -60,7 +58,7 @@ contract TreasuryManagerAgent is BaseAgent {
             "auditor"
         );
         address[] memory auditors = abi.decode(dataBytes, (address[]));
-        
+
         console.log(
             "auditor address ::::::::::::::::::::::::::::::::: ",
             auditors[0]

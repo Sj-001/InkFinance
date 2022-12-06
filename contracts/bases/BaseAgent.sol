@@ -7,8 +7,6 @@ import "../interfaces/IAgent.sol";
 import "../interfaces/IDeploy.sol";
 import "../interfaces/IProposalInfo.sol";
 
-
-
 abstract contract BaseAgent is IDeploy, IAgent, IProposalInfo, BaseVerify {
     /// @notice the description of the agent;
     string private _description;

@@ -13,7 +13,6 @@ contract IncomeManagerSetupAgent is BaseAgent {
 
     address private _dao;
 
-
     /// @inheritdoc IDeploy
     function init(
         address dao_,
@@ -22,7 +21,6 @@ contract IncomeManagerSetupAgent is BaseAgent {
     ) public virtual override returns (bytes memory) {
         super.init(config_);
         _dao = dao_;
-        
     }
 
     /// @inheritdoc IAgent
@@ -32,7 +30,6 @@ contract IncomeManagerSetupAgent is BaseAgent {
         override
         returns (bool success)
     {
-
         bytes32 typeID;
         bytes memory bytesData;
 
@@ -62,8 +59,7 @@ contract IncomeManagerSetupAgent is BaseAgent {
 
     /// @inheritdoc IAgent
     function exec(bytes32 proposalID) external override onlyCallFromDAO {
-
-        if ( _executed == true) {
+        if (_executed == true) {
             revert TheAgentIsAlreadyExecuted();
         }
 
@@ -105,9 +101,7 @@ contract IncomeManagerSetupAgent is BaseAgent {
         executed = _executed;
     }
 
-    function getTypeID() external pure override returns (bytes32 typeID) {
-        
-    }
+    function getTypeID() external pure override returns (bytes32 typeID) {}
 
     function getVersion() external pure override returns (uint256 version) {
         version = 1;

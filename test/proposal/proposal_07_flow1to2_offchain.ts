@@ -38,7 +38,7 @@ describe("proposal related test", function () {
         var erc20Address = inkERC20.address;
 
         // // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 1);
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
         await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
@@ -53,7 +53,7 @@ describe("proposal related test", function () {
         proposal.metadata[3] =  {
             "key":  "VoteFlow",
             "typeID": keccak256(toUtf8Bytes("type.BYTES32")),
-            "data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+            "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
             "desc": "0x0002",
         };
 
@@ -75,7 +75,7 @@ describe("proposal related test", function () {
 
 
 
-        /*
+        
         console.log("committee infos:", await masterDAO.getDAOCommittees());
 
         var proposalID = await masterDAO.getProposalIDByIndex(0);
@@ -89,7 +89,7 @@ describe("proposal related test", function () {
 
         var proposalSummery = await masterDAO.getProposalSummary(proposalID);
 
-        console.log("summery:", proposalSummery);
+        // console.log("summery:", proposalSummery);
 
         // expect(proposalSummery.status).to.be.equal(0);
 
@@ -99,7 +99,7 @@ describe("proposal related test", function () {
         await tallyVotesByTheBoard(await masterDAO.address,  proposalID);
 
         // console.log("first proposal id: ", proposalID);
-        // console.log("proposal summery:", proposalSummery);
+        console.log("proposal summery:", proposalSummery);
 
 
         proposalSummery = await masterDAO.getProposalSummary(proposalID);
@@ -111,8 +111,8 @@ describe("proposal related test", function () {
 
         console.log("dao committees: ", await masterDAO.getDAOCommittees());
 
-        */
         
+        console.log("passed committee:", await masterDAO.getVotedCommittee(proposalID));
 
 
     });

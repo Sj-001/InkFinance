@@ -22,8 +22,6 @@ interface IDAO is
     IAgentHandler,
     IProcessHandler
 {
-
-    
     event NewDAOCreated(
         address indexed owner,
         address indexed token,
@@ -70,7 +68,7 @@ interface IDAO is
         view
         returns (CommitteeInfo[] memory infos);
 
-    /// @dev deploy 
+    /// @dev deploy
     function deployByKey(
         bytes32 typeID,
         bytes32 contractKey,

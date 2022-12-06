@@ -7,6 +7,7 @@ import "../interfaces/IDAO.sol";
 import "../libraries/defined/DutyID.sol";
 import "../utils/BytesUtils.sol";
 import "hardhat/console.sol";
+
 /// @title InvestmentManagementSetupAgent
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice InvestmentManagementSetupAgent is delegate setup investment committee & member's duty

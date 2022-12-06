@@ -48,7 +48,12 @@ contract TheBoard is BaseCommittee {
         // valid the right step
         // valid the status of the proposal
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
-        proposalID = proposalHandler.newProposal(proposal, commit, _msgSender(), data);
+        proposalID = proposalHandler.newProposal(
+            proposal,
+            commit,
+            _msgSender(),
+            data
+        );
     }
 
     /// @inheritdoc IVoteHandler
@@ -85,7 +90,6 @@ contract TheBoard is BaseCommittee {
         return allowOperate(identity, voteUser);
     }
 
-
     /// @inheritdoc ICommittee
     function tallyVotes(VoteIdentity calldata identity, bytes memory data)
         external
@@ -95,13 +99,13 @@ contract TheBoard is BaseCommittee {
             revert YouDoNotHaveDutyToOperate();
         }
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
-        if (
-            IProcessHandler(getParentDAO()).getVoteExpirationTime(
-                identity.proposalID
-            ) > block.timestamp
-        ) {
-            revert CannotTallyVote();
-        }
+        // if (
+        //     IProcessHandler(getParentDAO()).getVoteExpirationTime(
+        //         identity.proposalID
+        //     ) > block.timestamp
+        // ) {
+        //     revert CannotTallyVote();
+        // }
 
         // @todo verify if it's expired.
         bool passOrNot = _calculateVoteResults(identity, true);
@@ -112,7 +116,7 @@ contract TheBoard is BaseCommittee {
         } else {
             voteInfo.status = VoteStatus.DENY;
         }
-        
+
         console.log("tally vote result", passOrNot);
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }

@@ -20,4 +20,9 @@ interface IProcessHandler {
         external
         view
         returns (address committee, bytes32 step);
+
+    function getVotedCommittee(bytes32 proposalID)
+        external
+        view
+        returns (address[] memory committee);
 }

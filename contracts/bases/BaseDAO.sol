@@ -1001,7 +1001,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     0x0000000000000000000000000000000000000000000000000000000000000000
                 ) {
                     address agentAddress = _agents[agents[i]];
-                    IAgent(agentAddress).exec(info.proposalID);
+
+                    if (
+                        !IAgent(agentAddress).isExecuted() &&
+                        IAgent(agentAddress).isUniqueInDAO()
+                    ) {
+                        IAgent(agentAddress).exec(info.proposalID);
+                    }
                 }
             }
         }
@@ -1061,9 +1067,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         // init sentinel.
         steps[_SENTINEL_ID].nextStep = flow.committees[0].step;
         if (flow.committees[0].step != 0x00) {
-
             for (uint256 j = 0; j < flow.committees.length; j++) {
-
                 CommitteeCreateInfo memory committeeInfo = flow.committees[j];
                 require(
                     committeeInfo.step != bytes32(0x0) &&
@@ -1086,10 +1090,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     steps[committeeInfo.step].nextStep = bytes32(0x0);
                 }
             }
-        } else {
-            console.log(
-                "no action required #############################################################################################################################################################################################################################################################################################################################################################################################################################"
-            );
         }
     }
 
@@ -1112,6 +1112,21 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             c.name = committeeName;
             c.dutyIDs = dutyIDs;
             _committees.push(c);
+        }
+    }
+
+    function getVotedCommittee(bytes32 proposalID)
+        external
+        view
+        override
+        returns (address[] memory committee)
+    {
+        ProposalProgress storage info = _proposalInfo[proposalID];
+
+        uint256 committeeSize = info.committees.length;
+        committee = new address[](committeeSize);
+        for (uint256 i = 0; i < committeeSize; i++) {
+            committee[i] = info.committees[i].committee;
         }
     }
 
