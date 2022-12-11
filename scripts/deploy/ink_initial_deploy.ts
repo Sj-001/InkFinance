@@ -21,18 +21,24 @@ async function deploy(){
   const configManagerFactory = await ethers.getContractFactory("ConfigManager");
   const configManager = await configManagerFactory.deploy();
   await configManager.deployed();
+  console.log("config manager deployed..")
 
   const factoryManagerFactory = await ethers.getContractFactory("FactoryManager");
   const factoryManager = await factoryManagerFactory.deploy(configManager.address);
   await factoryManager.deployed();
 
+  console.log("factory deployed")
+
   const theBoardFactory = await ethers.getContractFactory("TheBoard");
   const theBoardCommitteeImpl = await theBoardFactory.deploy();
   await theBoardCommitteeImpl.deployed();
+  console.log("the board deployed..")
 
   const thePublicFactory = await ethers.getContractFactory("ThePublic");
   const thePublicCommitteeImpl = await thePublicFactory.deploy();
   await thePublicCommitteeImpl.deployed();
+
+  console.log("ThePublic deployed..")
 
   const treasuryCommitteeFactory = await ethers.getContractFactory("TreasuryCommittee");
   const theTreasuryCommitteeImpl = await treasuryCommitteeFactory.deploy();

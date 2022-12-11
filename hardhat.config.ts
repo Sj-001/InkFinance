@@ -32,12 +32,22 @@ module.exports = {
 
         }
         
-        // ,
-        // rinkeby: {
-        //     url: process.env.API_URL_RINKEBY,
-        //     accounts: [process.env.PRIVATE_KEY_RINKEBY]
-        // }
-      
+        ,
+        dev_avax: {
+            url: process.env.DEV_AVAX_RPC,
+            accounts: [process.env.DEV_AVAX_KEY]
+        }
+        ,
+        dev_bsc: {
+            url: process.env.DEV_BSC_RPC,
+            accounts: [process.env.DEV_BSC_KEY]
+        }
+
+        ,
+        dev_polygon: {
+            url: process.env.DEV_POLYGON_RPC,
+            accounts: [process.env.DEV_POLYGON_KEY]
+        }
     },
 
     abiExporter: {
