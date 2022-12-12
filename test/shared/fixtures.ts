@@ -12,7 +12,7 @@ import * as FactoryManagerABI from "../../artifacts/contracts/cores/FactoryManag
 import * as MasterDAOABI from "../../artifacts/contracts/daos/MasterDAO.sol/MasterDAO.json";
 import * as InkERC20ABI from "../../artifacts/contracts/tokens/InkERC20.sol/InkERC20.json";
 import * as TheBoardABI from "../../artifacts/contracts/committee/TheBoard.sol/TheBoard.json";
-import * as ThePublicABI from "../../artifacts/contracts/committee/ThePUblic.sol/ThePublic.json";
+import * as ThePublicABI from "../../artifacts/contracts/committee/ThePublic.sol/ThePublic.json";
 import * as TreasuryCommitteeABI from "../../artifacts/contracts/committee/TreasuryCommittee.sol/TreasuryCommittee.json";
 import * as TreasuryManagerAgentABI from "../../artifacts/contracts/agents/TreasuryManagerAgent.sol/TreasuryManagerAgent.json";
 import * as PayrollExecuteAgentABI from "../../artifacts/contracts/agents/PayrollExecuteAgent.sol/PayrollExecuteAgent.json";
