@@ -48,6 +48,12 @@ module.exports = {
             url: process.env.DEV_POLYGON_RPC,
             accounts: [process.env.DEV_POLYGON_KEY]
         }
+
+        ,
+        dev_neon: {
+            url: process.env.DEV_NEON_RPC,
+            accounts: [process.env.DEV_NEON_KEY]
+        }
     },
 
     abiExporter: {
