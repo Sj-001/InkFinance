@@ -102,7 +102,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// @notice governance token
     IERC20 private _govToken;
 
-    /// @notice ？？
+
     uint256 private _govTokenAmountRequirement;
 
     /// @notice staking engine address

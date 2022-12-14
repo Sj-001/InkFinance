@@ -26,8 +26,6 @@ contract MasterDAO is BaseDAO {
 
     //     proposalID = _newProposal(proposal, commit, data);
 
-    //     // 0x 全0 DAO 内部Offchain
-    //     // 0x 全FFF 任意执行，
     //     mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[
     //         DEFAULT_FLOW_ID
     //     ];
