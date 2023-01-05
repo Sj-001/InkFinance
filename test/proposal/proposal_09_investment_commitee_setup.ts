@@ -6,12 +6,12 @@ import { Fixture } from 'ethereum-waffle'
 import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
-import { FactoryManagerFixture, InkERC20Fixture } from '../shared/fixtures'; 
+import { FactoryManagerFixture, FUND_MANAGER_KEY, InkERC20Fixture } from '../shared/fixtures'; 
 
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
-import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
+import { INVESTMENT_COMMITTEE_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
-import { buildMasterDAOInitData, buildInvestmentSetupProposal } from '../shared/parameters'; 
+import { buildFundInitData, buildMasterDAOInitData, buildInvestmentSetupProposal } from '../shared/parameters'; 
 
 const { expect } = chai;
 import {defaultAbiCoder} from '@ethersproject/abi';
@@ -46,7 +46,7 @@ describe("proposal related test", function () {
         proposal.metadata[2] =  {
             "key":  "VoteFlow",
             "typeID": keccak256(toUtf8Bytes("type.BYTES32")),
-            "data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+            "data": "0x0000000000000000000000000000000000000000000000000000000000000000",
             "desc": "0x0002",
         };
 
@@ -80,17 +80,70 @@ describe("proposal related test", function () {
         // console.log("first proposal id: ", proposalID);
         // console.log("proposal summery:", proposalSummery);
 
+        var committeeAddress = await masterDAO.getDeployedContractByKey(INVESTMENT_COMMITTEE_KEY);
+
+        await setupFund(masterDAO.address, erc20Address);
+
+        // await launchFund(committeeAddress, erc20Address);
 
 
+        // await voteAndInvestTheFund();
         
+        // await withdrawPrincipal()
 
 
     });
 
 
+    async function setupFund (daoAddress:string, erc20Address:string) {
+
+
+        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
+        var masterDAO = await masterDAOFactory.attach(daoAddress);
+
+        var fundManagerFactory = await ethers.getContractFactory("FundManager");
+        var fundManagerAddress = await masterDAO.getDeployedContractByKey(FUND_MANAGER_KEY);
+        var fundManager = await fundManagerFactory.attach(fundManagerAddress);
+
+        var fundInitData = buildFundInitData(erc20Address); 
+
+
+        await fundManager.createFund(fundInitData);
+
+    }
+
+    async function launchFund (committeeAddress:string, erc20Address:string) {
+
+
+    }
+
+
+    async function purchaseFund (committeeAddress:string, erc20Address:string) {
 
 
 
+    }
+
+    async function tallyUp (committeeAddress:string, erc20Address:string) {
+
+    }
+
+
+    async function startFund (committeeAddress:string, erc20Address:string) {
+
+
+    }
+
+    async function claimShare(committeeAddress:string, erc20Address:string) {
+
+
+    }
+
+
+    async function claimPrincipal (committeeAddress:string, erc20Address:string) {
+
+
+    }
 
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
         const signers = await ethers.getSigners();

@@ -4,7 +4,9 @@ pragma solidity ^0.8.0;
 import "../bases/BaseCommittee.sol";
 import "../interfaces/IAgentHandler.sol";
 import "../interfaces/IDAO.sol";
+import "../interfaces/IFundManager.sol";
 import "../libraries/defined/DutyID.sol";
+
 import "hardhat/console.sol";
 
 contract InvestmentCommittee is BaseCommittee {
@@ -19,19 +21,18 @@ contract InvestmentCommittee is BaseCommittee {
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
         _init(dao_, config_, data_);
-
+        // init fund manager here
         console.log("Investment Committee init called");
+        // _fundManager = address(0);
         return callbackEvent;
     }
 
     /// @inheritdoc ICommittee
     function newProposal(
-        NewProposalInfo calldata,
-        bool,
-        bytes calldata
-    ) external override returns (bytes32) {
-        revert NotAllowToOperate();
-    }
+        NewProposalInfo calldata proposal,
+        bool commit,
+        bytes calldata data
+    ) external override returns (bytes32 proposalID) {}
 
     function vote(
         VoteIdentity calldata identity,
@@ -39,9 +40,7 @@ contract InvestmentCommittee is BaseCommittee {
         uint256 count,
         string calldata feedback,
         bytes calldata data
-    ) external override {
-        revert NotAllowToOperate();
-    }
+    ) external override {}
 
     /// @inheritdoc IVoteHandler
     function allowToVote(VoteIdentity calldata, address)
@@ -50,6 +49,7 @@ contract InvestmentCommittee is BaseCommittee {
         override
         returns (bool)
     {
+        // reach minimal & fund raise not finished yet
         return false;
     }
 
@@ -59,7 +59,7 @@ contract InvestmentCommittee is BaseCommittee {
         pure
         override
     {
-        revert NotAllowToOperate();
+        // make sure reach minimal purchase
     }
 
     /// @inheritdoc IDeploy

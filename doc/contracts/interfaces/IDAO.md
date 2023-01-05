@@ -58,7 +58,7 @@ function setupFlowInfo(
 
 ### setupUCV
 
-
+> after ucv manager created, call this method set ucv's manager
 
 *Declaration:*
 ```solidity
@@ -71,7 +71,7 @@ function setupUCV(
 
 ### getFlowSteps
 
-> ge flow steps
+> get flow steps
 
 *Declaration:*
 ```solidity
@@ -83,9 +83,23 @@ function getFlowSteps(
 
 
 
+### getDAODeployFactory
+
+
+
+*Declaration:*
+```solidity
+function getDAODeployFactory(
+) external returns
+(address factoryAddress)
+```
+
+
+
+
 ### deployByKey
 
-
+> deploy
 
 *Declaration:*
 ```solidity
@@ -117,20 +131,29 @@ function getDAOCommittees(
 
 ### setupCommittee
 
+> create committee
 
 
 *Declaration:*
 ```solidity
 function setupCommittee(
+string name,
+bytes32 deployKey,
+bytes dutyIDs
 ) external
 ```
 
-
+*Args:*
+| Arg | Type | Description |
+| --- | --- | --- |
+|`name` | string | committee's name
+|`deployKey` | bytes32 | the deploy key of the committee
+|`dutyIDs` | bytes | committee's dutyID
 
 
 ## 5.Events
 ### NewDAOCreated
-event
+
 
 
 

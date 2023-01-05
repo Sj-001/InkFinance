@@ -54,6 +54,11 @@ module.exports = {
             url: process.env.DEV_NEON_RPC,
             accounts: [process.env.DEV_NEON_KEY]
         }
+        ,
+        dev_goerli: {
+            url: process.env.DEV_GOERLI_RPC,
+            accounts: [process.env.DEV_GOERLI_KEY]
+        }
     },
 
     abiExporter: {

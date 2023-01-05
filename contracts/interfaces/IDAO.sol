@@ -68,6 +68,11 @@ interface IDAO is
         view
         returns (CommitteeInfo[] memory infos);
 
+    function getDAODeployFactory()
+        external
+        view
+        returns (address factoryAddress);
+
     /// @dev deploy
     function deployByKey(
         bytes32 typeID,

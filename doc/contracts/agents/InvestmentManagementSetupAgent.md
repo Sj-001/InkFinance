@@ -1,7 +1,7 @@
-# DAOUpdateAgent
+# InvestmentManagementSetupAgent
 
 
-DAOUpdateAgent is a delegate to update DAO's base info.
+InvestmentManagementSetupAgent is delegate setup investment committee & member's duty
 
 
 ## 1.Contents
@@ -14,7 +14,11 @@ DAOUpdateAgent is a delegate to update DAO's base info.
 
 | Var | Type |
 | --- | --- |
-| FLOW_ID | bytes32 |
+| FUND_ADMIN | string |
+| FUND_MANAGER | string |
+| FUND_RISK_MANAGER | string |
+| FUND_LIQUIDATOR | string |
+| FUND_AUDITOR | string |
 
 ## 3.Modifiers
 
@@ -66,13 +70,30 @@ bytes32 proposalID
 ```solidity
 function exec(
 bytes32 proposalID
-) external
+) external onlyCallFromDAO
 ```
+*Modifiers:*
+| Modifier |
+| --- |
+| onlyCallFromDAO |
 
 *Args:*
 | Arg | Type | Description |
 | --- | --- | --- |
 |`proposalID` | bytes32 | target proposal
+
+
+### _setMemberDuties
+
+
+
+*Declaration:*
+```solidity
+function _setMemberDuties(
+) internal
+```
+
+
 
 
 ### getTypeID

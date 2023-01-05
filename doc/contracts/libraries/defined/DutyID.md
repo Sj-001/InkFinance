@@ -20,6 +20,11 @@
 | OPERATOR | bytes32 |
 | AUDITOR | bytes32 |
 | INVESTOR | bytes32 |
+| FUND_ADMIN | bytes32 |
+| FUND_MANAGER | bytes32 |
+| FUND_RISK_MANAGER | bytes32 |
+| FUND_LIQUIDATOR | bytes32 |
+| FUND_AUDITOR | bytes32 |
 
 ## 3.Modifiers
 

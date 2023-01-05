@@ -131,7 +131,6 @@ string keyName
 |`keyID` | bytes32 | :white_check_mark: | user defined key
 |`admin` | address | :white_check_mark: | admin's address
 ### SetPrefixConfigAdmin
-注: string类型仅用于事件, 合约本地存储用hash后的值.
 
 > when set admin of some domain's key prefix, this event will be sent
 
@@ -145,7 +144,7 @@ string keyName
 |`admin` | address | :white_check_mark: | admin's address
 ### SetKV
 
-
+> once domain admin set value of the key, this event will be emit
 
 
 

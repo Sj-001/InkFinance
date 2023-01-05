@@ -623,6 +623,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getDAODeployFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "factoryAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",

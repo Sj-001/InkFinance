@@ -299,17 +299,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "dao_",
+        "name": "admin",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "config_",
+        "name": "config",
         "type": "address"
       },
       {
         "internalType": "bytes",
-        "name": "data_",
+        "name": "data",
         "type": "bytes"
       }
     ],

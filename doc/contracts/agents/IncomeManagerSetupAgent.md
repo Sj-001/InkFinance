@@ -22,7 +22,7 @@
 ```solidity
 function init(
 ) public returns
-(bytes callbackEvent)
+(bytes)
 ```
 
 

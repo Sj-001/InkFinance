@@ -7,7 +7,7 @@ import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
 import {defaultAbiCoder} from '@ethersproject/abi';
-import {INVESTMENT_UCV_KEY, INVESTMENT_COMMITTEE_KEY, INVESTMENT_UCV_MANAGER_KEY, INVESTMENT_MANAGER_AGENT_KEY, INK_BADGE_KEY,INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY,PROPOSAL_HANDLER_KEY, PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY } from '../shared/fixtures';  
+import {FUND_MANAGER_KEY, INK_FUND_KEY, INVESTMENT_UCV_KEY, INVESTMENT_COMMITTEE_KEY, INVESTMENT_UCV_MANAGER_KEY, INVESTMENT_MANAGER_AGENT_KEY, INK_BADGE_KEY,INCOME_MANAGER_SETUP_AGENT_KEY, TREASURY_INCOME_MANAGER_KEY,PROPOSAL_HANDLER_KEY, PAYROLL_SETUP_AGENT_KEY, THE_TREASURY_COMMITTEE_KEY, THE_TREASURY_MANAGER_AGENT_KEY,FACTORY_MANAGER_KEY, PROPOSER_DUTYID, VOTER_DUTYID, INK_CONFIG_DOMAIN, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, PAYROLL_EXECUTE_AGENT_KEY, PAYROLL_UCV_KEY, PAYROLL_UCV_MANAGER_KEY } from '../shared/fixtures';  
 const {loadFixture, deployContract} = waffle;
 
 
@@ -151,7 +151,83 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
 }
 
 
+export function buildFundInitData(erc20Address:string) {
 
+
+    var fundName = "Fundname";
+    var fundDescription = "FundDescription";
+    var fundToken = erc20Address;
+    var minRaise = ethers.utils.parseEther("1000");
+    var maxRaise = ethers.utils.parseEther("10000");
+
+    var timestamp = Date.now();
+    var sec = Math.floor(timestamp / 1000);
+
+    var raisedPeriod = 60 * 60 * 24 * 5; // 5 days
+    var durationOfFund = 60 * 60 * 24 * 30;
+
+    var allowIntermittentDistributions = 1;
+    var allowFundTokenized = 1;
+    var tokenName = "TestTokenName";
+    var tokenAmount = ethers.utils.parseEther("10000");
+
+    var allowExchange = 1;
+    var auditPeriod = 60 * 60 * 24;
+    
+    var investmentDomain = 1; // real-world
+    var investmentType = 1; // Debt/Loans/Bonds
+
+    var maxSingleExposure = 100;
+    var minNumberOfHoldings = 1;
+    var maxNavDowndraftFromPeak = 5;
+    var maxNavLoss = 20;
+
+    var requireClientBiometricIdentity = 0;
+    var requireClientLegalIdentity = 0;
+
+    
+
+    var fixedFee = 100;
+    var fixedFeeShouldGoToTreasury = 1;
+
+    var performanceFee = 100;
+    var performanceFeeShouldGoToTreasury = 1;
+    
+
+
+    var fundInitialData = {
+        "fundDeployKey": FACTORY_MANAGER_KEY,
+        "fundName" : fundName,
+        "fundDescription" : fundDescription,
+        "fundToken": fundToken, 
+        "minRaise" : minRaise,
+        "maxRaise" : maxRaise,
+        "raisedPeriod" : raisedPeriod,
+        "durationOfFund" : durationOfFund,
+        "allowIntermittentDistributions" : allowIntermittentDistributions,
+        "allowFundTokenized" : allowFundTokenized,
+        "tokenName" : tokenName,
+        "tokenAmount" : tokenAmount,
+        "allowExchange" : allowExchange,
+        "auditPeriod" : auditPeriod,
+        "investmentDomain" : investmentDomain,
+        "investmentType" : investmentType,
+        "maxSingleExposure" : maxSingleExposure,
+        "minNumberOfHoldings" : minNumberOfHoldings,
+        "maxNavDowndraftFromPeak" : maxNavDowndraftFromPeak,
+        "maxNavLoss" : maxNavLoss,
+        "requireClientBiometricIdentity" : requireClientBiometricIdentity,
+        "requireClientLegalIdentity" : requireClientLegalIdentity,
+        "fixedFee" : fixedFee,
+        "fixedFeeShouldGoToTreasury" : fixedFeeShouldGoToTreasury,
+        "performanceFee" : performanceFee,
+        "performanceFeeShouldGoToTreasury" : performanceFeeShouldGoToTreasury,
+    }
+
+
+    return fundInitialData;
+    
+}
 
 export function buildOffchainProposal() {
         // create agent
@@ -319,9 +395,9 @@ export function buildInvestmentSetupProposal(fundAdmin:string, fundManager:strin
 
     headers[1] = {
         "key":  "ucvManagerKey",
-        "typeID": INVESTMENT_UCV_MANAGER_KEY,
+        "typeID": FUND_MANAGER_KEY,
         // "typeID": keccak256(toUtf8Bytes("typeID")),
-        "data": INVESTMENT_UCV_MANAGER_KEY,
+        "data": FUND_MANAGER_KEY,
         "desc": "0x0002",
     };
 
@@ -380,6 +456,90 @@ export function buildInvestmentSetupProposal(fundAdmin:string, fundManager:strin
 
     return proposal;
 }
+
+/*
+export function buildFundSetupProposal(erc20Address:string) {
+
+    var agents = []
+    agents[0] = PAYROLL_SETUP_AGENT_KEY;
+    
+    // agents[1] = toUtf8Bytes("");
+    var headers = [];
+
+    // setup member and schedule and payments.
+    headers[0] = {
+        "key":  "ucvKey",
+        "typeID": PAYROLL_UCV_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": PAYROLL_UCV_KEY,
+        "desc": "0x0002",
+    }; 
+
+    headers[1] = {
+        "key":  "ucvManagerKey",
+        "typeID": PAYROLL_UCV_MANAGER_KEY,
+        // "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": PAYROLL_UCV_MANAGER_KEY,
+        "desc": "0x0002",
+    };
+
+    headers[2] = {
+        "key":  "SubCategory",
+        "typeID": keccak256(toUtf8Bytes("typeID")),
+        "data": web3.eth.abi.encodeParameter("string", "helloSubcategory" ),
+        "desc": "0x0002",
+    };
+
+    
+    // var memberItem = {
+    //     addr:  "0xf46B1E93aF2Bf497b07726108A539B478B31e64C",
+    //     coin: erc20Address,
+    //     oncePay:  10000000,
+    //     desc: "payroll",
+    // };
+
+
+
+    var kvData = [];
+
+    var timestamp = Date.now();
+    var sec = Math.floor(timestamp / 1000);
+    console.log("now time ################################################################# ", sec);
+
+    // var minRaise = web3.eth.abi.encodeParameter("uint256", ethers.utils.parseEther("10000000"));
+
+    var startTimeBytes = web3.eth.abi.encodeParameter("uint256", (sec - 110));
+
+    // var periodBytes = web3.eth.abi.encodeParameter("uint256", 60*60 );
+    var periodBytes = web3.eth.abi.encodeParameter("uint256", 100 );
+
+
+    // kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["auditStartTime", keccak256(toUtf8Bytes("uint256")), startTimeBytes]) ;
+ 
+    
+
+    kvData[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["raisedCurrency", keccak256(toUtf8Bytes("address")), erc20Address]) ;
+    // kvData[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "uint256"], ["minRaise", keccak256(toUtf8Bytes("uint256")), minRaise]) ;
+    // kvData[2] = web3.eth.abi.encodeParameters(["string", "bytes32", "uint256"], ["maxRaise", keccak256(toUtf8Bytes("uint256")), periodBytes]) ;
+    // kvData[3] = web3.eth.abi.encodeParameters(["string", "bytes32", "uint256"], ["raisePeriod", keccak256(toUtf8Bytes("uint256")), claimTimesByte]) ;
+    // kvData[4] = web3.eth.abi.encodeParameters(["string", "bytes32", "uint256"], ["fundDuration", keccak256(toUtf8Bytes("uint256")), claimTimesByte]) ;
+    // kvData[5] = web3.eth.abi.encodeParameters(["string", "bytes32", "string"], ["raiseTokenName", keccak256(toUtf8Bytes("uint256")), claimTimesByte]) ;
+    // kvData[6] = web3.eth.abi.encodeParameters(["string", "bytes32", "uint256"], ["raiseTokenAmount", keccak256(toUtf8Bytes("uint256")), claimTimesByte]) ;
+    // kvData[7] = web3.eth.abi.encodeParameters(["string", "bytes32", "uint256"], ["minHold", keccak256(toUtf8Bytes("uint256")), claimTimesByte]) ;
+
+    // 0x0000000000000000000000000000000000000000000000000000000000000000
+    // 0x0000000000000000000000000000000000000000000000000000000000000000
+    var proposal = {
+        "agents" : agents,
+        "topicID" : "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "crossChainProtocal":toUtf8Bytes(""),
+        "metadata" : headers,
+        "kvData" : kvData
+    }
+
+    return proposal;
+}
+*/
 
 
 

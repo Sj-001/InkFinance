@@ -769,6 +769,19 @@
   },
   {
     "inputs": [],
+    "name": "getDAODeployFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "factoryAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getDAOTallyVoteRules",
     "outputs": [
       {

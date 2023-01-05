@@ -1,0 +1,190 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "fundAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "fundDeployKey",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "string",
+            "name": "fundName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "fundDescription",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "fundToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minRaise",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxRaise",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "raisedPeriod",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "durationOfFund",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "allowIntermittentDistributions",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "allowFundTokenized",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "tokenName",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "allowExchange",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "auditPeriod",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "investmentDomain",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "investmentType",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxSingleExposure",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minNumberOfHoldings",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxNavDowndraftFromPeak",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxNavLoss",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "requireClientBiometricIdentity",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "requireClientLegalIdentity",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "fixedFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "fixedFeeShouldGoToTreasury",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "performanceFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "performanceFeeShouldGoToTreasury",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IFundInfo.NewFundInfo",
+        "name": "fundInfo",
+        "type": "tuple"
+      }
+    ],
+    "name": "FundCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "launchTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "FundLaunched",
+    "type": "event"
+  }
+]

@@ -15,7 +15,7 @@
 ## 4.Functions
 
 ### getAgentIDAddr
-Agent Related
+
 
 
 *Declaration:*

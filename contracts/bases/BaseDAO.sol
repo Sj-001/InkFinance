@@ -102,7 +102,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     /// @notice governance token
     IERC20 private _govToken;
 
-
     uint256 private _govTokenAmountRequirement;
 
     /// @notice staking engine address
@@ -245,6 +244,15 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     function getBadge() external view returns (address badge) {
         badge = _badge;
+    }
+
+    function getDAODeployFactory()
+        external
+        view
+        override
+        returns (address factoryAddress)
+    {
+        factoryAddress = _factoryAddress;
     }
 
     function _setupProposalFlow(bytes32 proposalID, bytes32[] memory agents)

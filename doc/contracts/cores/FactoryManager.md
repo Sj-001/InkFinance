@@ -1,7 +1,7 @@
 # FactoryManager
 
 
-Factory is used to generate DAO instance
+Factory is used to generate Contract instance
 
 
 ## 1.Contents

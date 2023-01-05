@@ -228,6 +228,20 @@ function _calculateVoteResults(
 
 
 
+### _calculateVoteResults
+
+
+
+*Declaration:*
+```solidity
+function _calculateVoteResults(
+) internal returns
+(bool _passedOrNot)
+```
+
+
+
+
 ### _tallyVotes
 
 
@@ -278,6 +292,20 @@ function _checkProposalStatus(
 function _checkDeadline(
 ) internal returns
 (bool end)
+```
+
+
+
+
+### _isDeadlineExpired
+
+
+
+*Declaration:*
+```solidity
+function _isDeadlineExpired(
+) internal returns
+(bool isExpired)
 ```
 
 

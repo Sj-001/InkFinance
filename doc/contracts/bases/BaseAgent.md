@@ -32,7 +32,7 @@ modifier onlyCallFromDAO
 
 ### initAgent
 
-
+> specify agent's dao, it's been execute only once
 
 *Declaration:*
 ```solidity

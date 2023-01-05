@@ -32,7 +32,7 @@ function getVoteExpirationTime(
 
 
 ### getVoteCommitteeInfo
-
+return the step of proposal
 
 
 *Declaration:*
@@ -40,6 +40,20 @@ function getVoteExpirationTime(
 function getVoteCommitteeInfo(
 ) external returns
 (address committee, bytes32 step)
+```
+
+
+
+
+### getVotedCommittee
+
+
+
+*Declaration:*
+```solidity
+function getVotedCommittee(
+) external returns
+(address[] committee)
 ```
 
 

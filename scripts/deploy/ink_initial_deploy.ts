@@ -110,6 +110,17 @@ async function deploy(){
   const investmentUCVImpl = await InvestmentUCVFactory.deploy();
   await investmentUCVImpl.deployed();
 
+
+
+  const FundManagerFactory = await ethers.getContractFactory("FundManager");
+  const fundManagerImpl = await FundManagerFactory.deploy();
+  await fundManagerImpl.deployed();
+
+
+  const InkFundFactory = await ethers.getContractFactory("InkFund");
+  const inkFundImpl = await InkFundFactory.deploy();
+  await inkFundImpl.deployed();
+
   //init factory manager key
   console.log("useful constant ################################################################################################################## ")
 
@@ -149,6 +160,8 @@ async function deploy(){
   console.log("the investment committee setup agent key:", await configManager.buildConfigKey(admin, "ADMIN", "InvestmentManagementSetupAgent"));
   console.log("the investment manager key:", await configManager.buildConfigKey(admin, "ADMIN", "InvestmentUCVManager"));
   console.log("the investment ucv key:", await configManager.buildConfigKey(admin, "ADMIN", "InvestmentUCV"));
+  console.log("the fund manager key:", await configManager.buildConfigKey(admin, "ADMIN", "FundManager"));
+  console.log("the ink fund key:", await configManager.buildConfigKey(admin, "ADMIN", "InkFund"));
 
 
   console.log("contract type ------------------------------------------------------------------ ")
@@ -180,6 +193,8 @@ async function deploy(){
   keyValues[15] = {"keyPrefix":"ADMIN", "keyName":"InvestmentManagementSetupAgent", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentManagementSetupAgentImpl.address)}
   keyValues[16] = {"keyPrefix":"ADMIN", "keyName":"InvestmentUCVManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentUCVManagerImpl.address)}
   keyValues[17] = {"keyPrefix":"ADMIN", "keyName":"InvestmentUCV", "typeID":keccak256(toUtf8Bytes("address")), "data": (await investmentUCVImpl.address)}
+  keyValues[18] = {"keyPrefix":"ADMIN", "keyName":"FundManager", "typeID":keccak256(toUtf8Bytes("address")), "data": (await fundManagerImpl.address)}
+  keyValues[19] = {"keyPrefix":"ADMIN", "keyName":"InkFund", "typeID":keccak256(toUtf8Bytes("address")), "data": (await inkFundImpl.address)}
   
 
   await configManager.batchSetKV(admin, keyValues);

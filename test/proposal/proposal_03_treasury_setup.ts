@@ -90,7 +90,7 @@ describe("proposal related test", function () {
 
 
 
-        /*
+        /* 
         // proposal category = payroll?
         await makeSetupPayrollProposal(committeeAddress, erc20Address, treasurySetupPropoalTopicID);
 

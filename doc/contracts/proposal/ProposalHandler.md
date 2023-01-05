@@ -58,6 +58,7 @@ makeing a new proposal
 function newProposal(
 struct IProposalInfo.NewProposalInfo proposal,
 bool commit,
+address proposer,
 bytes data
 ) public onlyDAO returns
 (bytes32 proposalID)
@@ -72,6 +73,7 @@ bytes data
 | --- | --- | --- |
 |`proposal` | struct IProposalInfo.NewProposalInfo | content of the proposal
 |`commit` | bool | if proposal content is huge, the frontend could set commit as False, and submit multiple times
+|`proposer` | address | who make the proposal
 |`data` | bytes | support data, decide by case
 
 *Returns:*
