@@ -1,5 +1,16 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "factoryKey",
+        "type": "bytes32"
+      }
+    ],
+    "name": "DeployFailuer",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -157,6 +168,16 @@
             "internalType": "uint256",
             "name": "performanceFeeShouldGoToTreasury",
             "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "fundManagers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "riskManagers",
+            "type": "address[]"
           }
         ],
         "indexed": false,
@@ -372,6 +393,16 @@
             "internalType": "uint256",
             "name": "performanceFeeShouldGoToTreasury",
             "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "fundManagers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "riskManagers",
+            "type": "address[]"
           }
         ],
         "internalType": "struct IFundInfo.NewFundInfo",
@@ -404,6 +435,19 @@
         "internalType": "uint256",
         "name": "share",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCreatedFunds",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "",
+        "type": "bytes32[]"
       }
     ],
     "stateMutability": "view",
@@ -463,7 +507,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {

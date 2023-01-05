@@ -31,21 +31,11 @@ interface IFundInfo {
         uint256 fixedFeeShouldGoToTreasury;
         uint256 performanceFee;
         uint256 performanceFeeShouldGoToTreasury;
+        address[] fundManagers;
+        address[] riskManagers;
     }
 
-    /// @dev basic fund info
-    /// @param funds fund ucv contract address
-    struct FundInfo {
-        bytes32 fundID;
-        address funds;
-        address fundToken;
-        uint256 minRaise;
-        uint256 maxRaise;
-        uint256 raisingPeriod;
-        uint256 durationOfFund;
-        uint256 startRaisingDate;
-        uint256 totalRaised;
-    }
+
 
     event FundCreated(
         bytes32 fundID,

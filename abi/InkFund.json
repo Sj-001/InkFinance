@@ -17,7 +17,33 @@
   },
   {
     "inputs": [],
+    "name": "FundRaiseIsOver",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotStartYet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "OperateIsNowAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "left",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "purchase",
+        "type": "uint256"
+      }
+    ],
+    "name": "PurchaseTooMuch",
     "type": "error"
   },
   {
@@ -208,6 +234,16 @@
             "internalType": "uint256",
             "name": "performanceFeeShouldGoToTreasury",
             "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "fundManagers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "riskManagers",
+            "type": "address[]"
           }
         ],
         "indexed": false,
@@ -452,7 +488,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {

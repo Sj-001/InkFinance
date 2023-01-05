@@ -82,9 +82,13 @@ describe("proposal related test", function () {
 
         var committeeAddress = await masterDAO.getDeployedContractByKey(INVESTMENT_COMMITTEE_KEY);
 
-        await setupFund(masterDAO.address, erc20Address);
+        var fundManagerAddress = await masterDAO.getDeployedContractByKey(FUND_MANAGER_KEY);
 
-        // await launchFund(committeeAddress, erc20Address);
+
+
+        await setupFund(fundManagerAddress, erc20Address);
+
+        await launchFund(fundManagerAddress);
 
 
         // await voteAndInvestTheFund();
@@ -95,30 +99,41 @@ describe("proposal related test", function () {
     });
 
 
-    async function setupFund (daoAddress:string, erc20Address:string) {
-
-
-        var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
-        var masterDAO = await masterDAOFactory.attach(daoAddress);
-
+    async function setupFund (fundManagerAddress:string, erc20Address:string) {
+        const signers = await ethers.getSigners();
         var fundManagerFactory = await ethers.getContractFactory("FundManager");
-        var fundManagerAddress = await masterDAO.getDeployedContractByKey(FUND_MANAGER_KEY);
         var fundManager = await fundManagerFactory.attach(fundManagerAddress);
 
-        var fundInitData = buildFundInitData(erc20Address); 
+        var fundInitData = buildFundInitData(erc20Address, signers[0].address, signers[0].address); 
 
 
         await fundManager.createFund(fundInitData);
 
+        var funds = await fundManager.getCreatedFunds();
+
+        console.log("funds:", funds);
+
+        console.log("fund launch status:", await fundManager.getLaunchStatus(funds[0]));
+
     }
 
-    async function launchFund (committeeAddress:string, erc20Address:string) {
+    async function launchFund (fundManagerAddress:string) {
+        var fundManagerFactory = await ethers.getContractFactory("FundManager");
+        var fundManager = await fundManagerFactory.attach(fundManagerAddress);
 
+        var funds = await fundManager.getCreatedFunds();
 
+        console.log("funds:", funds);
+
+        console.log("fund launch status:", await fundManager.getLaunchStatus(funds[0]));
+        await fundManager.launchFund(funds[0]);
+        // await fundManager.launchFund(funds[0]); // valid launch twice
+        console.log("fund launch status:", await fundManager.getLaunchStatus(funds[0]));
+        
     }
 
 
-    async function purchaseFund (committeeAddress:string, erc20Address:string) {
+    async function purchaseFund (fundManagerAddress:string, erc20Address:string) {
 
 
 

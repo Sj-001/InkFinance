@@ -151,7 +151,7 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
 }
 
 
-export function buildFundInitData(erc20Address:string) {
+export function buildFundInitData(erc20Address:string, fundManager:string, riskManager:string) {
 
 
     var fundName = "Fundname";
@@ -194,9 +194,14 @@ export function buildFundInitData(erc20Address:string) {
     var performanceFeeShouldGoToTreasury = 1;
     
 
+    var fundManagers = [];
+    fundManagers[0] = fundManager;
+
+    var riskManagers = [];
+    riskManagers[0] = riskManager;
 
     var fundInitialData = {
-        "fundDeployKey": FACTORY_MANAGER_KEY,
+        "fundDeployKey": INK_FUND_KEY,
         "fundName" : fundName,
         "fundDescription" : fundDescription,
         "fundToken": fundToken, 
@@ -222,6 +227,8 @@ export function buildFundInitData(erc20Address:string) {
         "fixedFeeShouldGoToTreasury" : fixedFeeShouldGoToTreasury,
         "performanceFee" : performanceFee,
         "performanceFeeShouldGoToTreasury" : performanceFeeShouldGoToTreasury,
+        "fundManagers" : fundManagers,
+        "riskManagers" : riskManagers
     }
 
 

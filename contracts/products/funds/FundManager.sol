@@ -17,6 +17,7 @@ error DeployFailuer(bytes32 factoryKey);
 contract FundManager is IFundManager, BaseUCVManager {
     // using Strings for uint256;
     using EnumerableSet for EnumerableSet.AddressSet;
+    using EnumerableSet for EnumerableSet.Bytes32Set;
 
     EnumerableSet.Bytes32Set private _fundList;
 
@@ -24,6 +25,9 @@ contract FundManager is IFundManager, BaseUCVManager {
     mapping(bytes32 => address) private _funds;
 
     address private _factoryManager;
+
+
+    bytes32 private _setupProposalID;
 
     function init(
         address dao_,
@@ -35,13 +39,17 @@ contract FundManager is IFundManager, BaseUCVManager {
         console.log("FundManager init called");
 
         _dao = dao_;
-
+        _setupProposalID = abi.decode(data_, (bytes32));
         _factoryManager = IDAO(_dao).getDAODeployFactory();
+
     }
 
-    // constructor(address factoryManager_) {
-    //     _factoryManager = factoryManager_;
-    // }
+    function getCreatedFunds() external view returns(bytes32[] memory) {
+
+        return _fundList.values();
+    }
+
+
 
     /// @inheritdoc IFundManager
     function createFund(NewFundInfo memory fundInfo)
@@ -52,18 +60,21 @@ contract FundManager is IFundManager, BaseUCVManager {
         // authrized
         bytes32 fundID = _newFundID();
 
-        // bytes memory initData = abi.encode(address(this), fundInfo);
+        // valid fundManager & riskManager have been set in the InvestmentCommittee
 
-        // address fundAddress = _deployByFactoryKey(FactoryKeyTypeID.UCV_TYPE_ID, fundInfo.fundDeployKey, initData);
-        // _funds[fundID] = fundAddress;
 
-        console.log(fundInfo.fundName);
-        console.logBytes32(fundID);
-        console.log(fundInfo.requireClientBiometricIdentity);
+        bytes memory initData = abi.encode(address(this), fundID, fundInfo);
+
+        address fundAddress = _deployByFactoryKey(FactoryKeyTypeID.UCV_TYPE_ID, fundInfo.fundDeployKey, initData);
+
+        _funds[fundID] = fundAddress;
+        _fundList.add(fundID);
+
+        // console.log("fundmanager", fundInfo.fundManagers[0]);
 
         emit FundCreated(
             fundID,
-            address(0),
+            fundAddress,
             fundInfo.fundName,
             fundInfo.fundDescription,
             fundInfo
@@ -74,8 +85,11 @@ contract FundManager is IFundManager, BaseUCVManager {
     function getLaunchStatus(bytes32 fundID)
         external
         override
+        view
         returns (uint256 status)
-    {}
+    {
+        status = IFund(_funds[fundID]).getLaunchStatus();
+    }
 
     /// @inheritdoc IFundManager
     function launchFund(bytes32 fundID) external override {
@@ -95,7 +109,9 @@ contract FundManager is IFundManager, BaseUCVManager {
         external
         override
         returns (uint256 status)
-    {}
+    {
+        status = IFund(_funds[fundID]).getFundStatus();
+    }
 
     /// @inheritdoc IFundManager
     function geFundShare(bytes32 fundID)
@@ -153,18 +169,6 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
 
-    function purchaseFundShare(bytes32 proposalID, uint256 purchaseAmount) external override {
-        // maximum purchase check
-        uint256 maximum = 0;        
-        if (_fundRaised[proposalID] < maximum && _fundRaised[proposalID] + purchaseAmount <= maximum) {
-
-            // 
-
-
-        }
-
-        _fundRaised[proposalID] += purchaseAmount;
-    }
 
 
     function withdrawPrincipal(bytes32 proposalID) external override {
