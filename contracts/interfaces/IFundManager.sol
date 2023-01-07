@@ -24,6 +24,7 @@ interface IFundManager is IFundInfo {
 
     /// @dev when the fund raised enough tokens, the fund admin could start fund and the fund manager
     /// could start to using raised fund to invest
+    /// Only FunderManager could run this
     function startFund(bytes32 fundID) external;
 
     /// @dev get fund's status
@@ -41,4 +42,5 @@ interface IFundManager is IFundInfo {
 
     /// @dev claim principal and profit, require fund share token to prove the share
     function claimPrincipalAndProfit(bytes32 fundID) external;
+    
 }

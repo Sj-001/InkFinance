@@ -13,6 +13,8 @@ import "hardhat/console.sol";
 
 error TheAccountIsNotAuthroized(address account);
 error DeployFailuer(bytes32 factoryKey);
+error TheFundNeedToTallyUp();
+error TheFundCanNotWithdrawPrincipalNow();
 
 contract FundManager is IFundManager, BaseUCVManager {
     // using Strings for uint256;
@@ -25,7 +27,6 @@ contract FundManager is IFundManager, BaseUCVManager {
     mapping(bytes32 => address) private _funds;
 
     address private _factoryManager;
-
 
     bytes32 private _setupProposalID;
 
@@ -59,10 +60,7 @@ contract FundManager is IFundManager, BaseUCVManager {
     {
         // authrized
         bytes32 fundID = _newFundID();
-
         // valid fundManager & riskManager have been set in the InvestmentCommittee
-
-
         bytes memory initData = abi.encode(address(this), fundID, fundInfo);
 
         address fundAddress = _deployByFactoryKey(FactoryKeyTypeID.UCV_TYPE_ID, fundInfo.fundDeployKey, initData);
@@ -70,13 +68,12 @@ contract FundManager is IFundManager, BaseUCVManager {
         _funds[fundID] = fundAddress;
         _fundList.add(fundID);
 
-        // console.log("fundmanager", fundInfo.fundManagers[0]);
-
         emit FundCreated(
             fundID,
             fundAddress,
             fundInfo.fundName,
             fundInfo.fundDescription,
+            block.timestamp,
             fundInfo
         );
     }
@@ -101,7 +98,19 @@ contract FundManager is IFundManager, BaseUCVManager {
     /// @inheritdoc IFundManager
     function startFund(bytes32 fundID) external override {
         // authrized
-        IFund(_funds[fundID]).launch();
+        IFund(_funds[fundID]).startFund();
+        address treasuryUCV = IDAO(_dao).getUCV();
+
+        /*
+        address to,
+        address token,
+        uint256 tokenType,
+        uint256 tokenID,
+        uint256 value,
+        bytes memory data
+        */
+        IFund(_funds[fundID]).transferFixedFeeToUCV(treasuryUCV);
+
     }
 
     /// @inheritdoc IFundManager
@@ -122,13 +131,39 @@ contract FundManager is IFundManager, BaseUCVManager {
     {}
 
     /// @inheritdoc IFundManager
-    function claimFundShare(bytes32 fundID) external override {}
+    function claimFundShare(bytes32 fundID) external override {
+        // MAKE SURE FundStatus = 2 || 3
+        
+
+
+    }
 
     /// @inheritdoc IFundManager
-    function withdrawPrincipal(bytes32 fundID) external override {}
+    function withdrawPrincipal(bytes32 fundID) external override {
+        // MAKE SURE FundStatus = 1 failed
+
+        uint256 status = IFund(_funds[fundID]).getFundStatus();
+        if (status == 1) {
+            IFund(_funds[fundID]).withdrawPrincipal(msg.sender);
+        } else {
+
+            revert TheFundCanNotWithdrawPrincipalNow();
+        }
+
+
+    }
 
     /// @inheritdoc IFundManager
-    function claimPrincipalAndProfit(bytes32 fundID) external override {}
+    function claimPrincipalAndProfit(bytes32 fundID) external override {
+        // MAKE SURE FundStatus = 9
+        uint256 status = IFund(_funds[fundID]).getFundStatus();
+        if (status == 9) {
+            IFund(_funds[fundID]).claimPrincipalAndProfit(msg.sender);
+        } else {
+            revert TheFundNeedToTallyUp();
+        }
+
+    }
 
     /// @inheritdoc IFundManager
     function getFund(bytes32 fundID)
@@ -168,9 +203,6 @@ contract FundManager is IFundManager, BaseUCVManager {
 
     }
 
-
-
-
     function withdrawPrincipal(bytes32 proposalID) external override {
         // make sure the proposal is failed
         
@@ -205,8 +237,6 @@ contract FundManager is IFundManager, BaseUCVManager {
             deployedAddress = turnBytesToAddress(_returnedBytes);
         } else {
             revert DeployFailuer(contractKey);
-            // console.log("test turn turn bytes 32 ", deployedAddress);
-            // console.log("to address ", _returnedBytes.toAddress());
         }
     }
 

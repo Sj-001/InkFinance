@@ -89,6 +89,18 @@ abstract contract BaseUCV is IUCV, BaseVerify {
         uint256 value,
         bytes memory data
     ) external override enableToExecute returns (bool) {
+        return _transferTo(to, token, tokenType, tokenID, value, data);
+    }
+
+
+    function _transferTo(
+        address to,
+        address token,
+        uint256 tokenType,
+        uint256 tokenID,
+        uint256 value,
+        bytes memory data
+    ) internal returns (bool) {
         if (tokenType == 721) {
             IERC721(token).safeTransferFrom(address(this), to, tokenID, "");
         } else if (tokenType == 20) {
@@ -121,6 +133,7 @@ abstract contract BaseUCV is IUCV, BaseVerify {
 
         return true;
     }
+
 
     function _depositeERC20(address token, uint256 amount) internal {
         if (token == address(0)) {

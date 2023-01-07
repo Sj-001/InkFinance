@@ -16,7 +16,7 @@ interface IFundInfo {
         uint256 allowIntermittentDistributions;
         uint256 allowFundTokenized;
         string tokenName;
-        uint256 tokenAmount;
+        // uint256 tokenAmount;
         uint256 allowExchange;
         uint256 auditPeriod;
         string investmentDomain;
@@ -42,6 +42,7 @@ interface IFundInfo {
         address fundAddress,
         string name,
         string description,
+        uint256 createTime,
         NewFundInfo fundInfo
     );
 

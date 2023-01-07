@@ -1,5 +1,18 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "claimPrincipalAndProfit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getFundStatus",
     "outputs": [
@@ -23,6 +36,29 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRaisedInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "minRaise",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxRaise",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "currentRaised",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -66,7 +102,40 @@
   },
   {
     "inputs": [],
+    "name": "startFund",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "tallyUp",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "treasuryUCV",
+        "type": "address"
+      }
+    ],
+    "name": "transferFixedFeeToUCV",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawPrincipal",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

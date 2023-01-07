@@ -18,6 +18,9 @@ error FundAlreadyLaunched(bytes32 fundID);
 error NotStartYet();
 error FundRaiseIsOver();
 error PurchaseTooMuch(uint256 left, uint256 purchase);
+error StillLaunching();
+error FundAlreadyStartedOrFailed();
+error FundRaiseFailed();
 
 contract InkFund is IFundInfo, IFund, BaseUCV {
 
@@ -30,9 +33,15 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     uint256 private _startRaisingDate = 0;
 
+    uint256 private _startFundDate = 0;
+
     uint256 private _fundStatus = 0;
 
+    uint256 private _launchStatus = 0;
+
     bytes32 private _fundID = bytes32(0);
+
+    uint256 private _fixedFeeTransferTime = 0;
 
     mapping(address => uint256) private _fundShare;
 
@@ -86,7 +95,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         if (_startRaisingDate > 0) {
             status = 1;
         }
-        if (_startRaisingDate + _fund.raisedPeriod > block.timestamp) {
+
+        // console.log(_startRaisingDate);
+        // console.log(_fund.raisedPeriod);
+
+        if (_startRaisingDate + _fund.raisedPeriod < block.timestamp) {
             status = 2;
         }
     }
@@ -102,7 +115,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             revert FundRaiseIsOver();
         }
 
-        if (_totalRaised < _fund.maxRaise && _totalRaised + amount <= _fund.maxRaise) {
+        if (_totalRaised > _fund.maxRaise || _totalRaised + amount > _fund.maxRaise) {
             
             revert PurchaseTooMuch(_fund.maxRaise - _totalRaised, amount);
         }
@@ -134,7 +147,32 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
     }
 
+    /// @inheritdoc IFund
+    function startFund() external override {
+        // uint256 launchStatus = _getLaunchStatus();
+        // if (launchStatus != 2) {
+        //     revert StillLaunching();
+        // }
 
+        uint256 fundStatus = _getFundStatus();
+        if (fundStatus == 0) {
+            revert StillLaunching();
+        }
+
+        if (fundStatus == 1 || fundStatus == 3) {
+            revert FundAlreadyStartedOrFailed();
+        }
+
+        if (fundStatus == 2 && _totalRaised >= _fund.minRaise) {
+            _fundStatus = 3;
+            _startFundDate = block.timestamp;
+
+        } else {
+
+            revert FundRaiseFailed();
+        }
+
+    }
 
     /// @inheritdoc IFund
     function tallyUp() external override {
@@ -142,6 +180,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         uint256 status = _getFundStatus();
         if (status == 3) {
             _fundStatus = 9;
+
+
+
+
+
         }
 
     }
@@ -149,16 +192,48 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     /// @inheritdoc IFund
     function getShare(address owner)
         external
+        view 
         override
-        returns (uint256 amount)
+        returns (uint256 claimableShare)
     {
-        // uint256 totalRaised = 0;
-         
-        // uint256 fundIssued = 0;
+        uint256 currentPurchased = _fundShare[owner];
 
-        // uint256 currentPurchased = _fundShare[proposalID][msg.sender];
+        if (currentPurchased == 0) {
+            return 0;
+        }
 
-        // uint256 claimableShare = currentPurchased / totalRaised * 100 * fundIssued;
+        // calculate based on all purchased percentage
+        claimableShare = currentPurchased * 100 / _totalRaised;
+    }
+
+    /// @inheritdoc IFund
+    function getRaisedInfo() external view override returns (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) {
+        return _getRaisedInfo();
+    }
+
+    function _getRaisedInfo() internal view returns (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) {
+        minRaise = _fund.minRaise;
+        maxRaise = _fund.maxRaise;
+        currentRaised = _totalRaised;
+    }
+
+    /// @inheritdoc IFund
+    function transferFixedFeeToUCV(address treasuryUCV) external override {
+
+        if (_fund.fixedFeeShouldGoToTreasury == 1 && _fixedFeeTransferTime ==0 ) {
+            uint256 value = _fund.fixedFee * _totalRaised;
+            _transferTo(treasuryUCV, _fund.fundToken, 20, 0, value, "");
+            _fixedFeeTransferTime = block.timestamp;
+        }
+    }
+
+    /// @inheritdoc IFund
+    function claimPrincipalAndProfit(address owner) external override {
+        // require enough Token to get profit
+    }
+
+    /// @inheritdoc IFund
+    function withdrawPrincipal(address owner) external override {
 
     }
 

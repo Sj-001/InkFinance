@@ -1315,6 +1315,19 @@
   },
   {
     "inputs": [],
+    "name": "getUCV",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "ucv",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getVersion",
     "outputs": [
       {

@@ -212,7 +212,7 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
         "allowIntermittentDistributions" : allowIntermittentDistributions,
         "allowFundTokenized" : allowFundTokenized,
         "tokenName" : tokenName,
-        "tokenAmount" : tokenAmount,
+        // "tokenAmount" : tokenAmount,
         "allowExchange" : allowExchange,
         "auditPeriod" : auditPeriod,
         "investmentDomain" : investmentDomain,

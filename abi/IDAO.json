@@ -1028,6 +1028,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getUCV",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "ucv",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",

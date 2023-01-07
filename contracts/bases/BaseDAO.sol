@@ -109,6 +109,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     address private _badge;
 
+    address private _ucv;
+
     /// @notice global config manager addres
     /// @dev get contract implementation through the key
     address private _configManager;
@@ -1057,11 +1059,17 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
+
+    function getUCV() external view override returns(address ucv) {
+        ucv = _ucv;
+    }
+
     function setupUCV(address ucv, address ucvManager)
         external
         override
         onlyAgent
     {
+        _ucv = ucv;
         IUCVManager(ucvManager).setUCV(ucv);
     }
 
