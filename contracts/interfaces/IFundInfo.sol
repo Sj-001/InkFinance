@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 interface IFundInfo {
-    /// @dev when create a fund, fund init info structure should be orgnized and submit to FundManager
 
+    /// @dev when create a fund, fund init info structure should be orgnized and submit to FundManager
     struct NewFundInfo {
         bytes32 fundDeployKey;
         string fundName;
@@ -46,5 +46,6 @@ interface IFundInfo {
         NewFundInfo fundInfo
     );
 
-    event FundLaunched(bytes32 fundID, uint256 launchTime);
+
+    event LaunchStatusUpdated(bytes32 fundID, uint256 previousStatus, uint256 currentStatus, uint256 updateTime);
 }

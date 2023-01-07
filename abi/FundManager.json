@@ -2,12 +2,12 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "factoryKey",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "currentFundStatus",
+        "type": "uint256"
       }
     ],
-    "name": "DeployFailuer",
+    "name": "CannotClaimShareNow",
     "type": "error"
   },
   {
@@ -205,18 +205,12 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "bytes32",
-        "name": "fundID",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "launchTime",
-        "type": "uint256"
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
       }
     ],
-    "name": "FundLaunched",
+    "name": "Initialized",
     "type": "event"
   },
   {
@@ -224,12 +218,30 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint8",
-        "name": "version",
-        "type": "uint8"
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "updateTime",
+        "type": "uint256"
       }
     ],
-    "name": "Initialized",
+    "name": "LaunchStatusUpdated",
     "type": "event"
   },
   {
@@ -627,6 +639,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "tallyUpFund",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

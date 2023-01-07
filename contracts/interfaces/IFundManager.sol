@@ -16,7 +16,7 @@ interface IFundManager is IFundInfo {
     function getFund(bytes32 fundID) external returns (address fundAddres);
 
     /// @dev check the fund is launched or not
-    /// @return status 0=not launched yet 1=launched 2=launch finished(time is over)
+    /// @return status 0=not launched yet 1=launched 2=launch finished(time is over) 9=after tallyUp and finalized
     function getLaunchStatus(bytes32 fundID) external returns (uint256 status);
 
     /// @dev after fund created, the fund manager could launch fund
@@ -26,6 +26,10 @@ interface IFundManager is IFundInfo {
     /// could start to using raised fund to invest
     /// Only FunderManager could run this
     function startFund(bytes32 fundID) external;
+
+
+    /// @dev make the succeed fund ready claimed by the investors
+    function tallyUpFund(bytes32 fundID) external;
 
     /// @dev get fund's status
     /// @return status 0=not start yet(need to start fund) 1=failed(launch status is finished and raised fund not reach min raise tokens) 2=started 3=finished(could claim the principal & profit of investment)
@@ -42,5 +46,5 @@ interface IFundManager is IFundInfo {
 
     /// @dev claim principal and profit, require fund share token to prove the share
     function claimPrincipalAndProfit(bytes32 fundID) external;
-    
+
 }

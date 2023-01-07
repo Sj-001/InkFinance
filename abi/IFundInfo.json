@@ -191,11 +191,23 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "launchTime",
+        "name": "previousStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "updateTime",
         "type": "uint256"
       }
     ],
-    "name": "FundLaunched",
+    "name": "LaunchStatusUpdated",
     "type": "event"
   }
 ]

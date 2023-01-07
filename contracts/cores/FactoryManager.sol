@@ -20,12 +20,13 @@ import "hardhat/console.sol";
 
 error WrongTypeOfTheFactoryKey();
 error TheFactoryKeyIsNotExist();
-error FailedToGeneraateAddress(
+error FailedToGenerateAddress(
     bool randomSalt,
     bytes32 typeID,
     bytes32 factoryKey,
     address msgSender
 );
+error DeployedAddressPredictFailure();
 
 /// @title FactoryManager
 /// @author InkTech <tech-support@inkfinance.xyz>
@@ -125,6 +126,10 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             factoryKey,
             msg.sender
         );
+
+        if (afterDeployedAddressPredict == address(0)) {
+            revert DeployedAddressPredictFailure();
+        }
         // require(false, "here predict ");
         // console.log("predict address", afterDeployedAddressPredict);
 
@@ -150,7 +155,7 @@ contract FactoryManager is BaseVerify, IFactoryManager {
         );
 
         if (generatedContract == address(0)) {
-            revert FailedToGeneraateAddress(
+            revert FailedToGenerateAddress(
                 randomSalt,
                 typeID,
                 factoryKey,

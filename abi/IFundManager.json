@@ -191,11 +191,23 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "launchTime",
+        "name": "previousStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "updateTime",
         "type": "uint256"
       }
     ],
-    "name": "FundLaunched",
+    "name": "LaunchStatusUpdated",
     "type": "event"
   },
   {
@@ -478,6 +490,19 @@
       }
     ],
     "name": "startFund",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "tallyUpFund",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

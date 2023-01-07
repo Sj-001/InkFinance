@@ -92,7 +92,20 @@ describe("proposal related test", function () {
 
         await purchaseFund(fundManagerAddress, erc20Address);
 
+
+        // fund manager start to invest
+        // transfer fixed fee to treasury
+        // issue voucher for investor to claim
         await startFund(fundManagerAddress);
+
+        // claim user's voucher
+        await claimShare(fundManagerAddress);
+
+        // if fund raised failed, user should claim principal
+        await claimPrincipal(fundManagerAddress);
+
+        // user could claim principal and profit
+        await tallyUp(fundManagerAddress);
 
 
         // await voteAndInvestTheFund();
@@ -169,9 +182,9 @@ describe("proposal related test", function () {
         console.log("balance of fund(before):", await erc20.balanceOf(fundAddress));
 
 
-        var purchaseAmount = ethers.utils.parseEther("100");
+        var buyer1PurchaseAmount = ethers.utils.parseEther("1");
         var buyer2PurchaseAmount = ethers.utils.parseEther("150");
-        await fund.purchaseShare(purchaseAmount);
+        await fund.purchaseShare(buyer1PurchaseAmount);
         await fund.connect(buyer2).purchaseShare(buyer2PurchaseAmount);
 
 
@@ -179,7 +192,8 @@ describe("proposal related test", function () {
 
         console.log("fund raised info:", await fund.getRaisedInfo());
 
-        console.log("get share:", await fund.connect(buyer2).getShare(buyer1.address));
+        console.log("buyer1 share:", await fund.getShare(buyer1.address));
+        console.log("buyer2 share:", await fund.getShare(buyer2.address));
 
     }
 
@@ -199,20 +213,43 @@ describe("proposal related test", function () {
 
     }
 
-    async function tallyUp (committeeAddress:string, erc20Address:string) {
+    async function tallyUp (fundManagerAddress:string) {
         
+        var fundManagerFactory = await ethers.getContractFactory("FundManager");
+        var fundManager = await fundManagerFactory.attach(fundManagerAddress);
 
+        var funds = await fundManager.getCreatedFunds();
+
+        console.log("ready to purchase funds:", funds[0]);
+
+        // get fund(ucv) address to purchase the share
+        const fundAddress = fundManager.getFund(funds[0]);
+        const fund = await ethers.getContractAt("InkFund", fundAddress);
+        
+        await fundManager.tallyUpFund(funds[0]);
 
     }
 
-    async function claimShare(committeeAddress:string, erc20Address:string) {
+    async function claimShare(fundManagerAddress:string) {
 
+        var fundManagerFactory = await ethers.getContractFactory("FundManager");
+        var fundManager = await fundManagerFactory.attach(fundManagerAddress);
+
+        var funds = await fundManager.getCreatedFunds();
+
+        console.log("ready to purchase funds:", funds[0]);
+
+        // get fund(ucv) address to purchase the share
+        const fundAddress = fundManager.getFund(funds[0]);
+        const fund = await ethers.getContractAt("InkFund", fundAddress);
+        
+        await fundManager.claimFundShare(funds[0]);
 
     }
 
 
-    async function claimPrincipal (committeeAddress:string, erc20Address:string) {
-
+    async function claimPrincipal (committeeAddress:string) {
+        
 
     }
 

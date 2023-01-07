@@ -11,6 +11,8 @@ import "../interfaces/IUCV.sol";
 import "../interfaces/IFundInfo.sol";
 import "../interfaces/IFund.sol";
 
+import "../tokens/InkFundVourcherToken.sol";
+
 import "../utils/TransferHelper.sol";
 import "hardhat/console.sol";
 
@@ -21,6 +23,12 @@ error PurchaseTooMuch(uint256 left, uint256 purchase);
 error StillLaunching();
 error FundAlreadyStartedOrFailed();
 error FundRaiseFailed();
+error CurrentFundStatusDonotSupportThisOperation(uint256 fundStatus);
+error FundNotLaunchYet(bytes32 fundID);
+error FundAlreadySucceed();
+error OnlyStartedFundCoundTallyUp(uint256 currentFundStatus);
+error FundInvestmentIsNotFinished(uint256 endTime, uint256 executeTime);
+
 
 contract InkFund is IFundInfo, IFund, BaseUCV {
 
@@ -45,10 +53,9 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     mapping(address => uint256) private _fundShare;
 
+    address private _vourcher;
 
     NewFundInfo private _fund;
-
-
 
     function init(
         address dao_,
@@ -80,7 +87,23 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         if (_startRaisingDate > 0) {
             revert FundAlreadyLaunched(_fundID);
         }
+        _launchStatus = 1;
         _startRaisingDate = block.timestamp;
+
+        emit LaunchStatusUpdated(_fundID, 0, _launchStatus, block.timestamp);
+    }
+
+
+    /// @inheritdoc IFund
+    function triggerLaunchStatus() external override {
+        if (_launchStatus == 0) {
+            revert FundNotLaunchYet(_fundID);
+        }
+        uint256 currentLaunchStatus = _getLaunchStatus();
+        if (_launchStatus != currentLaunchStatus) {
+            emit LaunchStatusUpdated(_fundID, _launchStatus, currentLaunchStatus, block.timestamp);
+            _launchStatus = currentLaunchStatus;
+        }
     }
 
     /// @inheritdoc IFund
@@ -95,9 +118,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         if (_startRaisingDate > 0) {
             status = 1;
         }
-
-        // console.log(_startRaisingDate);
-        // console.log(_fund.raisedPeriod);
 
         if (_startRaisingDate + _fund.raisedPeriod < block.timestamp) {
             status = 2;
@@ -136,6 +156,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         if (_fundStatus > 0) {
             return _fundStatus;
         }
+
         if (_getLaunchStatus() != 2) {
             return 0;
         }
@@ -163,28 +184,38 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             revert FundAlreadyStartedOrFailed();
         }
 
+        if (fundStatus == 9) {
+            revert FundAlreadySucceed();
+        }
+
         if (fundStatus == 2 && _totalRaised >= _fund.minRaise) {
             _fundStatus = 3;
             _startFundDate = block.timestamp;
 
-        } else {
+            _issueVoucher();
 
+        } else {
+            // fund raise failed
+            // fundStatus = 1;
             revert FundRaiseFailed();
         }
-
+        
     }
 
     /// @inheritdoc IFund
     function tallyUp() external override {
 
+
         uint256 status = _getFundStatus();
         if (status == 3) {
+
+            if (_startRaisingDate + _fund.raisedPeriod + _fund.durationOfFund < block.timestamp) {
+                revert FundInvestmentIsNotFinished(_startRaisingDate + _fund.raisedPeriod + _fund.durationOfFund, block.timestamp);
+            }
             _fundStatus = 9;
 
-
-
-
-
+        } else {
+            revert OnlyStartedFundCoundTallyUp(status);
         }
 
     }
@@ -196,14 +227,26 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         override
         returns (uint256 claimableShare)
     {
-        uint256 currentPurchased = _fundShare[owner];
+        claimableShare = _getShare(owner);
 
-        if (currentPurchased == 0) {
-            return 0;
-        }
+    }
 
-        // calculate based on all purchased percentage
-        claimableShare = currentPurchased * 100 / _totalRaised;
+    function _getShare(address owner) internal view returns(uint256 share) {
+        share = _fundShare[owner];
+        // if (currentPurchased == 0) {
+        //     return 0;
+        // }
+        // // calculate based on all purchased percentage
+        // // claimableShare = currentPurchased * 100 * 1e18 / _totalRaised;
+        // claimableShare = currentPurchased;
+    }
+
+
+    function claimShare(address owner) external override {
+        uint256 currentPurchased = _getShare(owner);
+        IERC20(_vourcher).transferFrom(address(this), owner, currentPurchased);
+        _fundShare[owner] = 0;
+
     }
 
     /// @inheritdoc IFund
@@ -220,7 +263,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     /// @inheritdoc IFund
     function transferFixedFeeToUCV(address treasuryUCV) external override {
 
-        if (_fund.fixedFeeShouldGoToTreasury == 1 && _fixedFeeTransferTime ==0 ) {
+        if (_fund.fixedFeeShouldGoToTreasury == 1 && _fixedFeeTransferTime ==0 && treasuryUCV != address(0)) {
             uint256 value = _fund.fixedFee * _totalRaised;
             _transferTo(treasuryUCV, _fund.fundToken, 20, 0, value, "");
             _fixedFeeTransferTime = block.timestamp;
@@ -235,6 +278,36 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     /// @inheritdoc IFund
     function withdrawPrincipal(address owner) external override {
 
+        uint256 fundStatus = _getFundStatus();
+        if (fundStatus != 1) {
+            revert CurrentFundStatusDonotSupportThisOperation(fundStatus);
+        }
+
+        _transferTo(owner, _fund.fundToken, 20, 0, _getShare(owner), "");
+
+        _fundShare[owner] = 0;
+
+
+    }
+
+
+    function _issueVoucher() internal {
+
+        _vourcher = address(new InkFundVourcherToken());
+        //cut the fee
+        if (_fund.fixedFee == 0) {
+
+        }
+
+
+        console.log("issued token:", _vourcher);
+
+
+        uint256 value = _fund.fixedFee * _totalRaised;
+        InkFundVourcherToken(_vourcher).issue(_fund.tokenName, _fund.tokenName, value, address(this));
+
+        console.log("balance:", IERC20(_vourcher).balanceOf(address(this)));
+        
     }
 
     /// @inheritdoc IDeploy

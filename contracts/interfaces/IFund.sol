@@ -7,9 +7,12 @@ interface IFund {
     /// @dev launch the fund (Only FundManager could execute)
     function launch() external;
 
+    /// @dev manually update launch status
+    function triggerLaunchStatus() external;
 
     /// @dev when the fund raised enough tokens, the fund admin could start fund and the fund manager
     /// could start to using raised fund to invest
+    /// meanwhile generate share tokens for claim
     /// Only FunderManager could run this
     function startFund() external;
 
@@ -33,14 +36,13 @@ interface IFund {
     function getFundStatus() external returns (uint256 status);
 
     /// @dev calculate the profit and transfer to the treasury
-    /// meanwhile generate share tokens for claim
     function tallyUp() external;
 
     /// @dev get the fund raised progress
     function getRaisedInfo() external returns (uint256 minRaise, uint256 maxRaise, uint256 currentRaised);
 
     /// @dev get how may fund token will get of the owner
-    function getShare(address owner) external returns (uint256 amount);
+    function getShare(address owner) external view returns (uint256 amount);
 
     /// @dev fund manager ask to pay for the fixed fee
     function transferFixedFeeToUCV(address treasuryUCV) external;
@@ -48,6 +50,10 @@ interface IFund {
     /// @dev after Admin click tallyUp the fund and the profit is ready,
     /// then user could claim the principal and profit
     function claimPrincipalAndProfit(address owner) external;
+
+
+    
+    function claimShare(address owner) external;
 
     /// @dev when launching is finished and can't raise enough token,
     /// the user could withdraw their principal

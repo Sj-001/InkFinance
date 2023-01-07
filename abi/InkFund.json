@@ -22,6 +22,38 @@
   },
   {
     "inputs": [],
+    "name": "FundAlreadySucceed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "endTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "executeTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "FundInvestmentIsNotFinished",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "FundNotLaunchYet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "FundRaiseFailed",
     "type": "error"
   },
@@ -33,6 +65,17 @@
   {
     "inputs": [],
     "name": "NotStartYet",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "currentFundStatus",
+        "type": "uint256"
+      }
+    ],
+    "name": "OnlyStartedFundCoundTallyUp",
     "type": "error"
   },
   {
@@ -276,18 +319,12 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "bytes32",
-        "name": "fundID",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "launchTime",
-        "type": "uint256"
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
       }
     ],
-    "name": "FundLaunched",
+    "name": "Initialized",
     "type": "event"
   },
   {
@@ -295,12 +332,30 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint8",
-        "name": "version",
-        "type": "uint8"
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "updateTime",
+        "type": "uint256"
       }
     ],
-    "name": "Initialized",
+    "name": "LaunchStatusUpdated",
     "type": "event"
   },
   {
@@ -810,6 +865,13 @@
         "type": "bool"
       }
     ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "triggerLaunchStatus",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },

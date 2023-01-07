@@ -153,6 +153,8 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
 
 export function buildFundInitData(erc20Address:string, fundManager:string, riskManager:string) {
 
+    var percentage2 = ethers.utils.parseEther("0.02");
+
 
     var fundName = "Fundname";
     var fundDescription = "FundDescription";
@@ -173,7 +175,7 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
 
     var allowExchange = 1;
     var auditPeriod = 60 * 60 * 24;
-    
+
     var investmentDomain = 1; // real-world
     var investmentType = 1; // Debt/Loans/Bonds
 
@@ -187,10 +189,10 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
 
     
 
-    var fixedFee = 100;
+    var fixedFee = percentage2;
     var fixedFeeShouldGoToTreasury = 1;
 
-    var performanceFee = 100;
+    var performanceFee = percentage2;
     var performanceFeeShouldGoToTreasury = 1;
     
 

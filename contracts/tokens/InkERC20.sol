@@ -30,7 +30,7 @@ contract InkERC20 is Context, IERC20, IERC20Metadata, Initializable {
         _symbol = symbol_;
     }
 
-    function mintTo(address target, uint256 amount) public {
+    function mintTo(address target, uint256 amount) public virtual {
         _mint(target, amount);
     }
 

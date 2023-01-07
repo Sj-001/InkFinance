@@ -15,6 +15,7 @@ error TheAccountIsNotAuthroized(address account);
 error DeployFailuer(bytes32 factoryKey);
 error TheFundNeedToTallyUp();
 error TheFundCanNotWithdrawPrincipalNow();
+error CannotClaimShareNow(uint256 currentFundStatus);
 
 contract FundManager is IFundManager, BaseUCVManager {
     // using Strings for uint256;
@@ -68,6 +69,8 @@ contract FundManager is IFundManager, BaseUCVManager {
         _funds[fundID] = fundAddress;
         _fundList.add(fundID);
 
+        // address fundAddress = address(0);
+
         emit FundCreated(
             fundID,
             fundAddress,
@@ -100,15 +103,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         // authrized
         IFund(_funds[fundID]).startFund();
         address treasuryUCV = IDAO(_dao).getUCV();
-
-        /*
-        address to,
-        address token,
-        uint256 tokenType,
-        uint256 tokenID,
-        uint256 value,
-        bytes memory data
-        */
         IFund(_funds[fundID]).transferFixedFeeToUCV(treasuryUCV);
 
     }
@@ -128,13 +122,31 @@ contract FundManager is IFundManager, BaseUCVManager {
         view
         override
         returns (uint256 share)
-    {}
+    {
+        share = IFund(_funds[fundID]).getShare(msg.sender);
+    }
+
+
+    function tallyUpFund(bytes32 fundID) external override {
+        IFund(_funds[fundID]).tallyUp();
+    }
+
+
+
 
     /// @inheritdoc IFundManager
     function claimFundShare(bytes32 fundID) external override {
-        // MAKE SURE FundStatus = 2 || 3
+        // MAKE SURE FundStatus = 2 || 3 || 9
         
+        uint256 status = IFund(_funds[fundID]).getFundStatus();
+        if (status == 2  || status == 3 || status == 9) {
 
+            IFund(_funds[fundID]).claimShare(msg.sender);
+
+        } else {
+
+            revert CannotClaimShareNow(status);
+        }
 
     }
 
@@ -149,8 +161,6 @@ contract FundManager is IFundManager, BaseUCVManager {
 
             revert TheFundCanNotWithdrawPrincipalNow();
         }
-
-
     }
 
     /// @inheritdoc IFundManager
@@ -182,33 +192,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         fundID = keccak256(abi.encodePacked(_seed, address(this)));
     }
 
-    /*
-    /// @inheritdoc IFundManager
-    function claimFundShare(bytes32 proposalID) external override {
-
-        uint256 totalRaised = 0;
-         
-        uint256 fundIssued = 0;
-
-        uint256 currentPurchased = _fundShare[proposalID][msg.sender];
-
-        uint256 claimableShare = currentPurchased / totalRaised * 100 * fundIssued;
-
-        // transfer
-        _fundShare[proposalID][msg.sender] = 0;
-        // emit FundShareClaimed()
-    }
-
-    function geFundShare(bytes32 proposalID) external override {
-
-    }
-
-    function withdrawPrincipal(bytes32 proposalID) external override {
-        // make sure the proposal is failed
-        
-    }
-
-    */
 
     function getTypeID() external override returns (bytes32 typeID) {}
 
