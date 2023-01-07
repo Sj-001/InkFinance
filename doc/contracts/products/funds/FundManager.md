@@ -28,6 +28,20 @@ function init(
 
 
 
+### getCreatedFunds
+
+
+
+*Declaration:*
+```solidity
+function getCreatedFunds(
+) external returns
+(bytes32[])
+```
+
+
+
+
 ### createFund
 
 > create a fund (UCV) for taking user's investment 
@@ -78,6 +92,7 @@ function launchFund(
 
 > when the fund raised enough tokens, the fund admin could start fund and the fund manager
 could start to using raised fund to invest
+Only FunderManager could run this
 
 *Declaration:*
 ```solidity

@@ -78,6 +78,7 @@ function launchFund(
 
 > when the fund raised enough tokens, the fund admin could start fund and the fund manager
 could start to using raised fund to invest
+Only FunderManager could run this
 
 *Declaration:*
 ```solidity

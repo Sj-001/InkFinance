@@ -27,6 +27,21 @@ function launch(
 
 
 
+### startFund
+
+> when the fund raised enough tokens, the fund admin could start fund and the fund manager
+could start to using raised fund to invest
+Only FunderManager could run this
+
+*Declaration:*
+```solidity
+function startFund(
+) external
+```
+
+
+
+
 ### getLaunchStatus
 
 > get launch status
@@ -43,7 +58,7 @@ function getLaunchStatus(
 *Returns:*
 | Arg | Description |
 | --- | --- |
-|`status` | 0=not launched yet 1=launched 2=launch finished(time is over)
+|`status` | 0=not launched yet 1=launching 2=launch finished(time is over)
 
 ### purchaseShare
 
@@ -77,7 +92,12 @@ function getFundStatus(
 *Returns:*
 | Arg | Description |
 | --- | --- |
-|`status` | 0=not start yet(need to start fund) 1=failed(launch status is finished and raised fund not reach min raise tokens) 2=started 3=finished(could claim the principal & profit of investment)
+|`status` | 
+0=not start yet(need to start fund) 
+1=failed(launch status is finished and raised fund not reach min raise tokens) 
+2=could start
+3=started
+9=finished(could claim the principal & profit of investment)
 
 ### tallyUp
 
@@ -93,6 +113,20 @@ function tallyUp(
 
 
 
+### getRaisedInfo
+
+> get the fund raised progress
+
+*Declaration:*
+```solidity
+function getRaisedInfo(
+) external returns
+(uint256 minRaise, uint256 maxRaise, uint256 currentRaised)
+```
+
+
+
+
 ### getShare
 
 > get how may fund token will get of the owner
@@ -102,6 +136,47 @@ function tallyUp(
 function getShare(
 ) external returns
 (uint256 amount)
+```
+
+
+
+
+### transferFixedFeeToUCV
+
+> fund manager ask to pay for the fixed fee
+
+*Declaration:*
+```solidity
+function transferFixedFeeToUCV(
+) external
+```
+
+
+
+
+### claimPrincipalAndProfit
+
+> after Admin click tallyUp the fund and the profit is ready,
+then user could claim the principal and profit
+
+*Declaration:*
+```solidity
+function claimPrincipalAndProfit(
+) external
+```
+
+
+
+
+### withdrawPrincipal
+
+> when launching is finished and can't raise enough token,
+the user could withdraw their principal
+
+*Declaration:*
+```solidity
+function withdrawPrincipal(
+) external
 ```
 
 

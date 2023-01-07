@@ -55,30 +55,4 @@ function listMyNFT(
 
 
 
-### transferFrom
-
-
-
-*Declaration:*
-```solidity
-function transferFrom(
-) public
-```
-
-
-
-
-### safeTransferFrom
-
-
-
-*Declaration:*
-```solidity
-function safeTransferFrom(
-) public
-```
-
-
-
-
 ## 5.Events

@@ -105,6 +105,20 @@ function transferTo(
 
 
 
+### _transferTo
+
+
+
+*Declaration:*
+```solidity
+function _transferTo(
+) internal returns
+(bool)
+```
+
+
+
+
 ### _depositeERC20
 
 

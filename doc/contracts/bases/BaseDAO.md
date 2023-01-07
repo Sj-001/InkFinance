@@ -903,6 +903,20 @@ function setupFlowInfo(
 
 
 
+### getUCV
+
+
+
+*Declaration:*
+```solidity
+function getUCV(
+) external returns
+(address ucv)
+```
+
+
+
+
 ### setupUCV
 
 

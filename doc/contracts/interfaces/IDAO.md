@@ -69,6 +69,20 @@ function setupUCV(
 
 
 
+### getUCV
+
+
+
+*Declaration:*
+```solidity
+function getUCV(
+) external returns
+(address ucv)
+```
+
+
+
+
 ### getFlowSteps
 
 > get flow steps
