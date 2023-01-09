@@ -1,5 +1,5 @@
 import chai from "chai";
-import {Wallet, Contract} from "ethers";
+import {Wallet, Contract, BigNumber} from "ethers";
 import {MockProvider} from "ethereum-waffle";
 import {keccak256, toUtf8Bytes } from 'ethers/lib/utils';
 import { Fixture } from 'ethereum-waffle'
@@ -85,6 +85,10 @@ describe("proposal related test", function () {
         var fundManagerAddress = await masterDAO.getDeployedContractByKey(FUND_MANAGER_KEY);
 
 
+        var minRaise = ethers.utils.parseEther("1000");
+        var maxRaise = ethers.utils.parseEther("10000");
+
+        
 
         await setupFund(fundManagerAddress, erc20Address);
 
@@ -249,7 +253,7 @@ describe("proposal related test", function () {
 
 
     async function claimPrincipal (committeeAddress:string) {
-        
+
 
     }
 

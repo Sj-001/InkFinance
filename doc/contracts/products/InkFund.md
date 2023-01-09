@@ -41,6 +41,33 @@ function launch(
 
 
 
+### getLaunchTime
+
+
+
+*Declaration:*
+```solidity
+function getLaunchTime(
+) external returns
+(uint256 start, uint256 end)
+```
+
+
+
+
+### triggerLaunchStatus
+
+> manually update launch status
+
+*Declaration:*
+```solidity
+function triggerLaunchStatus(
+) external
+```
+
+
+
+
 ### getLaunchStatus
 
 > get launch status
@@ -130,6 +157,7 @@ function _getFundStatus(
 
 > when the fund raised enough tokens, the fund admin could start fund and the fund manager
 could start to using raised fund to invest
+meanwhile generate share tokens for claim
 Only FunderManager could run this
 
 *Declaration:*
@@ -144,7 +172,6 @@ function startFund(
 ### tallyUp
 
 > calculate the profit and transfer to the treasury
-meanwhile generate share tokens for claim
 
 *Declaration:*
 ```solidity
@@ -164,6 +191,33 @@ function tallyUp(
 function getShare(
 ) external returns
 (uint256 claimableShare)
+```
+
+
+
+
+### _getShare
+
+
+
+*Declaration:*
+```solidity
+function _getShare(
+) internal returns
+(uint256 share)
+```
+
+
+
+
+### claimShare
+
+
+
+*Declaration:*
+```solidity
+function claimShare(
+) external
 ```
 
 
@@ -233,6 +287,19 @@ the user could withdraw their principal
 ```solidity
 function withdrawPrincipal(
 ) external
+```
+
+
+
+
+### _issueVoucher
+
+
+
+*Declaration:*
+```solidity
+function _issueVoucher(
+) internal
 ```
 
 

@@ -256,6 +256,11 @@
         "internalType": "string",
         "name": "symbol_",
         "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "decimal_",
+        "type": "uint8"
       }
     ],
     "name": "init",

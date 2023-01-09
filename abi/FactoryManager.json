@@ -11,6 +11,11 @@
     "type": "constructor"
   },
   {
+    "inputs": [],
+    "name": "DeployedAddressPredictFailure",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "bool",
@@ -33,7 +38,7 @@
         "type": "address"
       }
     ],
-    "name": "FailedToGeneraateAddress",
+    "name": "FailedToGenerateAddress",
     "type": "error"
   },
   {

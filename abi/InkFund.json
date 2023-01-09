@@ -1,5 +1,16 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "fundStatus",
+        "type": "uint256"
+      }
+    ],
+    "name": "CurrentFundStatusDonotSupportThisOperation",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "DepositeError",
     "type": "error"
@@ -139,6 +150,12 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "daoAddres",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "bytes32",
         "name": "fundID",
         "type": "bytes32"
@@ -166,6 +183,12 @@
         "internalType": "uint256",
         "name": "createTime",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
       },
       {
         "components": [
@@ -312,6 +335,37 @@
       }
     ],
     "name": "FundCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "updateTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "FundStatusUpdated",
     "type": "event"
   },
   {
@@ -499,6 +553,19 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "claimShare",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "configManager",
     "outputs": [
@@ -582,6 +649,24 @@
       {
         "internalType": "uint256",
         "name": "status",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLaunchTime",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
         "type": "uint256"
       }
     ],

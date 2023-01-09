@@ -27,10 +27,24 @@ function launch(
 
 
 
+### triggerLaunchStatus
+
+> manually update launch status
+
+*Declaration:*
+```solidity
+function triggerLaunchStatus(
+) external
+```
+
+
+
+
 ### startFund
 
 > when the fund raised enough tokens, the fund admin could start fund and the fund manager
 could start to using raised fund to invest
+meanwhile generate share tokens for claim
 Only FunderManager could run this
 
 *Declaration:*
@@ -102,7 +116,6 @@ function getFundStatus(
 ### tallyUp
 
 > calculate the profit and transfer to the treasury
-meanwhile generate share tokens for claim
 
 *Declaration:*
 ```solidity
@@ -162,6 +175,33 @@ then user could claim the principal and profit
 *Declaration:*
 ```solidity
 function claimPrincipalAndProfit(
+) external
+```
+
+
+
+
+### getLaunchTime
+
+
+
+*Declaration:*
+```solidity
+function getLaunchTime(
+) external returns
+(uint256 start, uint256 end)
+```
+
+
+
+
+### claimShare
+
+
+
+*Declaration:*
+```solidity
+function claimShare(
 ) external
 ```
 

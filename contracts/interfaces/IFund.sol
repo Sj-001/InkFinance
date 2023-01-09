@@ -52,7 +52,7 @@ interface IFund {
     function claimPrincipalAndProfit(address owner) external;
 
 
-    
+    function getLaunchTime() external view returns(uint256 start, uint256 end);
     function claimShare(address owner) external;
 
     /// @dev when launching is finished and can't raise enough token,

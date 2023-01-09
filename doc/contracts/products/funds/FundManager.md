@@ -73,7 +73,7 @@ function getLaunchStatus(
 *Returns:*
 | Arg | Description |
 | --- | --- |
-|`status` | 0=not launched yet 1=launched 2=launch finished(time is over)
+|`status` | 0=not launched yet 1=launched 2=launch finished(time is over) 9=after tallyUp and finalized
 
 ### launchFund
 
@@ -135,6 +135,19 @@ function geFundShare(
 
 
 
+### tallyUpFund
+
+
+
+*Declaration:*
+```solidity
+function tallyUpFund(
+) external
+```
+
+
+
+
 ### claimFundShare
 
 > claim share token
@@ -174,9 +187,36 @@ function claimPrincipalAndProfit(
 
 
 
+### getFundLaunchTimeInfo
+
+> get fund lauch start time & end time(if it's not launch yet, startTime = 0)
+
+*Declaration:*
+```solidity
+function getFundLaunchTimeInfo(
+) external returns
+(uint256, uint256)
+```
+
+
+
+
+### triggerFundLaunchStatus
+
+> if raise time is up, update launch status (fund status also)
+
+*Declaration:*
+```solidity
+function triggerFundLaunchStatus(
+) external
+```
+
+
+
+
 ### getFund
 
-> get the fund contract address of the fund, each fund has their own fund ucv to collect assets.
+
 
 *Declaration:*
 ```solidity

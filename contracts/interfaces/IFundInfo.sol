@@ -38,14 +38,17 @@ interface IFundInfo {
 
 
     event FundCreated(
+        address daoAddres,
         bytes32 fundID,
         address fundAddress,
         string name,
         string description,
         uint256 createTime,
+        address creator,
         NewFundInfo fundInfo
     );
 
 
     event LaunchStatusUpdated(bytes32 fundID, uint256 previousStatus, uint256 currentStatus, uint256 updateTime);
+    event FundStatusUpdated(bytes32 fundID, uint256 previousStatus, uint256 currentStatus, uint256 updateTime);
 }

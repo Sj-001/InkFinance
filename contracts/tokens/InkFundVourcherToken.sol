@@ -9,13 +9,12 @@ import "./InkERC20.sol";
  */
 contract InkFundVourcherToken is InkERC20 {
     
-    function issue(string memory name_, string memory symbol_, uint256 totalSupply, address target)
+    function issue(string memory name_, string memory symbol_, uint8 decimal_, uint256 totalSupply, address target)
         public
     {
-        super.init(name_, symbol_);
+        super.init(name_, symbol_, decimal_);
         _mint(target, totalSupply);
     }
-
 
     
     function mintTo(address target, uint256 amount) public override {

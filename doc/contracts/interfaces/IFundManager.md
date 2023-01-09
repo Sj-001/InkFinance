@@ -59,7 +59,7 @@ function getLaunchStatus(
 *Returns:*
 | Arg | Description |
 | --- | --- |
-|`status` | 0=not launched yet 1=launched 2=launch finished(time is over)
+|`status` | 0=not launched yet 1=launched 2=launch finished(time is over) 9=after tallyUp and finalized
 
 ### launchFund
 
@@ -83,6 +83,19 @@ Only FunderManager could run this
 *Declaration:*
 ```solidity
 function startFund(
+) external
+```
+
+
+
+
+### tallyUpFund
+
+> make the succeed fund ready claimed by the investors
+
+*Declaration:*
+```solidity
+function tallyUpFund(
 ) external
 ```
 
@@ -154,6 +167,33 @@ function withdrawPrincipal(
 *Declaration:*
 ```solidity
 function claimPrincipalAndProfit(
+) external
+```
+
+
+
+
+### getFundLaunchTimeInfo
+
+> get fund lauch start time & end time(if it's not launch yet, startTime = 0)
+
+*Declaration:*
+```solidity
+function getFundLaunchTimeInfo(
+) external returns
+(uint256 startTime, uint256 endTime)
+```
+
+
+
+
+### triggerFundLaunchStatus
+
+> if raise time is up, update launch status (fund status also)
+
+*Declaration:*
+```solidity
+function triggerFundLaunchStatus(
 ) external
 ```
 

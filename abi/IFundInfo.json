@@ -4,6 +4,12 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "daoAddres",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "bytes32",
         "name": "fundID",
         "type": "bytes32"
@@ -31,6 +37,12 @@
         "internalType": "uint256",
         "name": "createTime",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
       },
       {
         "components": [
@@ -177,6 +189,37 @@
       }
     ],
     "name": "FundCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "updateTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "FundStatusUpdated",
     "type": "event"
   },
   {

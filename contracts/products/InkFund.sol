@@ -55,6 +55,10 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     address private _vourcher;
 
+    uint256 private _confirmedProfit = 0;
+
+    uint256 private _voucherValue = 0;
+
     NewFundInfo private _fund;
 
     function init(
@@ -75,8 +79,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _fundID = fundID;
         _fund = fundInitData;
 
-        console.log(fundInitData.fundName);
-        console.logBytes32(fundID);
 
         return callbackEvent;
     }
@@ -94,6 +96,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
 
+    function getLaunchTime() external view override returns(uint256 start, uint256 end) {
+        return (_startRaisingDate, _startFundDate + _fund.raisedPeriod);
+    }
+
+
     /// @inheritdoc IFund
     function triggerLaunchStatus() external override {
         if (_launchStatus == 0) {
@@ -103,6 +110,13 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         if (_launchStatus != currentLaunchStatus) {
             emit LaunchStatusUpdated(_fundID, _launchStatus, currentLaunchStatus, block.timestamp);
             _launchStatus = currentLaunchStatus;
+            // update fundStatus if launching is over
+            if (_launchStatus == 2) {
+                if (_fundStatus == 1 || _fundStatus == 2) {
+                    emit FundStatusUpdated(_fundID, _fundStatus, _getFundStatus(), block.timestamp);
+                    _fundStatus = _getFundStatus();
+                }
+            }
         }
     }
 
@@ -214,6 +228,12 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             }
             _fundStatus = 9;
 
+            // calculate the profits and calculate per voucher's value
+            _confirmedProfit = IERC20(_fund.fundToken).balanceOf(address(this));
+            _voucherValue = _confirmedProfit / _totalRaised;
+
+
+
         } else {
             revert OnlyStartedFundCoundTallyUp(status);
         }
@@ -273,6 +293,24 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     /// @inheritdoc IFund
     function claimPrincipalAndProfit(address owner) external override {
         // require enough Token to get profit
+        // 3种凭证
+        // 1 staking
+        // 2 certificate
+        // 3 
+        uint256 status = _getFundStatus();
+        if (status != 9) {
+            revert CurrentFundStatusDonotSupportThisOperation(status);
+        }
+
+        // calculate voucher values;
+        
+        
+        // get back vouchers
+
+        
+        uint256 vouchers = _fund.fixedFee * _totalRaised;
+
+
     }
 
     /// @inheritdoc IFund
@@ -284,9 +322,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
 
         _transferTo(owner, _fund.fundToken, 20, 0, _getShare(owner), "");
-
         _fundShare[owner] = 0;
-
 
     }
 
@@ -299,13 +335,9 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         }
 
-
         console.log("issued token:", _vourcher);
-
-
         uint256 value = _fund.fixedFee * _totalRaised;
-        InkFundVourcherToken(_vourcher).issue(_fund.tokenName, _fund.tokenName, value, address(this));
-
+        InkFundVourcherToken(_vourcher).issue(_fund.tokenName, _fund.tokenName, IERC20Metadata(_fund.fundToken).decimals() ,value, address(this));
         console.log("balance:", IERC20(_vourcher).balanceOf(address(this)));
         
     }

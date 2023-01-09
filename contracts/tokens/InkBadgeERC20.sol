@@ -17,7 +17,7 @@ contract InkBadgeERC20 is InkERC20, IDeploy {
             data,
             (string, address, uint256)
         );
-        super.init(name, name);
+        super.init(name, name, 18);
         _mint(account, amount);
     }
 

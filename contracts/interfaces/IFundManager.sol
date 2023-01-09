@@ -47,4 +47,12 @@ interface IFundManager is IFundInfo {
     /// @dev claim principal and profit, require fund share token to prove the share
     function claimPrincipalAndProfit(bytes32 fundID) external;
 
+    /// @dev get fund lauch start time & end time(if it's not launch yet, startTime = 0)
+    function getFundLaunchTimeInfo(bytes32 fundID) external view returns(uint256 startTime, uint256 endTime);
+
+
+    /// @dev if raise time is up, update launch status (fund status also)
+    function triggerFundLaunchStatus(bytes32 fundID) external;
+
+
 }

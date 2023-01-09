@@ -11,6 +11,17 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "factoryKey",
+        "type": "bytes32"
+      }
+    ],
+    "name": "DeployFailuer",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "TheFundCanNotWithdrawPrincipalNow",
     "type": "error"
@@ -23,6 +34,12 @@
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "daoAddres",
+        "type": "address"
+      },
       {
         "indexed": false,
         "internalType": "bytes32",
@@ -52,6 +69,12 @@
         "internalType": "uint256",
         "name": "createTime",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
       },
       {
         "components": [
@@ -198,6 +221,37 @@
       }
     ],
     "name": "FundCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentStatus",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "updateTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "FundStatusUpdated",
     "type": "event"
   },
   {
@@ -498,6 +552,30 @@
         "type": "bytes32"
       }
     ],
+    "name": "getFundLaunchTimeInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      }
+    ],
     "name": "getFundStatus",
     "outputs": [
       {
@@ -650,6 +728,19 @@
       }
     ],
     "name": "tallyUpFund",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "triggerFundLaunchStatus",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

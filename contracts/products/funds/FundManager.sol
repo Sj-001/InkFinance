@@ -72,11 +72,13 @@ contract FundManager is IFundManager, BaseUCVManager {
         // address fundAddress = address(0);
 
         emit FundCreated(
+            _dao,
             fundID,
             fundAddress,
             fundInfo.fundName,
             fundInfo.fundDescription,
             block.timestamp,
+            msg.sender,
             fundInfo
         );
     }
@@ -176,6 +178,23 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
     /// @inheritdoc IFundManager
+    function getFundLaunchTimeInfo(bytes32 fundID)
+        external
+        view
+        override
+        returns (uint256, uint256)
+    {
+        return IFund(_funds[fundID]).getLaunchTime();
+    }
+
+    /// @inheritdoc IFundManager
+    function triggerFundLaunchStatus(bytes32 fundID)
+        external
+        override
+    {
+        IFund(_funds[fundID]).triggerLaunchStatus();
+    }
+
     function getFund(bytes32 fundID)
         external
         view
