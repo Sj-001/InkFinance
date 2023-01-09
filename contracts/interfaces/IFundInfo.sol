@@ -49,6 +49,12 @@ interface IFundInfo {
     );
 
 
-    event LaunchStatusUpdated(bytes32 fundID, uint256 previousStatus, uint256 currentStatus, uint256 updateTime);
-    event FundStatusUpdated(bytes32 fundID, uint256 previousStatus, uint256 currentStatus, uint256 updateTime);
+    /// @dev when status changed this event will emit
+    /// @param fundID the id of the fund
+    /// @param statusType 1=launch status, 2=fund status
+    /// @param previousStatus previous status
+    /// @param currentStatus current status
+    /// @param updateTime time 
+    event FundStatusUpdated(bytes32 fundID, uint256 statusType, uint256 previousStatus, uint256 currentStatus, uint256 updateTime);
+
 }

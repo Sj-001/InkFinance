@@ -349,6 +349,12 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "statusType",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "previousStatus",
         "type": "uint256"
       },
@@ -379,37 +385,6 @@
       }
     ],
     "name": "Initialized",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "fundID",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "previousStatus",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "currentStatus",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "updateTime",
-        "type": "uint256"
-      }
-    ],
-    "name": "LaunchStatusUpdated",
     "type": "event"
   },
   {

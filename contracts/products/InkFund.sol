@@ -92,7 +92,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _launchStatus = 1;
         _startRaisingDate = block.timestamp;
 
-        emit LaunchStatusUpdated(_fundID, 0, _launchStatus, block.timestamp);
+        emit FundStatusUpdated(_fundID, 1,  0, _launchStatus, block.timestamp);
     }
 
 
@@ -108,12 +108,12 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
         uint256 currentLaunchStatus = _getLaunchStatus();
         if (_launchStatus != currentLaunchStatus) {
-            emit LaunchStatusUpdated(_fundID, _launchStatus, currentLaunchStatus, block.timestamp);
+            emit FundStatusUpdated(_fundID, 1, _launchStatus, currentLaunchStatus, block.timestamp);
             _launchStatus = currentLaunchStatus;
             // update fundStatus if launching is over
             if (_launchStatus == 2) {
                 if (_fundStatus == 1 || _fundStatus == 2) {
-                    emit FundStatusUpdated(_fundID, _fundStatus, _getFundStatus(), block.timestamp);
+                    emit FundStatusUpdated(_fundID, 2, _fundStatus, _getFundStatus(), block.timestamp);
                     _fundStatus = _getFundStatus();
                 }
             }

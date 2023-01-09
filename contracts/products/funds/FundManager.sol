@@ -28,7 +28,6 @@ contract FundManager is IFundManager, BaseUCVManager {
     mapping(bytes32 => address) private _funds;
 
     address private _factoryManager;
-
     bytes32 private _setupProposalID;
 
     function init(
