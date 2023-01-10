@@ -7,7 +7,7 @@ import "./InkERC20.sol";
  * @author InkTech <tech-support@inkfinance.xyz>
  * @dev Implementation of the {IERC20} interface.
  */
-contract InkFundVourcherToken is InkERC20 {
+contract InkFundCertificateToken is InkERC20 {
     
     function issue(string memory name_, string memory symbol_, uint8 decimal_, uint256 totalSupply, address target)
         public

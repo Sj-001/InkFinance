@@ -11,7 +11,7 @@ import "../interfaces/IUCV.sol";
 import "../interfaces/IFundInfo.sol";
 import "../interfaces/IFund.sol";
 
-import "../tokens/InkFundVourcherToken.sol";
+import "../tokens/InkFundCertificateToken.sol";
 
 import "../utils/TransferHelper.sol";
 import "hardhat/console.sol";
@@ -28,7 +28,7 @@ error FundNotLaunchYet(bytes32 fundID);
 error FundAlreadySucceed();
 error OnlyStartedFundCoundTallyUp(uint256 currentFundStatus);
 error FundInvestmentIsNotFinished(uint256 endTime, uint256 executeTime);
-
+error NoShareCouldBeClaim();
 
 contract InkFund is IFundInfo, IFund, BaseUCV {
 
@@ -79,6 +79,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _fundID = fundID;
         _fund = fundInitData;
 
+        emit FundStatusUpdated(_fundID, 1,  0, 0, block.timestamp);
 
         return callbackEvent;
     }
@@ -112,9 +113,12 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             _launchStatus = currentLaunchStatus;
             // update fundStatus if launching is over
             if (_launchStatus == 2) {
-                if (_fundStatus == 1 || _fundStatus == 2) {
-                    emit FundStatusUpdated(_fundID, 2, _fundStatus, _getFundStatus(), block.timestamp);
-                    _fundStatus = _getFundStatus();
+
+                uint256 fundStatus = _getFundStatus();
+
+                if (fundStatus == 1 || fundStatus == 2) {
+                    emit FundStatusUpdated(_fundID, 2, 0, fundStatus, block.timestamp);
+                    _fundStatus = fundStatus;
                 }
             }
         }
@@ -205,8 +209,17 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         if (fundStatus == 2 && _totalRaised >= _fund.minRaise) {
             _fundStatus = 3;
             _startFundDate = block.timestamp;
+            
 
-            _issueVoucher();
+            if (_fund.allowFundTokenized == 1) {
+                if (_fund.allowIntermittentDistributions == 1) {
+                    // ERC3525
+                } else {
+                    // ERC20
+                    _issueCertifcate();
+                }
+            } 
+
 
         } else {
             // fund raise failed
@@ -263,6 +276,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
 
     function claimShare(address owner) external override {
+
+        if (_fund.allowFundTokenized != 1) {
+            revert NoShareCouldBeClaim();
+        }
+
         uint256 currentPurchased = _getShare(owner);
         IERC20(_vourcher).transferFrom(address(this), owner, currentPurchased);
         _fundShare[owner] = 0;
@@ -327,9 +345,9 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
 
-    function _issueVoucher() internal {
+    function _issueCertifcate() internal {
 
-        _vourcher = address(new InkFundVourcherToken());
+        _vourcher = address(new InkFundCertificateToken());
         //cut the fee
         if (_fund.fixedFee == 0) {
 
@@ -337,7 +355,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         console.log("issued token:", _vourcher);
         uint256 value = _fund.fixedFee * _totalRaised;
-        InkFundVourcherToken(_vourcher).issue(_fund.tokenName, _fund.tokenName, IERC20Metadata(_fund.fundToken).decimals() ,value, address(this));
+        InkFundCertificateToken(_vourcher).issue(_fund.tokenName, _fund.tokenName, IERC20Metadata(_fund.fundToken).decimals() ,value, address(this));
         console.log("balance:", IERC20(_vourcher).balanceOf(address(this)));
         
     }
