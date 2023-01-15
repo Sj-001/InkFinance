@@ -53,6 +53,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     mapping(address => uint256) private _fundShare;
 
+    mapping(address => uint256) private _originalShare;
+
     address private _vourcher;
 
     uint256 private _confirmedProfit = 0;
@@ -161,6 +163,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _depositeERC20(_fund.fundToken, amount);
         _totalRaised += amount;
         _fundShare[msg.sender] += amount;
+        _originalShare[msg.sender] += amount;
 
     }
 
@@ -263,6 +266,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         claimableShare = _getShare(owner);
 
     }
+
+    function getOriginalShare(address owner) external view override returns (uint256 amount) {
+        amount = _originalShare[owner];
+    }
+
 
     function _getShare(address owner) internal view returns(uint256 share) {
         share = _fundShare[owner];

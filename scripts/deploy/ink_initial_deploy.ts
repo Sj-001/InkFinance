@@ -44,6 +44,8 @@ async function deploy(){
   const theTreasuryCommitteeImpl = await treasuryCommitteeFactory.deploy();
   await theTreasuryCommitteeImpl.deployed();
 
+  console.log("ThePublic deployed..")
+
   const masterDAOFactory = await ethers.getContractFactory("MasterDAO");
   const masterDAOImpl = await masterDAOFactory.deploy();
   await masterDAOImpl.deployed();
@@ -116,10 +118,15 @@ async function deploy(){
   const fundManagerImpl = await FundManagerFactory.deploy();
   await fundManagerImpl.deployed();
 
+  console.log("FundManager deployed..")
+
 
   const InkFundFactory = await ethers.getContractFactory("InkFund");
   const inkFundImpl = await InkFundFactory.deploy();
   await inkFundImpl.deployed();
+
+  console.log("InkFund deployed..")
+
 
   //init factory manager key
   console.log("useful constant ################################################################################################################## ")

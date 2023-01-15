@@ -384,7 +384,7 @@ export async function InkERC20Fixture(_wallets: Wallet[], _mockProvider: MockPro
 
     const signers = await ethers.getSigners();
     const inkERC20 = await deployContract(signers[0], InkERC20ABI, []);
-    await inkERC20.init("InkERC20", "InkERC20")
+    await inkERC20.init("InkERC20", "InkERC20", 18)
     await inkERC20.deployed();
 
     return {inkERC20};

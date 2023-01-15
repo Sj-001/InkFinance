@@ -44,6 +44,10 @@ interface IFund {
     /// @dev get how may fund token will get of the owner
     function getShare(address owner) external view returns (uint256 amount);
 
+    /// @dev return how many purchased no matter the user withdraw the principal
+    function getOriginalShare(address owner) external view returns (uint256 amount);
+
+
     /// @dev fund manager ask to pay for the fixed fee
     function transferFixedFeeToUCV(address treasuryUCV) external;
 

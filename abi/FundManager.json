@@ -144,9 +144,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "string",
+            "internalType": "uint256",
             "name": "investmentDomain",
-            "type": "string"
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -382,9 +382,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "string",
+            "internalType": "uint256",
             "name": "investmentDomain",
-            "type": "string"
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -703,6 +703,24 @@
       }
     ],
     "name": "tallyUpFund",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "dao_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "factory_",
+        "type": "address"
+      }
+    ],
+    "name": "testInit",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -19,7 +19,7 @@ interface IFundInfo {
         // uint256 tokenAmount;
         uint256 allowExchange;
         uint256 auditPeriod;
-        string investmentDomain;
+        uint256 investmentDomain;
         uint256 investmentType;
         uint256 maxSingleExposure;
         uint256 minNumberOfHoldings;

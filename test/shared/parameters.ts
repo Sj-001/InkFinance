@@ -171,18 +171,18 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
     var allowIntermittentDistributions = 1;
     var allowFundTokenized = 1;
     var tokenName = "TestTokenName";
-    var tokenAmount = ethers.utils.parseEther("10000");
+    // var tokenAmount = ethers.utils.parseEther("10000");
 
     var allowExchange = 1;
     var auditPeriod = 60 * 60 * 24;
 
-    var investmentDomain = 1; // real-world
-    var investmentType = 1; // Debt/Loans/Bonds
+    var investmentDomain = 2; // real-world
+    var investmentType = 2; // Debt/Loans/Bonds
 
-    var maxSingleExposure = 100;
-    var minNumberOfHoldings = 1;
-    var maxNavDowndraftFromPeak = 5;
-    var maxNavLoss = 20;
+    var maxSingleExposure = "10000000000000000000";
+    var minNumberOfHoldings = "20000000000000000000";
+    var maxNavDowndraftFromPeak = "30000000000000000000";
+    var maxNavLoss = "40000000000000000000";
 
     var requireClientBiometricIdentity = 0;
     var requireClientLegalIdentity = 0;

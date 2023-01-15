@@ -75,6 +75,11 @@
   },
   {
     "inputs": [],
+    "name": "NoShareCouldBeClaim",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "NotStartYet",
     "type": "error"
   },
@@ -258,9 +263,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "string",
+            "internalType": "uint256",
             "name": "investmentDomain",
-            "type": "string"
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -656,6 +661,25 @@
         "internalType": "address",
         "name": "ucvManager",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "getOriginalShare",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

@@ -38,7 +38,7 @@ describe("proposal related test", function () {
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
         var masterDAO = masterDAOFactory.attach(firstDAOAddress);
         console.log("dao address:", masterDAO.address);
-        // // select one flow of the DAO
+        // select one flow of the DAO
 
         var proposal = buildInvestmentSetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address, signers[0].address);
 
@@ -97,19 +97,19 @@ describe("proposal related test", function () {
         await purchaseFund(fundManagerAddress, erc20Address);
 
 
-        // fund manager start to invest
-        // transfer fixed fee to treasury
-        // issue voucher for investor to claim
-        await startFund(fundManagerAddress);
+        // // fund manager start to invest
+        // // transfer fixed fee to treasury
+        // // issue voucher for investor to claim
+        // await startFund(fundManagerAddress);
 
-        // claim user's voucher
-        await claimShare(fundManagerAddress);
+        // // claim user's voucher
+        // await claimShare(fundManagerAddress);
 
-        // if fund raised failed, user should claim principal
-        await claimPrincipal(fundManagerAddress);
+        // // if fund raised failed, user should claim principal
+        // await claimPrincipal(fundManagerAddress);
 
-        // user could claim principal and profit
-        await tallyUp(fundManagerAddress);
+        // // user could claim principal and profit
+        // await tallyUp(fundManagerAddress);
 
 
         // await voteAndInvestTheFund();

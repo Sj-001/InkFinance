@@ -16,6 +16,7 @@ error DeployFailuer(bytes32 factoryKey);
 error TheFundNeedToTallyUp();
 error TheFundCanNotWithdrawPrincipalNow();
 error CannotClaimShareNow(uint256 currentFundStatus);
+error SucceedButRevert(bytes byteData);
 
 contract FundManager is IFundManager, BaseUCVManager {
     // using Strings for uint256;
@@ -45,8 +46,14 @@ contract FundManager is IFundManager, BaseUCVManager {
 
     }
 
-    function getCreatedFunds() external view returns(bytes32[] memory) {
 
+    function testInit(address dao_, address factory_) public {
+        _dao = dao_;
+        _factoryManager = factory_;
+    }
+
+
+    function getCreatedFunds() external view returns(bytes32[] memory) {
         return _fundList.values();
     }
 
@@ -234,7 +241,11 @@ contract FundManager is IFundManager, BaseUCVManager {
         (bool _success, bytes memory _returnedBytes) = address(_factoryManager)
             .call(deployCall);
 
+        // bool _success = true;
         if (_success) {
+
+            // revert SucceedButRevert(_returnedBytes);
+            
             deployedAddress = turnBytesToAddress(_returnedBytes);
         } else {
             revert DeployFailuer(contractKey);
