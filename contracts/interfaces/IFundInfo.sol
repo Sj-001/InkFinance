@@ -49,6 +49,16 @@ interface IFundInfo {
     );
 
 
+    event FundPurchase(
+        address daoAddres,
+        bytes32 fundID,
+        address fundAddress,
+        address buyer,
+        uint256 purchaseTime,
+        uint256 purchaseAmount,
+        uint256 totalPurchased
+    );
+
     /// @dev when status changed this event will emit
     /// @param fundID the id of the fund
     /// @param statusType 1=launch status, 2=fund status

@@ -168,7 +168,7 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
     var raisedPeriod = 60 * 60 * 24 * 5; // 5 days
     var durationOfFund = 60 * 60 * 24 * 30;
 
-    var allowIntermittentDistributions = 1;
+    var allowIntermittentDistributions = 0;
     var allowFundTokenized = 1;
     var tokenName = "TestTokenName";
     // var tokenAmount = ethers.utils.parseEther("10000");

@@ -202,6 +202,12 @@
         "internalType": "uint256",
         "name": "signTime",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "isLastSigner",
+        "type": "uint256"
       }
     ],
     "name": "PayrollSign",

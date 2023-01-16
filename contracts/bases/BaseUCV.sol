@@ -135,6 +135,10 @@ abstract contract BaseUCV is IUCV, BaseVerify {
     }
 
 
+    function getDAO() internal view returns(address dao) {
+        dao = _dao;
+    }
+
     function _depositeERC20(address token, uint256 amount) internal {
         if (token == address(0)) {
             if (amount != msg.value) {

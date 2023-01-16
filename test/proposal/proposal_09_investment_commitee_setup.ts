@@ -100,10 +100,10 @@ describe("proposal related test", function () {
         // // fund manager start to invest
         // // transfer fixed fee to treasury
         // // issue voucher for investor to claim
-        // await startFund(fundManagerAddress);
+        await startFund(fundManagerAddress);
 
         // // claim user's voucher
-        // await claimShare(fundManagerAddress);
+        await claimShare(fundManagerAddress);
 
         // // if fund raised failed, user should claim principal
         // await claimPrincipal(fundManagerAddress);
@@ -186,7 +186,7 @@ describe("proposal related test", function () {
         console.log("balance of fund(before):", await erc20.balanceOf(fundAddress));
 
 
-        var buyer1PurchaseAmount = ethers.utils.parseEther("1");
+        var buyer1PurchaseAmount = ethers.utils.parseEther("2000");
         var buyer2PurchaseAmount = ethers.utils.parseEther("150");
         await fund.purchaseShare(buyer1PurchaseAmount);
         await fund.connect(buyer2).purchaseShare(buyer2PurchaseAmount);
@@ -235,6 +235,9 @@ describe("proposal related test", function () {
     }
 
     async function claimShare(fundManagerAddress:string) {
+        const signers = await ethers.getSigners();
+
+        const buyer1 = signers[0];
 
         var fundManagerFactory = await ethers.getContractFactory("FundManager");
         var fundManager = await fundManagerFactory.attach(fundManagerAddress);
@@ -247,7 +250,20 @@ describe("proposal related test", function () {
         const fundAddress = fundManager.getFund(funds[0]);
         const fund = await ethers.getContractAt("InkFund", fundAddress);
         
+
+
+        const certificateToken = await fund.getCertificateInfo();
+        const erc20 = await ethers.getContractAt("InkERC20", certificateToken);
+        // const token = await ethers.getContractAt("IERC20", certificateToken);
+        
+        // console.log("certi token:", certificateToken);
+        // console.log("balance:", token.balanceOf(fundAddress));        
         await fundManager.claimFundShare(funds[0]);
+
+        console.log("after claim balance:", await erc20.balanceOf(buyer1.address))
+
+
+        
 
     }
 

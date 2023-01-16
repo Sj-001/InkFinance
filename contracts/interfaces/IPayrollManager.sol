@@ -71,12 +71,14 @@ interface IPayrollManager is IUCVManager {
     );
 
     /// @notice once the multisigner role sign, this event will pass
+    /// @param isLastSigner 1=last one to sign
     event PayrollSign(
         address indexed dao,
         uint256 indexed scheduleID,
         uint256 indexed payID,
         address signer,
-        uint256 signTime
+        uint256 signTime,
+        uint256 isLastSigner
     );
 
     /// @notice once add member under a payroll, this event will be emit

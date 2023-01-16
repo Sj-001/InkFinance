@@ -314,7 +314,12 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
         _checkDirectPay(scheduleID);
 
-        emit PayrollSign(_dao, scheduleID, payID, msg.sender, block.timestamp);
+
+        bool isLastSigner = _isPayIDSigned(scheduleID, payID);
+        
+        uint256 lastSignerFlag = isLastSigner == true ? 1 : 0;
+
+        emit PayrollSign(_dao, scheduleID, payID, msg.sender, block.timestamp, lastSignerFlag);
     }
 
     function _checkDirectPay(uint256 scheduleID) internal {

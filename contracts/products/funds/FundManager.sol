@@ -148,7 +148,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         
         uint256 status = IFund(_funds[fundID]).getFundStatus();
         if (status == 2  || status == 3 || status == 9) {
-
+            console.log("address:", _funds[fundID]);
             IFund(_funds[fundID]).claimShare(msg.sender);
 
         } else {

@@ -55,7 +55,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     mapping(address => uint256) private _originalShare;
 
-    address private _vourcher;
+    address private _certificate;
 
     uint256 private _confirmedProfit = 0;
 
@@ -159,11 +159,19 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             
             revert PurchaseTooMuch(_fund.maxRaise - _totalRaised, amount);
         }
+
+
         
         _depositeERC20(_fund.fundToken, amount);
+
         _totalRaised += amount;
         _fundShare[msg.sender] += amount;
         _originalShare[msg.sender] += amount;
+
+
+        emit FundPurchase(getDAO(), _fundID, address(this), msg.sender, block.timestamp, amount, _originalShare[msg.sender]);
+
+
 
     }
 
@@ -197,9 +205,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         // }
 
         uint256 fundStatus = _getFundStatus();
-        if (fundStatus == 0) {
-            revert StillLaunching();
-        }
+        // if (fundStatus == 0) {
+        //     revert StillLaunching();
+        // }
+
+        fundStatus = 2;
 
         if (fundStatus == 1 || fundStatus == 3) {
             revert FundAlreadyStartedOrFailed();
@@ -285,12 +295,17 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     function claimShare(address owner) external override {
 
-        if (_fund.allowFundTokenized != 1) {
+        if (_fund.allowFundTokenized != 1 && _fund.allowIntermittentDistributions == 0) {
             revert NoShareCouldBeClaim();
         }
 
         uint256 currentPurchased = _getShare(owner);
-        IERC20(_vourcher).transferFrom(address(this), owner, currentPurchased);
+
+
+        console.log("has share:", currentPurchased);
+
+        // IERC20(_certificate).transferFrom(address(this), owner, currentPurchased);
+        IERC20(_certificate).transfer(owner, currentPurchased);
         _fundShare[owner] = 0;
 
     }
@@ -355,17 +370,22 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     function _issueCertifcate() internal {
 
-        _vourcher = address(new InkFundCertificateToken());
+        _certificate = address(new InkFundCertificateToken());
         //cut the fee
         if (_fund.fixedFee == 0) {
 
         }
 
-        console.log("issued token:", _vourcher);
-        uint256 value = _fund.fixedFee * _totalRaised;
-        InkFundCertificateToken(_vourcher).issue(_fund.tokenName, _fund.tokenName, IERC20Metadata(_fund.fundToken).decimals() ,value, address(this));
-        console.log("balance:", IERC20(_vourcher).balanceOf(address(this)));
+        console.log("issued token:", _certificate);
+        uint256 value = _totalRaised;
+        InkFundCertificateToken(_certificate).issue(_fund.tokenName, _fund.tokenName, IERC20Metadata(_fund.fundToken).decimals() ,value, address(this));
+        console.log("balance:", IERC20(_certificate).balanceOf(address(this)));
         
+    }
+
+
+    function getCertificateInfo() external view returns(address certificate) {
+        certificate = _certificate;
     }
 
     /// @inheritdoc IDeploy
