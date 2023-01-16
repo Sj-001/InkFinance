@@ -518,25 +518,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "fundID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "geFundShare",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "share",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getCreatedFunds",
     "outputs": [
@@ -624,6 +605,25 @@
       {
         "internalType": "uint256",
         "name": "status",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getShareOfFund",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "share",
         "type": "uint256"
       }
     ],

@@ -199,17 +199,14 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     /// @inheritdoc IFund
     function startFund() external override {
-        // uint256 launchStatus = _getLaunchStatus();
-        // if (launchStatus != 2) {
-        //     revert StillLaunching();
-        // }
+
 
         uint256 fundStatus = _getFundStatus();
-        // if (fundStatus == 0) {
-        //     revert StillLaunching();
-        // }
+        if (fundStatus == 0) {
+            revert StillLaunching();
+        }
 
-        fundStatus = 2;
+        // fundStatus = 2;
 
         if (fundStatus == 1 || fundStatus == 3) {
             revert FundAlreadyStartedOrFailed();

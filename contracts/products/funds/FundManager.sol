@@ -125,7 +125,7 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
     /// @inheritdoc IFundManager
-    function geFundShare(bytes32 fundID)
+    function getShareOfFund(bytes32 fundID)
         external
         view
         override

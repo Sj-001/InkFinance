@@ -35,8 +35,7 @@ interface IFundManager is IFundInfo {
     /// @return status 0=not start yet(need to start fund) 1=failed(launch status is finished and raised fund not reach min raise tokens) 2=started 3=finished(could claim the principal & profit of investment)
     function getFundStatus(bytes32 fundID) external returns (uint256 status);
 
-    /// @dev get how many share token could claim
-    function geFundShare(bytes32 fundID) external view returns (uint256 share);
+
 
     /// @dev claim share token
     function claimFundShare(bytes32 fundID) external;
@@ -54,5 +53,8 @@ interface IFundManager is IFundInfo {
     /// @dev if raise time is up, update launch status (fund status also)
     function triggerFundLaunchStatus(bytes32 fundID) external;
 
+
+    /// @dev get how many share token could claim
+    function getShareOfFund(bytes32 fundID) external returns (uint256 share);
 
 }
