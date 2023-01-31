@@ -102,6 +102,9 @@ describe("proposal related test", function () {
         // // issue voucher for investor to claim
         await startFund(fundManagerAddress);
 
+
+        await makeDistribution(fundManagerAddress, erc20Address);
+
         // // claim user's voucher
         await claimShare(fundManagerAddress);
 
@@ -126,6 +129,7 @@ describe("proposal related test", function () {
         var fundManager = await fundManagerFactory.attach(fundManagerAddress);
 
         var fundInitData = buildFundInitData(erc20Address, signers[0].address, signers[0].address); 
+        // var fundInitData = buildFundInitData("0x0000000000000000000000000000000000000000", signers[0].address, signers[0].address); 
 
         await fundManager.createFund(fundInitData);
 
@@ -137,6 +141,35 @@ describe("proposal related test", function () {
 
     }
 
+
+    async function makeDistribution (fundManagerAddress:string, erc20Address:string) {
+        var fundManagerFactory = await ethers.getContractFactory("FundManager");
+        var fundManager = await fundManagerFactory.attach(fundManagerAddress);
+
+        var funds = await fundManager.getCreatedFunds();
+
+        console.log("funds:", funds);
+
+
+        var distributions = {
+            "token" : erc20Address,
+            "amount" :  ethers.utils.parseEther("100")
+        }
+
+        // await fundManager.launchFund(funds[0]); // valid launch twice    
+        console.log("fund launch status:", await fundManager.makeDistribution(funds[0], "remark content", distributions));
+        const signers = await ethers.getSigners();
+
+        const buyer1 = signers[0];
+        console.log("check how many I could claim:", await fundManager.getClaimableDistributionAmount(funds[0], buyer1.address));
+        
+        const erc20 = await ethers.getContractAt("InkERC20", erc20Address);
+        console.log("balance of buyer1(before):", await erc20.balanceOf(buyer1.address));
+        
+        console.log("claim :", await fundManager.claimDistribution(funds[0]));
+
+        console.log("balance of buyer1(after):", await erc20.balanceOf(buyer1.address));
+    }
 
     async function launchFund (fundManagerAddress:string) {
         var fundManagerFactory = await ethers.getContractFactory("FundManager");
@@ -187,7 +220,7 @@ describe("proposal related test", function () {
 
 
         var buyer1PurchaseAmount = ethers.utils.parseEther("2000");
-        var buyer2PurchaseAmount = ethers.utils.parseEther("150");
+        var buyer2PurchaseAmount = ethers.utils.parseEther("1500");
         await fund.purchaseShare(buyer1PurchaseAmount);
         await fund.connect(buyer2).purchaseShare(buyer2PurchaseAmount);
 

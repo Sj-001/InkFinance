@@ -17,13 +17,21 @@ error TheFundNeedToTallyUp();
 error TheFundCanNotWithdrawPrincipalNow();
 error CannotClaimShareNow(uint256 currentFundStatus);
 error SucceedButRevert(bytes byteData);
+error TokenIsNotEnoughToDistribute(address token);
+error DistributionAlreadyClaimedBefore(bytes32 distributionID);
 
 contract FundManager is IFundManager, BaseUCVManager {
+
     // using Strings for uint256;
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
     EnumerableSet.Bytes32Set private _fundList;
+
+    mapping(bytes32=>FundDistribution[]) private _fundDistributions;
+
+    /// DistributionID=>(EOA=>ClaimTime)
+    mapping(bytes32 => mapping(address=>uint256)) private _distributionClaimed;
 
     /// @dev fundID->Fund address
     mapping(bytes32 => address) private _funds;
@@ -47,11 +55,110 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
 
-    function testInit(address dao_, address factory_) public {
-        _dao = dao_;
-        _factoryManager = factory_;
+
+    function makeDistribution(bytes32 fundID, string memory remark, DistributionInfo memory distributionTokens) external {
+        
+        // valid manager
+
+        // valid period & status
+
+        // new ID
+        bytes32 distributionID = _newID();
+        
+        // valid token amount is enough to distribute after all distribution
+        // for(uint256 i=0; i<distributionTokens.length;i++) {
+        if (!isTokenEnough(fundID, distributionTokens.token, distributionTokens.amount)) {
+            revert TokenIsNotEnoughToDistribute(distributionTokens.token);
+        }
+        // }
+
+        // (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) = InkFund(_fund).getRaisedInfo() 
+        // FundDistribution memory distribution = new FundDistribution()
+        // distribution.distributionID = distributionID;
+        // distribution.token = 
+
+        FundDistribution memory distribution;
+        distribution.distributionID = distributionID;
+        distribution.token = distributionTokens.token;
+        distribution.amount = distributionTokens.amount;
+
+        _fundDistributions[fundID].push(distribution);
+
+
+        emit DistributionCreated(
+            fundID,
+            _funds[fundID],
+            msg.sender,
+            block.timestamp,
+            distributionID,
+            remark,
+            distributionTokens.token,
+            distributionTokens.amount
+        );
     }
 
+    function isTokenEnough(bytes32 fundID, address token, uint256 amount) internal returns(bool) {
+        uint256 currentTokenDistribution = 0;
+        for(uint256 i=0;i <_fundDistributions[fundID].length; i++) {
+            currentTokenDistribution += _fundDistributions[fundID][i].amount;
+            // for(uint256 j=0;j <_fundDistributions[i].distributionTokens.length; j++) {
+            //     if (true) {
+            //         currentTokenDistribution += _fundDistributions[i].distributionTokens.amount;
+            //     }
+            // }
+        }
+        (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) = IFund(_funds[fundID]).getRaisedInfo();
+        // think about tax
+        if (currentRaised - currentTokenDistribution < amount) {
+            return false;
+        }
+        return true;
+    }
+    
+    function getClaimableDistributionAmount(bytes32 fundID, address investor) external view returns(uint256 currentTokenDistribution){
+        currentTokenDistribution = _getClaimableDistributionAmount(fundID, investor);
+    }
+
+
+
+    function _getClaimableDistributionAmount(bytes32 fundID, address investor) internal view returns(uint256 currentTokenDistribution){
+        // // calculate share
+        uint256 sharePercentage = IFund(_funds[fundID]).getSharePercentage(investor);
+
+        for(uint256 i=0;i <_fundDistributions[fundID].length; i++) {
+            if (_distributionClaimed[_fundDistributions[fundID][i].distributionID][investor] == 0){
+                currentTokenDistribution += (_fundDistributions[fundID][i].amount * sharePercentage / 1e18);
+            }
+        }
+    }
+
+
+    
+    function claimDistribution(bytes32 fundID) external {
+
+        address claimer = msg.sender;
+        uint256 currentTokenDistribution = _getClaimableDistributionAmount(fundID, claimer);
+        if (currentTokenDistribution > 0) {
+                
+            // if (_distributionClaimed[distributionID][msg.sender] > 0) {
+            //     revert DistributionAlreadyClaimedBefore(distributionID);
+            // }
+            address distributeToken = address(0);
+
+            for(uint256 i=0;i <_fundDistributions[fundID].length; i++) {
+                if (_distributionClaimed[_fundDistributions[fundID][i].distributionID][claimer] == 0){
+                    _distributionClaimed[_fundDistributions[fundID][i].distributionID][claimer] = block.timestamp;
+
+                    // now we have just one token, so it works now
+                    distributeToken = _fundDistributions[fundID][i].token;
+                }
+            }
+
+            IFund(_funds[fundID]).distribute(claimer, distributeToken, currentTokenDistribution);
+
+        }
+        
+    }
 
     function getCreatedFunds() external view returns(bytes32[] memory) {
         return _fundList.values();
@@ -66,7 +173,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         returns (address ucvAddress)
     {
         // authrized
-        bytes32 fundID = _newFundID();
+        bytes32 fundID = _newID();
         // valid fundManager & riskManager have been set in the InvestmentCommittee
         bytes memory initData = abi.encode(address(this), fundID, fundInfo);
 
@@ -135,11 +242,13 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
 
+    function getFundOperationTime(bytes32 fundID) external view override returns(uint256, uint256) {
+        return IFund(_funds[fundID]).getFundTime();
+    }
+
     function tallyUpFund(bytes32 fundID) external override {
         IFund(_funds[fundID]).tallyUp();
     }
-
-
 
 
     /// @inheritdoc IFundManager
@@ -193,6 +302,8 @@ contract FundManager is IFundManager, BaseUCVManager {
         return IFund(_funds[fundID]).getLaunchTime();
     }
 
+
+
     /// @inheritdoc IFundManager
     function triggerFundLaunchStatus(bytes32 fundID)
         external
@@ -211,8 +322,8 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
     uint256 private _seed = 0;
-
-    function _newFundID() private returns (bytes32 fundID) {
+    
+    function _newID() private returns (bytes32 fundID) {
         _seed++;
         fundID = keccak256(abi.encodePacked(_seed, address(this)));
     }

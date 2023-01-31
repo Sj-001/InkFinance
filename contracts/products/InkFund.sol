@@ -96,12 +96,19 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _startRaisingDate = block.timestamp;
 
         emit FundStatusUpdated(_fundID, 1,  0, _launchStatus, block.timestamp);
+        emit FundStatusUpdated(_fundID, 2,  0, 0, block.timestamp);
     }
 
 
     function getLaunchTime() external view override returns(uint256 start, uint256 end) {
-        return (_startRaisingDate, _startFundDate + _fund.raisedPeriod);
+        return (_startRaisingDate, _startRaisingDate + _fund.raisedPeriod);
     }
+
+
+    function getFundTime() external view override returns(uint256 start, uint256 end) {
+        return (_startFundDate, _startFundDate + _fund.durationOfFund);
+    }
+
 
 
     /// @inheritdoc IFund
@@ -132,7 +139,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
 
-
     function _getLaunchStatus() internal view returns(uint256 status) {
         status = 0;
         if (_startRaisingDate > 0) {
@@ -145,7 +151,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
     /// @inheritdoc IFund
-    function purchaseShare(uint256 amount) external override {
+    function purchaseShare(uint256 amount) external override payable {
         uint256 launchStatus = _getLaunchStatus();
         if (launchStatus == 0) {
             revert NotStartYet();
@@ -154,24 +160,37 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         if (launchStatus == 2) {
             revert FundRaiseIsOver();
         }
+    
 
         if (_totalRaised > _fund.maxRaise || _totalRaised + amount > _fund.maxRaise) {
             
             revert PurchaseTooMuch(_fund.maxRaise - _totalRaised, amount);
         }
 
+        /*
 
-        
-        _depositeERC20(_fund.fundToken, amount);
+        address to,
+        address token,
+        uint256 tokenType,
+        uint256 tokenID,
+        uint256 value,
+        bytes memory data
 
+        */
+        if (_fund.fundToken == 0x0000000000000000000000000000000000000000) {
+            // 
+ 
+            // payable(to).transfer(value);
+        } else {
+            _depositeERC20(_fund.fundToken, amount);
+        }
+ 
         _totalRaised += amount;
         _fundShare[msg.sender] += amount;
         _originalShare[msg.sender] += amount;
 
 
         emit FundPurchase(getDAO(), _fundID, address(this), msg.sender, block.timestamp, amount, _originalShare[msg.sender]);
-
-
 
     }
 
@@ -202,24 +221,23 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
 
         uint256 fundStatus = _getFundStatus();
-        if (fundStatus == 0) {
-            revert StillLaunching();
-        }
+        // if (fundStatus == 0) {
+        //     revert StillLaunching();
+        // }
 
-        // fundStatus = 2;
+         fundStatus = 2;
 
-        if (fundStatus == 1 || fundStatus == 3) {
-            revert FundAlreadyStartedOrFailed();
-        }
+        // if (fundStatus == 1 || fundStatus == 3) {
+        //     revert FundAlreadyStartedOrFailed();
+        // }
 
-        if (fundStatus == 9) {
-            revert FundAlreadySucceed();
-        }
+        // if (fundStatus == 9) {
+        //     revert FundAlreadySucceed();
+        // }
 
         if (fundStatus == 2 && _totalRaised >= _fund.minRaise) {
             _fundStatus = 3;
             _startFundDate = block.timestamp;
-            
 
             if (_fund.allowFundTokenized == 1) {
                 if (_fund.allowIntermittentDistributions == 1) {
@@ -228,8 +246,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                     // ERC20
                     _issueCertifcate();
                 }
-            } 
+            }
 
+
+            // emit Start
+            emit FundStatusUpdated(_fundID, 2, fundStatus, _fundStatus, block.timestamp);
 
         } else {
             // fund raise failed
@@ -255,7 +276,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             _confirmedProfit = IERC20(_fund.fundToken).balanceOf(address(this));
             _voucherValue = _confirmedProfit / _totalRaised;
 
-
+            emit FundStatusUpdated(_fundID, 2, status, _fundStatus, block.timestamp);
 
         } else {
             revert OnlyStartedFundCoundTallyUp(status);
@@ -298,7 +319,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         uint256 currentPurchased = _getShare(owner);
 
-
         console.log("has share:", currentPurchased);
 
         // IERC20(_certificate).transferFrom(address(this), owner, currentPurchased);
@@ -331,7 +351,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     /// @inheritdoc IFund
     function claimPrincipalAndProfit(address owner) external override {
         // require enough Token to get profit
-        // 3种凭证
+        // 3 kinds of certificate
         // 1 staking
         // 2 certificate
         // 3 
@@ -351,6 +371,16 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     }
 
+
+    function getSharePercentage(address owner) external view override returns(uint256 perc){
+        
+        console.log("original share:", _originalShare[owner]);
+        console.log("total raised:", _totalRaised);
+
+        
+        return _originalShare[owner] * 1e18 / _totalRaised;
+    }
+
     /// @inheritdoc IFund
     function withdrawPrincipal(address owner) external override {
 
@@ -363,6 +393,13 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _fundShare[owner] = 0;
 
     }
+
+
+    function distribute(address owner, address token, uint256 amount) external override {
+        _transferTo(owner, token, 20, 0, amount, "");
+    }
+
+
 
 
     function _issueCertifcate() internal {

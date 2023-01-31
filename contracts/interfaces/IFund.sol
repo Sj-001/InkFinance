@@ -24,7 +24,7 @@ interface IFund {
     /// have to meet requirement
     /// 1. still launching
     /// 2. raised fund + amount less than max raise
-    function purchaseShare(uint256 amount) external;
+    function purchaseShare(uint256 amount) external payable;
 
     /// @dev get fund's status
     /// @return status 
@@ -57,9 +57,19 @@ interface IFund {
 
 
     function getLaunchTime() external view returns(uint256 start, uint256 end);
+
+    function getFundTime() external view returns(uint256 start, uint256 end);
+
+
     function claimShare(address owner) external;
 
     /// @dev when launching is finished and can't raise enough token,
     /// the user could withdraw their principal
     function withdrawPrincipal(address owner) external;
+
+
+    function getSharePercentage(address owner) external view returns(uint256 perc);
+
+
+    function distribute(address owner, address token, uint256 amount) external;
 }

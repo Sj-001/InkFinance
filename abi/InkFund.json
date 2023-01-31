@@ -27,16 +27,6 @@
     "type": "error"
   },
   {
-    "inputs": [],
-    "name": "FundAlreadyStartedOrFailed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "FundAlreadySucceed",
-    "type": "error"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -143,6 +133,61 @@
       }
     ],
     "name": "ChainTokenDeposited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "fundAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "createTime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "distributionID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "distributionRemark",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "distributionToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "distributionAmount",
+        "type": "address"
+      }
+    ],
+    "name": "DistributionCreated",
     "type": "event"
   },
   {
@@ -643,6 +688,29 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "distribute",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bool",
         "name": "enable_",
         "type": "bool"
@@ -673,6 +741,24 @@
       {
         "internalType": "uint256",
         "name": "status",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getFundTime",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
         "type": "uint256"
       }
     ],
@@ -778,6 +864,25 @@
       {
         "internalType": "uint256",
         "name": "claimableShare",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "getSharePercentage",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "perc",
         "type": "uint256"
       }
     ],
@@ -903,7 +1008,7 @@
     ],
     "name": "purchaseShare",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {

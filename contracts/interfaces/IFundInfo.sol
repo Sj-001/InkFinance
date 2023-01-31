@@ -36,7 +36,32 @@ interface IFundInfo {
     }
 
 
+    struct DistributionInfo{
+        address token;
+        uint256 amount;
+    }
 
+    struct FundDistribution {
+        bytes32 distributionID;
+        // DistributionInfo[] distributionTokens;
+        address token;
+        uint256 amount;
+    }
+
+    event DistributionCreated(
+        bytes32 fundID,
+        address fundAddress,
+        address creator,
+        uint256 createTime,
+
+        bytes32 distributionID,
+        string distributionRemark,
+        address distributionToken,
+        address distributionAmount
+    );
+    // DistributionInfo[] distributionTokens
+    
+    
     event FundCreated(
         address daoAddres,
         bytes32 fundID,

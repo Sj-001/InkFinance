@@ -49,6 +49,7 @@ interface IFundManager is IFundInfo {
     /// @dev get fund lauch start time & end time(if it's not launch yet, startTime = 0)
     function getFundLaunchTimeInfo(bytes32 fundID) external view returns(uint256 startTime, uint256 endTime);
 
+    function getFundOperationTime(bytes32 fundID) external view returns(uint256 startTime, uint256 endTime);
 
     /// @dev if raise time is up, update launch status (fund status also)
     function triggerFundLaunchStatus(bytes32 fundID) external;
