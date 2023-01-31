@@ -53,11 +53,10 @@ interface IFundInfo {
         address fundAddress,
         address creator,
         uint256 createTime,
-
         bytes32 distributionID,
         string distributionRemark,
         address distributionToken,
-        address distributionAmount
+        uint256 distributionAmount
     );
     // DistributionInfo[] distributionTokens
     
