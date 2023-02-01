@@ -27,6 +27,16 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "FundAlreadyStartedOrFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "FundAlreadySucceed",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -106,6 +116,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "StillLaunching",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -182,9 +197,9 @@
       },
       {
         "indexed": false,
-        "internalType": "address",
+        "internalType": "uint256",
         "name": "distributionAmount",
-        "type": "address"
+        "type": "uint256"
       }
     ],
     "name": "DistributionCreated",

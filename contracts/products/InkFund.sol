@@ -221,19 +221,19 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
 
         uint256 fundStatus = _getFundStatus();
-        // if (fundStatus == 0) {
-        //     revert StillLaunching();
-        // }
+        if (fundStatus == 0) {
+            revert StillLaunching();
+        }
 
-         fundStatus = 2;
+        //  fundStatus = 2;
 
-        // if (fundStatus == 1 || fundStatus == 3) {
-        //     revert FundAlreadyStartedOrFailed();
-        // }
+        if (fundStatus == 1 || fundStatus == 3) {
+            revert FundAlreadyStartedOrFailed();
+        }
 
-        // if (fundStatus == 9) {
-        //     revert FundAlreadySucceed();
-        // }
+        if (fundStatus == 9) {
+            revert FundAlreadySucceed();
+        }
 
         if (fundStatus == 2 && _totalRaised >= _fund.minRaise) {
             _fundStatus = 3;

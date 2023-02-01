@@ -89,9 +89,9 @@
       },
       {
         "indexed": false,
-        "internalType": "address",
+        "internalType": "uint256",
         "name": "distributionAmount",
-        "type": "address"
+        "type": "uint256"
       }
     ],
     "name": "DistributionCreated",
