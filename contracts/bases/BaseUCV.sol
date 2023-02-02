@@ -141,6 +141,11 @@ abstract contract BaseUCV is IUCV, BaseVerify {
 
     function _depositeERC20(address token, uint256 amount) internal {
         if (token == address(0)) {
+            
+            console.log(amount);
+
+            console.log(msg.value);
+
             if (amount != msg.value) {
                 revert DepositeError();
             }

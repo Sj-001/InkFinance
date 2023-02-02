@@ -25,13 +25,14 @@ module.exports = {
     },
 
     networks: {
-        ink_dev_eth: {
-            url: process.env.INK_DEV_ETH,
-            accounts: [process.env.INK_DEV_ETH_PRIVATE_KEY],
+        dev_eth: {
+            url: process.env.DEV_ETH,
+            accounts: [process.env.DEV_ETH_PRIVATE_KEY],
             gasPrice: 10000000070,
 
         }
         
+        /*
         ,
         dev_avax: {
             url: process.env.DEV_AVAX_RPC,
@@ -59,6 +60,7 @@ module.exports = {
             url: process.env.DEV_GOERLI_RPC,
             accounts: [process.env.DEV_GOERLI_KEY]
         }
+        */
     },
 
     abiExporter: {

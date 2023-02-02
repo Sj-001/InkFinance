@@ -61,6 +61,9 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     uint256 private _voucherValue = 0;
 
+    // when make distribution, certain amount of token should be frozened
+    uint256 private _frozened = 0;
+
     NewFundInfo private _fund;
 
     function init(
@@ -109,7 +112,19 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         return (_startFundDate, _startFundDate + _fund.durationOfFund);
     }
 
+    function frozen(uint256 amount) external override {
+        _frozened += amount;
+    }
 
+
+    function getActiveAmount() external view returns (uint256 left) {
+        return _getActiveAmount();
+    }
+
+
+    function _getActiveAmount() internal view returns (uint256 left) {
+        return _totalRaised - _frozened;
+    }
 
     /// @inheritdoc IFund
     function triggerLaunchStatus() external override {
@@ -177,14 +192,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         bytes memory data
 
         */
-        if (_fund.fundToken == 0x0000000000000000000000000000000000000000) {
-            // 
- 
-            // payable(to).transfer(value);
-        } else {
-            _depositeERC20(_fund.fundToken, amount);
-        }
- 
+        _depositeERC20(_fund.fundToken, amount);
+        
         _totalRaised += amount;
         _fundShare[msg.sender] += amount;
         _originalShare[msg.sender] += amount;
@@ -237,6 +246,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         if (fundStatus == 2 && _totalRaised >= _fund.minRaise) {
             _fundStatus = 3;
+            
             _startFundDate = block.timestamp;
 
             if (_fund.allowFundTokenized == 1) {
@@ -248,6 +258,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                 }
             }
 
+
+            emit FundStart(_fundID, address(this), _startFundDate, _startFundDate + _fund.durationOfFund);
 
             // emit Start
             emit FundStatusUpdated(_fundID, 2, fundStatus, _fundStatus, block.timestamp);
@@ -306,7 +318,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         //     return 0;
         // }
         // // calculate based on all purchased percentage
-        // // claimableShare = currentPurchased * 100 * 1e18 / _totalRaised;
+        // claimableShare = currentPurchased * 100 * 1e18 / _totalRaised;
         // claimableShare = currentPurchased;
     }
 

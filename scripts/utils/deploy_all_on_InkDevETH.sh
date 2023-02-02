@@ -1,1 +1,1 @@
-npx hardhat run --network ink_dev_eth ./scripts/deploy/ink_initial_deploy.ts
+npx hardhat run --network dev_eth ./scripts/deploy/ink_initial_deploy.ts

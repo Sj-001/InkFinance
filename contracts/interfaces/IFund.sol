@@ -72,4 +72,8 @@ interface IFund {
 
 
     function distribute(address owner, address token, uint256 amount) external;
+
+
+    function frozen(uint256 amount) external;
+    
 }

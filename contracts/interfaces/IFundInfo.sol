@@ -60,7 +60,24 @@ interface IFundInfo {
     );
     // DistributionInfo[] distributionTokens
     
-    
+    event DistributionClaimed(
+        bytes32 fundID,
+        address fundAddress,
+        address claimer,
+        uint256 claimTime,
+        bytes32 lastDistributionID,
+        address claimToken,
+        uint256 claimAmount
+    );
+
+    event FundStart (
+        bytes32 fundID,
+        address fundAddress,
+        uint256 startTime,
+        uint256 endTime
+    );
+
+
     event FundCreated(
         address daoAddres,
         bytes32 fundID,

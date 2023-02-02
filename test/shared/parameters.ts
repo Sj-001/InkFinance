@@ -238,6 +238,95 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
     
 }
 
+
+export function buildFundInitData2(erc20Address:string, fundManager:string, riskManager:string) {
+
+    var percentage2 = ethers.utils.parseEther("0.02");
+
+
+    var fundName = "Fundname";
+    var fundDescription = "FundDescription";
+    var fundToken = erc20Address;
+    var minRaise = ethers.utils.parseEther("1000");
+    var maxRaise = ethers.utils.parseEther("10000");
+
+    var timestamp = Date.now();
+    var sec = Math.floor(timestamp / 1000);
+
+    var raisedPeriod = 60 * 60 * 24 * 5; // 5 days
+    var durationOfFund = 60 * 60 * 24 * 30;
+
+    var allowIntermittentDistributions = 0;
+    var allowFundTokenized = 1;
+    var tokenName = "TestTokenName";
+    // var tokenAmount = ethers.utils.parseEther("10000");
+
+    var allowExchange = 1;
+    var auditPeriod = 60 * 60 * 24;
+
+    var investmentDomain = 2; // real-world
+    var investmentType = 2; // Debt/Loans/Bonds
+
+    var maxSingleExposure = "10000000000000000000";
+    var minNumberOfHoldings = "20000000000000000000";
+    var maxNavDowndraftFromPeak = "30000000000000000000";
+    var maxNavLoss = "40000000000000000000";
+
+    var requireClientBiometricIdentity = 0;
+    var requireClientLegalIdentity = 0;
+
+    
+
+    var fixedFee = percentage2;
+    var fixedFeeShouldGoToTreasury = 1;
+
+    var performanceFee = percentage2;
+    var performanceFeeShouldGoToTreasury = 1;
+    
+
+    var fundManagers = [];
+    fundManagers[0] = fundManager;
+
+    var riskManagers = [];
+    riskManagers[0] = riskManager;
+
+    var fundInitialData = {
+        "fundDeployKey": INK_FUND_KEY,
+        "fundName" : fundName,
+        "fundDescription" : fundDescription,
+        "fundToken": fundToken, 
+        "minRaise" : minRaise,
+        "maxRaise" : maxRaise,
+        "raisedPeriod" : raisedPeriod,
+        "durationOfFund" : durationOfFund,
+        "allowIntermittentDistributions" : allowIntermittentDistributions,
+        "allowFundTokenized" : allowFundTokenized,
+        "tokenName" : tokenName,
+        // "tokenAmount" : tokenAmount,
+        "allowExchange" : allowExchange,
+        "auditPeriod" : auditPeriod,
+        "investmentDomain" : investmentDomain,
+        "investmentType" : investmentType,
+        "maxSingleExposure" : maxSingleExposure,
+        "minNumberOfHoldings" : minNumberOfHoldings,
+        "maxNavDowndraftFromPeak" : maxNavDowndraftFromPeak,
+        "maxNavLoss" : maxNavLoss,
+        "requireClientBiometricIdentity" : requireClientBiometricIdentity,
+        "requireClientLegalIdentity" : requireClientLegalIdentity,
+        "fixedFee" : fixedFee,
+        "fixedFeeShouldGoToTreasury" : fixedFeeShouldGoToTreasury,
+        "performanceFee" : performanceFee,
+        "performanceFeeShouldGoToTreasury" : performanceFeeShouldGoToTreasury,
+        "fundManagers" : fundManagers,
+        "riskManagers" : riskManagers
+    }
+
+
+    return fundInitialData;
+    
+}
+
+
 export function buildOffchainProposal() {
         // create agent
         var agents = []

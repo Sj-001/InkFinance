@@ -47,7 +47,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         super.init(config_);
 
         console.log("FundManager init called");
-
         _dao = dao_;
         _setupProposalID = abi.decode(data_, (bytes32));
         _factoryManager = IDAO(_dao).getDAODeployFactory();
@@ -70,6 +69,8 @@ contract FundManager is IFundManager, BaseUCVManager {
         if (!isTokenEnough(fundID, distributionTokens.token, distributionTokens.amount)) {
             revert TokenIsNotEnoughToDistribute(distributionTokens.token);
         }
+
+
         // }
 
         // (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) = InkFund(_fund).getRaisedInfo() 
@@ -84,6 +85,9 @@ contract FundManager is IFundManager, BaseUCVManager {
 
         _fundDistributions[fundID].push(distribution);
 
+
+        IFund(_funds[fundID]).frozen(distributionTokens.amount);
+        
 
         emit DistributionCreated(
             fundID,
@@ -112,13 +116,13 @@ contract FundManager is IFundManager, BaseUCVManager {
         if (currentRaised - currentTokenDistribution < amount) {
             return false;
         }
+
         return true;
     }
     
     function getClaimableDistributionAmount(bytes32 fundID, address investor) external view returns(uint256 currentTokenDistribution){
         currentTokenDistribution = _getClaimableDistributionAmount(fundID, investor);
     }
-
 
 
     function _getClaimableDistributionAmount(bytes32 fundID, address investor) internal view returns(uint256 currentTokenDistribution){
@@ -132,8 +136,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         }
     }
 
-
-    
     function claimDistribution(bytes32 fundID) external {
 
         address claimer = msg.sender;
@@ -144,6 +146,7 @@ contract FundManager is IFundManager, BaseUCVManager {
             //     revert DistributionAlreadyClaimedBefore(distributionID);
             // }
             address distributeToken = address(0);
+            bytes32 lastDistributionID = bytes32(0);
 
             for(uint256 i=0;i <_fundDistributions[fundID].length; i++) {
                 if (_distributionClaimed[_fundDistributions[fundID][i].distributionID][claimer] == 0){
@@ -151,19 +154,33 @@ contract FundManager is IFundManager, BaseUCVManager {
 
                     // now we have just one token, so it works now
                     distributeToken = _fundDistributions[fundID][i].token;
+                    lastDistributionID = _fundDistributions[fundID][i].distributionID;
+
                 }
             }
 
             IFund(_funds[fundID]).distribute(claimer, distributeToken, currentTokenDistribution);
 
+            // emit last claim distributionID
+            emit DistributionClaimed(fundID, _funds[fundID], claimer, block.timestamp, lastDistributionID, distributeToken, currentTokenDistribution);
+
+
+
         }
         
+    }
+
+
+    function getDistributed(bytes32 fundID) external view returns(uint256 totalDistribution) {
+
+        for(uint256 i=0;i <_fundDistributions[fundID].length; i++) {
+            totalDistribution += _fundDistributions[fundID][i].amount;
+        }
     }
 
     function getCreatedFunds() external view returns(bytes32[] memory) {
         return _fundList.values();
     }
-
 
 
     /// @inheritdoc IFundManager
