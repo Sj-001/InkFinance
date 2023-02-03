@@ -98,25 +98,27 @@ describe("proposal related test", function () {
         await purchaseFund(fundManagerAddress, erc20Address);
 
 
+        
+
         // // fund manager start to invest
         // // transfer fixed fee to treasury
         // // issue voucher for investor to claim
 
-        await sleep(5000);
+        // await sleep(5000);
 
-        await startFund(fundManagerAddress);
+        // await startFund(fundManagerAddress);
 
 
-        await makeDistribution(fundManagerAddress, erc20Address);
+        // await makeDistribution(fundManagerAddress, erc20Address);
 
-        // // claim user's voucher
-        await claimShare(fundManagerAddress);
+        // // // claim user's voucher
+        // await claimShare(fundManagerAddress);
 
-        // // if fund raised failed, user should claim principal
-        await claimPrincipal(fundManagerAddress);
+        // // // if fund raised failed, user should claim principal
+        // await claimPrincipal(fundManagerAddress);
 
-        // // user could claim principal and profit
-        await tallyUp(fundManagerAddress);
+        // // // user could claim principal and profit
+        // await tallyUp(fundManagerAddress);
 
 
         // await voteAndInvestTheFund();
@@ -235,6 +237,13 @@ describe("proposal related test", function () {
 
         console.log("buyer1 share:", await fund.getShare(buyer1.address));
         console.log("buyer2 share:", await fund.getShare(buyer2.address));
+
+
+
+        await fund.test();
+        
+
+
 
     }
 

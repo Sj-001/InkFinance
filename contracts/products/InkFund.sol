@@ -26,7 +26,7 @@ error FundRaiseFailed();
 error CurrentFundStatusDonotSupportThisOperation(uint256 fundStatus);
 error FundNotLaunchYet(bytes32 fundID);
 error FundAlreadySucceed();
-error OnlyStartedFundCoundTallyUp(uint256 currentFundStatus);
+error OnlyStartedFundCouldTallyUp(uint256 currentFundStatus);
 error FundInvestmentIsNotFinished(uint256 endTime, uint256 executeTime);
 error NoShareCouldBeClaim();
 error NotSupport(uint256 roleType);
@@ -36,11 +36,13 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     using EnumerableSet for EnumerableSet.UintSet;
     using Address for address;
 
+    /// how many token raised;
     uint256 private _totalRaised;
 
-    uint256 private _principal;
-
     uint256 private _startRaisingDate = 0;
+
+    /// raised principal - tax
+    uint256 private _fundAvailablePrincipal = 0;
 
     uint256 private _startFundDate = 0;
 
@@ -54,7 +56,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     mapping(address => uint256) private _fundShare;
 
-    mapping(address => uint256) private _originalShare;
+    mapping(address => uint256) private _originalInvested;
 
     address private _certificate;
 
@@ -118,13 +120,13 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
 
-    function getActiveAmount() external view returns (uint256 left) {
-        return _getActiveAmount();
+    function getAvailablePrincipal() external view returns (uint256 left) {
+        return _getAvailablePrincipal();
     }
 
 
-    function _getActiveAmount() internal view returns (uint256 left) {
-        return _totalRaised - _frozened;
+    function _getAvailablePrincipal() internal view returns (uint256 left) {
+        return _fundAvailablePrincipal - _frozened;
     }
 
     /// @inheritdoc IFund
@@ -132,6 +134,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         if (_launchStatus == 0) {
             revert FundNotLaunchYet(_fundID);
         }
+        
         uint256 currentLaunchStatus = _getLaunchStatus();
         if (_launchStatus != currentLaunchStatus) {
             emit FundStatusUpdated(_fundID, 1, _launchStatus, currentLaunchStatus, block.timestamp);
@@ -169,6 +172,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     /// @inheritdoc IFund
     function purchaseShare(uint256 amount) external override payable {
         uint256 launchStatus = _getLaunchStatus();
+    
         if (launchStatus == 0) {
             revert NotStartYet();
         }
@@ -177,7 +181,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             revert FundRaiseIsOver();
         }
     
-
         if (_totalRaised > _fund.maxRaise || _totalRaised + amount > _fund.maxRaise) {
             
             revert PurchaseTooMuch(_fund.maxRaise - _totalRaised, amount);
@@ -197,12 +200,62 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         
         _totalRaised += amount;
         _fundShare[msg.sender] += amount;
-        _originalShare[msg.sender] += amount;
+        _originalInvested[msg.sender] += amount;
 
 
-        emit FundPurchase(getDAO(), _fundID, address(this), msg.sender, block.timestamp, amount, _originalShare[msg.sender]);
+        emit FundPurchase(getDAO(), _fundID, address(this), msg.sender, block.timestamp, amount, _originalInvested[msg.sender]);
 
     }
+
+    function test() external view override {
+        // after 
+
+
+        uint256 myPercentage = _originalInvested[msg.sender] * 100 / _totalRaised;
+        uint256 tax = 10;
+
+
+        console.log("START TEST #####################################################################");
+        
+        console.log("MyPercentage:", myPercentage);
+        console.log("Total raised:", _totalRaised);
+
+        uint256 taxFee = _totalRaised * tax / 100;
+        console.log("Tax      Fee:", taxFee);
+        console.log("Original  My:", (_totalRaised) * myPercentage / 100);
+        console.log("After Tax My:", (_totalRaised - taxFee) * myPercentage / 100);
+        console.log("END TEST #####################################################################");
+        
+    }
+
+
+    function getClaimableCertificate(address investor) external view returns(uint256 amount) {
+        return _getClaimableCertificate(investor);
+    }
+
+
+    function _getClaimableCertificate(address investor) internal view returns(uint256 amount) {
+
+    }
+
+    function getClaimableInvestment(address investor) external view returns(uint256 amount) {
+        return _getClaimableInvestment(investor);
+    }
+    
+    function _getClaimableInvestment(address investor) internal view returns(uint256 amount) {
+
+    }
+
+    function claimCertificate() external {
+
+    }
+
+    function claimInvestment() external {
+
+    }
+
+
+    // function withMyInvestment() 
 
     /// @inheritdoc IFund
     function getFundStatus() external view override returns (uint256 status) {
@@ -259,7 +312,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                 }
             }
 
-
             emit FundStart(_fundID, address(this), _startFundDate, _startFundDate + _fund.durationOfFund);
 
             // emit Start
@@ -292,7 +344,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             emit FundStatusUpdated(_fundID, 2, status, _fundStatus, block.timestamp);
 
         } else {
-            revert OnlyStartedFundCoundTallyUp(status);
+            revert OnlyStartedFundCouldTallyUp(status);
         }
 
     }
@@ -339,22 +391,22 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         returns (uint256 claimableShare)
     {
         claimableShare = _getShare(owner);
-
     }
 
-    function getOriginalShare(address owner) external view override returns (uint256 amount) {
-        amount = _originalShare[owner];
+    function getOriginalInvested(address owner) external view override returns (uint256 amount) {
+        amount = _originalInvested[owner];
     }
-
 
     function _getShare(address owner) internal view returns(uint256 share) {
         share = _fundShare[owner];
+
         // if (currentPurchased == 0) {
         //     return 0;
         // }
         // // calculate based on all purchased percentage
         // claimableShare = currentPurchased * 100 * 1e18 / _totalRaised;
         // claimableShare = currentPurchased;
+
     }
 
 
@@ -388,10 +440,13 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     /// @inheritdoc IFund
     function transferFixedFeeToUCV(address treasuryUCV) external override {
 
-        if (_fund.fixedFeeShouldGoToTreasury == 1 && _fixedFeeTransferTime ==0 && treasuryUCV != address(0)) {
-            uint256 value = _fund.fixedFee * _totalRaised;
+        if (_fund.fixedFeeShouldGoToTreasury == 1 && _fixedFeeTransferTime == 0 && treasuryUCV != address(0)) {
+            // uint256 taxFee = _totalRaised * tax / 100;
+            uint256 value = _fund.fixedFee * _totalRaised / 100;
             _transferTo(treasuryUCV, _fund.fundToken, 20, 0, value, "");
             _fixedFeeTransferTime = block.timestamp;
+
+            _fundAvailablePrincipal -= value;
         }
     }
 
@@ -412,20 +467,15 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         
         // get back vouchers
 
-        
         uint256 vouchers = _fund.fixedFee * _totalRaised;
-
 
     }
 
 
-    function getSharePercentage(address owner) external view override returns(uint256 perc){
-        
-        console.log("original share:", _originalShare[owner]);
-        console.log("total raised:", _totalRaised);
+    function getOwnerPercentage(address owner) external view override returns(uint256 perc){
 
-        
-        return _originalShare[owner] * 1e18 / _totalRaised;
+        perc = _originalInvested[owner] * 100 / _totalRaised;
+
     }
 
     /// @inheritdoc IFund
@@ -447,8 +497,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
 
-
-
     function _issueCertifcate() internal {
 
         _certificate = address(new InkFundCertificateToken());
@@ -458,7 +506,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
 
         console.log("issued token:", _certificate);
-        uint256 value = _totalRaised;
+        uint256 value = _getAvailablePrincipal();
         InkFundCertificateToken(_certificate).issue(_fund.tokenName, _fund.tokenName, IERC20Metadata(_fund.fundToken).decimals() ,value, address(this));
         console.log("balance:", IERC20(_certificate).balanceOf(address(this)));
         

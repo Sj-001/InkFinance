@@ -436,9 +436,10 @@ contract FundManager is IFundManager, BaseUCVManager {
         if (_success) {
 
             // revert SucceedButRevert(_returnedBytes);
-            
             deployedAddress = turnBytesToAddress(_returnedBytes);
+
         } else {
+            
             revert DeployFailuer(contractKey);
         }
     }

@@ -45,7 +45,7 @@ interface IFund {
     function getShare(address owner) external view returns (uint256 amount);
 
     /// @dev return how many purchased no matter the user withdraw the principal
-    function getOriginalShare(address owner) external view returns (uint256 amount);
+    function getOriginalInvested(address owner) external view returns (uint256 amount);
 
 
     /// @dev fund manager ask to pay for the fixed fee
@@ -68,7 +68,7 @@ interface IFund {
     function withdrawPrincipal(address owner) external;
 
 
-    function getSharePercentage(address owner) external view returns(uint256 perc);
+    function getOwnerPercentage(address owner) external view returns(uint256 perc);
 
 
     function distribute(address owner, address token, uint256 amount) external;
@@ -78,7 +78,10 @@ interface IFund {
     
 
     function hasRoleSetting(uint256 roleType) external view returns (bool has);
-    
+
 
     function isRoleAuthorized(uint256 roleType, address user) external view returns (bool has);
+
+
+    function test() external view;
 }

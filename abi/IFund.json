@@ -131,7 +131,7 @@
         "type": "address"
       }
     ],
-    "name": "getOriginalShare",
+    "name": "getOriginalInvested",
     "outputs": [
       {
         "internalType": "uint256",
@@ -278,6 +278,13 @@
     "name": "tallyUp",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "test",
+    "outputs": [],
+    "stateMutability": "view",
     "type": "function"
   },
   {
