@@ -143,6 +143,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "getOwnerPercentage",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "perc",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getRaisedInfo",
     "outputs": [
@@ -178,25 +197,6 @@
       {
         "internalType": "uint256",
         "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "getSharePercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "perc",
         "type": "uint256"
       }
     ],

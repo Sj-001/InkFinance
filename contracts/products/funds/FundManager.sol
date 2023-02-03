@@ -184,7 +184,7 @@ contract FundManager is IFundManager, BaseUCVManager {
 
     function _getClaimableDistributionAmount(bytes32 fundID, address investor) internal view returns(uint256 currentTokenDistribution){
         // // calculate share
-        uint256 sharePercentage = IFund(_funds[fundID]).getSharePercentage(investor);
+        uint256 sharePercentage = IFund(_funds[fundID]).getOwnerPercentage(investor);
 
         for(uint256 i=0;i <_fundDistributions[fundID].length; i++) {
             if (_distributionClaimed[_fundDistributions[fundID][i].distributionID][investor] == 0){
@@ -439,7 +439,7 @@ contract FundManager is IFundManager, BaseUCVManager {
             deployedAddress = turnBytesToAddress(_returnedBytes);
 
         } else {
-            
+
             revert DeployFailuer(contractKey);
         }
     }

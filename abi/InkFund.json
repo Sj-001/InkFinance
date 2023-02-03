@@ -715,6 +715,20 @@
     "type": "fallback"
   },
   {
+    "inputs": [],
+    "name": "claimCertificate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "claimInvestment",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -842,7 +856,7 @@
   },
   {
     "inputs": [],
-    "name": "getActiveAmount",
+    "name": "getAvailablePrincipal",
     "outputs": [
       {
         "internalType": "uint256",
@@ -861,6 +875,44 @@
         "internalType": "address",
         "name": "certificate",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "investor",
+        "type": "address"
+      }
+    ],
+    "name": "getClaimableCertificate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "investor",
+        "type": "address"
+      }
+    ],
+    "name": "getClaimableInvestment",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -961,6 +1013,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "getOwnerPercentage",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "perc",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getRaisedInfo",
     "outputs": [
@@ -996,25 +1067,6 @@
       {
         "internalType": "uint256",
         "name": "claimableShare",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "getSharePercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "perc",
         "type": "uint256"
       }
     ],
