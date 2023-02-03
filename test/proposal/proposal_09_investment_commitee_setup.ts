@@ -18,6 +18,7 @@ import {defaultAbiCoder} from '@ethersproject/abi';
 
 
 const {loadFixture, deployContract} = waffle;
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe("proposal related test", function () {
 
@@ -100,6 +101,9 @@ describe("proposal related test", function () {
         // // fund manager start to invest
         // // transfer fixed fee to treasury
         // // issue voucher for investor to claim
+
+        await sleep(5000);
+
         await startFund(fundManagerAddress);
 
 
@@ -109,10 +113,10 @@ describe("proposal related test", function () {
         await claimShare(fundManagerAddress);
 
         // // if fund raised failed, user should claim principal
-        // await claimPrincipal(fundManagerAddress);
+        await claimPrincipal(fundManagerAddress);
 
         // // user could claim principal and profit
-        // await tallyUp(fundManagerAddress);
+        await tallyUp(fundManagerAddress);
 
 
         // await voteAndInvestTheFund();
@@ -148,7 +152,7 @@ describe("proposal related test", function () {
 
         var funds = await fundManager.getCreatedFunds();
 
-        console.log("funds:", funds);
+        // console.log("funds:", funds);
 
 
         var distributions = {

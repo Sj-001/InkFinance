@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/IFundManager.sol";
 import "../../interfaces/IFund.sol";
 import "../../interfaces/IDAO.sol";
+import "../../interfaces/IProposalHandler.sol";
 import "../../libraries/defined/FactoryKeyTypeID.sol";
 import "../../bases/BaseUCVManager.sol";
 import "hardhat/console.sol";
@@ -19,6 +20,8 @@ error CannotClaimShareNow(uint256 currentFundStatus);
 error SucceedButRevert(bytes byteData);
 error TokenIsNotEnoughToDistribute(address token);
 error DistributionAlreadyClaimedBefore(bytes32 distributionID);
+
+error TheMemberIsNotAuthorized(address member);
 
 contract FundManager is IFundManager, BaseUCVManager {
 
@@ -54,11 +57,67 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
 
+    /// @inheritdoc IFundManager
+    function isCommitteeOperator(uint256 roleType, address operator) external view returns(bool exist){
+        exist = _isCommitteeOperator(roleType, operator);
+    }
+    
+    function _isCommitteeOperator(uint256 roleType, address operator) internal view returns(bool exist){
+
+        exist = false;
+        // Fund Manager
+        if (roleType == 1) {
+            exist = _checkCommitteeMemberExist("fundManager", operator);
+        } else if (roleType == 2) {
+            exist = _checkCommitteeMemberExist("fundRiskManager", operator);
+        }
+    }
+
+    function _checkCommitteeMemberExist(string memory roleKey, address operator) internal view returns(bool exist) {
+            
+            bytes32 typeID;
+            bytes memory memberBytes;
+            (typeID, memberBytes) = IProposalHandler(_dao).getProposalKvData(
+                _setupProposalID,
+                roleKey
+            );
+            address[] memory members = abi.decode(memberBytes, (address[]));
+
+            exist = false;
+            for (uint256 i = 0; i < members.length; i++) {
+
+                console.log("compare role:", roleKey);
+                console.log(members[i], operator);
+                console.log(members[i]==operator);
+
+                if (members[i] == operator) {
+                    exist = true;
+                    break;
+                }
+            }
+    }
+
+    /// @inheritdoc IFundManager
+    function isAuthorizedFundOperator(bytes32 fundID, uint256 roleType, address operator) external view returns(bool authorized) {
+        authorized = _isAuthorizedFundOperator(fundID, roleType, operator);
+    }
+
+    function _isAuthorizedFundOperator(bytes32 fundID, uint256 roleType, address operator) internal view returns(bool authorized) {
+        
+        if (IFund(_funds[fundID]).hasRoleSetting(roleType)) {
+            authorized = IFund(_funds[fundID]).isRoleAuthorized(roleType, operator);
+        } else {
+            authorized = _isCommitteeOperator(roleType, operator);
+        }
+    }
+
 
     function makeDistribution(bytes32 fundID, string memory remark, DistributionInfo memory distributionTokens) external {
         
         // valid manager
-
+        if (!_isAuthorizedFundOperator(fundID, 1, msg.sender)){
+            revert TheMemberIsNotAuthorized(msg.sender);
+        }
         // valid period & status
 
         // new ID
@@ -69,8 +128,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         if (!isTokenEnough(fundID, distributionTokens.token, distributionTokens.amount)) {
             revert TokenIsNotEnoughToDistribute(distributionTokens.token);
         }
-
-
         // }
 
         // (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) = InkFund(_fund).getRaisedInfo() 
@@ -87,7 +144,7 @@ contract FundManager is IFundManager, BaseUCVManager {
 
 
         IFund(_funds[fundID]).frozen(distributionTokens.amount);
-        
+
 
         emit DistributionCreated(
             fundID,
@@ -135,6 +192,7 @@ contract FundManager is IFundManager, BaseUCVManager {
             }
         }
     }
+
 
     function claimDistribution(bytes32 fundID) external {
 
@@ -189,7 +247,12 @@ contract FundManager is IFundManager, BaseUCVManager {
         override
         returns (address ucvAddress)
     {
+
         // authrized
+        if (!_isCommitteeOperator(1, msg.sender)){
+            revert TheMemberIsNotAuthorized(msg.sender);
+        }
+
         bytes32 fundID = _newID();
         // valid fundManager & riskManager have been set in the InvestmentCommittee
         bytes memory initData = abi.encode(address(this), fundID, fundInfo);

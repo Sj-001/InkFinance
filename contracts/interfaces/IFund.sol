@@ -76,4 +76,9 @@ interface IFund {
 
     function frozen(uint256 amount) external;
     
+
+    function hasRoleSetting(uint256 roleType) external view returns (bool has);
+    
+
+    function isRoleAuthorized(uint256 roleType, address user) external view returns (bool has);
 }

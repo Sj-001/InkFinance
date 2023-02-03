@@ -204,6 +204,49 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "roleType",
+        "type": "uint256"
+      }
+    ],
+    "name": "hasRoleSetting",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "has",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "roleType",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "isRoleAuthorized",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "has",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "launch",
     "outputs": [],

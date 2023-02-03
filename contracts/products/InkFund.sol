@@ -29,6 +29,7 @@ error FundAlreadySucceed();
 error OnlyStartedFundCoundTallyUp(uint256 currentFundStatus);
 error FundInvestmentIsNotFinished(uint256 endTime, uint256 executeTime);
 error NoShareCouldBeClaim();
+error NotSupport(uint256 roleType);
 
 contract InkFund is IFundInfo, IFund, BaseUCV {
 
@@ -246,7 +247,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         if (fundStatus == 2 && _totalRaised >= _fund.minRaise) {
             _fundStatus = 3;
-            
+
             _startFundDate = block.timestamp;
 
             if (_fund.allowFundTokenized == 1) {
@@ -294,6 +295,40 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             revert OnlyStartedFundCoundTallyUp(status);
         }
 
+    }
+
+    function hasRoleSetting(uint256 roleType) external view override returns (bool has){
+        if (roleType == 1) {
+            has = _fund.fundManagers.length > 0;
+        }
+
+        else if (roleType == 2) {
+            has = _fund.riskManagers.length > 0;
+        }
+
+        else {
+            revert NotSupport(roleType);
+        }
+
+    }
+
+    function isRoleAuthorized(uint256 roleType, address user) external view override returns (bool authroized) {
+        if (roleType == 1) {
+            for (uint256 i=0; i<_fund.fundManagers.length; i++) {
+                if (_fund.fundManagers[i] == user) {
+                    authroized = true;
+                    break;
+                }
+            }
+        } else if (roleType == 2) {
+
+            for (uint256 i=0; i<_fund.riskManagers.length; i++) {
+                if (_fund.riskManagers[i] == user) {
+                    authroized = true;
+                    break;
+                }
+            }
+        }
     }
 
     /// @inheritdoc IFund

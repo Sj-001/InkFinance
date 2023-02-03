@@ -96,12 +96,10 @@ describe("proposal related test", function () {
 
         await purchaseFund(fundManagerAddress, erc20Address);
 
-
         // // fund manager start to invest
         // // transfer fixed fee to treasury
         // // issue voucher for investor to claim
         await startFund(fundManagerAddress);
-
 
         await makeDistribution(fundManagerAddress, erc20Address);
 
@@ -109,7 +107,7 @@ describe("proposal related test", function () {
         await claimShare(fundManagerAddress);
 
         // // if fund raised failed, user should claim principal
-        // await claimPrincipal(fundManagerAddress);
+        await claimPrincipal(fundManagerAddress);
 
         // // user could claim principal and profit
         // await tallyUp(fundManagerAddress);
