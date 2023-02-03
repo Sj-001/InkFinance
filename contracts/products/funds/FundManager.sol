@@ -58,7 +58,7 @@ contract FundManager is IFundManager, BaseUCVManager {
 
 
     /// @inheritdoc IFundManager
-    function isCommitteeOperator(uint256 roleType, address operator) external view returns(bool exist){
+    function isCommitteeOperator(uint256 roleType, address operator) external view override returns(bool exist){
         exist = _isCommitteeOperator(roleType, operator);
     }
     
@@ -98,7 +98,7 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
     /// @inheritdoc IFundManager
-    function isAuthorizedFundOperator(bytes32 fundID, uint256 roleType, address operator) external view returns(bool authorized) {
+    function isAuthorizedFundOperator(bytes32 fundID, uint256 roleType, address operator) external view override returns(bool authorized) {
         authorized = _isAuthorizedFundOperator(fundID, roleType, operator);
     }
 
