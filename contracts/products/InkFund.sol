@@ -30,6 +30,7 @@ error OnlyStartedFundCouldTallyUp(uint256 currentFundStatus);
 error FundInvestmentIsNotFinished(uint256 endTime, uint256 executeTime);
 error NoShareCouldBeClaim();
 error NotSupport(uint256 roleType);
+error CertificatedClaimed();
 
 contract InkFund is IFundInfo, IFund, BaseUCV {
 
@@ -54,9 +55,13 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     uint256 private _fixedFeeTransferTime = 0;
 
-    mapping(address => uint256) private _fundShare;
+    // mapping(address => uint256) private _fundShare;
 
     mapping(address => uint256) private _originalInvested;
+
+    mapping(address => uint256) private _investmentClaimed;
+
+    mapping(address => uint256) private _certificateClaimed;
 
     address private _certificate;
 
@@ -68,6 +73,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     uint256 private _frozened = 0;
 
     NewFundInfo private _fund;
+
 
     function init(
         address dao_,
@@ -87,6 +93,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _fundID = fundID;
         _fund = fundInitData;
 
+
+
         emit FundStatusUpdated(_fundID, 1,  0, 0, block.timestamp);
 
         return callbackEvent;
@@ -94,7 +102,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
 
     /// @inheritdoc IFund
-    function launch() external override {
+    function launch() external override enableToExecute {
         if (_startRaisingDate > 0) {
             revert FundAlreadyLaunched(_fundID);
         }
@@ -115,7 +123,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         return (_startFundDate, _startFundDate + _fund.durationOfFund);
     }
 
-    function frozen(uint256 amount) external override {
+    function frozen(uint256 amount) external override enableToExecute {
         _frozened += amount;
     }
 
@@ -130,7 +138,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
     /// @inheritdoc IFund
-    function triggerLaunchStatus() external override {
+    function triggerLaunchStatus() external override enableToExecute {
         if (_launchStatus == 0) {
             revert FundNotLaunchYet(_fundID);
         }
@@ -182,76 +190,84 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
     
         if (_totalRaised > _fund.maxRaise || _totalRaised + amount > _fund.maxRaise) {
-            
             revert PurchaseTooMuch(_fund.maxRaise - _totalRaised, amount);
         }
 
-        /*
-
-        address to,
-        address token,
-        uint256 tokenType,
-        uint256 tokenID,
-        uint256 value,
-        bytes memory data
-
-        */
+        
         _depositeERC20(_fund.fundToken, amount);
         
         _totalRaised += amount;
-        _fundShare[msg.sender] += amount;
+        // _fundShare[msg.sender] += amount;
         _originalInvested[msg.sender] += amount;
-
-
         emit FundPurchase(getDAO(), _fundID, address(this), msg.sender, block.timestamp, amount, _originalInvested[msg.sender]);
 
     }
 
-    function test() external view override {
-        // after 
-
-
-        uint256 myPercentage = _originalInvested[msg.sender] * 100 / _totalRaised;
-        uint256 tax = 10;
-
-
-        console.log("START TEST #####################################################################");
+    // function test() external view override {
+    //     // after 
+    //     uint256 totalRaised = 1000000 ether;
+    //     uint256 invested = 10000 ether;
+    //     uint256 giveaway = 80000 ether;
+    //     // uint256 decimal = 18;
+    //     // uint256 myPercentage = invested * 1e18 / totalRaised;
+    //     uint256 tax = 0.001 ether;
+    //     console.log("START TEST #####################################################################");
+    //     console.log("TotalR is:", totalRaised);
+    //     console.log("TaxFee is:", totalRaised * tax / 1e18);
+    //     console.log("Give   is:", invested * giveaway / totalRaised);
+    //     // console.log("Original  My:", (_totalRaised) * myPercentage / 100);
+    //     // console.log("After Tax My:", (_totalRaised - taxFee) * myPercentage / 100);
+    //     console.log("END TEST #####################################################################");
         
-        console.log("MyPercentage:", myPercentage);
-        console.log("Total raised:", _totalRaised);
-
-        uint256 taxFee = _totalRaised * tax / 100;
-        console.log("Tax      Fee:", taxFee);
-        console.log("Original  My:", (_totalRaised) * myPercentage / 100);
-        console.log("After Tax My:", (_totalRaised - taxFee) * myPercentage / 100);
-        console.log("END TEST #####################################################################");
-        
-    }
+    // }
 
 
-    function getClaimableCertificate(address investor) external view returns(uint256 amount) {
+    function getClaimableCertificate(address investor) external view override returns(uint256 amount) {
         return _getClaimableCertificate(investor);
     }
 
 
     function _getClaimableCertificate(address investor) internal view returns(uint256 amount) {
-
+        if (_certificate != address(0) && _certificateClaimed[investor] == 0) {
+            amount = _originalInvested[investor];
+        }
     }
 
-    function getClaimableInvestment(address investor) external view returns(uint256 amount) {
+    function getClaimableInvestment(address investor) external view override returns(uint256 amount) {
         return _getClaimableInvestment(investor);
     }
     
     function _getClaimableInvestment(address investor) internal view returns(uint256 amount) {
 
+        if (_investmentClaimed[investor] == 0) {
+            amount = _originalInvested[investor] * _getAvailablePrincipal() / _totalRaised;
+        }
     }
 
-    function claimCertificate() external {
+    function claimCertificate(address investor) external override {
+        if (_certificateClaimed[investor] > 0) {
+            revert CertificatedClaimed();
+        }
+        uint256 certificates = _getClaimableCertificate(investor);
+        _certificateClaimed[investor] = certificates;
+        _transferTo(investor, _certificate, 20, 0, certificates, "");
 
     }
 
-    function claimInvestment() external {
+    function claimInvestment(address investor) external override {
+        uint256 status = _getFundStatus();
+        if (status == 1 || status == 9) {
+            if (_investmentClaimed[investor] == 0) {
+                // claim profit and principal
+                uint256 profitAndPrincipal = _getClaimableInvestment(investor);
+                _transferTo(investor, _fund.fundToken, 20, 0, profitAndPrincipal, "");
+                _investmentClaimed[investor] = profitAndPrincipal;
+            }
+        } else {
 
+            revert CurrentFundStatusDonotSupportThisOperation(status);
+        
+        }
     }
 
 
@@ -328,21 +344,16 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     /// @inheritdoc IFund
     function tallyUp() external override {
 
-
         uint256 status = _getFundStatus();
         if (status == 3) {
-
             if (_startRaisingDate + _fund.raisedPeriod + _fund.durationOfFund < block.timestamp) {
                 revert FundInvestmentIsNotFinished(_startRaisingDate + _fund.raisedPeriod + _fund.durationOfFund, block.timestamp);
             }
             _fundStatus = 9;
-
             // calculate the profits and calculate per voucher's value
-            _confirmedProfit = IERC20(_fund.fundToken).balanceOf(address(this));
-            _voucherValue = _confirmedProfit / _totalRaised;
-
+            // _confirmedProfit = IERC20(_fund.fundToken).balanceOf(address(this));
+            // _voucherValue = _confirmedProfit / _totalRaised;
             emit FundStatusUpdated(_fundID, 2, status, _fundStatus, block.timestamp);
-
         } else {
             revert OnlyStartedFundCouldTallyUp(status);
         }
@@ -384,47 +395,47 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
     /// @inheritdoc IFund
-    function getShare(address owner)
-        external
-        view 
-        override
-        returns (uint256 claimableShare)
-    {
-        claimableShare = _getShare(owner);
-    }
+    // function getShare(address owner)
+    //     external
+    //     view 
+    //     override
+    //     returns (uint256 claimableShare)
+    // {
+    //     claimableShare = _getShare(owner);
+    // }
 
     function getOriginalInvested(address owner) external view override returns (uint256 amount) {
         amount = _originalInvested[owner];
     }
 
-    function _getShare(address owner) internal view returns(uint256 share) {
-        share = _fundShare[owner];
+    // function _getShare(address owner) internal view returns(uint256 share) {
+    //     share = _fundShare[owner];
 
-        // if (currentPurchased == 0) {
-        //     return 0;
-        // }
-        // // calculate based on all purchased percentage
-        // claimableShare = currentPurchased * 100 * 1e18 / _totalRaised;
-        // claimableShare = currentPurchased;
+    //     // if (currentPurchased == 0) {
+    //     //     return 0;
+    //     // }
+    //     // // calculate based on all purchased percentage
+    //     // claimableShare = currentPurchased * 100 * 1e18 / _totalRaised;
+    //     // claimableShare = currentPurchased;
 
-    }
+    // }
 
 
-    function claimShare(address owner) external override {
+    // function claimShare(address owner) external override {
 
-        if (_fund.allowFundTokenized != 1 && _fund.allowIntermittentDistributions == 0) {
-            revert NoShareCouldBeClaim();
-        }
+    //     if (_fund.allowFundTokenized != 1 && _fund.allowIntermittentDistributions == 0) {
+    //         revert NoShareCouldBeClaim();
+    //     }
 
-        uint256 currentPurchased = _getShare(owner);
+    //     uint256 currentPurchased = _getShare(owner);
 
-        console.log("has share:", currentPurchased);
+    //     console.log("has share:", currentPurchased);
 
-        // IERC20(_certificate).transferFrom(address(this), owner, currentPurchased);
-        IERC20(_certificate).transfer(owner, currentPurchased);
-        _fundShare[owner] = 0;
+    //     // IERC20(_certificate).transferFrom(address(this), owner, currentPurchased);
+    //     IERC20(_certificate).transfer(owner, currentPurchased);
+    //     _fundShare[owner] = 0;
 
-    }
+    // }
 
     /// @inheritdoc IFund
     function getRaisedInfo() external view override returns (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) {
@@ -445,57 +456,60 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             uint256 value = _fund.fixedFee * _totalRaised / 100;
             _transferTo(treasuryUCV, _fund.fundToken, 20, 0, value, "");
             _fixedFeeTransferTime = block.timestamp;
-
             _fundAvailablePrincipal -= value;
         }
     }
 
     /// @inheritdoc IFund
-    function claimPrincipalAndProfit(address owner) external override {
-        // require enough Token to get profit
-        // 3 kinds of certificate
-        // 1 staking
-        // 2 certificate
-        // 3 
-        uint256 status = _getFundStatus();
-        if (status != 9) {
-            revert CurrentFundStatusDonotSupportThisOperation(status);
-        }
+    // function claimPrincipalAndProfit(address owner) external override {
+    //     // require enough Token to get profit
+    //     // 3 kinds of certificate
+    //     // 1 staking
+    //     // 2 certificate
+    //     // 3 
+    //     uint256 status = _getFundStatus();
+    //     if (status != 9) {
+    //         revert CurrentFundStatusDonotSupportThisOperation(status);
+    //     }
 
-        // calculate voucher values;
+    //     // calculate voucher values;
         
         
-        // get back vouchers
+    //     // get back vouchers
 
-        uint256 vouchers = _fund.fixedFee * _totalRaised;
+    //     uint256 vouchers = _fund.fixedFee * _totalRaised;
 
-    }
+    // }
 
 
-    function getOwnerPercentage(address owner) external view override returns(uint256 perc){
+    // function getOwnerPercentage(address owner) external view override returns(uint256 perc){
 
-        perc = _originalInvested[owner] * 100 / _totalRaised;
+    //     perc = _originalInvested[owner] * 100 / _totalRaised;
 
-    }
+    // }
 
     /// @inheritdoc IFund
-    function withdrawPrincipal(address owner) external override {
+    // function withdrawPrincipal(address owner) external override {
 
-        uint256 fundStatus = _getFundStatus();
-        if (fundStatus != 1) {
-            revert CurrentFundStatusDonotSupportThisOperation(fundStatus);
-        }
+    //     uint256 fundStatus = _getFundStatus();
+    //     if (fundStatus != 1) {
+    //         revert CurrentFundStatusDonotSupportThisOperation(fundStatus);
+    //     }
 
-        _transferTo(owner, _fund.fundToken, 20, 0, _getShare(owner), "");
-        _fundShare[owner] = 0;
+    //     _transferTo(owner, _fund.fundToken, 20, 0, _getShare(owner), "");
+    //     _fundShare[owner] = 0;
 
-    }
+    // }
 
 
     function distribute(address owner, address token, uint256 amount) external override {
         _transferTo(owner, token, 20, 0, amount, "");
     }
 
+
+    function calculateClaimableAmount(address investor, uint256 total) external view override returns(uint256 amount) {
+        return _originalInvested[investor] * total / _totalRaised
+    }
 
     function _issueCertifcate() internal {
 

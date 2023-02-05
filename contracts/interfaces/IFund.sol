@@ -41,8 +41,6 @@ interface IFund {
     /// @dev get the fund raised progress
     function getRaisedInfo() external returns (uint256 minRaise, uint256 maxRaise, uint256 currentRaised);
 
-    /// @dev get how may fund token will get of the owner
-    function getShare(address owner) external view returns (uint256 amount);
 
     /// @dev return how many purchased no matter the user withdraw the principal
     function getOriginalInvested(address owner) external view returns (uint256 amount);
@@ -51,25 +49,26 @@ interface IFund {
     /// @dev fund manager ask to pay for the fixed fee
     function transferFixedFeeToUCV(address treasuryUCV) external;
 
-    /// @dev after Admin click tallyUp the fund and the profit is ready,
-    /// then user could claim the principal and profit
-    function claimPrincipalAndProfit(address owner) external;
-
-
     function getLaunchTime() external view returns(uint256 start, uint256 end);
 
     function getFundTime() external view returns(uint256 start, uint256 end);
 
 
-    function claimShare(address owner) external;
+    // function claimShare(address owner) external;
 
     /// @dev when launching is finished and can't raise enough token,
     /// the user could withdraw their principal
-    function withdrawPrincipal(address owner) external;
+    // function withdrawPrincipal(address owner) external;
 
 
-    function getOwnerPercentage(address owner) external view returns(uint256 perc);
+    /// @dev after Admin click tallyUp the fund and the profit is ready,
+    /// then user could claim the principal and profit
+    // function claimPrincipalAndProfit(address owner) external;
 
+    // function getOwnerPercentage(address owner) external view returns(uint256 perc);
+
+    /// @dev get how may fund token will get of the owner
+    // function getShare(address owner) external view returns (uint256 amount);
 
     function distribute(address owner, address token, uint256 amount) external;
 
@@ -80,8 +79,15 @@ interface IFund {
     function hasRoleSetting(uint256 roleType) external view returns (bool has);
 
 
-    function isRoleAuthorized(uint256 roleType, address user) external view returns (bool has);
+    function isRoleAuthorized(uint256 roleType, address user) external view returns (bool authroized);
+
+    function claimCertificate(address investor) external;
+    function claimInvestment(address investor) external;
+
+    function getClaimableInvestment(address investor) external view returns(uint256 amount);
+    function getClaimableCertificate(address investor) external view returns(uint256 amount);
 
 
-    function test() external view;
+    function calculateClaimableAmount(address investor, uint256 total) external view returns(uint256 amount);
+    // function test() external view;
 }

@@ -420,7 +420,7 @@
         "type": "bytes32"
       }
     ],
-    "name": "claimFundShare",
+    "name": "claimFundCertificate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -693,25 +693,6 @@
       {
         "internalType": "uint256",
         "name": "status",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "fundID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getShareOfFund",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "share",
         "type": "uint256"
       }
     ],

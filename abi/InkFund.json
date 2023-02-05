@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "name": "CertificatedClaimed",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -71,11 +76,6 @@
   {
     "inputs": [],
     "name": "FundRaiseIsOver",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NoShareCouldBeClaim",
     "type": "error"
   },
   {
@@ -715,41 +715,51 @@
     "type": "fallback"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "investor",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "total",
+        "type": "uint256"
+      }
+    ],
+    "name": "calculateClaimableAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "investor",
+        "type": "address"
+      }
+    ],
     "name": "claimCertificate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "investor",
+        "type": "address"
+      }
+    ],
     "name": "claimInvestment",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "claimPrincipalAndProfit",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "claimShare",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1013,25 +1023,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "getOwnerPercentage",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "perc",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getRaisedInfo",
     "outputs": [
@@ -1048,25 +1039,6 @@
       {
         "internalType": "uint256",
         "name": "currentRaised",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "getShare",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "claimableShare",
         "type": "uint256"
       }
     ],
@@ -1285,13 +1257,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "test",
-    "outputs": [],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -1351,19 +1316,6 @@
   {
     "inputs": [],
     "name": "triggerLaunchStatus",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "withdrawPrincipal",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -55,7 +55,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         _factoryManager = IDAO(_dao).getDAODeployFactory();
 
     }
-
+    
 
     /// @inheritdoc IFundManager
     function isCommitteeOperator(uint256 roleType, address operator) external view override returns(bool exist){
@@ -183,12 +183,13 @@ contract FundManager is IFundManager, BaseUCVManager {
 
 
     function _getClaimableDistributionAmount(bytes32 fundID, address investor) internal view returns(uint256 currentTokenDistribution){
-        // // calculate share
-        uint256 sharePercentage = IFund(_funds[fundID]).getOwnerPercentage(investor);
+
 
         for(uint256 i=0;i <_fundDistributions[fundID].length; i++) {
             if (_distributionClaimed[_fundDistributions[fundID][i].distributionID][investor] == 0){
-                currentTokenDistribution += (_fundDistributions[fundID][i].amount * sharePercentage / 1e18);
+                // currentTokenDistribution +=  (_fundDistributions[fundID][i].amount * sharePercentage / 1e18);
+                currentTokenDistribution += IFund(_funds[fundID]).calculateClaimableAmount(investor, _fundDistributions[fundID][i].amount);
+
             }
         }
     }
@@ -312,14 +313,14 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
     /// @inheritdoc IFundManager
-    function getShareOfFund(bytes32 fundID)
-        external
-        view
-        override
-        returns (uint256 share)
-    {
-        share = IFund(_funds[fundID]).getShare(msg.sender);
-    }
+    // function getShareOfFund(bytes32 fundID)
+    //     external
+    //     view
+    //     override
+    //     returns (uint256 share)
+    // {
+    //     share = IFund(_funds[fundID]).getShare(msg.sender);
+    // }
 
 
     function getFundOperationTime(bytes32 fundID) external view override returns(uint256, uint256) {
@@ -332,13 +333,13 @@ contract FundManager is IFundManager, BaseUCVManager {
 
 
     /// @inheritdoc IFundManager
-    function claimFundShare(bytes32 fundID) external override {
+    function claimFundCertificate(bytes32 fundID) external override {
         // MAKE SURE FundStatus = 2 || 3 || 9
         
         uint256 status = IFund(_funds[fundID]).getFundStatus();
         if (status == 2  || status == 3 || status == 9) {
-            console.log("address:", _funds[fundID]);
-            IFund(_funds[fundID]).claimShare(msg.sender);
+            // console.log("address:", _funds[fundID]);
+            IFund(_funds[fundID]).claimCertificate(msg.sender);
 
         } else {
 
@@ -353,7 +354,7 @@ contract FundManager is IFundManager, BaseUCVManager {
 
         uint256 status = IFund(_funds[fundID]).getFundStatus();
         if (status == 1) {
-            IFund(_funds[fundID]).withdrawPrincipal(msg.sender);
+            IFund(_funds[fundID]).getClaimableInvestment(msg.sender);
         } else {
 
             revert TheFundCanNotWithdrawPrincipalNow();
@@ -365,7 +366,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         // MAKE SURE FundStatus = 9
         uint256 status = IFund(_funds[fundID]).getFundStatus();
         if (status == 9) {
-            IFund(_funds[fundID]).claimPrincipalAndProfit(msg.sender);
+            IFund(_funds[fundID]).getClaimableInvestment(msg.sender);
         } else {
             revert TheFundNeedToTallyUp();
         }

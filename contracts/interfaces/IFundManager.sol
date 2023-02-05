@@ -38,7 +38,7 @@ interface IFundManager is IFundInfo {
 
 
     /// @dev claim share token
-    function claimFundShare(bytes32 fundID) external;
+    // function claimFundShare(bytes32 fundID) external;
 
     /// @dev withdraw principal, when launch status is over and fund status is failed
     function withdrawPrincipal(bytes32 fundID) external;
@@ -56,7 +56,7 @@ interface IFundManager is IFundInfo {
 
 
     /// @dev get how many share token could claim
-    function getShareOfFund(bytes32 fundID) external returns (uint256 share);
+    // function getShareOfFund(bytes32 fundID) external returns (uint256 share);
 
     /// @dev check operator has role type setting during create the committee
     /// @param roleType 1=FundManager 2=RiskManager
@@ -65,5 +65,8 @@ interface IFundManager is IFundInfo {
     /// @dev check operator has role type setting combine in the committee and during create the fund(the fund has higher priority)
     /// @param roleType 1=FundManager 2=RiskManager
     function isAuthorizedFundOperator(bytes32 fundID, uint256 roleType, address operator) external view returns(bool authorized);
+
+
+    function claimFundCertificate(bytes32 fundID) external;
 
 }
