@@ -193,7 +193,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             revert PurchaseTooMuch(_fund.maxRaise - _totalRaised, amount);
         }
 
-        
+
         _depositeERC20(_fund.fundToken, amount);
         
         _totalRaised += amount;
@@ -508,7 +508,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
 
     function calculateClaimableAmount(address investor, uint256 total) external view override returns(uint256 amount) {
-        return _originalInvested[investor] * total / _totalRaised
+        return _originalInvested[investor] * total / _totalRaised;
     }
 
     function _issueCertifcate() internal {
