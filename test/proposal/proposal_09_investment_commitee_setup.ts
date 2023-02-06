@@ -120,7 +120,6 @@ describe("proposal related test", function () {
         // // // user could claim principal and profit
         // await tallyUp(fundManagerAddress);
 
-
         // await voteAndInvestTheFund();
         
         // await withdrawPrincipal()
