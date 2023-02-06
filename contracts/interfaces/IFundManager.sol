@@ -55,8 +55,14 @@ interface IFundManager is IFundInfo {
     function triggerFundLaunchStatus(bytes32 fundID) external;
 
 
-    /// @dev get how many share token could claim
-    // function getShareOfFund(bytes32 fundID) external returns (uint256 share);
+    /// @dev get originally how many token invested
+    function getOriginalInvestment(bytes32 fundID, address owner) external view returns (uint256 amount);
+
+    /// @dev get how many tokens could claim  
+    function getCurrentInvestment(bytes32 fundID, address owner) external view returns (uint256 amount);
+
+    /// @dev get how many certificates could claim
+    function getFundCertificate(bytes32 fundID, address owner) external view returns (uint256 amount);
 
     /// @dev check operator has role type setting during create the committee
     /// @param roleType 1=FundManager 2=RiskManager

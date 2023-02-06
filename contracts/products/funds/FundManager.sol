@@ -312,7 +312,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         status = IFund(_funds[fundID]).getFundStatus();
     }
 
-    /// @inheritdoc IFundManager
+    // /// @inheritdoc IFundManager
     // function getShareOfFund(bytes32 fundID)
     //     external
     //     view
@@ -321,6 +321,21 @@ contract FundManager is IFundManager, BaseUCVManager {
     // {
     //     share = IFund(_funds[fundID]).getShare(msg.sender);
     // }
+
+    /// @inheritdoc IFundManager
+    function getOriginalInvestment(bytes32 fundID, address owner) external view override returns (uint256 amount){
+        amount = IFund(_funds[fundID]).getOriginalInvested(owner);
+    }
+
+    /// @inheritdoc IFundManager
+    function getCurrentInvestment(bytes32 fundID, address owner) external view override returns (uint256 amount) {
+        amount = IFund(_funds[fundID]).getClaimableInvestment(owner);
+    }
+
+    /// @inheritdoc IFundManager
+    function getFundCertificate(bytes32 fundID, address owner) external view override returns (uint256 amount) {
+        amount = IFund(_funds[fundID]).getClaimableCertificate(owner);
+    }
 
 
     function getFundOperationTime(bytes32 fundID) external view override returns(uint256, uint256) {

@@ -104,12 +104,12 @@ describe("proposal related test", function () {
         // // transfer fixed fee to treasury
         // // issue voucher for investor to claim
 
-        // await sleep(5000);
+        await sleep(5000);
 
-        // await startFund(fundManagerAddress);
+        await startFund(fundManagerAddress);
 
 
-        // await makeDistribution(fundManagerAddress, erc20Address);
+        await makeDistribution(fundManagerAddress, erc20Address);
 
         // // // claim user's voucher
         // await claimShare(fundManagerAddress);
@@ -235,13 +235,14 @@ describe("proposal related test", function () {
 
         console.log("fund raised info:", await fund.getRaisedInfo());
 
-        console.log("buyer1 share:", await fund.getShare(buyer1.address));
-        console.log("buyer2 share:", await fund.getShare(buyer2.address));
+        console.log("buyer1 share:", await fund.getOriginalInvested(buyer1.address));
+
+        console.log("buyer2 share:", await fund.getOriginalInvested(buyer2.address));
 
 
 
-        await fund.test();
-        
+        // await fund.test();
+
 
 
 
