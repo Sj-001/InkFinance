@@ -32,7 +32,7 @@ module.exports = {
 
         }
         
-        /*
+        
         ,
         dev_avax: {
             url: process.env.DEV_AVAX_RPC,
@@ -60,7 +60,7 @@ module.exports = {
             url: process.env.DEV_GOERLI_RPC,
             accounts: [process.env.DEV_GOERLI_KEY]
         }
-        */
+        
     },
 
     abiExporter: {

@@ -370,7 +370,9 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
 
         else {
-            revert NotSupport(roleType);
+            // revert NotSupport(roleType);
+
+            has = false;
         }
 
     }

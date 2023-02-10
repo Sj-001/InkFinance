@@ -187,7 +187,6 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
     var requireClientBiometricIdentity = 0;
     var requireClientLegalIdentity = 0;
 
-    
 
     var fixedFee = percentage2;
     var fixedFeeShouldGoToTreasury = 1;

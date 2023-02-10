@@ -70,6 +70,8 @@ contract FundManager is IFundManager, BaseUCVManager {
             exist = _checkCommitteeMemberExist("fundManager", operator);
         } else if (roleType == 2) {
             exist = _checkCommitteeMemberExist("fundRiskManager", operator);
+        } else if (roleType == 0) {
+            exist = _checkCommitteeMemberExist("fundAdmin", operator);
         }
     }
 
@@ -118,6 +120,8 @@ contract FundManager is IFundManager, BaseUCVManager {
         if (!_isAuthorizedFundOperator(fundID, 1, msg.sender)){
             revert TheMemberIsNotAuthorized(msg.sender);
         }
+
+
         // valid period & status
 
         // new ID
@@ -251,9 +255,11 @@ contract FundManager is IFundManager, BaseUCVManager {
     {
 
         // authrized
-        if (!_isCommitteeOperator(1, msg.sender)){
-            revert TheMemberIsNotAuthorized(msg.sender);
-        }
+        // if (!_isCommitteeOperator(1, msg.sender)){
+        //     revert TheMemberIsNotAuthorized(msg.sender);
+        // }
+
+        require(_isCommitteeOperator(1, msg.sender) , "The user is authorized");
 
         bytes32 fundID = _newID();
         // valid fundManager & riskManager have been set in the InvestmentCommittee
@@ -370,7 +376,7 @@ contract FundManager is IFundManager, BaseUCVManager {
 
         uint256 status = IFund(_funds[fundID]).getFundStatus();
         if (status == 1) {
-            IFund(_funds[fundID]).getClaimableInvestment(msg.sender);
+            IFund(_funds[fundID]).claimInvestment(msg.sender);
         } else {
 
             revert TheFundCanNotWithdrawPrincipalNow();
@@ -382,7 +388,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         // MAKE SURE FundStatus = 9
         uint256 status = IFund(_funds[fundID]).getFundStatus();
         if (status == 9) {
-            IFund(_funds[fundID]).getClaimableInvestment(msg.sender);
+            IFund(_funds[fundID]).claimInvestment(msg.sender);
         } else {
             revert TheFundNeedToTallyUp();
         }

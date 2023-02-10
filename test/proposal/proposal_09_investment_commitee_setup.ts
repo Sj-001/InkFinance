@@ -135,8 +135,8 @@ describe("proposal related test", function () {
 
         var fundInitData = buildFundInitData(erc20Address, signers[0].address, signers[0].address); 
         // var fundInitData = buildFundInitData("0x0000000000000000000000000000000000000000", signers[0].address, signers[0].address); 
-
-        await fundManager.createFund(fundInitData);
+        const buyer2 = signers[1];
+        await fundManager.connect(buyer2).createFund(fundInitData);
 
         var funds = await fundManager.getCreatedFunds();
 
