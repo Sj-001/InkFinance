@@ -301,8 +301,12 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         uint256 fundStatus = _getFundStatus();
         if (fundStatus == 0) {
-            revert StillLaunching();
+            // revert StillLaunching();
+
+            require(false, "still launching");
         }
+
+
 
         //  fundStatus = 2;
 
@@ -505,6 +509,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
 
     function distribute(address owner, address token, uint256 amount) external override {
+
+        console.log("tk:", token);
         _transferTo(owner, token, 20, 0, amount, "");
     }
 
@@ -523,7 +529,12 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         console.log("issued token:", _certificate);
         uint256 value = _getAvailablePrincipal();
-        InkFundCertificateToken(_certificate).issue(_fund.tokenName, _fund.tokenName, IERC20Metadata(_fund.fundToken).decimals() ,value, address(this));
+        uint8 decimal = 18;
+        if (_fund.fundToken != address(0)) {
+            decimal = IERC20Metadata(_fund.fundToken).decimals();
+        }
+
+        InkFundCertificateToken(_certificate).issue(_fund.tokenName, _fund.tokenName, decimal ,value, address(this));
         console.log("balance:", IERC20(_certificate).balanceOf(address(this)));
         
     }

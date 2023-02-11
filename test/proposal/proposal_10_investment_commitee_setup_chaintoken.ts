@@ -16,7 +16,7 @@ import { buildFundInitData2, buildFundInitData, buildMasterDAOInitData, buildInv
 const { expect } = chai;
 import {defaultAbiCoder} from '@ethersproject/abi';
 
-
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const {loadFixture, deployContract} = waffle;
 
 describe("proposal related test", function () {
@@ -88,13 +88,18 @@ describe("proposal related test", function () {
         var minRaise = ethers.utils.parseEther("1000");
         var maxRaise = ethers.utils.parseEther("10000");
 
-        
+
 
         await setupFund(fundManagerAddress, erc20Address);
 
         await launchFund(fundManagerAddress);
 
+
         await purchaseFund(fundManagerAddress, erc20Address);
+        
+
+
+
 
         // // fund manager start to invest
         // // transfer fixed fee to treasury
@@ -103,14 +108,14 @@ describe("proposal related test", function () {
 
         await makeDistribution(fundManagerAddress, erc20Address);
 
-        // // claim user's voucher
-        await claimShare(fundManagerAddress);
+        // // // claim user's voucher
+        // await claimShare(fundManagerAddress);
 
-        // // if fund raised failed, user should claim principal
-        await claimPrincipal(fundManagerAddress);
+        // // // if fund raised failed, user should claim principal
+        // await claimPrincipal(fundManagerAddress);
 
         // // user could claim principal and profit
-        // await tallyUp(fundManagerAddress);
+        await tallyUp(fundManagerAddress);
 
 
         // await voteAndInvestTheFund();
@@ -151,8 +156,8 @@ describe("proposal related test", function () {
 
 
         var distributions = {
-            "token" : erc20Address,
-            "amount" :  ethers.utils.parseEther("100")
+            "token" : "0x0000000000000000000000000000000000000000",
+            "amount" :  ethers.utils.parseEther("10")
         }
 
         // await fundManager.launchFund(funds[0]); // valid launch twice    
@@ -201,35 +206,46 @@ describe("proposal related test", function () {
 
         console.log("ready to purchase funds:", funds[0]);
 
-        const erc20 = await ethers.getContractAt("InkERC20", erc20Address);
+        // const erc20 = await ethers.getContractAt("InkERC20", erc20Address);
         
         // get fund(ucv) address to purchase the share
-        const fundAddress = fundManager.getFund(funds[0]);
+        const fundAddress = await fundManager.getFund(funds[0]);
+
+        console.log("fund address:", fundAddress)
         const fund = await ethers.getContractAt("InkFund", fundAddress);
 
-        var tokenAmount = ethers.utils.parseEther("1000");
+        // var tokenAmount = ethers.utils.parseEther("1000");
 
-        await erc20.mintTo(signers[0].address, tokenAmount);
-        await erc20.mintTo(buyer2.address, tokenAmount);
+        // await erc20.mintTo(signers[0].address, tokenAmount);
+        // await erc20.mintTo(buyer2.address, tokenAmount);
 
-        await erc20.approve(fundAddress, tokenAmount);
-        await erc20.connect(buyer2).approve(fundAddress, tokenAmount);
+        // await erc20.approve(fundAddress, tokenAmount);
+        // await erc20.connect(buyer2).approve(fundAddress, tokenAmount);
 
-        console.log("balance of fund(before):", await erc20.balanceOf(fundAddress));
+        console.log("balance of fund(before):",   await web3.eth.getBalance(fundAddress));
 
 
-        var buyer1PurchaseAmount = ethers.utils.parseEther("20");
-        var buyer2PurchaseAmount = ethers.utils.parseEther("15");
+        var buyer1PurchaseAmount = ethers.utils.parseEther("100");
+        var buyer2PurchaseAmount = ethers.utils.parseEther("150");
+
+
+
         await fund.purchaseShare(buyer1PurchaseAmount, {value:buyer1PurchaseAmount});
         await fund.connect(buyer2).purchaseShare(buyer2PurchaseAmount, {value:buyer2PurchaseAmount});
 
 
-        console.log("balance of fund(after):", await erc20.balanceOf(fundAddress));
+        console.log("balance of fund(after):",  await web3.eth.getBalance(fundAddress));
+
 
         console.log("fund raised info:", await fund.getRaisedInfo());
 
-        console.log("buyer1 share:", await fund.getShare(buyer1.address));
-        console.log("buyer2 share:", await fund.getShare(buyer2.address));
+        // console.log("buyer1 share:", await fund.getShare(buyer1.address));
+        // console.log("buyer2 share:", await fund.getShare(buyer2.address));
+
+
+        await sleep(10000);
+
+        console.log("status:", await fundManager.getLaunchStatus(funds[0]));
 
     }
 

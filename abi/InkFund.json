@@ -87,17 +87,6 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "roleType",
-        "type": "uint256"
-      }
-    ],
-    "name": "NotSupport",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
         "name": "currentFundStatus",
         "type": "uint256"
       }
@@ -124,11 +113,6 @@
       }
     ],
     "name": "PurchaseTooMuch",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "StillLaunching",
     "type": "error"
   },
   {

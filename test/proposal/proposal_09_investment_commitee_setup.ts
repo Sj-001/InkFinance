@@ -104,7 +104,7 @@ describe("proposal related test", function () {
         // // transfer fixed fee to treasury
         // // issue voucher for investor to claim
 
-        await sleep(5000);
+        await sleep(10000);
 
         await startFund(fundManagerAddress);
 
@@ -118,7 +118,7 @@ describe("proposal related test", function () {
         // await claimPrincipal(fundManagerAddress);
 
         // // // user could claim principal and profit
-        // await tallyUp(fundManagerAddress);
+        await tallyUp(fundManagerAddress);
 
         // await voteAndInvestTheFund();
         
@@ -136,7 +136,7 @@ describe("proposal related test", function () {
         var fundInitData = buildFundInitData(erc20Address, signers[0].address, signers[0].address); 
         // var fundInitData = buildFundInitData("0x0000000000000000000000000000000000000000", signers[0].address, signers[0].address); 
         const buyer2 = signers[1];
-        await fundManager.connect(buyer2).createFund(fundInitData);
+        await fundManager.createFund(fundInitData);
 
         var funds = await fundManager.getCreatedFunds();
 

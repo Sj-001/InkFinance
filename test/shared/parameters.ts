@@ -165,7 +165,7 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
     var timestamp = Date.now();
     var sec = Math.floor(timestamp / 1000);
 
-    var raisedPeriod = 10 ;//60 * 60 * 24 * 5; // 5 days
+    var raisedPeriod = 5 ;//60 * 60 * 24 * 5; // 5 days
     var durationOfFund = 60 * 60 * 24 * 30;
 
     var allowIntermittentDistributions = 0;
@@ -246,13 +246,13 @@ export function buildFundInitData2(erc20Address:string, fundManager:string, risk
     var fundName = "Fundname";
     var fundDescription = "FundDescription";
     var fundToken = erc20Address;
-    var minRaise = ethers.utils.parseEther("1000");
-    var maxRaise = ethers.utils.parseEther("10000");
+    var minRaise = ethers.utils.parseEther("100");
+    var maxRaise = ethers.utils.parseEther("1000");
 
     var timestamp = Date.now();
     var sec = Math.floor(timestamp / 1000);
 
-    var raisedPeriod = 60 * 60 * 24 * 5; // 5 days
+    var raisedPeriod = 10;// 60 * 60 * 24 * 5; // 5 days
     var durationOfFund = 60 * 60 * 24 * 30;
 
     var allowIntermittentDistributions = 0;

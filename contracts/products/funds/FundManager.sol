@@ -120,8 +120,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         if (!_isAuthorizedFundOperator(fundID, 1, msg.sender)){
             revert TheMemberIsNotAuthorized(msg.sender);
         }
-
-
         // valid period & status
 
         // new ID
@@ -129,9 +127,11 @@ contract FundManager is IFundManager, BaseUCVManager {
         
         // valid token amount is enough to distribute after all distribution
         // for(uint256 i=0; i<distributionTokens.length;i++) {
-        if (!isTokenEnough(fundID, distributionTokens.token, distributionTokens.amount)) {
-            revert TokenIsNotEnoughToDistribute(distributionTokens.token);
-        }
+        require(isTokenEnough(fundID, distributionTokens.token, distributionTokens.amount), "token is not enough");
+        //     revert TokenIsNotEnoughToDistribute(distributionTokens.token);
+
+
+        // }
         // }
 
         // (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) = InkFund(_fund).getRaisedInfo() 
@@ -223,6 +223,8 @@ contract FundManager is IFundManager, BaseUCVManager {
                 }
             }
 
+
+
             IFund(_funds[fundID]).distribute(claimer, distributeToken, currentTokenDistribution);
 
             // emit last claim distributionID
@@ -259,12 +261,16 @@ contract FundManager is IFundManager, BaseUCVManager {
         //     revert TheMemberIsNotAuthorized(msg.sender);
         // }
 
-        require(_isCommitteeOperator(1, msg.sender) , "The user is authorized");
+        console.log("fund token:", fundInfo.fundToken);
+        
+        require(_isCommitteeOperator(0, msg.sender) , "The user is not authorized");
 
         bytes32 fundID = _newID();
         // valid fundManager & riskManager have been set in the InvestmentCommittee
         bytes memory initData = abi.encode(address(this), fundID, fundInfo);
 
+
+        // valid treasury exist
         address fundAddress = _deployByFactoryKey(FactoryKeyTypeID.UCV_TYPE_ID, fundInfo.fundDeployKey, initData);
 
         _funds[fundID] = fundAddress;
@@ -291,12 +297,16 @@ contract FundManager is IFundManager, BaseUCVManager {
         view
         returns (uint256 status)
     {
+
+
         status = IFund(_funds[fundID]).getLaunchStatus();
     }
 
     /// @inheritdoc IFundManager
     function launchFund(bytes32 fundID) external override {
         // authrized
+        require(_isCommitteeOperator(0, msg.sender) , "The user is not authorized");
+
         IFund(_funds[fundID]).launch();
         // emit FundLaunched();
     }
@@ -304,6 +314,8 @@ contract FundManager is IFundManager, BaseUCVManager {
     /// @inheritdoc IFundManager
     function startFund(bytes32 fundID) external override {
         // authrized
+        require(_isCommitteeOperator(0, msg.sender) , "The user is not authorized");
+
         IFund(_funds[fundID]).startFund();
         address treasuryUCV = IDAO(_dao).getUCV();
         IFund(_funds[fundID]).transferFixedFeeToUCV(treasuryUCV);
