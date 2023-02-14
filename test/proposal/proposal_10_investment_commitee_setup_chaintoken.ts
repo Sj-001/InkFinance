@@ -30,7 +30,7 @@ describe("proposal related test", function () {
         const {inkERC20} = await loadFixture(InkERC20Fixture);        
         var erc20Address = inkERC20.address;
 
-        // // select/create a DAO
+        // create a DAO
         var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
         await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 

@@ -69,6 +69,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     uint256 private _voucherValue = 0;
 
+    bool private _isLiqudating = false;
+
     // when make distribution, certain amount of token should be frozened
     uint256 private _frozened = 0;
 
@@ -397,7 +399,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                     break;
                 }
             }
-        }
+        } 
     }
 
     /// @inheritdoc IFund
@@ -507,10 +509,14 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     // }
 
+    function liquidate() external override {
+        _isLiqudating = true;
+        
+    }
 
     function distribute(address owner, address token, uint256 amount) external override {
+        require (_isLiqudating == false, "");
 
-        console.log("tk:", token);
         _transferTo(owner, token, 20, 0, amount, "");
     }
 

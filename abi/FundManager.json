@@ -1049,6 +1049,19 @@
         "internalType": "bytes32",
         "name": "fundID",
         "type": "bytes32"
+      }
+    ],
+    "name": "liquidateFund",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
       },
       {
         "internalType": "string",

@@ -41,7 +41,6 @@ interface IFund {
     /// @dev get the fund raised progress
     function getRaisedInfo() external returns (uint256 minRaise, uint256 maxRaise, uint256 currentRaised);
 
-
     /// @dev return how many purchased no matter the user withdraw the principal
     function getOriginalInvested(address owner) external view returns (uint256 amount);
 
@@ -90,4 +89,7 @@ interface IFund {
 
     function calculateClaimableAmount(address investor, uint256 total) external view returns(uint256 amount);
     // function test() external view;
+
+    
+    function liquidate() external;
 }

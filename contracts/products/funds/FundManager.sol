@@ -72,7 +72,12 @@ contract FundManager is IFundManager, BaseUCVManager {
             exist = _checkCommitteeMemberExist("fundRiskManager", operator);
         } else if (roleType == 0) {
             exist = _checkCommitteeMemberExist("fundAdmin", operator);
+        } else if (roleType == 3) {
+            exist = _checkCommitteeMemberExist("fundLiquidator", operator);
         }
+
+
+        
     }
 
     function _checkCommitteeMemberExist(string memory roleKey, address operator) internal view returns(bool exist) {
@@ -95,7 +100,8 @@ contract FundManager is IFundManager, BaseUCVManager {
                 if (members[i] == operator) {
                     exist = true;
                     break;
-                }
+                } 
+
             }
     }
 
@@ -417,7 +423,12 @@ contract FundManager is IFundManager, BaseUCVManager {
         return IFund(_funds[fundID]).getLaunchTime();
     }
 
+    function liquidateFund(bytes32 fundID) external override {
+                // authrized
+        require(_isCommitteeOperator(3, msg.sender) , "The user is not authorized");
+        IFund(_funds[fundID]).liquidate();
 
+    }
 
     /// @inheritdoc IFundManager
     function triggerFundLaunchStatus(bytes32 fundID)

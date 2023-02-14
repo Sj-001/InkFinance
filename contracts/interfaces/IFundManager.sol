@@ -75,4 +75,6 @@ interface IFundManager is IFundInfo {
 
     function claimFundCertificate(bytes32 fundID) external;
 
+    function liquidateFund(bytes32 fundID) external;
+
 }
