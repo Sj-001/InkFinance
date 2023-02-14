@@ -108,7 +108,6 @@ describe("proposal related test", function () {
 
         await startFund(fundManagerAddress);
 
-
         await makeDistribution(fundManagerAddress, erc20Address);
 
         // // // claim user's voucher
@@ -276,7 +275,11 @@ describe("proposal related test", function () {
         const fundAddress = fundManager.getFund(funds[0]);
         const fund = await ethers.getContractAt("InkFund", fundAddress);
         
+        sleep(10000)
+        
         await fundManager.tallyUpFund(funds[0]);
+        console.log("tally up finished")
+        
 
     }
 

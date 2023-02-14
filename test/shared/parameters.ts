@@ -165,8 +165,8 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
     var timestamp = Date.now();
     var sec = Math.floor(timestamp / 1000);
 
-    var raisedPeriod = 5 ;//60 * 60 * 24 * 5; // 5 days
-    var durationOfFund = 60 * 60 * 24 * 30;
+    var raisedPeriod = 10 ;//60 * 60 * 24 * 5; // 5 days
+    var durationOfFund = 10;//60 * 60 * 24 * 30;
 
     var allowIntermittentDistributions = 0;
     var allowFundTokenized = 1;

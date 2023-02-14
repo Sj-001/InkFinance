@@ -351,18 +351,26 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     function tallyUp() external override {
 
         uint256 status = _getFundStatus();
+        require (status == 3, "Only started fund could tally up");
+        require (_startFundDate + _fund.durationOfFund >= block.timestamp, "");
+        _fundStatus = 9;
+        emit FundStatusUpdated(_fundID, 2, status, _fundStatus, block.timestamp);
+
+        /*
         if (status == 3) {
-            if (_startRaisingDate + _fund.raisedPeriod + _fund.durationOfFund < block.timestamp) {
+            if (_startFundDate + _fund.durationOfFund < block.timestamp) {
+
+
                 revert FundInvestmentIsNotFinished(_startRaisingDate + _fund.raisedPeriod + _fund.durationOfFund, block.timestamp);
             }
             _fundStatus = 9;
             // calculate the profits and calculate per voucher's value
             // _confirmedProfit = IERC20(_fund.fundToken).balanceOf(address(this));
             // _voucherValue = _confirmedProfit / _totalRaised;
-            emit FundStatusUpdated(_fundID, 2, status, _fundStatus, block.timestamp);
+        
         } else {
             revert OnlyStartedFundCouldTallyUp(status);
-        }
+        }*/
 
     }
 
