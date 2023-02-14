@@ -368,6 +368,8 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
     function tallyUpFund(bytes32 fundID) external override {
+
+        require(_isCommitteeOperator(0, msg.sender) , "The user is not authorized");
         IFund(_funds[fundID]).tallyUp();
     }
 
