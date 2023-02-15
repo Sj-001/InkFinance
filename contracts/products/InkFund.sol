@@ -249,10 +249,18 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
     
     function _getClaimableInvestment(address investor) internal view returns(uint256 amount) {
+        if (_certificate == address(0)) {
+            if (_investmentClaimed[investor] == 0) {
+                amount = _originalInvested[investor] * _confirmedProfit / _totalRaised;
+            }
+        } else {
 
-        if (_investmentClaimed[investor] == 0) {
-            amount = _originalInvested[investor] * _getAvailablePrincipal() / _totalRaised;
+            uint256 userOwned = IERC20(_certificate).balanceOf(investor);
+            amount = userOwned * _confirmedProfit / _totalRaised;
+
         }
+
+
     }
 
     function claimCertificate(address investor) external override {
