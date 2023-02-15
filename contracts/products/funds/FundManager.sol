@@ -332,6 +332,7 @@ contract FundManager is IFundManager, BaseUCVManager {
     function getFundStatus(bytes32 fundID)
         external
         override
+        view
         returns (uint256 status)
     {
         status = IFund(_funds[fundID]).getFundStatus();

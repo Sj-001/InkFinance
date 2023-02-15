@@ -166,6 +166,9 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                 if (fundStatus == 1 || fundStatus == 2) {
                     emit FundStatusUpdated(_fundID, 2, 0, fundStatus, block.timestamp);
                     _fundStatus = fundStatus;
+                    if (fundStatus ==1) {
+                        _confirmedProfit = _getAvailablePrincipal();
+                    }
                 }
             }
         }
@@ -248,7 +251,12 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         return _getClaimableInvestment(investor);
     }
     
-    function _getClaimableInvestment(address investor) internal view returns(uint256 amount) {
+    function _getClaimableInvestment(address investor) internal view returns(uint256 amount) {  
+        uint256 status = _getFundStatus();
+        if (status != 1 && status != 9) {
+            amount = 0;
+        }
+
         if (_certificate == address(0)) {
             if (_investmentClaimed[investor] == 0) {
                 amount = _originalInvested[investor] * _confirmedProfit / _totalRaised;
@@ -276,6 +284,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     function claimInvestment(address investor) external override {
         uint256 status = _getFundStatus();
         if (status == 1 || status == 9) {
+            
+
 
             if (_certificate == address(0)) {
                 // claim directly

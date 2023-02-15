@@ -33,7 +33,7 @@ interface IFund {
     /// 2=could start
     /// 3=started
     /// 9=finished(could claim the principal & profit of investment)
-    function getFundStatus() external returns (uint256 status);
+    function getFundStatus() external view returns (uint256 status);
 
     /// @dev calculate the profit and transfer to the treasury
     function tallyUp() external;
