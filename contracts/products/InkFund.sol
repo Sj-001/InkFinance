@@ -71,6 +71,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     bool private _isLiqudating = false;
 
+
+
     // when make distribution, certain amount of token should be frozened
     uint256 private _frozened = 0;
 
@@ -136,7 +138,14 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
 
     function _getAvailablePrincipal() internal view returns (uint256 left) {
-        return _fundAvailablePrincipal - _frozened;
+        // return _fundAvailablePrincipal - _frozened;
+
+        if (_fund.fundToken == address(0)) {
+            return address(this).balance - _frozened;
+        } else {
+            return IERC20(_fund.fundToken).balanceOf(address(this)) - _frozened;
+        }
+        // return _fundAvailablePrincipal - _frozened;
     }
 
     /// @inheritdoc IFund
@@ -259,12 +268,34 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     function claimInvestment(address investor) external override {
         uint256 status = _getFundStatus();
         if (status == 1 || status == 9) {
-            if (_investmentClaimed[investor] == 0) {
-                // claim profit and principal
-                uint256 profitAndPrincipal = _getClaimableInvestment(investor);
-                _transferTo(investor, _fund.fundToken, 20, 0, profitAndPrincipal, "");
-                _investmentClaimed[investor] = profitAndPrincipal;
+
+            if (_certificate == address(0)) {
+                // claim directly
+                if (_investmentClaimed[investor] == 0) {
+                    // claim profit and principal
+                    uint256 profitAndPrincipal = _getClaimableInvestment(investor);
+                    _transferTo(investor, _fund.fundToken, 20, 0, profitAndPrincipal, "");
+                    _investmentClaimed[investor] = profitAndPrincipal;
+                }
+
+            } else {
+                // claim based on tokens
+                // authorized first
+                // calculate based on how many token they have
+
+                uint256 userOwned = IERC20(_certificate).balanceOf(investor);
+
+                IERC20(_certificate).transferFrom(investor, address(this), userOwned);
+
+                uint256 claimableAmount = userOwned * _confirmedProfit / _totalRaised;
+
+                _transferTo(investor, _fund.fundToken, 20, 0, claimableAmount, "");
+
+
+
             }
+
+
         } else {
 
             revert CurrentFundStatusDonotSupportThisOperation(status);
@@ -304,12 +335,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         uint256 fundStatus = _getFundStatus();
         if (fundStatus == 0) {
             // revert StillLaunching();
-
             require(false, "still launching");
         }
-
-
-
         //  fundStatus = 2;
 
         if (fundStatus == 1 || fundStatus == 3) {
@@ -352,10 +379,10 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         uint256 status = _getFundStatus();
         require (status == 3, "Only started fund could tally up");
-        require (_startFundDate + _fund.durationOfFund >= block.timestamp, "");
+        // require (_startFundDate + _fund.durationOfFund >= block.timestamp, "");
         _fundStatus = 9;
         emit FundStatusUpdated(_fundID, 2, status, _fundStatus, block.timestamp);
-
+        _confirmedProfit = _getAvailablePrincipal();
         /*
         if (status == 3) {
             if (_startFundDate + _fund.durationOfFund < block.timestamp) {
@@ -410,48 +437,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         } 
     }
 
-    /// @inheritdoc IFund
-    // function getShare(address owner)
-    //     external
-    //     view 
-    //     override
-    //     returns (uint256 claimableShare)
-    // {
-    //     claimableShare = _getShare(owner);
-    // }
 
     function getOriginalInvested(address owner) external view override returns (uint256 amount) {
         amount = _originalInvested[owner];
     }
 
-    // function _getShare(address owner) internal view returns(uint256 share) {
-    //     share = _fundShare[owner];
-
-    //     // if (currentPurchased == 0) {
-    //     //     return 0;
-    //     // }
-    //     // // calculate based on all purchased percentage
-    //     // claimableShare = currentPurchased * 100 * 1e18 / _totalRaised;
-    //     // claimableShare = currentPurchased;
-
-    // }
-
-
-    // function claimShare(address owner) external override {
-
-    //     if (_fund.allowFundTokenized != 1 && _fund.allowIntermittentDistributions == 0) {
-    //         revert NoShareCouldBeClaim();
-    //     }
-
-    //     uint256 currentPurchased = _getShare(owner);
-
-    //     console.log("has share:", currentPurchased);
-
-    //     // IERC20(_certificate).transferFrom(address(this), owner, currentPurchased);
-    //     IERC20(_certificate).transfer(owner, currentPurchased);
-    //     _fundShare[owner] = 0;
-
-    // }
 
     /// @inheritdoc IFund
     function getRaisedInfo() external view override returns (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) {
@@ -476,46 +466,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
     }
 
-    /// @inheritdoc IFund
-    // function claimPrincipalAndProfit(address owner) external override {
-    //     // require enough Token to get profit
-    //     // 3 kinds of certificate
-    //     // 1 staking
-    //     // 2 certificate
-    //     // 3 
-    //     uint256 status = _getFundStatus();
-    //     if (status != 9) {
-    //         revert CurrentFundStatusDonotSupportThisOperation(status);
-    //     }
-
-    //     // calculate voucher values;
-        
-        
-    //     // get back vouchers
-
-    //     uint256 vouchers = _fund.fixedFee * _totalRaised;
-
-    // }
-
-
-    // function getOwnerPercentage(address owner) external view override returns(uint256 perc){
-
-    //     perc = _originalInvested[owner] * 100 / _totalRaised;
-
-    // }
-
-    /// @inheritdoc IFund
-    // function withdrawPrincipal(address owner) external override {
-
-    //     uint256 fundStatus = _getFundStatus();
-    //     if (fundStatus != 1) {
-    //         revert CurrentFundStatusDonotSupportThisOperation(fundStatus);
-    //     }
-
-    //     _transferTo(owner, _fund.fundToken, 20, 0, _getShare(owner), "");
-    //     _fundShare[owner] = 0;
-
-    // }
 
     function liquidate() external override {
         _isLiqudating = true;
@@ -524,7 +474,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     function distribute(address owner, address token, uint256 amount) external override {
         require (_isLiqudating == false, "");
-
         _transferTo(owner, token, 20, 0, amount, "");
     }
 

@@ -111,11 +111,13 @@ describe("proposal related test", function () {
         // // // claim user's voucher
         // await claimShare(fundManagerAddress);
 
-        // // // if fund raised failed, user should claim principal
-        // await claimPrincipal(fundManagerAddress);
+
 
         // // user could claim principal and profit
         await tallyUp(fundManagerAddress);
+
+        // // // if fund raised failed, user should claim principal
+        await claimInvestment(fundManagerAddress);
 
 
         // await voteAndInvestTheFund();
@@ -278,6 +280,8 @@ describe("proposal related test", function () {
         const fundAddress = fundManager.getFund(funds[0]);
         const fund = await ethers.getContractAt("InkFund", fundAddress);
         
+        sleep(10000)
+
         await fundManager.tallyUpFund(funds[0]);
 
     }
@@ -316,9 +320,39 @@ describe("proposal related test", function () {
     }
 
 
-    async function claimPrincipal (committeeAddress:string) {
+    async function claimInvestment (fundManagerAddress:string) {
+        const signers = await ethers.getSigners();
+
+        const buyer1 = signers[0];
+
+        var fundManagerFactory = await ethers.getContractFactory("FundManager");
+        var fundManager = await fundManagerFactory.attach(fundManagerAddress);
+
+        var funds = await fundManager.getCreatedFunds();
+
+        // get fund(ucv) address to purchase the share
+        const fundAddress = fundManager.getFund(funds[0]);
+        const fund = await ethers.getContractAt("InkFund", fundAddress);
+        var certificateToken = await fund.getCertificateInfo();
+        console.log("get current investment: ", await fundManager.getCurrentInvestment(funds[0], buyer1.address))
 
 
+
+        
+        // const certificateToken = await fund.getCertificateInfo();
+        // const erc20 = await ethers.getContractAt("InkERC20", certificateToken);
+        const token = await ethers.getContractAt("IERC20", certificateToken);
+        // // console.log("certi token:", certificateToken);
+        console.log("user's certificate balance:", await token.balanceOf(buyer1.address)); 
+        await fundManager.claimFundCertificate(funds[0]);
+        console.log("user's certificate balance:", await token.balanceOf(buyer1.address)); 
+
+        console.log("eth balance: ", await buyer1.getBalance());
+
+        await token.approve(fundAddress, ethers.utils.parseEther("10000000000000"));
+        await fundManager.claimPrincipalAndProfit(funds[0]);
+
+        console.log("eth balance: ", await buyer1.getBalance());
     }
 
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
