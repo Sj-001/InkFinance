@@ -132,7 +132,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
 
-    function getAvailablePrincipal() external view returns (uint256 left) {
+    function getAvailablePrincipal() external view override returns (uint256 left) {
         return _getAvailablePrincipal();
     }
 

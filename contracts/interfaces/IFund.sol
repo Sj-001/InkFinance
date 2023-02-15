@@ -92,4 +92,7 @@ interface IFund {
 
     
     function liquidate() external;
+
+    
+    function getAvailablePrincipal() external view override returns (uint256 left); 
 }
