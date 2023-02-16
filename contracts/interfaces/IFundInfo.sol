@@ -69,8 +69,17 @@ interface IFundInfo {
         address claimToken,
         uint256 claimAmount
     );
+    
 
     event FundStart (
+        bytes32 fundID,
+        address fundAddress,
+        uint256 startTime,
+        uint256 endTime
+    );
+
+
+    event LaunchStart (
         bytes32 fundID,
         address fundAddress,
         uint256 startTime,

@@ -240,7 +240,8 @@ export function buildFundInitData(erc20Address:string, fundManager:string, riskM
 
 export function buildFundInitData2(erc20Address:string, fundManager:string, riskManager:string) {
 
-    var percentage2 = ethers.utils.parseEther("0.02");
+    var percentage2 = ethers.utils.parseEther("0.1");
+    var percentage3 = ethers.utils.parseEther("0.05");
 
 
     var fundName = "Fundname";
@@ -277,10 +278,10 @@ export function buildFundInitData2(erc20Address:string, fundManager:string, risk
     
 
     var fixedFee = percentage2;
-    var fixedFeeShouldGoToTreasury = 1;
+    var fixedFeeShouldGoToTreasury = percentage3;
 
     var performanceFee = percentage2;
-    var performanceFeeShouldGoToTreasury = 1;
+    var performanceFeeShouldGoToTreasury = percentage3;
     
 
     var fundManagers = [];
@@ -313,7 +314,7 @@ export function buildFundInitData2(erc20Address:string, fundManager:string, risk
         "requireClientBiometricIdentity" : requireClientBiometricIdentity,
         "requireClientLegalIdentity" : requireClientLegalIdentity,
         "fixedFee" : fixedFee,
-        "fixedFeeShouldGoToTreasury" : fixedFeeShouldGoToTreasury,
+        "fixedFeeShouldGoToTreasury" : percentage3,
         "performanceFee" : performanceFee,
         "performanceFeeShouldGoToTreasury" : performanceFeeShouldGoToTreasury,
         "fundManagers" : fundManagers,

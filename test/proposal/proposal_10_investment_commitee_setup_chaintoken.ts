@@ -336,8 +336,6 @@ describe("proposal related test", function () {
         var certificateToken = await fund.getCertificateInfo();
         console.log("get current investment: ", await fundManager.getCurrentInvestment(funds[0], buyer1.address))
 
-
-
         
         // const certificateToken = await fund.getCertificateInfo();
         // const erc20 = await ethers.getContractAt("InkERC20", certificateToken);
@@ -346,6 +344,7 @@ describe("proposal related test", function () {
         console.log("user's certificate balance:", await token.balanceOf(buyer1.address)); 
         await fundManager.claimFundCertificate(funds[0]);
         console.log("user's certificate balance:", await token.balanceOf(buyer1.address)); 
+        console.log("user's certificate claimable:", await fundManager.getFundCertificate(funds[0], buyer1.address)); 
 
         console.log("eth balance: ", await buyer1.getBalance());
 
@@ -353,6 +352,7 @@ describe("proposal related test", function () {
         await fundManager.claimPrincipalAndProfit(funds[0]);
 
         console.log("eth balance: ", await buyer1.getBalance());
+        console.log("current investment available to claim: ", await fundManager.getCurrentInvestment(funds[0], buyer1.address));
     }
 
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {

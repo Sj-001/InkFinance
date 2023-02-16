@@ -8,6 +8,8 @@ import "../interfaces/IIdentity.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice IdenetityManager is used to verify the account.
 contract IdentityManager is IIdentity {
+
+
     function supportsInterface(bytes4 interfaceId)
         public
         view
@@ -19,7 +21,9 @@ contract IdentityManager is IIdentity {
     }
 
     /// @inheritdoc IIdentity
-    function batchSetUserKVs(UserKV[] memory kvs) external override {}
+    function batchSetUserKVs(UserKV[] memory kvs) external override {
+        
+    }
 
     /// @inheritdoc IIdentity
     function getUserKV(address zone, bytes32 key)

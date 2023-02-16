@@ -14,7 +14,7 @@ interface IFund {
     /// could start to using raised fund to invest
     /// meanwhile generate share tokens for claim
     /// Only FunderManager could run this
-    function startFund() external;
+    function startFund(address treasury) external;
 
     /// @dev get launch status
     /// @return status 0=not launched yet 1=launching 2=launch finished(time is over)
@@ -46,7 +46,7 @@ interface IFund {
 
 
     /// @dev fund manager ask to pay for the fixed fee
-    function transferFixedFeeToUCV(address treasuryUCV) external;
+    // function transferFixedFeeToUCV(address treasuryUCV) external;
 
     function getLaunchTime() external view returns(uint256 start, uint256 end);
 
@@ -95,4 +95,6 @@ interface IFund {
 
 
     function getAvailablePrincipal() external view returns (uint256 left); 
+    
+    function getAdminServiceBalance() external view returns(uint256 fee);
 }

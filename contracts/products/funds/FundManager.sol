@@ -321,10 +321,12 @@ contract FundManager is IFundManager, BaseUCVManager {
     function startFund(bytes32 fundID) external override {
         // authrized
         require(_isCommitteeOperator(0, msg.sender) , "The user is not authorized");
-
-        IFund(_funds[fundID]).startFund();
+        
         address treasuryUCV = IDAO(_dao).getUCV();
-        IFund(_funds[fundID]).transferFixedFeeToUCV(treasuryUCV);
+
+        IFund(_funds[fundID]).startFund(treasuryUCV);
+
+        // IFund(_funds[fundID]).transferFixedFeeToUCV(treasuryUCV);
 
     }
 

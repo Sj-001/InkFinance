@@ -71,6 +71,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     bool private _isLiqudating = false;
 
+    uint256 private _serviceFee = 0;
 
 
     // when make distribution, certain amount of token should be frozened
@@ -97,9 +98,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _fundID = fundID;
         _fund = fundInitData;
 
-
-
-        emit FundStatusUpdated(_fundID, 1,  0, 0, block.timestamp);
+        emit FundStatusUpdated(_fundID, 1, 0, 0, block.timestamp);
 
         return callbackEvent;
     }
@@ -112,8 +111,9 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
         _launchStatus = 1;
         _startRaisingDate = block.timestamp;
-
-        emit FundStatusUpdated(_fundID, 1,  0, _launchStatus, block.timestamp);
+        
+        emit LaunchStart(_fundID,  address(this),  _startRaisingDate,  _startFundDate + _fund.raisedPeriod);
+        // emit FundStatusUpdated(_fundID, 1,  0, _launchStatus, block.timestamp);
         emit FundStatusUpdated(_fundID, 2,  0, 0, block.timestamp);
     }
 
@@ -347,7 +347,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
     /// @inheritdoc IFund
-    function startFund() external override {
+    function startFund(address treasury) external override {
 
 
         uint256 fundStatus = _getFundStatus();
@@ -370,6 +370,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
             _startFundDate = block.timestamp;
 
+
             if (_fund.allowFundTokenized == 1) {
                 if (_fund.allowIntermittentDistributions == 1) {
                     // ERC3525
@@ -378,6 +379,12 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                     _issueCertifcate();
                 }
             }
+
+
+            // 
+
+            takeFixedFee(treasury);
+
 
             emit FundStart(_fundID, address(this), _startFundDate, _startFundDate + _fund.durationOfFund);
 
@@ -472,18 +479,43 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         currentRaised = _totalRaised;
     }
 
-    /// @inheritdoc IFund
-    function transferFixedFeeToUCV(address treasuryUCV) external override {
 
-        if (_fund.fixedFeeShouldGoToTreasury == 1 && _fixedFeeTransferTime == 0 && treasuryUCV != address(0)) {
-            // uint256 taxFee = _totalRaised * tax / 100;
-            uint256 value = _fund.fixedFee * _totalRaised / 100;
-            _transferTo(treasuryUCV, _fund.fundToken, 20, 0, value, "");
-            _fixedFeeTransferTime = block.timestamp;
-            _fundAvailablePrincipal -= value;
+    function takeFixedFee(address treasuryUCV) internal { 
+
+        require(_fixedFeeTransferTime == 0, "Fee already taked");
+        uint8 decimal = _getTokenDecimal(_fund.fundToken);
+        uint256 fixedFee = _fund.fixedFee * _totalRaised / (1 * 10 ** decimal);
+
+        console.log("total:", _totalRaised);
+
+        _frozened = _frozened + fixedFee;
+        if (_fund.fixedFeeShouldGoToTreasury == 0) {
+            _serviceFee += fixedFee;
+            console.log("serv1:", fixedFee);
+
+        } else {
+
+            if (treasuryUCV == address(0)) {
+                // no treasury, so keep all the fee here
+                _serviceFee += fixedFee;
+                console.log("serv2:", fixedFee);
+
+            } else {
+                
+                uint256 treasuryFee = _fund.fixedFeeShouldGoToTreasury * fixedFee / (1 * 10 ** decimal);
+                _serviceFee += (fixedFee - treasuryFee);
+                console.log("serv3:", fixedFee);
+                console.log("trea4:", treasuryFee);
+
+                _transferTo(treasuryUCV, _fund.fundToken, 20, 0, treasuryFee, "");
+                _fixedFeeTransferTime = block.timestamp;
+            }
         }
     }
 
+    function getAdminServiceBalance() external view override returns(uint256 fee) {
+        fee = _serviceFee;
+    }
 
     function liquidate() external override {
         _isLiqudating = true;
@@ -510,16 +542,20 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         console.log("issued token:", _certificate);
         uint256 value = _getAvailablePrincipal();
-        uint8 decimal = 18;
-        if (_fund.fundToken != address(0)) {
-            decimal = IERC20Metadata(_fund.fundToken).decimals();
-        }
-
+        uint8 decimal = _getTokenDecimal(_fund.fundToken);
+ 
         InkFundCertificateToken(_certificate).issue(_fund.tokenName, _fund.tokenName, decimal ,value, address(this));
         console.log("balance:", IERC20(_certificate).balanceOf(address(this)));
         
     }
 
+
+    function _getTokenDecimal(address token) internal returns(uint8 decimal) {
+        decimal = 18;
+        if (token != address(0)) {
+            decimal = IERC20Metadata(token).decimals();
+        }
+    }
 
     function getCertificateInfo() external view returns(address certificate) {
         certificate = _certificate;
