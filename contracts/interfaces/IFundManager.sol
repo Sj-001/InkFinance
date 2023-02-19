@@ -77,4 +77,6 @@ interface IFundManager is IFundInfo {
 
     function liquidateFund(bytes32 fundID) external;
 
+   function getCreatedDistributes(bytes32 fundID) external view returns(FundDistribution[] memory);
+ 
 }
