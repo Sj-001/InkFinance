@@ -20,8 +20,13 @@ contract KYCVerifyManager {
         _config = config_;
     }
 
+
+    // 0xf46B1E93aF2Bf497b07726108A539B478B31e64C
     function registerUser(bytes memory signature, bytes memory signData) external {
         // require(_verify(signature, signData, _signer), "sign is invalid");
+        
+    
+    
     }
 
 

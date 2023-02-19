@@ -255,6 +255,10 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
 
+    function getCreatedDistributes(bytes32 fundID) external view returns(FundDistribution[] memory) {
+       return  _fundDistributions[fundID];
+    }
+
     /// @inheritdoc IFundManager
     function createFund(NewFundInfo memory fundInfo)
         external
