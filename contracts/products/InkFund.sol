@@ -112,7 +112,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _launchStatus = 1;
         _startRaisingDate = block.timestamp;
         
-        emit LaunchStart(_fundID,  address(this),  _startRaisingDate,  _startFundDate + _fund.raisedPeriod);
+        emit LaunchStart(_fundID,  address(this),  _startRaisingDate,  _startRaisingDate + _fund.raisedPeriod);
         // emit FundStatusUpdated(_fundID, 1,  0, _launchStatus, block.timestamp);
         emit FundStatusUpdated(_fundID, 2,  0, 0, block.timestamp);
     }
@@ -141,6 +141,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         // return _fundAvailablePrincipal - _frozened;
 
         if (_fund.fundToken == address(0)) {
+
             return address(this).balance - _frozened;
         } else {
             return IERC20(_fund.fundToken).balanceOf(address(this)) - _frozened;
@@ -489,18 +490,17 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         uint256 fixedFee = _fund.fixedFee * _totalRaised / (1 * 10 ** decimal);
 
         console.log("total:", _totalRaised);
-
-        _frozened = _frozened + fixedFee;
         if (_fund.fixedFeeShouldGoToTreasury == 0) {
             _serviceFee += fixedFee;
             console.log("serv1:", fixedFee);
-
+            _frozened += fixedFee;
         } else {
 
             if (treasuryUCV == address(0)) {
                 // no treasury, so keep all the fee here
                 _serviceFee += fixedFee;
                 console.log("serv2:", fixedFee);
+                _frozened += fixedFee;
 
             } else {
                 
@@ -511,6 +511,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
                 _transferTo(treasuryUCV, _fund.fundToken, 20, 0, treasuryFee, "");
                 _fixedFeeTransferTime = block.timestamp;
+                _frozened += _serviceFee;
+
             }
         }
     }
@@ -526,6 +528,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     function distribute(address owner, address token, uint256 amount) external override {
         require (_isLiqudating == false, "");
+        _frozened = _frozened - amount;
         _transferTo(owner, token, 20, 0, amount, "");
     }
 
