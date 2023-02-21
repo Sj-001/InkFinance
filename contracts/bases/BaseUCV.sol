@@ -98,17 +98,31 @@ abstract contract BaseUCV is IUCV, BaseVerify {
         address token,
         uint256 tokenType,
         uint256 tokenID,
-        uint256 value,
+        uint256 _value,
         bytes memory data
     ) internal returns (bool) {
         if (tokenType == 721) {
             IERC721(token).safeTransferFrom(address(this), to, tokenID, "");
         } else if (tokenType == 20) {
             if (token != address(0x0)) {
-                IERC20(token).transfer(to, value);
+                IERC20(token).transfer(to, _value);
                 // TransferHelper.safeTransfer(token, to, value);
             } else {
-                payable(to).transfer(value);
+
+                console.log("this balance:", address(this).balance);
+                console.log("ucv balance:", address(to).balance);
+                console.log("here");
+
+                // payable(to).transfer(_value);
+
+                payable(to).send(_value);
+
+                //  (bool success,) = to.call{value: _value}("");
+                // require(success, "Transfer failed.");
+
+                console.log("this balance:", address(this).balance);
+                console.log("ucv balance:", address(to).balance);
+            
             }
         } else {
             revert TokenTypeNotSupport(tokenType);
@@ -123,7 +137,7 @@ abstract contract BaseUCV is IUCV, BaseVerify {
                     tokenType,
                     tokenID,
                     "deposit",
-                    value,
+                    _value,
                     address(this),
                     "",
                     block.timestamp

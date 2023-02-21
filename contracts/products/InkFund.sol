@@ -207,12 +207,14 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             revert PurchaseTooMuch(_fund.maxRaise - _totalRaised, amount);
         }
 
-
         _depositeERC20(_fund.fundToken, amount);
         
         _totalRaised += amount;
+        
         // _fundShare[msg.sender] += amount;
         _originalInvested[msg.sender] += amount;
+
+
         emit FundPurchase(getDAO(), _fundID, address(this), msg.sender, block.timestamp, amount, _originalInvested[msg.sender]);
 
     }

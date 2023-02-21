@@ -11,7 +11,7 @@ import { FactoryManagerFixture, FUND_MANAGER_KEY, InkERC20Fixture } from '../sha
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
 import { INVESTMENT_COMMITTEE_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
 import { FactoryTypeID, DAOTypeID, AgentTypeID, CommitteeTypeID } from '../shared/fixtures'; 
-import { buildFundInitData2, buildFundInitData, buildMasterDAOInitData, buildInvestmentSetupProposal } from '../shared/parameters'; 
+import { buildTreasurySetupProposal, buildFundInitData2, buildFundInitData, buildMasterDAOInitData, buildInvestmentSetupProposal } from '../shared/parameters'; 
 
 const { expect } = chai;
 import {defaultAbiCoder} from '@ethersproject/abi';
@@ -39,6 +39,37 @@ describe("proposal related test", function () {
         var masterDAO = masterDAOFactory.attach(firstDAOAddress);
         console.log("dao address:", masterDAO.address);
         // select one flow of the DAO
+
+
+
+        var proposalT = buildTreasurySetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address);
+        proposalT.metadata[3] = {
+            "key":  "Expiration",
+            "typeID": keccak256(toUtf8Bytes("type.UINT256")),
+            "data":  web3.eth.abi.encodeParameter("uint256", 2),
+            "desc":  "0x0002",
+        };
+        // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
+        
+        var theBoardAddress = await masterDAO.getDeployedContractByKey("0x9386c0f239c958604010fb0d19f447c347da25b93a863f07e6c4a1a5eca03672");
+        var theBoardFactory = await ethers.getContractFactory("TheBoard");
+        // var theBoard = theBoardFactory.attach(flowSteps[0].committee);
+        var theBoard = theBoardFactory.attach(theBoardAddress);
+
+        await theBoard.newProposal(proposalT, true, "0x00");
+
+
+        var proposalID = await masterDAO.getProposalIDByIndex(0);
+    
+        console.log("first proposal id: ", proposalID);
+        await voteProposalByTheBoard(await masterDAO.address, proposalID);
+
+        // once decide, 
+        await tallyVotesByTheBoard(await masterDAO.address,  proposalID);
+
+
+        
+
 
         var proposal = buildInvestmentSetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address, signers[0].address);
 
@@ -68,10 +99,9 @@ describe("proposal related test", function () {
 
         console.log("committee infos:", await masterDAO.getDAOCommittees());
 
-        var proposalID = await masterDAO.getProposalIDByIndex(0);
+        var proposalID = await masterDAO.getProposalIDByIndex(1);
         
         console.log("proposal flow:", await masterDAO.getProposalFlow(proposalID))
-
 
         await voteProposalByTheBoard(await masterDAO.address, proposalID);
 
@@ -356,20 +386,28 @@ describe("proposal related test", function () {
     }
 
     async function voteProposalByThePublic(daoAddress:string, proposalID:string) {
+        
         const signers = await ethers.getSigners();
+
+        const denySigner = signers[1];
+
         console.log("voteProposalByThePublic proposalID", proposalID);
 
         var masterDAOFactory = await ethers.getContractFactory("MasterDAO");
         var masterDAO = await masterDAOFactory.attach(daoAddress);
+        var committeeInfo = await masterDAO.getNextVoteCommitteeInfo(proposalID);
+        console.log("voteProposalByThePublic vote committee info:", await committeeInfo);
+        // var theVoteCommitteeFactory = await ethers.getContractFactory("TheBoard");
+        // var theVoteCommittee = await theVoteCommitteeFactory.attach(committeeInfo.committee);
+        const theVoteCommittee = await ethers.getContractAt("ICommittee", committeeInfo.committee);
+        var voteIdentity = {"proposalID":proposalID, "step": committeeInfo.step};
 
-        var thePublicAddress = await masterDAO.getDeployedContractByKey(THE_PUBLIC_COMMITTEE_KEY);
 
-        console.log("voteProposalByThePublic vote committee info:", await thePublicAddress);
 
-        const theVoteCommittee = await ethers.getContractAt("ThePublic", thePublicAddress);
-        var voteIdentity = {"proposalID":proposalID, "step": "0x0000000000000000000000000000000000000000000000000000000000000000"};
+        console.log("vote committee address:", committeeInfo.committee);
         
-        await theVoteCommittee.connect(signers[1]).vote(voteIdentity, true, 1000, "", "0x00");
+        await theVoteCommittee.connect(signers[2]).vote(voteIdentity, true, 51, "", "0x00");
+        await theVoteCommittee.connect(denySigner).vote(voteIdentity, false, 50, "", "0x00");
 
     }
 

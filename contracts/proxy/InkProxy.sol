@@ -22,6 +22,12 @@ contract InkProxy is Proxy {
         return _getBeacon();
     }
 
+    // receive() external override payable {
+    //     // emit ChainTokenDeposited(msg.sender, msg.value);
+
+    //     // console.log("receive eth");
+    // }
+
     function updateBeacon(address beacon, bytes memory data)
         external
         isProxyAdmin

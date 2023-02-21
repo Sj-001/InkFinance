@@ -39,6 +39,7 @@ contract FundManager is IFundManager, BaseUCVManager {
     /// @dev fundID->Fund address
     mapping(bytes32 => address) private _funds;
 
+
     address private _factoryManager;
     bytes32 private _setupProposalID;
 
@@ -323,6 +324,10 @@ contract FundManager is IFundManager, BaseUCVManager {
         require(_isCommitteeOperator(0, msg.sender) , "The user is not authorized");
         
         address treasuryUCV = IDAO(_dao).getUCV();
+
+        // treasuryUCV = address(this);
+
+        console.log("treasury ucv:", treasuryUCV);
 
         IFund(_funds[fundID]).startFund(treasuryUCV);
 
