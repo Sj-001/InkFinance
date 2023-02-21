@@ -34,6 +34,8 @@ import * as InvestmentUCVManagerABI from "../../artifacts/contracts/ucv/Investme
 import * as InvestmentUCVABI from "../../artifacts/contracts/ucv/InvestmentUCV.sol/InvestmentUCV.json";
 import * as FundManagerABI from "../../artifacts/contracts/products/funds/FundManager.sol/FundManager.json";
 import * as InkFundABI from "../../artifacts/contracts/products/InkFund.sol/InkFund.json";
+import * as KYCVerifyManagerABI from "../../artifacts/contracts/cores/KYCVerifyManager.sol/KYCVerifyManager.json";
+import * as IdentityManagerABI from "../../artifacts/contracts/cores/IdentityManager.sol/IdentityManager.json";
 
 
 const {loadFixture, deployContract} = waffle;
@@ -399,6 +401,17 @@ export async function MockNFTFixture(_wallets: Wallet[], _mockProvider: MockProv
 
     return {mockNFT};
 }
+
+
+export async function KYCVerifyFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
+
+    const signers = await ethers.getSigners();
+    const verifier = await deployContract(signers[0], KYCVerifyManagerABI, []);
+    await verifier.deployed();
+
+    return {verifier};
+}
+
 
 export async function ConfigManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
 
