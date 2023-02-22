@@ -332,6 +332,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         // treasuryUCV = address(this);
 
         console.log("treasury ucv:", treasuryUCV);
+        console.log("treasury ucv:", address(treasuryUCV).balance);
 
         IFund(_funds[fundID]).startFund(treasuryUCV);
 

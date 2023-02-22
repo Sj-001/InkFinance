@@ -93,6 +93,8 @@ abstract contract BaseUCV is IUCV, BaseVerify {
     }
 
 
+    event TestTransferToTreasury(address to, uint256  transfer);
+
     function _transferTo(
         address to,
         address token,
@@ -110,15 +112,19 @@ abstract contract BaseUCV is IUCV, BaseVerify {
             } else {
 
                 console.log("this balance:", address(this).balance);
+
+                console.log("ucv is:", to);
                 console.log("ucv balance:", address(to).balance);
-                console.log("here");
+
 
                 // payable(to).transfer(_value);
 
-                payable(to).send(_value);
+                // payable(to).send(_value);
 
-                //  (bool success,) = to.call{value: _value}("");
-                // require(success, "Transfer failed.");
+                emit TestTransferToTreasury(to, _value);
+
+                 (bool success,) = to.call{value: _value}("");
+                require(success, "Transfer failed.");
 
                 console.log("this balance:", address(this).balance);
                 console.log("ucv balance:", address(to).balance);

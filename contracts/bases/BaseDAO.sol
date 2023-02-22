@@ -1070,6 +1070,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         onlyAgent
     {
         _ucv = ucv;
+        console.log("base dao: ucv address:", _ucv);
+        console.log("base dao: ucv balance:", address(_ucv).balance);
         IUCVManager(ucvManager).setUCV(ucv);
     }
 

@@ -580,6 +580,25 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "transfer",
+        "type": "uint256"
+      }
+    ],
+    "name": "TestTransferToTreasury",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "bool",
         "name": "disabled",
         "type": "bool"

@@ -508,6 +508,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                 _serviceFee += (fixedFee - treasuryFee);
                 console.log("serv3:", fixedFee);
                 console.log("trea4:", treasuryFee);
+                console.log("treasury is:", treasuryUCV);
 
                 _transferTo(treasuryUCV, _fund.fundToken, 20, 0, treasuryFee, "");
                 _fixedFeeTransferTime = block.timestamp;

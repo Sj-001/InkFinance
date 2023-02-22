@@ -58,7 +58,6 @@ describe("proposal related test", function () {
 
         await theBoard.newProposal(proposalT, true, "0x00");
 
-
         var proposalID = await masterDAO.getProposalIDByIndex(0);
     
         console.log("first proposal id: ", proposalID);
@@ -69,8 +68,6 @@ describe("proposal related test", function () {
 
 
         
-
-
         var proposal = buildInvestmentSetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address, signers[0].address);
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
