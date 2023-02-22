@@ -111,10 +111,10 @@ abstract contract BaseUCV is IUCV, BaseVerify {
                 // TransferHelper.safeTransfer(token, to, value);
             } else {
 
-                console.log("this balance:", address(this).balance);
+                // console.log("this balance:", address(this).balance);
 
-                console.log("ucv is:", to);
-                console.log("ucv balance:", address(to).balance);
+                // console.log("ucv is:", to);
+                // console.log("ucv balance:", address(to).balance);
 
 
                 // payable(to).transfer(_value);
@@ -126,8 +126,8 @@ abstract contract BaseUCV is IUCV, BaseVerify {
                  (bool success,) = to.call{value: _value}("");
                 require(success, "Transfer failed.");
 
-                console.log("this balance:", address(this).balance);
-                console.log("ucv balance:", address(to).balance);
+                // console.log("this balance:", address(this).balance);
+                // console.log("ucv balance:", address(to).balance);
             
             }
         } else {

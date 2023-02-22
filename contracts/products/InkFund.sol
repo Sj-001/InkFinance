@@ -407,7 +407,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
         uint256 status = _getFundStatus();
         require (status == 3, "Only started fund could tally up");
-        // require (_startFundDate + _fund.durationOfFund >= block.timestamp, "");
+        require (block.timestamp >= _startFundDate + _fund.durationOfFund, "Need to wait until investment period finished");
         _fundStatus = 9;
         emit FundStatusUpdated(_fundID, 2, status, _fundStatus, block.timestamp);
         _confirmedProfit = _getAvailablePrincipal();
