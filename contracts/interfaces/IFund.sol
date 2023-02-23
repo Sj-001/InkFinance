@@ -93,6 +93,7 @@ interface IFund {
     
     function liquidate() external;
 
+    function isLiquidate() external view returns(bool);
 
     function getAvailablePrincipal() external view returns (uint256 left); 
     

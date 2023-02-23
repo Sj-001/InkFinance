@@ -35,6 +35,7 @@ error CertificatedClaimed();
 contract InkFund is IFundInfo, IFund, BaseUCV {
 
     using EnumerableSet for EnumerableSet.UintSet;
+
     using Address for address;
 
     /// how many token raised;
@@ -130,6 +131,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     function frozen(uint256 amount) external override enableToExecute {
         _frozened += amount;
     }
+
+    function isLiquidate() external view override returns(bool){
+        return _isLiqudating;
+    }
+
 
 
     function getAvailablePrincipal() external view override returns (uint256 left) {

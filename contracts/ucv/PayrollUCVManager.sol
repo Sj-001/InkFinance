@@ -70,8 +70,8 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             return payIDs;
         }
 
-        console.log("scheduleID", scheduleID);
-        console.log("block.timestamp", block.timestamp);
+        // console.log("scheduleID", scheduleID);
+        // console.log("block.timestamp", block.timestamp);
 
         uint256 latestID = getLatestPayID(scheduleID, block.timestamp);
 
@@ -300,9 +300,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             // make sure it's contract
 
             // console.log("payee:", payee);
-            if (!IUCV(payee).supportsInterface(type(IUCV).interfaceId)) {
-                revert PayeeNotUCVContract(payee);
-            }
+            require(IUCV(payee).supportsInterface(type(IUCV).interfaceId), "Target address is not UCV");
         }
     }
 
