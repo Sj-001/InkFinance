@@ -307,11 +307,12 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
     /// @inheritdoc IPayrollManager
     function signPayID(uint256 scheduleID, uint256 payID) external override {
         _checkAvailableToSign(scheduleID, payID, msg.sender);
+
         PayrollSchedule storage sc = _schedules[scheduleID];
+
         sc.paymentSigns[payID][msg.sender] = block.timestamp;
 
         _checkDirectPay(scheduleID);
-
 
         bool isLastSigner = _isPayIDSigned(scheduleID, payID);
         
