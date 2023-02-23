@@ -78,7 +78,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         }
 
 
-        
     }
 
     function _checkCommitteeMemberExist(string memory roleKey, address operator) internal view returns(bool exist) {
@@ -309,7 +308,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         returns (uint256 status)
     {
 
-
         status = IFund(_funds[fundID]).getLaunchStatus();
     }
 
@@ -482,6 +480,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         bytes32 contractKey,
         bytes memory initData
     ) internal returns (address deployedAddress) {
+
         bytes memory deployCall = abi.encodeWithSignature(
             "deploy(bool,bytes32,bytes32,bytes)",
             true,
@@ -495,12 +494,9 @@ contract FundManager is IFundManager, BaseUCVManager {
 
         // bool _success = true;
         if (_success) {
-
             // revert SucceedButRevert(_returnedBytes);
             deployedAddress = turnBytesToAddress(_returnedBytes);
-
         } else {
-
             revert DeployFailuer(contractKey);
         }
     }
