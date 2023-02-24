@@ -204,20 +204,15 @@ contract FundManager is IFundManager, BaseUCVManager {
         }
     }
 
-
-    function claimDistribution(bytes32 fundID) external {
-
+    function _claimDistribution(bytes32 fundID) internal {
         address claimer = msg.sender;
         uint256 currentTokenDistribution = _getClaimableDistributionAmount(fundID, claimer);
         if (currentTokenDistribution > 0) {
-                
             // if (_distributionClaimed[distributionID][msg.sender] > 0) {
             //     revert DistributionAlreadyClaimedBefore(distributionID);
             // }
-            
             address distributeToken = address(0);
             bytes32 lastDistributionID = bytes32(0);
-
             for(uint256 i=0;i <_fundDistributions[fundID].length; i++) {
                 if (_distributionClaimed[_fundDistributions[fundID][i].distributionID][claimer] == 0){
                     _distributionClaimed[_fundDistributions[fundID][i].distributionID][claimer] = block.timestamp;
@@ -228,18 +223,15 @@ contract FundManager is IFundManager, BaseUCVManager {
 
                 }
             }
-
-
-
             IFund(_funds[fundID]).distribute(claimer, distributeToken, currentTokenDistribution);
-
             // emit last claim distributionID
             emit DistributionClaimed(fundID, _funds[fundID], claimer, block.timestamp, lastDistributionID, distributeToken, currentTokenDistribution);
-
-
-
         }
-        
+    }
+
+
+    function claimDistribution(bytes32 fundID) external {
+        _claimDistribution(fundID);
     }
 
 
@@ -265,14 +257,11 @@ contract FundManager is IFundManager, BaseUCVManager {
         override
         returns (address ucvAddress)
     {
-
         // authrized
         // if (!_isCommitteeOperator(1, msg.sender)){
         //     revert TheMemberIsNotAuthorized(msg.sender);
         // }
 
-        console.log("fund token:", fundInfo.fundToken);
-        
         require(_isCommitteeOperator(0, msg.sender) , "The user is not authorized");
 
         bytes32 fundID = _newID();
@@ -408,6 +397,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         uint256 status = IFund(_funds[fundID]).getFundStatus();
         if (status == 1) {
             IFund(_funds[fundID]).claimInvestment(msg.sender);
+            _claimDistribution(fundID);
         } else {
 
             revert TheFundCanNotWithdrawPrincipalNow();
@@ -420,6 +410,7 @@ contract FundManager is IFundManager, BaseUCVManager {
         uint256 status = IFund(_funds[fundID]).getFundStatus();
         if (status == 9) {
             IFund(_funds[fundID]).claimInvestment(msg.sender);
+            _claimDistribution(fundID);
         } else {
             revert TheFundNeedToTallyUp();
         }
