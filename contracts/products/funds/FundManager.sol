@@ -257,10 +257,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         override
         returns (address ucvAddress)
     {
-        // authrized
-        // if (!_isCommitteeOperator(1, msg.sender)){
-        //     revert TheMemberIsNotAuthorized(msg.sender);
-        // }
 
         require(_isCommitteeOperator(0, msg.sender) , "The user is not authorized");
 
