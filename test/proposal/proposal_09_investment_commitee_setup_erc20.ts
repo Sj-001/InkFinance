@@ -119,9 +119,13 @@ describe("proposal related test", function () {
         // // // user could claim principal and profit
         await tallyUp(fundManagerAddress);
 
+        // await claimin
         // await voteAndInvestTheFund();
         
         // await withdrawPrincipal()
+
+
+        await claimInvestment(fundManagerAddress)
 
 
     });
@@ -299,17 +303,15 @@ describe("proposal related test", function () {
         const fundAddress = fundManager.getFund(funds[0]);
         const fund = await ethers.getContractAt("InkFund", fundAddress);
         
-
-
         const certificateToken = await fund.getCertificateInfo();
         const erc20 = await ethers.getContractAt("InkERC20", certificateToken);
         // const token = await ethers.getContractAt("IERC20", certificateToken);
         
         // console.log("certi token:", certificateToken);
         // console.log("balance:", token.balanceOf(fundAddress));        
-        await fundManager.claimFundShare(funds[0]);
+        await fundManager.claimFundCertificate(funds[0]);
 
-        console.log("after claim balance:", await erc20.balanceOf(buyer1.address))
+        console.log("certificate =:", await erc20.balanceOf(buyer1.address))
 
 
         
@@ -432,5 +434,46 @@ describe("proposal related test", function () {
         await theVoteCommittee.tallyVotes(voteIdentity, "0x00");
         
     }
+
+
+    async function claimInvestment (fundManagerAddress:string) {
+        const signers = await ethers.getSigners();
+
+        const buyer1 = signers[0];
+
+        var fundManagerFactory = await ethers.getContractFactory("FundManager");
+        var fundManager = await fundManagerFactory.attach(fundManagerAddress);
+
+        var funds = await fundManager.getCreatedFunds();
+
+        // get fund(ucv) address to purchase the share
+        const fundAddress = fundManager.getFund(funds[0]);
+        const fund = await ethers.getContractAt("InkFund", fundAddress);
+        var certificateToken = await fund.getCertificateInfo();
+        console.log("get current investment: ", await fundManager.getCurrentInvestment(funds[0], buyer1.address))
+
+        
+        // const certificateToken = await fund.getCertificateInfo();
+        // const erc20 = await ethers.getContractAt("InkERC20", certificateToken);
+        const token = await ethers.getContractAt("IERC20", certificateToken);
+        // // console.log("certi token:", certificateToken);
+        console.log("user's certificate balance:", await token.balanceOf(buyer1.address)); 
+        await fundManager.claimFundCertificate(funds[0]);
+        console.log("user's certificate balance:", await token.balanceOf(buyer1.address)); 
+        console.log("user's certificate claimable:", await fundManager.getFundCertificate(funds[0], buyer1.address)); 
+
+        console.log("eth balance: ", await buyer1.getBalance());
+
+
+        await fundManager.liquidateFund(funds[0]);
+
+
+        await token.approve(fundAddress, ethers.utils.parseEther("10000000000000"));
+        await fundManager.claimPrincipalAndProfit(funds[0]);
+
+        console.log("eth balance: ", await buyer1.getBalance());
+        console.log("current investment available to claim: ", await fundManager.getCurrentInvestment(funds[0], buyer1.address));
+    }
+
 
 })

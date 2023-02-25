@@ -210,11 +210,11 @@ describe("proposal related test", function () {
         console.log("balance of buyer1(before):", await erc20.balanceOf(buyer1.address));
         
         console.log("claim :");
-        await fundManager.claimDistribution(funds[0]);
+        // await fundManager.claimDistribution(funds[0]);
 
-        console.log("balance of buyer1(after):", await erc20.balanceOf(buyer1.address));
+        // console.log("balance of buyer1(after):", await erc20.balanceOf(buyer1.address));
 
-        console.log("now available:", await fund.getAvailablePrincipal());
+        // console.log("now available:", await fund.getAvailablePrincipal());
     }
 
     async function launchFund (fundManagerAddress:string) {
@@ -283,7 +283,6 @@ describe("proposal related test", function () {
 
         // console.log("buyer1 share:", await fund.getShare(buyer1.address));
         // console.log("buyer2 share:", await fund.getShare(buyer2.address));
-
 
         await sleep(10000);
 
@@ -387,6 +386,10 @@ describe("proposal related test", function () {
         console.log("user's certificate claimable:", await fundManager.getFundCertificate(funds[0], buyer1.address)); 
 
         console.log("eth balance: ", await buyer1.getBalance());
+
+
+        await fundManager.liquidateFund(funds[0]);
+
 
         await token.approve(fundAddress, ethers.utils.parseEther("10000000000000"));
         await fundManager.claimPrincipalAndProfit(funds[0]);

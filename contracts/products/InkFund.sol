@@ -282,7 +282,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     function claimCertificate(address investor) external override {
         if (_certificateClaimed[investor] > 0) {
-            revert CertificatedClaimed();
+            // revert CertificatedClaimed();
+            return;
         }
         uint256 certificates = _getClaimableCertificate(investor);
         _certificateClaimed[investor] = certificates;
@@ -292,42 +293,36 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     function claimInvestment(address investor) external override {
         uint256 status = _getFundStatus();
-        if (status == 1 || status == 9) {
+        require (status == 1 || status == 9, "Current fund status is wrong") ;
+        
+    
             
+        if (_certificate == address(0)) {
+            // claim directly
+            if (_investmentClaimed[investor] == 0) {
+                // claim profit and principal
+                uint256 profitAndPrincipal = _getClaimableInvestment(investor);
 
-
-            if (_certificate == address(0)) {
-                // claim directly
-                if (_investmentClaimed[investor] == 0) {
-                    // claim profit and principal
-                    uint256 profitAndPrincipal = _getClaimableInvestment(investor);
+                if (profitAndPrincipal > 0) {
                     _transferTo(investor, _fund.fundToken, 20, 0, profitAndPrincipal, "");
                     _investmentClaimed[investor] = profitAndPrincipal;
                 }
-
-            } else {
-                // claim based on tokens
-                // authorized first
-                // calculate based on how many token they have
-
-                uint256 userOwned = IERC20(_certificate).balanceOf(investor);
-
-                IERC20(_certificate).transferFrom(investor, address(this), userOwned);
-
-                uint256 claimableAmount = userOwned * _confirmedProfit / _totalRaised;
-
-                _transferTo(investor, _fund.fundToken, 20, 0, claimableAmount, "");
-
-
-
             }
 
-
         } else {
+            // claim based on tokens
+            // authorized first
+            // calculate based on how many token they have
 
-            revert CurrentFundStatusDonotSupportThisOperation(status);
-        
+            uint256 userOwned = IERC20(_certificate).balanceOf(investor);
+            IERC20(_certificate).transferFrom(investor, address(this), userOwned);
+            uint256 claimableAmount = userOwned * _confirmedProfit / _totalRaised;
+            _transferTo(investor, _fund.fundToken, 20, 0, claimableAmount, "");
         }
+
+        // } else {
+        //     revert CurrentFundStatusDonotSupportThisOperation(status);
+        // }
     }
 
 

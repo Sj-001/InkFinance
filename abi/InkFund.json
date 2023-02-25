@@ -1,22 +1,6 @@
 [
   {
     "inputs": [],
-    "name": "CertificatedClaimed",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "fundStatus",
-        "type": "uint256"
-      }
-    ],
-    "name": "CurrentFundStatusDonotSupportThisOperation",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "DepositeError",
     "type": "error"
   },
