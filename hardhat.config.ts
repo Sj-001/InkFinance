@@ -5,7 +5,7 @@ import 'hardhat-typechain'
 import '@nomiclabs/hardhat-ethers'
 
 import 'hardhat-abi-exporter';
-
+import 'hardhat-contract-sizer';
 import "@nomiclabs/hardhat-web3";
 import '@openzeppelin/hardhat-upgrades';
 
@@ -25,20 +25,42 @@ module.exports = {
     },
 
     networks: {
-        dev: {
-            url: `https://gethdev.inkfinance.xyz`,
-            accounts: ["ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"],
-                // mnemonic: `test test test test test test test test test test test junk`,
-                // private key: ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-            // },
+        dev_eth: {
+            url: process.env.DEV_ETH,
+            accounts: [process.env.DEV_ETH_PRIVATE_KEY],
             gasPrice: 10000000070,
 
-        },
-        rinkeby: {
-            url: process.env.API_URL_RINKEBY,
-            accounts: [process.env.PRIVATE_KEY_RINKEBY]
         }
-      
+        
+        
+        // ,
+        // dev_avax: {
+        //     url: process.env.DEV_AVAX_RPC,
+        //     accounts: [process.env.DEV_AVAX_KEY]
+        // }
+        // ,
+        // dev_bsc: {
+        //     url: process.env.DEV_BSC_RPC,
+        //     accounts: [process.env.DEV_BSC_KEY]
+        // }
+
+        // ,
+        // dev_polygon: {
+        //     url: process.env.DEV_POLYGON_RPC,
+        //     accounts: [process.env.DEV_POLYGON_KEY]
+        // }
+
+        // ,
+        // dev_neon: {
+        //     url: process.env.DEV_NEON_RPC,
+        //     accounts: [process.env.DEV_NEON_KEY]
+        // }
+        // ,
+        // dev_goerli: {
+        //     url: process.env.DEV_GOERLI_RPC,
+        //     accounts: [process.env.DEV_GOERLI_KEY]
+        // }
+        
     },
 
     abiExporter: {
@@ -49,6 +71,12 @@ module.exports = {
         only: [],
         spacing: 2,
         pretty: false
+    },
+    contractSizer: {
+        alphaSort: true,
+        disambiguatePaths: false,
+        runOnCompile: true,
+        strict: false,
     }
 
 

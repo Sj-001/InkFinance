@@ -1,0 +1,299 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "voteID",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "agree",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "count",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "feedback",
+        "type": "string"
+      }
+    ],
+    "name": "Vote",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "proposalID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct IVoteHandler.VoteIdentity",
+        "name": "identity",
+        "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "voteUser",
+        "type": "address"
+      }
+    ],
+    "name": "allowToVote",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "allowToVote",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "proposalID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct IVoteHandler.VoteIdentity",
+        "name": "identity",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bool",
+        "name": "agreeOrDisagreeOption",
+        "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "startVoter",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pageSize",
+        "type": "uint256"
+      }
+    ],
+    "name": "getVoteDetail",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "voter",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "count",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IVoteHandler.MemberVoteInfo[]",
+        "name": "voteDetails",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "proposalID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct IVoteHandler.VoteIdentity",
+        "name": "identity",
+        "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getVoteDetailByAccount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "agreeVotes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "denyVotes",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "proposalID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct IVoteHandler.VoteIdentity",
+        "name": "identity",
+        "type": "tuple"
+      }
+    ],
+    "name": "getVoteSummary",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum IVoteHandler.VoteStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bytes32",
+                "name": "proposalID",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "step",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct IVoteHandler.VoteIdentity",
+            "name": "identity",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalVotes",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "agreeVotes",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "agreeVoterNum",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "denyVotes",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "denyVoterNum",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IVoteHandler.VoteInfo",
+        "name": "result",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "proposalID",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "step",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct IVoteHandler.VoteIdentity",
+        "name": "identity",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bool",
+        "name": "agree",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "count",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "feedback",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "vote",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
