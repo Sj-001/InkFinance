@@ -63,7 +63,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     mapping(address => uint256) private _investmentClaimed;
 
     mapping(address => uint256) private _certificateClaimed;
-
+    
     address private _certificate;
 
     uint256 private _confirmedProfit = 0;

@@ -23,6 +23,8 @@ error DistributionAlreadyClaimedBefore(bytes32 distributionID);
 
 error TheMemberIsNotAuthorized(address member);
 
+
+
 contract FundManager is IFundManager, BaseUCVManager {
 
     // using Strings for uint256;
@@ -393,9 +395,8 @@ contract FundManager is IFundManager, BaseUCVManager {
         uint256 status = IFund(_funds[fundID]).getFundStatus();
         if (status == 1) {
             IFund(_funds[fundID]).claimInvestment(msg.sender);
-            _claimDistribution(fundID);
-        } else {
 
+        } else {
             revert TheFundCanNotWithdrawPrincipalNow();
         }
     }
