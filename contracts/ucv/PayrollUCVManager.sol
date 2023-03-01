@@ -300,7 +300,10 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             // make sure it's contract
 
             // console.log("payee:", payee);
-            require(IUCV(payee).supportsInterface(type(IUCV).interfaceId), "Target address is not UCV");
+            require(
+                IUCV(payee).supportsInterface(type(IUCV).interfaceId),
+                "Target address is not UCV"
+            );
         }
     }
 
@@ -315,10 +318,17 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         _checkDirectPay(scheduleID);
 
         bool isLastSigner = _isPayIDSigned(scheduleID, payID);
-        
+
         uint256 lastSignerFlag = isLastSigner == true ? 1 : 0;
 
-        emit PayrollSign(_dao, scheduleID, payID, msg.sender, block.timestamp, lastSignerFlag);
+        emit PayrollSign(
+            _dao,
+            scheduleID,
+            payID,
+            msg.sender,
+            block.timestamp,
+            lastSignerFlag
+        );
     }
 
     function _checkDirectPay(uint256 scheduleID) internal {

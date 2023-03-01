@@ -24,14 +24,14 @@ contract InkERC20 is Context, IERC20, IERC20Metadata, Initializable {
 
     uint8 private _decimal;
 
-    function init(string memory name_, string memory symbol_, uint8 decimal_)
-        public
-        initializer
-    {
+    function init(
+        string memory name_,
+        string memory symbol_,
+        uint8 decimal_
+    ) public initializer {
         _name = name_;
         _symbol = symbol_;
         _decimal = decimal_;
-
     }
 
     function mintTo(address target, uint256 amount) public virtual {

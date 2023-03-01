@@ -68,9 +68,9 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             data,
             (string, bytes)
         );
-        
+
         _committeeName = name;
-        
+
         bytes32[] memory dutyArray = abi.decode(duties, (bytes32[]));
         for (uint256 i = 0; i < dutyArray.length; i++) {
             _committeeDuties.add(dutyArray[i]);

@@ -62,7 +62,7 @@ interface IDAO is
     /// @dev after ucv manager created, call this method set ucv's manager
     function setupUCV(address ucv, address ucvManager) external;
 
-    function getUCV() external view returns(address ucv);
+    function getUCV() external view returns (address ucv);
 
     /// @dev get flow steps
     function getFlowSteps(bytes32 flowID)

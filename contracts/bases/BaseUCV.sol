@@ -92,8 +92,7 @@ abstract contract BaseUCV is IUCV, BaseVerify {
         return _transferTo(to, token, tokenType, tokenID, value, data);
     }
 
-
-    event TestTransferToTreasury(address to, uint256  transfer);
+    event TestTransferToTreasury(address to, uint256 transfer);
 
     function _transferTo(
         address to,
@@ -110,12 +109,10 @@ abstract contract BaseUCV is IUCV, BaseVerify {
                 IERC20(token).transfer(to, _value);
                 // TransferHelper.safeTransfer(token, to, value);
             } else {
-
                 // console.log("this balance:", address(this).balance);
 
                 // console.log("ucv is:", to);
                 // console.log("ucv balance:", address(to).balance);
-
 
                 // payable(to).transfer(_value);
 
@@ -123,12 +120,11 @@ abstract contract BaseUCV is IUCV, BaseVerify {
 
                 emit TestTransferToTreasury(to, _value);
 
-                 (bool success,) = to.call{value: _value}("");
+                (bool success, ) = to.call{value: _value}("");
                 require(success, "Transfer failed.");
 
                 // console.log("this balance:", address(this).balance);
                 // console.log("ucv balance:", address(to).balance);
-            
             }
         } else {
             revert TokenTypeNotSupport(tokenType);
@@ -154,15 +150,12 @@ abstract contract BaseUCV is IUCV, BaseVerify {
         return true;
     }
 
-
-    function getDAO() internal view returns(address dao) {
+    function getDAO() internal view returns (address dao) {
         dao = _dao;
     }
 
     function _depositeERC20(address token, uint256 amount) internal {
         if (token == address(0)) {
-        
-
             if (amount != msg.value) {
                 revert DepositeError();
             }

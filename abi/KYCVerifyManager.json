@@ -2,36 +2,54 @@
   {
     "inputs": [
       {
-        "internalType": "bytes1",
-        "name": "b",
-        "type": "bytes1"
-      }
-    ],
-    "name": "char",
-    "outputs": [
-      {
-        "internalType": "bytes1",
-        "name": "c",
-        "type": "bytes1"
+        "internalType": "address",
+        "name": "signer_",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
-    "type": "function"
+    "type": "constructor"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
         "internalType": "string",
-        "name": "cont",
+        "name": "issuer",
         "type": "string"
       },
       {
-        "internalType": "bytes",
-        "name": "sig",
-        "type": "bytes"
+        "indexed": false,
+        "internalType": "address",
+        "name": "userWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "accountType",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "account",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "data",
+        "type": "string"
       }
     ],
-    "name": "ecrecovery",
+    "name": "KYCVerified",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "_signer",
     "outputs": [
       {
         "internalType": "address",
@@ -43,11 +61,55 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getIdentityManager",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "identityManager",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getSigner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "signer",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "identityManager_",
+        "type": "address"
+      }
+    ],
+    "name": "updateIdentityManager",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes",
-        "name": "signature_",
+        "name": "signature",
         "type": "bytes"
+      },
+      {
+        "internalType": "string",
+        "name": "zone",
+        "type": "string"
       },
       {
         "internalType": "string",
@@ -58,29 +120,20 @@
         "internalType": "string",
         "name": "account",
         "type": "string"
-      }
-    ],
-    "name": "registerUser",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
+      {
+        "internalType": "string",
+        "name": "data",
+        "type": "string"
+      },
       {
         "internalType": "address",
-        "name": "x",
+        "name": "testWallet",
         "type": "address"
       }
     ],
-    "name": "toAsciiString",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
+    "name": "verifyUser",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   }

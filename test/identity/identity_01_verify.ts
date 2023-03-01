@@ -36,14 +36,30 @@ describe("identity test", function () {
         const signers = await ethers.getSigners();
         const {verifier} = await loadFixture(KYCVerifyFixture); 
         
-
-        var sign = "0x82382ca884db8f0239240aaa1c4596d55e6c9585fb4cc51bdcea069baaefe71364eacea15c9f51793a5a36f8d25edee434f67df78bca1d9bbb28d72411bce8b41b";
-        var type = "twitter"
-        var accountID = "A1"
-        // var eoa = ""
-
-        await verifier.registerUser(sign, type, accountID);
+        const buyer1 = signers[0];
+        // var sign1 = "0x82382ca884db8f0239240aaa1c4596d55e6c9585fb4cc51bdcea069baaefe71364eacea15c9f51793a5a36f8d25edee434f67df78bca1d9bbb28d72411bce8b41b";
+        // var type1 = "twitter"
+        // var accountID1 = "A1"
+        // var wallet = "0xBbe14Ab2F06Ef9B33DA7da789005b0CD669C7F81";
+        // await verifier.verifyUser(sign1, "", type1, accountID1, "");
         
+
+
+        
+        var sign = "0xc39a9ea67bb29fd18d4241651fc5bcdf4732b3633a8c7ab6f4af7f04efdca4c41e601c1100da058baf3f86dc1fd23357cf85b15629ca31d9a80d41652817f78f1c";
+        var zone = "INK_FINANCE_KYC"
+        var type = "twitter"
+        var accountID = "T1"
+        var data = ""
+        var wallet = "0x779a3944CFbFB32038726307E48658719efaC02f"
+
+
+        await verifier.verifyUser(sign, zone, type, accountID, data);
+
+        const identity = await ethers.getContractAt("IIdentity", await verifier.getIdentityManager());
+
+        console.log("returned", await identity.getUserKV(verifier.address, wallet, "account_info"))
+
     });
 
 })

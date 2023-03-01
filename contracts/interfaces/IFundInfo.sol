@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 interface IFundInfo {
-
     /// @dev when create a fund, fund init info structure should be orgnized and submit to FundManager
     struct NewFundInfo {
         bytes32 fundDeployKey;
@@ -35,8 +34,7 @@ interface IFundInfo {
         address[] riskManagers;
     }
 
-
-    struct DistributionInfo{
+    struct DistributionInfo {
         address token;
         uint256 amount;
     }
@@ -59,7 +57,7 @@ interface IFundInfo {
         uint256 distributionAmount
     );
     // DistributionInfo[] distributionTokens
-    
+
     event DistributionClaimed(
         bytes32 fundID,
         address fundAddress,
@@ -69,23 +67,20 @@ interface IFundInfo {
         address claimToken,
         uint256 claimAmount
     );
-    
 
-    event FundStart (
+    event FundStart(
         bytes32 fundID,
         address fundAddress,
         uint256 startTime,
         uint256 endTime
     );
 
-
-    event LaunchStart (
+    event LaunchStart(
         bytes32 fundID,
         address fundAddress,
         uint256 startTime,
         uint256 endTime
     );
-
 
     event FundCreated(
         address daoAddres,
@@ -97,7 +92,6 @@ interface IFundInfo {
         address creator,
         NewFundInfo fundInfo
     );
-
 
     event FundPurchase(
         address daoAddres,
@@ -114,7 +108,12 @@ interface IFundInfo {
     /// @param statusType 1=launch status, 2=fund status
     /// @param previousStatus previous status
     /// @param currentStatus current status
-    /// @param updateTime time 
-    event FundStatusUpdated(bytes32 fundID, uint256 statusType, uint256 previousStatus, uint256 currentStatus, uint256 updateTime);
-
+    /// @param updateTime time
+    event FundStatusUpdated(
+        bytes32 fundID,
+        uint256 statusType,
+        uint256 previousStatus,
+        uint256 currentStatus,
+        uint256 updateTime
+    );
 }

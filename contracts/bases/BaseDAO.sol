@@ -1059,8 +1059,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _setFlowStep(flow);
     }
 
-
-    function getUCV() external view override returns(address ucv) {
+    function getUCV() external view override returns (address ucv) {
         ucv = _ucv;
     }
 

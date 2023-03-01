@@ -168,9 +168,8 @@ contract TreasuryManagerAgent is BaseAgent {
             abi.encode(ucvManager)
         );
 
-
         console.log("ucv address:", ucvAddress);
-        
+
         IDAO(_dao).setupUCV(ucvAddress, ucvManager);
         _executed = true;
     }

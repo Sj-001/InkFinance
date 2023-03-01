@@ -406,8 +406,16 @@ export async function MockNFTFixture(_wallets: Wallet[], _mockProvider: MockProv
 export async function KYCVerifyFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
 
     const signers = await ethers.getSigners();
-    const verifier = await deployContract(signers[0], KYCVerifyManagerABI, []);
+
+    const verifier = await deployContract(signers[0], KYCVerifyManagerABI, ["0xf46B1E93aF2Bf497b07726108A539B478B31e64C"]);
     await verifier.deployed();
+
+
+    const identity = await deployContract(signers[0], IdentityManagerABI, [verifier.address]);
+    await identity.deployed();
+
+
+    await verifier.updateIdentityManager(identity.address);
 
     return {verifier};
 }
