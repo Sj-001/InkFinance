@@ -125,11 +125,6 @@
         "internalType": "string",
         "name": "data",
         "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "testWallet",
-        "type": "address"
       }
     ],
     "name": "verifyUser",
