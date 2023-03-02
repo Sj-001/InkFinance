@@ -301,6 +301,11 @@ contract FundManager is IFundManager, BaseUCVManager {
         _claimDistribution(fundID);
     }
 
+
+    function assignFundServiceFee(address[] memory members) external {
+
+    }
+
     function getDistributed(bytes32 fundID)
         external
         view
@@ -508,6 +513,18 @@ contract FundManager is IFundManager, BaseUCVManager {
             revert TheFundNeedToTallyUp();
         }
     }
+
+    function allocateFundServiceFee(bytes32 fundID, address[] memory members, uint256[] memory fee) external override {
+
+        require(
+            _isCommitteeOperator(0, msg.sender),
+            "The user is not authorized"
+        );
+        
+        IFund(_funds[fundID]).assignFundServiceFee(members, fee);
+    }
+
+
 
     /// @inheritdoc IFundManager
     function getFundLaunchTimeInfo(bytes32 fundID)

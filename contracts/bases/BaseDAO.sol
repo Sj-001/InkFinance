@@ -78,6 +78,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 inkBadgeKey;
         address badge;
         bytes[] committees;
+        address[] admins;
         address[] members;
     }
 
@@ -426,10 +427,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         );
 
         // initial dutyID
-        _addDuty(admin_, DutyID.DAO_ADMIN);
-        _addDuty(admin_, DutyID.PROPOSER);
-        _addDuty(admin_, DutyID.VOTER);
-
+        for (uint m = 0; m < initData.admins.length; m ++) {
+            _addDuty(initData.admins[m], DutyID.DAO_ADMIN);
+            _addDuty(initData.admins[m], DutyID.PROPOSER);
+            _addDuty(initData.admins[m], DutyID.VOTER);
+        }
 
         for (uint m = 0; m < initData.members.length; m ++) {
             _addDuty(initData.members[m], DutyID.PROPOSER);

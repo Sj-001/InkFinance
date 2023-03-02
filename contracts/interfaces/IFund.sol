@@ -117,4 +117,6 @@ interface IFund {
     function getAvailablePrincipal() external view returns (uint256 left);
 
     function getAdminServiceBalance() external view returns (uint256 fee);
+
+    function assignFundServiceFee(address[] memory members, uint256[] memory fee) external;
 }

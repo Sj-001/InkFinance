@@ -34,6 +34,9 @@ error NotSupport(uint256 roleType);
 error CertificatedClaimed();
 
 contract InkFund is IFundInfo, IFund, BaseUCV {
+
+    event FundManagementFeeDistribute(bytes32 fundID, address[] member, uint256[] fee);
+
     using EnumerableSet for EnumerableSet.UintSet;
 
     using Address for address;
@@ -55,6 +58,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     bytes32 private _fundID = bytes32(0);
 
     uint256 private _fixedFeeTransferTime = 0;
+    
     uint256 private _performanceFeeTransferTime = 0;
 
     // mapping(address => uint256) private _fundShare;
@@ -378,7 +382,31 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         // }
     }
 
-    // function withMyInvestment()
+    function assignFundServiceFee(address[] memory members, uint256[] memory fee) external override enableToExecute {
+        // calculate fee == serviceFee
+        require(members.length == fee.length, "assign data error");
+        uint256 totalAssign = 0;
+        for(uint256 i=0; i<fee.length; i++) {
+            totalAssign += fee[i];
+        }
+
+        require (totalAssign == _serviceFee, "assign fee error");
+        for(uint256 i=0; i<members.length; i++) {
+            _transferTo(
+                members[i],
+                _fund.fundToken,
+                20,
+                0,
+                fee[i],
+                ""
+            );
+        }
+
+        _frozened -= _serviceFee;
+        _serviceFee = 0;
+        
+        emit FundManagementFeeDistribute(_fundID, members, fee);
+    }
 
     /// @inheritdoc IFund
     function getFundStatus() external view override returns (uint256 status) {

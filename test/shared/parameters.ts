@@ -137,14 +137,20 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         committesInfo[0] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["The Board", THE_BOARD_COMMITTEE_KEY , theBoardCommitteeDutyIDs]);
         committesInfo[1] = web3.eth.abi.encodeParameters(["string", "bytes32", "bytes"], ["The Public", THE_PUBLIC_COMMITTEE_KEY , thePublicCommitteeDutyIDs]);
 
+        var daoAdmin = [];
+
+        daoAdmin[0] = "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"
+        daoAdmin[1] = "0xed561d037eA9fB2D9DB64639F78A0c393ab22BcF";
+
+
         var daoMembers = [];
 
         daoMembers[0] = "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"
         daoMembers[1] = "0xed561d037eA9fB2D9DB64639F78A0c393ab22BcF";
 
 
-        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[], address[])'];
-        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, "0x0000000000000000000000000000000000000000", committesInfo, daoMembers];
+        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[], address[], address[])'];
+        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, "0x0000000000000000000000000000000000000000", committesInfo, daoAdmin, daoMembers];
         var masterDAOInitialData = defaultAbiCoder.encode(tupleSting,
              [tupleData]);
         
