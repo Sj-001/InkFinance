@@ -30,8 +30,9 @@ module.exports = {
             accounts: [process.env.DEV_ETH_PRIVATE_KEY],
             gasPrice: 10000000070,
 
-        },
-        
+        }
+
+        ,
         dev_avax: {
             url: process.env.DEV_AVAX_RPC,
             accounts: [process.env.DEV_AVAX_KEY]
@@ -41,7 +42,6 @@ module.exports = {
             url: process.env.DEV_BSC_RPC,
             accounts: [process.env.DEV_BSC_KEY]
         }
-
         ,
         dev_polygon: {
             url: process.env.DEV_POLYGON_RPC,

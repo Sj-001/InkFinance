@@ -206,6 +206,10 @@ abstract contract BaseUCV is IUCV, BaseVerify {
 
     /// @inheritdoc IUCV
     function getManager() external view override returns (address ucvManager) {
+        ucvManager = _getManager();
+    }
+
+    function _getManager() internal view returns (address ucvManager) {
         ucvManager = _ucvManager;
     }
 

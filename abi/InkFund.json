@@ -807,6 +807,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "dissolve",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -1277,13 +1284,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "tallyUp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

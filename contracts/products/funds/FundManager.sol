@@ -224,6 +224,12 @@ contract FundManager is IFundManager, BaseUCVManager {
         );
     }
 
+    function getFundDistributionAmount(bytes32 fundID) external override view returns(uint256 amount) {
+        for (uint256 i = 0; i < _fundDistributions[fundID].length; i++) {
+            amount += _fundDistributions[fundID][i].amount;
+        }
+    }
+
     function _getClaimableDistributionAmount(bytes32 fundID, address investor)
         internal
         view
@@ -463,7 +469,7 @@ contract FundManager is IFundManager, BaseUCVManager {
             _isCommitteeOperator(0, msg.sender),
             "The user is not authorized"
         );
-        IFund(_funds[fundID]).tallyUp();
+        IFund(_funds[fundID]).dissolve();
     }
 
     /// @inheritdoc IFundManager

@@ -35,7 +35,7 @@ interface IFund {
     function getFundStatus() external view returns (uint256 status);
 
     /// @dev calculate the profit and transfer to the treasury
-    function tallyUp() external;
+    function dissolve() external;
 
     /// @dev get the fund raised progress
     function getRaisedInfo()

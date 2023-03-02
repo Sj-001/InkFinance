@@ -90,6 +90,9 @@ interface IFundManager is IFundInfo {
         address operator
     ) external view returns (bool authorized);
 
+
+    function getFundDistributionAmount(bytes32 fundID) external view returns(uint256 amount);
+
     function claimFundCertificate(bytes32 fundID) external;
 
     function liquidateFund(bytes32 fundID) external;

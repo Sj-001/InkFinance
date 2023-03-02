@@ -10,6 +10,7 @@ import "../bases/BaseUCV.sol";
 import "../interfaces/IUCV.sol";
 import "../interfaces/IFundInfo.sol";
 import "../interfaces/IFund.sol";
+import "../interfaces/IFundManager.sol";
 
 import "../tokens/InkFundCertificateToken.sol";
 
@@ -54,6 +55,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     bytes32 private _fundID = bytes32(0);
 
     uint256 private _fixedFeeTransferTime = 0;
+    uint256 private _performanceFeeTransferTime = 0;
 
     // mapping(address => uint256) private _fundShare;
 
@@ -73,6 +75,9 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
 
     uint256 private _serviceFee = 0;
 
+    /// @dev after dissolved, _investmentProfit represent profits(all distributions + current principal - raised - fixed management fee)
+    uint256 private _investmentProfit = 0;
+
     // when make distribution, certain amount of token should be frozened
     uint256 private _frozened = 0;
 
@@ -84,8 +89,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
         // init fund manager here
-        console.log("InkFund init called");
-
         (
             address fundManager,
             bytes32 fundID,
@@ -98,7 +101,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _fund = fundInitData;
 
         emit FundStatusUpdated(_fundID, 1, 0, 0, block.timestamp);
-
         return callbackEvent;
     }
 
@@ -145,6 +147,22 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     function isLiquidate() external view override returns (bool) {
         return _isLiqudating;
     }
+
+    /// @dev profits = all distributions + current principal - raised - fixed management fee
+    function _calculateInvestmentProfit() internal view returns (uint256 profit) {
+
+        uint256 income = IFundManager(_getManager()).getFundDistributionAmount(_fundID) + _getAvailablePrincipal();
+
+        uint256 spend = _totalRaised + _serviceFee;
+
+        if (income > spend) {
+            profit = income - spend;
+        } else {
+            profit = 0;
+        }
+
+    }
+
 
     function getAvailablePrincipal()
         external
@@ -256,23 +274,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         );
     }
 
-    // function test() external view override {
-    //     // after
-    //     uint256 totalRaised = 1000000 ether;
-    //     uint256 invested = 10000 ether;
-    //     uint256 giveaway = 80000 ether;
-    //     // uint256 decimal = 18;
-    //     // uint256 myPercentage = invested * 1e18 / totalRaised;
-    //     uint256 tax = 0.001 ether;
-    //     console.log("START TEST #####################################################################");
-    //     console.log("TotalR is:", totalRaised);
-    //     console.log("TaxFee is:", totalRaised * tax / 1e18);
-    //     console.log("Give   is:", invested * giveaway / totalRaised);
-    //     // console.log("Original  My:", (_totalRaised) * myPercentage / 100);
-    //     // console.log("After Tax My:", (_totalRaised - taxFee) * myPercentage / 100);
-    //     console.log("END TEST #####################################################################");
-
-    // }
 
     function getClaimableCertificate(address investor)
         external
@@ -458,7 +459,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
     /// @inheritdoc IFund
-    function tallyUp() external override {
+    function dissolve() external override {
         uint256 status = _getFundStatus();
         require(status == 3, "Only started fund could tally up");
         require(
@@ -473,22 +474,15 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             _fundStatus,
             block.timestamp
         );
+        // how much left
         _confirmedProfit = _getAvailablePrincipal();
-        /*
-        if (status == 3) {
-            if (_startFundDate + _fund.durationOfFund < block.timestamp) {
+        // how much earned duration the investment period
+        _investmentProfit = _calculateInvestmentProfit();
 
+        if (_investmentProfit > 0) {
 
-                revert FundInvestmentIsNotFinished(_startRaisingDate + _fund.raisedPeriod + _fund.durationOfFund, block.timestamp);
-            }
-            _fundStatus = 9;
-            // calculate the profits and calculate per voucher's value
-            // _confirmedProfit = IERC20(_fund.fundToken).balanceOf(address(this));
-            // _voucherValue = _confirmedProfit / _totalRaised;
-        
-        } else {
-            revert OnlyStartedFundCouldTallyUp(status);
-        }*/
+        }
+
     }
 
     function hasRoleSetting(uint256 roleType)
@@ -568,27 +562,23 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         currentRaised = _totalRaised;
     }
 
-    function takeFixedFee(address treasuryUCV) internal {
-        require(_fixedFeeTransferTime == 0, "Fee already taked");
-        uint8 decimal = _getTokenDecimal(_fund.fundToken);
-        uint256 fixedFee = (_fund.fixedFee * _totalRaised) / (1 * 10**decimal);
 
-        console.log("total:", _totalRaised);
-        if (_fund.fixedFeeShouldGoToTreasury == 0) {
-            _serviceFee += fixedFee;
-            console.log("serv1:", fixedFee);
-            _frozened += fixedFee;
+    function _takeFeeToTreasury(address treasuryUCV, uint256 fee, uint256 percentageToTreasury) internal {
+
+        if (percentageToTreasury == 0) {
+            _serviceFee += fee;
+            _frozened += fee;
         } else {
             if (treasuryUCV == address(0)) {
-                // no treasury, so keep all the fee here
-                _serviceFee += fixedFee;
-                console.log("serv2:", fixedFee);
-                _frozened += fixedFee;
+                _serviceFee += fee;
+                console.log("serv2:", fee);
+                _frozened += fee;
             } else {
-                uint256 treasuryFee = (_fund.fixedFeeShouldGoToTreasury *
-                    fixedFee) / (1 * 10**decimal);
-                _serviceFee += (fixedFee - treasuryFee);
-                console.log("serv3:", fixedFee);
+                uint8 decimal = _getTokenDecimal(_fund.fundToken);
+                uint256 treasuryFee = (percentageToTreasury *
+                    fee) / (1 * 10**decimal);
+                _serviceFee += (fee - treasuryFee);
+                console.log("serv3:", fee);
                 console.log("trea4:", treasuryFee);
                 console.log("treasury is:", treasuryUCV);
 
@@ -600,10 +590,37 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                     treasuryFee,
                     ""
                 );
-                _fixedFeeTransferTime = block.timestamp;
                 _frozened += _serviceFee;
             }
         }
+    }
+
+
+    function takeFixedFee(address treasuryUCV) internal {
+
+        require(_fixedFeeTransferTime == 0, "Fee already taked");
+        uint8 decimal = _getTokenDecimal(_fund.fundToken);
+        uint256 fixedFee = (_fund.fixedFee * _totalRaised) / (1 * 10**decimal);
+
+        _takeFeeToTreasury(treasuryUCV, fixedFee, _fund.fixedFeeShouldGoToTreasury);
+        _fixedFeeTransferTime = block.timestamp;
+
+    }
+
+
+    function takePerformanceFee(address treasuryUCV) internal {
+
+        require(_performanceFeeTransferTime == 0, "Fee already taked");
+        uint8 decimal = _getTokenDecimal(_fund.fundToken);
+
+        uint256 investmentProfit = _calculateInvestmentProfit();
+
+        uint256 fee = (_fund.performanceFee * investmentProfit) / (1 * 10**decimal);
+
+        _takeFeeToTreasury(treasuryUCV, fee, _fund.performanceFeeShouldGoToTreasury);
+
+        _performanceFeeTransferTime = block.timestamp;
+        
     }
 
     function getAdminServiceBalance()
