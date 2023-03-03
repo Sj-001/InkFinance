@@ -76,7 +76,9 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         var thePublicCommitteeDutyIDsByteArray = [];
         thePublicCommitteeDutyIDsByteArray[0] = "0x0000000000000000000000000000000000000000000000000000000000000000";
         var thePublicCommitteeDutyIDs = web3.eth.abi.encodeParameter("bytes32[]", thePublicCommitteeDutyIDsByteArray);
-
+        
+        var theBoardAgreeRatio = ethers.utils.parseEther("1");
+        var thePublicAgreeRatio = ethers.utils.parseEther("0.5");
         
         /* 
         struct CommitteeCreateInfo {
@@ -88,7 +90,7 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         */
         var committeeInFlowTuple = 'tuple(string, bytes32, bytes32, bytes)';
         var flow0Committees = [];
-        flow0Committees[0] = ["The Board", keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs];
+        flow0Committees[0] = ["The Board", keccak256(toUtf8Bytes("board vote")), THE_BOARD_COMMITTEE_KEY, theBoardCommitteeDutyIDs ];
 
         var flow1Committees = [];
         flow1Committees[0] = ["The Public", keccak256(toUtf8Bytes("public vote")), THE_PUBLIC_COMMITTEE_KEY, thePublicCommitteeDutyIDs];
@@ -139,18 +141,19 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
 
         var daoAdmin = [];
 
-        daoAdmin[0] = "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"
-        daoAdmin[1] = "0xed561d037eA9fB2D9DB64639F78A0c393ab22BcF";
+        daoAdmin[0] = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+        // daoAdmin[1] = "0xed561d037eA9fB2D9DB64639F78A0c393ab22BcF";
 
 
-        var daoMembers = [];
+        // var daoMembers = [""];
 
-        daoMembers[0] = "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"
-        daoMembers[1] = "0xed561d037eA9fB2D9DB64639F78A0c393ab22BcF";
+        // daoMembers[0] = "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"
+        // daoMembers[1] = "0xed561d037eA9fB2D9DB64639F78A0c393ab22BcF";
 
+        var seats = 1;
 
-        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[], address[], address[])'];
-        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, "0x0000000000000000000000000000000000000000", committesInfo, daoAdmin, daoMembers];
+        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[], address[], address[], uint256)'];
+        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, "0x0000000000000000000000000000000000000000", committesInfo, daoAdmin, [], seats];
         var masterDAOInitialData = defaultAbiCoder.encode(tupleSting,
              [tupleData]);
         

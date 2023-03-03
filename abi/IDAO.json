@@ -594,6 +594,19 @@
   },
   {
     "inputs": [],
+    "name": "getBoardProposalAgreeSeats",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "minSeats",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getDAOCommittees",
     "outputs": [
       {

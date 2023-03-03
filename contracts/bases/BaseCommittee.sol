@@ -277,19 +277,19 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
 
     function _calculateVoteResults(
         VoteIdentity memory identity,
-        bool ignoreBaseRule
+        bool ignoreBaseRule,
+        uint256 baseAgreeSeat
     ) internal returns (bool _passedOrNot) {
-        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
 
+        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
         bool agree;
-        console.log("voteInfo.agreeVoterNum", voteInfo.agreeVoterNum);
-        if (voteInfo.agreeVoterNum > voteInfo.denyVoterNum) {
+
+        if (voteInfo.agreeVoterNum >= baseAgreeSeat) {
             agree = true;
         } else {
             agree = false;
         }
 
-        console.log("agree?", agree);
         if (agree) {
             voteInfo.status = VoteStatus.AGREE;
         } else {

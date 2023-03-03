@@ -107,8 +107,11 @@ contract TheBoard is BaseCommittee {
         //     revert CannotTallyVote();
         // }
 
+        // pass seats
+        uint256 basePassSeat = IDAO(getParentDAO()).getBoardProposalAgreeSeats();
+
         // @todo verify if it's expired.
-        bool passOrNot = _calculateVoteResults(identity, true);
+        bool passOrNot = _calculateVoteResults(identity, true, basePassSeat);
 
         VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
         if (passOrNot) {

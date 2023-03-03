@@ -80,6 +80,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes[] committees;
         address[] admins;
         address[] members;
+        uint256 agreeSeatsOfTheBoard;
     }
 
     // variables ////////////////////////////////////////////////////////////////////////
@@ -124,6 +125,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     ///@dev BoardOnly=0, PublicAndBoard=1, Public Only=2
     uint256 private _defaultFlowIDIndex = 0;
 
+    uint256 private _agreeSeatsOfTheBoard = 0;
+
     address private _proposalHandlerAddress;
 
     /// @dev stored proposal
@@ -165,7 +168,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             "admin's gov not enough"
         );
         _;
-    }
+    } 
 
     modifier onlyAgent() {
         address[] memory agentAddress;
@@ -195,6 +198,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
         _;
     }
+
+    function getBoardProposalAgreeSeats() external view override returns(uint256 minSeats) {
+        minSeats = _agreeSeatsOfTheBoard;
+    }   
 
     // test functins
     function getProposalIDByIndex(uint256 index)
@@ -312,6 +319,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             uint256 minEffectiveWallets
         )
     {
+
         minAgreeRatio = 5 * 1e17;
         minEffectiveVotes = _minEffectiveVotes;
         minEffectiveWallets = _minEffectiveVoteWallets;
@@ -384,6 +392,13 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _minEffectiveVoteWallets = initData.minEffectiveVoteWallets;
         _minPledgeRequired = initData.minPledgeRequired;
         _defaultFlowIDIndex = initData.defaultFlowIDIndex;
+        _agreeSeatsOfTheBoard = initData.agreeSeatsOfTheBoard;
+
+        uint allMembers = initData.admins.length + initData.members.length;
+        require (_agreeSeatsOfTheBoard <= allMembers, "seats set error(1)");
+        require (allMembers - _agreeSeatsOfTheBoard < _agreeSeatsOfTheBoard, "seats set error(2)");
+
+
 
         (, bytes memory factoryAddressBytes) = configManager.getKV(
             initData.factoryManagerKey
@@ -391,10 +406,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _factoryAddress = factoryAddressBytes.toAddress();
 
         _setupCommittees(initData.committees);
-
-        // _metadata._init();
-        // _metadata._setBytesSlice(initData.mds);
-        // require(initData.flows.length != 0, "no flow set");
 
         for (uint256 i = 0; i < initData.flows.length; i++) {
             _setFlowStep(initData.flows[i]);
@@ -758,6 +769,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _deployCommittees(name, deployKey, dutyIDs);
     }
 
+
     //////////////////// internal
 
     function _setupCommittees(bytes[] memory committees) internal {
@@ -1090,6 +1102,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
                     committeeInfo.addressConfigKey,
                     committeeInfo.dutyIDs
                 );
+
                 steps[committeeInfo.step].committee = deployedAddress;
                 // link next committee
                 if (j < flow.committees.length - 1) {
@@ -1154,7 +1167,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _appendFinishStep(info);
         _setNextStep(info, !agree);
 
-        console.log("next committee", info.nextCommittee.committee);
+
         if (info.nextCommittee.committee == address(0x0)) {
             IProposalHandler(_proposalHandlerAddress).decideProposal(
                 info.proposalID,

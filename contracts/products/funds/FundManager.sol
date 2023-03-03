@@ -302,9 +302,6 @@ contract FundManager is IFundManager, BaseUCVManager {
     }
 
 
-    function assignFundServiceFee(address[] memory members) external {
-
-    }
 
     function getDistributed(bytes32 fundID)
         external
