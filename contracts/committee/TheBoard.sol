@@ -107,6 +107,8 @@ contract TheBoard is BaseCommittee {
         //     revert CannotTallyVote();
         // }
 
+        
+
         // pass seats
         uint256 basePassSeat = IDAO(getParentDAO()).getBoardProposalAgreeSeats();
 

@@ -1097,6 +1097,24 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getVoteRequirement",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "minIndividalVotes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxIndividalVotes",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",

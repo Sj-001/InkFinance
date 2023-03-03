@@ -81,6 +81,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         address[] admins;
         address[] members;
         uint256 agreeSeatsOfTheBoard;
+        uint256 minIndividalVotes;
+        uint256 maxIndividalVotes;
     }
 
     // variables ////////////////////////////////////////////////////////////////////////
@@ -128,6 +130,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     uint256 private _agreeSeatsOfTheBoard = 0;
 
     address private _proposalHandlerAddress;
+    uint256 private _minIndividalVotes;
+    uint256 private _maxIndividalVotes;
 
     /// @dev stored proposal
     /// proposalID=>ProposalProgress
@@ -198,6 +202,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
         _;
     }
+
+
+    function getVoteRequirement() external view override returns(uint256 minIndividalVotes, uint256 maxIndividalVotes) {
+        minIndividalVotes = _minEffectiveVotes;
+        maxIndividalVotes = _maxIndividalVotes;
+    } 
 
     function getBoardProposalAgreeSeats() external view override returns(uint256 minSeats) {
         minSeats = _agreeSeatsOfTheBoard;
@@ -393,12 +403,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _minPledgeRequired = initData.minPledgeRequired;
         _defaultFlowIDIndex = initData.defaultFlowIDIndex;
         _agreeSeatsOfTheBoard = initData.agreeSeatsOfTheBoard;
+        _minIndividalVotes = initData.minIndividalVotes;
+        _maxIndividalVotes = initData.maxIndividalVotes;
 
         uint allMembers = initData.admins.length + initData.members.length;
         require (_agreeSeatsOfTheBoard <= allMembers, "seats set error(1)");
         require (allMembers - _agreeSeatsOfTheBoard < _agreeSeatsOfTheBoard, "seats set error(2)");
-
-
 
         (, bytes memory factoryAddressBytes) = configManager.getKV(
             initData.factoryManagerKey

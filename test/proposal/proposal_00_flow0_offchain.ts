@@ -54,8 +54,6 @@ describe("proposal_00_flow0_offchain", function () {
         await theBoard.newProposal(offchainProposal, true, "0x00");
         
         var proposalID = await masterDAO.getProposalIDByIndex(0);
-
-        
         var proposalSummery = await masterDAO.getProposalSummary(proposalID);
 
         console.log(await masterDAO.getTallyVoteRules(proposalID));

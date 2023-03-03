@@ -144,16 +144,16 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         daoAdmin[0] = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
         // daoAdmin[1] = "0xed561d037eA9fB2D9DB64639F78A0c393ab22BcF";
 
-
         // var daoMembers = [""];
-
         // daoMembers[0] = "0xf46B1E93aF2Bf497b07726108A539B478B31e64C"
         // daoMembers[1] = "0xed561d037eA9fB2D9DB64639F78A0c393ab22BcF";
 
         var seats = 1;
+        var minIndividalVotes = 1;
+        var maxIndividalVotes = 100;
 
-        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[], address[], address[], uint256)'];
-        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, "0x0000000000000000000000000000000000000000", committesInfo, daoAdmin, [], seats];
+        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[], address[], address[], uint256, uint256, uint256)'];
+        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, "0x0000000000000000000000000000000000000000", committesInfo, daoAdmin, [], seats, minIndividalVotes, maxIndividalVotes];
         var masterDAOInitialData = defaultAbiCoder.encode(tupleSting,
              [tupleData]);
         
