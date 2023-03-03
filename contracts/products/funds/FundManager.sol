@@ -193,24 +193,8 @@ contract FundManager is IFundManager, BaseUCVManager {
         address token,
         uint256 amount
     ) internal returns (bool) {
-        uint256 currentTokenDistribution = 0;
-        for (uint256 i = 0; i < _fundDistributions[fundID].length; i++) {
-            currentTokenDistribution += _fundDistributions[fundID][i].amount;
-            // for(uint256 j=0;j <_fundDistributions[i].distributionTokens.length; j++) {
-            //     if (true) {
-            //         currentTokenDistribution += _fundDistributions[i].distributionTokens.amount;
-            //     }
-            // }
-        }
-        (uint256 minRaise, uint256 maxRaise, uint256 currentRaised) = IFund(
-            _funds[fundID]
-        ).getRaisedInfo();
-        // think about tax
-        if (currentRaised - currentTokenDistribution < amount) {
-            return false;
-        }
-
-        return true;
+        uint256 current = IFund(_funds[fundID]).getAvailablePrincipal();
+        return current >= amount;
     }
 
     function getClaimableDistributionAmount(bytes32 fundID, address investor)
