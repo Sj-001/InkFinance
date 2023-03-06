@@ -142,6 +142,9 @@ contract FundManager is IFundManager, BaseUCVManager {
         if (!_isAuthorizedFundOperator(fundID, 1, msg.sender)) {
             revert TheMemberIsNotAuthorized(msg.sender);
         }
+
+        require (!IFund(_funds[fundID]).isLiquidate(), "The fund is liquidating");
+
         // valid period & status
 
         // new ID

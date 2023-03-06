@@ -669,7 +669,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         address token,
         uint256 amount
     ) external override {
-        require(_isLiqudating == false, "");
+
         _frozened = _frozened - amount;
         _transferTo(owner, token, 20, 0, amount, "");
     }

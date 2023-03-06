@@ -684,7 +684,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         external
         override
     {
-        require(_ownerAddress == _msgSender(), "not dao admin");
+        require(_hasDuty(_msgSender(), DutyID.PROPOSER), "not dao admin");
 
         IProposalHandler(_proposalHandlerAddress).execProposalMessage(
             proposalID,
@@ -1277,5 +1277,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     ) internal returns (address addr) {
         bytes memory initData = abi.encode(name, target, total);
         return IFactoryManager(_factoryAddress).clone(badgeKey, initData);
+    }
+
+
+    function isDAOAdmin(address user) external view override returns(bool) {
+        return _hasDuty(user, DutyID.DAO_ADMIN);
     }
 }

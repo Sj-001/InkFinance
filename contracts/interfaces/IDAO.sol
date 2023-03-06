@@ -104,6 +104,8 @@ interface IDAO is
     
     function getVoteRequirement() external view returns(uint256 minIndividalVotes, uint256 maxIndividalVotes);
     
+    
+    function isDAOAdmin(address user) external view returns(bool);
     /// @notice
     // function updateInfo(uint256 managerPledge, uint256 minimumVote, uint256 minimumWallet, bytes32 voteProcess, bytes memory addedMembers, bytes memory removedMembers) external;
 }
