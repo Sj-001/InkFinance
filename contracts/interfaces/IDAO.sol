@@ -19,8 +19,7 @@ error AgentCannotBeExecute();
 interface IDAO is
     IProposalHandler,
     IDutyControl,
-    IAgentHandler,
-    IProcessHandler
+    IAgentHandler
 {
     event NewDAOCreated(
         address indexed owner,
@@ -64,11 +63,11 @@ interface IDAO is
 
     function getUCV() external view returns (address ucv);
 
-    /// @dev get flow steps
-    function getFlowSteps(bytes32 flowID)
-        external
-        view
-        returns (CommitteeInfo[] memory infos);
+    // /// @dev get flow steps
+    // function getFlowSteps(bytes32 flowID)
+    //     external
+    //     view
+    //     returns (CommitteeInfo[] memory infos);
 
     function getDAODeployFactory()
         external

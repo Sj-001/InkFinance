@@ -27,22 +27,6 @@
     "type": "error"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "flowIndex",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "wantedFlowID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "FlowIsNotSupport",
-    "type": "error"
-  },
-  {
     "inputs": [],
     "name": "GenerateContractByKeyFailure",
     "type": "error"
@@ -67,11 +51,6 @@
       }
     ],
     "name": "MsgSenderIsNotCommittee",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "SystemError",
     "type": "error"
   },
   {
@@ -400,19 +379,6 @@
     ],
     "name": "TopicFix",
     "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "MAX_STEP_NUM",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
   },
   {
     "inputs": [
@@ -1164,19 +1130,6 @@
         "internalType": "bytes32",
         "name": "topicID",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getSupportedFlow",
-    "outputs": [
-      {
-        "internalType": "bytes32[]",
-        "name": "flows",
-        "type": "bytes32[]"
       }
     ],
     "stateMutability": "view",
