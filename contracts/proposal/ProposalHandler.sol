@@ -131,7 +131,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         console.log("first step:");
         console.logBytes32(firstStep);
 
-        require (firstStep == bytes32(0x0), "flow step error");
+        require (firstStep != bytes32(0x0), "flow step error");
 
         ProposalProgress storage info = _proposalInfo[proposalID];
         info.proposalID = proposalID;
