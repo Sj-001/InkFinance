@@ -203,6 +203,15 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _;
     }
 
+    function getBoardMemberCount() external view override returns(uint256 count) {
+
+        count = 0;
+        for (uint256 i=0; i < _daoMembersWithDuties.length(); i++ ){
+            if (_hasDuty(_daoMembersWithDuties.at(i), DutyID.PROPOSER)) {
+                count ++;
+            }
+        }
+    }
 
     function getVoteRequirement() external view override returns(uint256 minIndividalVotes, uint256 maxIndividalVotes) {
         minIndividalVotes = _minEffectiveVotes;
@@ -501,13 +510,20 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     /// @inheritdoc IDutyControl
-    function remmoveDuty(address account, bytes32 dutyID) external override {}
+    function remmoveDuty(address account, bytes32 dutyID) external override onlyAgent {
 
-    /// @inheritdoc IDutyControl
-    function addUser(address account) external override {}
+        EnumerableSet.AddressSet storage memberOwnedDuty = _dutyMembers[dutyID];
+        if (memberOwnedDuty.contains(account)) {
+            memberOwnedDuty.remove(account);
+            _dutyCounts[account] -= 1;
+        }
+    }
 
-    /// @inheritdoc IDutyControl
-    function removeUser(address account) external override {}
+    // /// @inheritdoc IDutyControl
+    // function addUser(address account) external override {}
+
+    // /// @inheritdoc IDutyControl
+    // function removeUser(address account) external override {}
 
     /// @inheritdoc IDutyControl
     function hasDuty(address account, bytes32 dutyID)
@@ -676,7 +692,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes32 proposalID,
         bool agree,
         bytes calldata data
-    ) external override {
+    ) external override onlyCommittee {
+
+
+
         _decideProposal(proposalID, msg.sender, agree, data);
     }
 
@@ -994,8 +1013,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             }
         } else {
             revert DeployFailuer(contractKey);
-            // console.log("test turn turn bytes 32 ", deployedAddress);
-            // console.log("to address ", _returnedBytes.toAddress());
+
         }
     }
 
@@ -1008,6 +1026,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     function _execFinish(ProposalProgress storage info, bool agree) internal {
+        
         require(info.nextCommittee.committee == address(0x0), "can't finish");
 
         if (agree == false) {
@@ -1084,8 +1103,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         onlyAgent
     {
         _ucv = ucv;
-        // console.log("base dao: ucv address:", _ucv);
-        // console.log("base dao: ucv balance:", address(_ucv).balance);
         IUCVManager(ucvManager).setUCV(ucv);
     }
 

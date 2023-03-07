@@ -461,6 +461,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         bytes calldata data
     ) external override onlyDAO {
         Proposal storage proposal = _proposals[proposalID];
+        require(proposal.status == ProposalStatus.PENDING, "The proposal is already decided");
 
         if (agree == false) {
             proposal.status = ProposalStatus.DENY;
