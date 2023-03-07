@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 import "../interfaces/IDeploy.sol";
 import "../interfaces/IDAO.sol";
+import "../interfaces/IAgent.sol";
 import "../interfaces/IProposalHandler.sol";
 
 import "../bases/BaseVerify.sol";
@@ -759,21 +760,21 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
                     "step empty"
                 );
 
-                // address deployedAddress = IDAO(_dao).setupCommittee (
-                //     committeeInfo.committeeName,
-                //     committeeInfo.addressConfigKey,
-                //     committeeInfo.dutyIDs
-                // );
+                address deployedAddress = IDAO(_dao).deployCommittees(
+                    committeeInfo.committeeName,
+                    committeeInfo.addressConfigKey,
+                    committeeInfo.dutyIDs
+                );
 
-                // steps[committeeInfo.step].committee = deployedAddress;
-                // // link next committee
-                // if (j < flow.committees.length - 1) {
-                //     steps[committeeInfo.step].nextStep = flow
-                //         .committees[j + 1]
-                //         .step;
-                // } else {
-                //     steps[committeeInfo.step].nextStep = bytes32(0x0);
-                // }
+                steps[committeeInfo.step].committee = deployedAddress;
+                // link next committee
+                if (j < flow.committees.length - 1) {
+                    steps[committeeInfo.step].nextStep = flow
+                        .committees[j + 1]
+                        .step;
+                } else {
+                    steps[committeeInfo.step].nextStep = bytes32(0x0);
+                }
             }
         }
     }
@@ -794,24 +795,20 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             return;
         }
 
-        // bytes32[] memory agents = info.agents;
-        // if (agree == true) {
-        //     // execute agent
-        //     for (uint256 i = 0; i < agents.length; i++) {
-        //         if (
-        //             agents[i] !=
-        //             0x0000000000000000000000000000000000000000000000000000000000000000
-        //         ) {
-        //             address agentAddress = _agents[agents[i]];
-        //             if (
-        //                 !IAgent(agentAddress).isExecuted() &&
-        //                 IAgent(agentAddress).isUniqueInDAO()
-        //             ) {
-        //                 IAgent(agentAddress).exec(info.proposalID);
-        //             }
-        //         }
-        //     }
-        // }
+        bytes32[] memory agents = info.agents;
+        if (agree == true) {
+            // execute agent
+            for (uint256 i = 0; i < agents.length; i++) {
+                if (
+                    agents[i] !=
+                    0x0000000000000000000000000000000000000000000000000000000000000000
+                ) {
+
+                    IDAO(_dao).delegateExecuteAgent(agents[i], info.proposalID);
+                
+                }
+            }
+        }
 
         emit ProposalDecide(
             address(this),

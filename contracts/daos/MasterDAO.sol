@@ -5,6 +5,7 @@ import "../bases/BaseDAO.sol";
 import "hardhat/console.sol";
 
 contract MasterDAO is BaseDAO {
+    
     using LEnumerableMetadata for LEnumerableMetadata.MetadataSet;
 
     address private _theBoard;

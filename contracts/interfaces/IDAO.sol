@@ -107,6 +107,16 @@ interface IDAO is
     
     function getBoardMemberCount() external view returns(uint256 count);
 
+
+    function deployCommittees (
+        string memory name,
+        bytes32 deployKey,
+        bytes memory dutyIDBytes
+    ) external returns (address committeeAddr);
+
+
+    function delegateExecuteAgent(bytes32 agentID, bytes32 proposalID) external;
+
     /// @notice
     /// function updateInfo(uint256 managerPledge, uint256 minimumVote, uint256 minimumWallet, bytes32 voteProcess, bytes memory addedMembers, bytes memory removedMembers) external;
 }

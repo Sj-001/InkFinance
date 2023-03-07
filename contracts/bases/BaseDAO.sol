@@ -111,14 +111,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     uint256 private _minEffectiveVotes;
     uint256 private _minEffectiveVoteWallets;
 
-
     uint256 private _agreeSeatsOfTheBoard = 0;
 
     address private _proposalHandlerAddress;
     uint256 private _minIndividalVotes;
     uint256 private _maxIndividalVotes;
-
-
 
     /// @dev key is dutyID
     /// find duty members according to dutyID,
@@ -133,8 +130,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
     /// @dev for verify the deployed contracts by key
     mapping(bytes32 => address) private _deployedContractdByKey;
-
-
 
     /// for test
     EnumerableSet.Bytes32Set internal _proposalsArray;
@@ -155,6 +150,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         );
         _;
     } 
+
 
     modifier onlyAgent() {
         address[] memory agentAddress;
@@ -728,6 +724,28 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             (string memory name, bytes32 deployKey, bytes memory dutyIDs) = abi
                 .decode(committees[i], (string, bytes32, bytes));
             _deployCommittees(name, deployKey, dutyIDs);
+        }
+    }
+
+    function deployCommittees (
+        string memory name,
+        bytes32 deployKey,
+        bytes memory dutyIDBytes
+    ) external override returns (address committeeAddr) {
+        if (_msgSender() == _proposalHandlerAddress) {
+            committeeAddr = _deployCommittees(name, deployKey, dutyIDBytes);
+        }
+    }
+
+
+    function delegateExecuteAgent(bytes32 agentID, bytes32 proposalID) external override {
+
+        address agentAddress = _agents[agentID];
+        if (
+            !IAgent(agentAddress).isExecuted() &&
+            IAgent(agentAddress).isUniqueInDAO()
+        ) {
+            IAgent(agentAddress).exec(proposalID);
         }
     }
 
