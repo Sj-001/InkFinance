@@ -234,5 +234,6 @@ interface IProposalHandler is IProposalInfo {
         returns (CommitteeInfo[] memory infos);
 
 
+    function setFlowStep(FlowInfo memory flow) external;
 
 }

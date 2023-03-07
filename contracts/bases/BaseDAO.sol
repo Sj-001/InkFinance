@@ -232,7 +232,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         /// @dev create agent and check parameters
         _setupAgents(proposalID, proposal.agents, data);
 
-        // _setupProposalFlow(proposalID, proposal.agents);
+        // setupProposalFlow(proposalID, proposal.agents);
 
         /// for test
         _proposalsArray.add(proposalID);
@@ -246,6 +246,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             proposer
         );
     }
+
 
     function getBadge() external view returns (address badge) {
         badge = _badge;
@@ -364,9 +365,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         _setupCommittees(initData.committees);
 
-        for (uint256 i = 0; i < initData.flows.length; i++) {
-            _setFlowStep(initData.flows[i]);
-        }
 
         if (initData.badge != address(0)) {
             _badge = initData.badge;
@@ -394,6 +392,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             initData.proposalHandlerKey,
             abi.encode(initData.defaultFlowIDIndex)
         );
+
+
+        
+        for (uint256 i = 0; i < initData.flows.length; i++) {
+            _setFlowStep(initData.flows[i]);
+        }
 
         // initial dutyID
         for (uint m = 0; m < initData.admins.length; m ++) {
@@ -904,12 +908,19 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
 
     function setupFlowInfo(FlowInfo memory flow) external override onlyAgent {
+        
+        _setFlowStep(flow);
+    }
+
+
+    function setFlowStep(FlowInfo memory flow) external override {
+
         _setFlowStep(flow);
     }
 
 
     function _setFlowStep(FlowInfo memory flow) internal {
-        // IProposalHandler(_proposalHandlerAddress).setFlowStep(flow);
+        IProposalHandler(_proposalHandlerAddress).setFlowStep(flow);
     }
 
 

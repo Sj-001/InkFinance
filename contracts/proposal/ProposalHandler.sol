@@ -97,21 +97,40 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
 
         _defaultFlowIDIndex = abi.decode(data_, (uint256));
         
+
         _dao = dao_;
 
         return callbackEvent;
     }
 
+    function setFlowStep(FlowInfo memory flow) external override {
 
+        _setFlowStep(flow);
+    }
+
+    function setupProposalFlow(bytes32 proposalID, bytes32[] memory agents)
+        external
+    {
+        _setupProposalFlow(proposalID, agents);
+    }
 
     function _setupProposalFlow(bytes32 proposalID, bytes32[] memory agents)
         internal
     {
+
+        console.log("_setupProposalFlow: ");
         bytes32 flowID = _getProposalFlow(proposalID);
+
+
+        console.logBytes32(flowID);
 
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[flowID];
 
         bytes32 firstStep = steps[_SENTINEL_ID].nextStep;
+
+        console.log("first step:");
+        console.logBytes32(firstStep);
+
         require (firstStep == bytes32(0x0), "flow step error");
 
         ProposalProgress storage info = _proposalInfo[proposalID];
@@ -190,6 +209,8 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     ) public override onlyDAO returns (bytes32 proposalID) {
         /* EnsureGovEnough */
         proposalID = _newProposal(proposal, commit, proposer, data);
+
+        _setupProposalFlow(proposalID, proposal.agents);
     }
 
     /// @inheritdoc IProposalHandler
@@ -743,6 +764,9 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     }
 
     function _setFlowStep(FlowInfo memory flow) internal {
+
+        console.log("set flow step #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ");
+
         // _factoryAddress;
         require(flow.committees.length < MAX_STEP_NUM, "too many steps");
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[
@@ -751,7 +775,14 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
 
         // init sentinel.
         steps[_SENTINEL_ID].nextStep = flow.committees[0].step;
+
+        console.logBytes32(flow.flowID);
+        console.logBytes32(flow.committees[0].step);
+        
         if (flow.committees[0].step != 0x00) {
+
+            console.log("committee length:", flow.committees.length);
+
             for (uint256 j = 0; j < flow.committees.length; j++) {
                 CommitteeCreateInfo memory committeeInfo = flow.committees[j];
                 require(
@@ -772,7 +803,10 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
                     steps[committeeInfo.step].nextStep = flow
                         .committees[j + 1]
                         .step;
+                    console.log("next step 1");
                 } else {
+
+                    console.log("next step 0");
                     steps[committeeInfo.step].nextStep = bytes32(0x0);
                 }
             }
