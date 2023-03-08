@@ -4,9 +4,8 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IDutyControl {
-
     event AddDAOMemberDuty(address account, bytes32 dutyID);
-    
+
     /// Duty Related
     /// @dev add user-defined DutyID, !!! Agent call only
     /// @param dutyID user-defined dutyID, formed by keccak256

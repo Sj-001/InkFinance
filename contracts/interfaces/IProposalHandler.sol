@@ -203,7 +203,6 @@ interface IProposalHandler is IProposalInfo {
     function execProposalMessage(bytes32 proposalID, bytes memory messages)
         external;
 
-
     function getNextVoteCommitteeInfo(bytes32 proposalID)
         external
         view
@@ -214,29 +213,22 @@ interface IProposalHandler is IProposalInfo {
         view
         returns (address committee, bytes32 step);
 
-
     function getVotedCommittee(bytes32 proposalID)
         external
         view
         returns (address[] memory committee);
 
-
-
     function getVoteExpirationTime(bytes32 proposalID)
         external
         view
-        returns (uint256 expiration);        
-
+        returns (uint256 expiration);
 
     function getFlowSteps(bytes32 flowID)
         external
         view
         returns (CommitteeInfo[] memory infos);
 
-
     function setFlowStep(FlowInfo memory flow) external;
 
-
     function getSupportedFlow() external view returns (bytes32[] memory flows);
-
 }

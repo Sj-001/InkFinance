@@ -34,20 +34,20 @@ contract ThePublic is BaseCommittee {
         string calldata feedback,
         bytes calldata data
     ) external override {
-        
         if (!_allowToVote(identity, _msgSender())) {
             revert NotAllowToOperate();
         }
 
-        (uint256 minIndividalVotes, uint256 maxIndividalVotes) = IDAO(getParentDAO()).getVoteRequirement();
-        require(count >= minIndividalVotes, "vote too less votes"); 
+        (uint256 minIndividalVotes, uint256 maxIndividalVotes) = IDAO(
+            getParentDAO()
+        ).getVoteRequirement();
+        require(count >= minIndividalVotes, "vote too less votes");
 
         if (maxIndividalVotes != 0) {
-            require(count <= maxIndividalVotes, "vote too many votes"); 
+            require(count <= maxIndividalVotes, "vote too many votes");
         }
-        
+
         _vote(identity, agree, count, true, feedback, data);
-    
     }
 
     function _allowToVote(VoteIdentity calldata identity, address voteUser)
@@ -80,12 +80,11 @@ contract ThePublic is BaseCommittee {
     function tallyVotes(VoteIdentity calldata identity, bytes memory data)
         public
         override
-    {   
-
+    {
         if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
-        
+
         _tallyVotes(identity, data, true);
     }
 

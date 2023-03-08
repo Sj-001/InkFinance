@@ -90,8 +90,10 @@ interface IFundManager is IFundInfo {
         address operator
     ) external view returns (bool authorized);
 
-
-    function getFundDistributionAmount(bytes32 fundID) external view returns(uint256 amount);
+    function getFundDistributionAmount(bytes32 fundID)
+        external
+        view
+        returns (uint256 amount);
 
     function claimFundCertificate(bytes32 fundID) external;
 
@@ -102,8 +104,10 @@ interface IFundManager is IFundInfo {
         view
         returns (FundDistribution[] memory);
 
-
-    function allocateFundServiceFee(bytes32 fundID, address[] memory members, uint256[] memory fee, bytes memory data) external;
-
-
+    function allocateFundServiceFee(
+        bytes32 fundID,
+        address[] memory members,
+        uint256[] memory fee,
+        bytes memory data
+    ) external;
 }

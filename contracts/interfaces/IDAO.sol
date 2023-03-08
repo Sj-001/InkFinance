@@ -16,11 +16,7 @@ error SystemError();
 error NotAllowedToOperate();
 error AgentCannotBeExecute();
 
-interface IDAO is
-    IProposalHandler,
-    IDutyControl,
-    IAgentHandler
-{
+interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
     event NewDAOCreated(
         address indexed owner,
         address indexed token,
@@ -98,22 +94,25 @@ interface IDAO is
         bytes memory dutyIDs
     ) external;
 
+    function getBoardProposalAgreeSeats()
+        external
+        view
+        returns (uint256 minSeats);
 
-    function getBoardProposalAgreeSeats() external view returns(uint256 minSeats);
-    
-    function getVoteRequirement() external view returns(uint256 minIndividalVotes, uint256 maxIndividalVotes);
-    
-    function isDAOAdmin(address user) external view returns(bool);
-    
-    function getBoardMemberCount() external view returns(uint256 count);
+    function getVoteRequirement()
+        external
+        view
+        returns (uint256 minIndividalVotes, uint256 maxIndividalVotes);
 
+    function isDAOAdmin(address user) external view returns (bool);
 
-    function deployCommittees (
+    function getBoardMemberCount() external view returns (uint256 count);
+
+    function deployCommittees(
         string memory name,
         bytes32 deployKey,
         bytes memory dutyIDBytes
     ) external returns (address committeeAddr);
-
 
     function delegateExecuteAgent(bytes32 agentID, bytes32 proposalID) external;
 

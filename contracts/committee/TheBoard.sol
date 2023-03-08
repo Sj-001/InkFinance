@@ -80,7 +80,6 @@ contract TheBoard is BaseCommittee {
         if (voteInfo.totalVotes == IDAO(getParentDAO()).getBoardMemberCount()) {
             _tallyVotes(identity, data);
         }
-
     }
 
     /// @inheritdoc IVoteHandler
@@ -102,14 +101,11 @@ contract TheBoard is BaseCommittee {
         external
         override
     {
-
-
         if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
 
         _tallyVotes(identity, data);
-
     }
 
     function _tallyVotes(VoteIdentity memory identity, bytes memory data)
@@ -118,7 +114,8 @@ contract TheBoard is BaseCommittee {
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
 
         // pass seats
-        uint256 basePassSeat = IDAO(getParentDAO()).getBoardProposalAgreeSeats();
+        uint256 basePassSeat = IDAO(getParentDAO())
+            .getBoardProposalAgreeSeats();
 
         // @todo verify if it's expired.
         bool passOrNot = _calculateVoteResults(identity, true, basePassSeat);
@@ -132,7 +129,6 @@ contract TheBoard is BaseCommittee {
 
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
-
 
     /// @inheritdoc IDeploy
     function getTypeID() external pure override returns (bytes32 typeID) {

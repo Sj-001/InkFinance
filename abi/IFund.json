@@ -73,7 +73,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "ucv",
+        "type": "address"
+      }
+    ],
     "name": "dissolve",
     "outputs": [],
     "stateMutability": "nonpayable",

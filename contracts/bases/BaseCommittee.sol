@@ -144,7 +144,6 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         string memory feedback,
         bytes memory data
     ) internal {
-        
         if (!allowOperate(identity, _msgSender())) {
             revert NotAllowToOperate();
         }
@@ -281,7 +280,6 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         bool ignoreBaseRule,
         uint256 baseAgreeSeat
     ) internal returns (bool _passedOrNot) {
-
         VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
         bool agree;
 

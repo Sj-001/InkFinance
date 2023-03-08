@@ -32,8 +32,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
-
-
     /// @notice BaseDAO initial data, when create dao,
     /// these data are necessary for creating the DAO instance.
     /// @param name DAO name
@@ -149,8 +147,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             "admin's gov not enough"
         );
         _;
-    } 
-
+    }
 
     modifier onlyAgent() {
         address[] memory agentAddress;
@@ -181,24 +178,38 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _;
     }
 
-    function getBoardMemberCount() external view override returns(uint256 count) {
-
+    function getBoardMemberCount()
+        external
+        view
+        override
+        returns (uint256 count)
+    {
         count = 0;
-        for (uint256 i=0; i < _daoMembersWithDuties.length(); i++ ){
+        for (uint256 i = 0; i < _daoMembersWithDuties.length(); i++) {
             if (_hasDuty(_daoMembersWithDuties.at(i), DutyID.PROPOSER)) {
-                count ++;
+                count++;
             }
         }
     }
 
-    function getVoteRequirement() external view override returns(uint256 minIndividalVotes, uint256 maxIndividalVotes) {
+    function getVoteRequirement()
+        external
+        view
+        override
+        returns (uint256 minIndividalVotes, uint256 maxIndividalVotes)
+    {
         minIndividalVotes = _minEffectiveVotes;
         maxIndividalVotes = _maxIndividalVotes;
-    } 
+    }
 
-    function getBoardProposalAgreeSeats() external view override returns(uint256 minSeats) {
+    function getBoardProposalAgreeSeats()
+        external
+        view
+        override
+        returns (uint256 minSeats)
+    {
         minSeats = _agreeSeatsOfTheBoard;
-    }   
+    }
 
     // test functins
     function getProposalIDByIndex(uint256 index)
@@ -247,12 +258,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         );
     }
 
-
-    function getSupportedFlow() external view override returns (bytes32[] memory flows) {
+    function getSupportedFlow()
+        external
+        view
+        override
+        returns (bytes32[] memory flows)
+    {
         flows = IProposalHandler(_proposalHandlerAddress).getSupportedFlow();
     }
-
-
 
     function getBadge() external view returns (address badge) {
         badge = _badge;
@@ -266,7 +279,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     {
         factoryAddress = _factoryAddress;
     }
-
 
     /// @inheritdoc IDAO
     function getDAOCommittees()
@@ -302,7 +314,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             uint256 minEffectiveWallets
         )
     {
-
         minAgreeRatio = 5 * 1e17;
         minEffectiveVotes = _minEffectiveVotes;
         minEffectiveWallets = _minEffectiveVoteWallets;
@@ -334,8 +345,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         minEffectiveWallets = _minEffectiveVoteWallets;
     }
 
-
-
     function _init(
         address admin_,
         address config_,
@@ -359,9 +368,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _minIndividalVotes = initData.minIndividalVotes;
         _maxIndividalVotes = initData.maxIndividalVotes;
 
-        uint allMembers = initData.admins.length + initData.members.length;
-        require (_agreeSeatsOfTheBoard <= allMembers, "seats set error(1)");
-        require (allMembers - _agreeSeatsOfTheBoard < _agreeSeatsOfTheBoard, "seats set error(2)");
+        uint256 allMembers = initData.admins.length + initData.members.length;
+        require(_agreeSeatsOfTheBoard <= allMembers, "seats set error(1)");
+        require(
+            allMembers - _agreeSeatsOfTheBoard < _agreeSeatsOfTheBoard,
+            "seats set error(2)"
+        );
 
         (, bytes memory factoryAddressBytes) = configManager.getKV(
             initData.factoryManagerKey
@@ -370,7 +382,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _factoryAddress = factoryAddressBytes.toAddress();
 
         _setupCommittees(initData.committees);
-
 
         if (initData.badge != address(0)) {
             _badge = initData.badge;
@@ -399,24 +410,22 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             abi.encode(initData.defaultFlowIDIndex)
         );
 
-
-        
         for (uint256 i = 0; i < initData.flows.length; i++) {
             _setFlowStep(initData.flows[i]);
         }
 
         // initial dutyID
-        for (uint m = 0; m < initData.admins.length; m ++) {
+        for (uint256 m = 0; m < initData.admins.length; m++) {
             _addDuty(initData.admins[m], DutyID.DAO_ADMIN);
             _addDuty(initData.admins[m], DutyID.PROPOSER);
             _addDuty(initData.admins[m], DutyID.VOTER);
         }
 
-        for (uint m = 0; m < initData.members.length; m ++) {
+        for (uint256 m = 0; m < initData.members.length; m++) {
             _addDuty(initData.members[m], DutyID.PROPOSER);
             _addDuty(initData.members[m], DutyID.VOTER);
         }
-        
+
         // emit events
         emit NewDAOCreated(
             admin_,
@@ -459,8 +468,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
     /// @inheritdoc IDutyControl
-    function remmoveDuty(address account, bytes32 dutyID) external override onlyAgent {
-
+    function remmoveDuty(address account, bytes32 dutyID)
+        external
+        override
+        onlyAgent
+    {
         EnumerableSet.AddressSet storage memberOwnedDuty = _dutyMembers[dutyID];
         if (memberOwnedDuty.contains(account)) {
             memberOwnedDuty.remove(account);
@@ -642,8 +654,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bool agree,
         bytes calldata data
     ) external override onlyCommittee {
-
-        IProposalHandler(_proposalHandlerAddress).decideProposal(proposalID, agree, data);
+        IProposalHandler(_proposalHandlerAddress).decideProposal(
+            proposalID,
+            agree,
+            data
+        );
         // _decideProposal(proposalID, msg.sender, agree, data);
     }
 
@@ -717,7 +732,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         infos = IProposalHandler(_proposalHandlerAddress).getFlowSteps(flowID);
     }
 
-
     function setupCommittee(
         string memory name,
         bytes32 deployKey,
@@ -725,7 +739,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     ) external override onlyAgent {
         _deployCommittees(name, deployKey, dutyIDs);
     }
-
 
     //////////////////// internal
 
@@ -737,7 +750,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
     }
 
-    function deployCommittees (
+    function deployCommittees(
         string memory name,
         bytes32 deployKey,
         bytes memory dutyIDBytes
@@ -747,9 +760,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
     }
 
-
-    function delegateExecuteAgent(bytes32 agentID, bytes32 proposalID) external override {
-
+    function delegateExecuteAgent(bytes32 agentID, bytes32 proposalID)
+        external
+        override
+    {
         address agentAddress = _agents[agentID];
         if (
             !IAgent(agentAddress).isExecuted() &&
@@ -759,7 +773,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         }
     }
 
-    function _deployCommittees (
+    function _deployCommittees(
         string memory name,
         bytes32 deployKey,
         bytes memory dutyIDBytes
@@ -836,9 +850,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         override
         returns (bytes32 flowID)
     {
-        flowID = IProposalHandler(_proposalHandlerAddress).getProposalFlow(proposalID);
+        flowID = IProposalHandler(_proposalHandlerAddress).getProposalFlow(
+            proposalID
+        );
     }
-
 
     function turnBytesToAddress(bytes memory byteAddress)
         internal
@@ -854,7 +869,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         override
         returns (CommitteeInfo memory committeeInfo)
     {
-        committeeInfo = IProposalHandler(_proposalHandlerAddress).getNextVoteCommitteeInfo(proposalID);
+        committeeInfo = IProposalHandler(_proposalHandlerAddress)
+            .getNextVoteCommitteeInfo(proposalID);
     }
 
     function getVoteCommitteeInfo(bytes32 proposalID)
@@ -863,10 +879,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         override
         returns (address committee, bytes32 step)
     {
-        return IProcessHandler(_proposalHandlerAddress).getVoteCommitteeInfo(proposalID);
+        return
+            IProcessHandler(_proposalHandlerAddress).getVoteCommitteeInfo(
+                proposalID
+            );
     }
-
-
 
     function _deployByFactoryKey(
         bool randomSalt,
@@ -900,7 +917,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             }
         } else {
             revert DeployFailuer(contractKey);
-
         }
     }
 
@@ -912,23 +928,17 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         return _deployByFactoryKey(false, typeID, contractKey, initData);
     }
 
-
     function setupFlowInfo(FlowInfo memory flow) external override onlyAgent {
-        
         _setFlowStep(flow);
     }
-
 
     function setFlowStep(FlowInfo memory flow) external override {
-
         _setFlowStep(flow);
     }
-
 
     function _setFlowStep(FlowInfo memory flow) internal {
         IProposalHandler(_proposalHandlerAddress).setFlowStep(flow);
     }
-
 
     function getUCV() external view override returns (address ucv) {
         ucv = _ucv;
@@ -942,8 +952,6 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _ucv = ucv;
         IUCVManager(ucvManager).setUCV(ucv);
     }
-
-
 
     function _addIntoCurrentCommittee(
         address committeeAddress,
@@ -973,9 +981,10 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         override
         returns (address[] memory committee)
     {
-        committee = IProposalHandler(_proposalHandlerAddress).getVotedCommittee(proposalID);
+        committee = IProposalHandler(_proposalHandlerAddress).getVotedCommittee(
+                proposalID
+            );
     }
-
 
     /// @inheritdoc IERC165
     function supportsInterface(bytes4 interfaceId)
@@ -1030,14 +1039,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         bytes calldata data
     ) external override {}
 
-
     function getVoteExpirationTime(bytes32 proposalID)
         external
         view
         override
         returns (uint256 expiration)
     {
-        expiration = IProposalHandler(_proposalHandlerAddress).getVoteExpirationTime(proposalID);
+        expiration = IProposalHandler(_proposalHandlerAddress)
+            .getVoteExpirationTime(proposalID);
     }
 
     function _createBadge(
@@ -1050,8 +1059,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         return IFactoryManager(_factoryAddress).clone(badgeKey, initData);
     }
 
-
-    function isDAOAdmin(address user) external view override returns(bool) {
+    function isDAOAdmin(address user) external view override returns (bool) {
         return _hasDuty(user, DutyID.DAO_ADMIN);
     }
 }

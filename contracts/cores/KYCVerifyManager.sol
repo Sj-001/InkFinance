@@ -13,7 +13,6 @@ import "../interfaces/IIdentity.sol";
 /// @author InkTech <tech-support@inkfinance.xyz>
 /// @notice KYCVerifyManager is used to verify signature
 contract KYCVerifyManager {
-
     /// @dev when user has been verified, this event will be emit
     /// @param issuer who verified the user, eg: INK_FINANCE_KYC
     /// @param accountType eg: twitter

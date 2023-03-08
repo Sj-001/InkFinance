@@ -34,8 +34,12 @@ error NotSupport(uint256 roleType);
 error CertificatedClaimed();
 
 contract InkFund is IFundInfo, IFund, BaseUCV {
-
-    event FundManagementFeeDistribute(bytes32 fundID, address[] member, uint256[] fee, bytes data);
+    event FundManagementFeeDistribute(
+        bytes32 fundID,
+        address[] member,
+        uint256[] fee,
+        bytes data
+    );
 
     using EnumerableSet for EnumerableSet.UintSet;
 
@@ -58,7 +62,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     bytes32 private _fundID = bytes32(0);
 
     uint256 private _fixedFeeTransferTime = 0;
-    
+
     uint256 private _performanceFeeTransferTime = 0;
 
     // mapping(address => uint256) private _fundShare;
@@ -153,20 +157,22 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
     /// @dev profits = all distributions + current principal - raised - fixed management fee
-    function _calculateInvestmentProfit() internal view returns (uint256 profit) {
+    function _calculateInvestmentProfit()
+        internal
+        view
+        returns (uint256 profit)
+    {
+        uint256 income = IFundManager(_getManager()).getFundDistributionAmount(
+            _fundID
+        ) + _getAvailablePrincipal();
 
-        uint256 income = IFundManager(_getManager()).getFundDistributionAmount(_fundID) + _getAvailablePrincipal();
-
-        uint256 spend = _totalRaised + _serviceFee;
-
+        uint256 spend = _totalRaised + calculateFee(_fund.fixedFee);
         if (income > spend) {
             profit = income - spend;
         } else {
             profit = 0;
         }
-
     }
-
 
     function getAvailablePrincipal()
         external
@@ -278,7 +284,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         );
     }
 
-
     function getClaimableCertificate(address investor)
         external
         view
@@ -382,29 +387,26 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         // }
     }
 
-    function assignFundServiceFee(address[] memory members, uint256[] memory fee, bytes memory data) external override enableToExecute {
+    function assignFundServiceFee(
+        address[] memory members,
+        uint256[] memory fee,
+        bytes memory data
+    ) external override enableToExecute {
         // calculate fee == serviceFee
         require(members.length == fee.length, "assign data error");
         uint256 totalAssign = 0;
-        for(uint256 i=0; i<fee.length; i++) {
+        for (uint256 i = 0; i < fee.length; i++) {
             totalAssign += fee[i];
         }
 
-        require (totalAssign == _serviceFee, "assign fee error");
-        for(uint256 i=0; i<members.length; i++) {
-            _transferTo(
-                members[i],
-                _fund.fundToken,
-                20,
-                0,
-                fee[i],
-                ""
-            );
+        require(totalAssign == _serviceFee, "assign fee error");
+        for (uint256 i = 0; i < members.length; i++) {
+            _transferTo(members[i], _fund.fundToken, 20, 0, fee[i], "");
         }
 
         _frozened -= _serviceFee;
         _serviceFee = 0;
-        
+
         emit FundManagementFeeDistribute(_fundID, members, fee, data);
     }
 
@@ -487,7 +489,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     }
 
     /// @inheritdoc IFund
-    function dissolve() external override {
+    function dissolve(address ucv) external override {
+
         uint256 status = _getFundStatus();
         require(status == 3, "Only started fund could tally up");
         require(
@@ -508,9 +511,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _investmentProfit = _calculateInvestmentProfit();
 
         if (_investmentProfit > 0) {
-
+            _takePerformanceFee(ucv);
         }
-
     }
 
     function hasRoleSetting(uint256 roleType)
@@ -590,9 +592,11 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         currentRaised = _totalRaised;
     }
 
-
-    function _takeFeeToTreasury(address treasuryUCV, uint256 fee, uint256 percentageToTreasury) internal {
-
+    function _takeFeeToTreasury(
+        address treasuryUCV,
+        uint256 fee,
+        uint256 percentageToTreasury
+    ) internal {
         if (percentageToTreasury == 0) {
             _serviceFee += fee;
             _frozened += fee;
@@ -603,8 +607,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                 _frozened += fee;
             } else {
                 uint8 decimal = _getTokenDecimal(_fund.fundToken);
-                uint256 treasuryFee = (percentageToTreasury *
-                    fee) / (1 * 10**decimal);
+                uint256 treasuryFee = (percentageToTreasury * fee) /
+                    (1 * 10**decimal);
                 _serviceFee += (fee - treasuryFee);
                 console.log("serv3:", fee);
                 console.log("trea4:", treasuryFee);
@@ -623,32 +627,47 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
     }
 
+    function calculateFee(uint256 perc) public view returns(uint256 fee) {
+
+        uint8 decimal = _getTokenDecimal(_fund.fundToken);
+
+        fee = (perc * _totalRaised) / (1 * 10**decimal);
+
+    } 
 
     function takeFixedFee(address treasuryUCV) internal {
-
         require(_fixedFeeTransferTime == 0, "Fee already taked");
-        uint8 decimal = _getTokenDecimal(_fund.fundToken);
-        uint256 fixedFee = (_fund.fixedFee * _totalRaised) / (1 * 10**decimal);
+        // uint8 decimal = _getTokenDecimal(_fund.fundToken);
+        // uint256 fixedFee = (_fund.fixedFee * _totalRaised) / (1 * 10**decimal);
+        uint256 fixedFee = calculateFee(_fund.fixedFee);
 
-        _takeFeeToTreasury(treasuryUCV, fixedFee, _fund.fixedFeeShouldGoToTreasury);
+        _takeFeeToTreasury(
+            treasuryUCV,
+            fixedFee,
+            _fund.fixedFeeShouldGoToTreasury
+        );
         _fixedFeeTransferTime = block.timestamp;
-
     }
 
-
-    function takePerformanceFee(address treasuryUCV) internal {
+    function _takePerformanceFee(address treasuryUCV) internal {
 
         require(_performanceFeeTransferTime == 0, "Fee already taked");
-        uint8 decimal = _getTokenDecimal(_fund.fundToken);
 
-        uint256 investmentProfit = _calculateInvestmentProfit();
+        if (_investmentProfit > 0) {
 
-        uint256 fee = (_fund.performanceFee * investmentProfit) / (1 * 10**decimal);
+            uint8 decimal = _getTokenDecimal(_fund.fundToken);
 
-        _takeFeeToTreasury(treasuryUCV, fee, _fund.performanceFeeShouldGoToTreasury);
+            uint256 fee = (_fund.performanceFee * _investmentProfit) /
+                (1 * 10**decimal);
+
+            _takeFeeToTreasury(
+                treasuryUCV,
+                fee,
+                _fund.performanceFeeShouldGoToTreasury
+            );
+        }
 
         _performanceFeeTransferTime = block.timestamp;
-        
     }
 
     function getAdminServiceBalance()
@@ -669,7 +688,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         address token,
         uint256 amount
     ) external override {
-
         _frozened = _frozened - amount;
         _transferTo(owner, token, 20, 0, amount, "");
     }
@@ -702,7 +720,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         console.log("balance:", IERC20(_certificate).balanceOf(address(this)));
     }
 
-    function _getTokenDecimal(address token) internal returns (uint8 decimal) {
+    function _getTokenDecimal(address token) internal view returns (uint8 decimal) {
         decimal = 18;
         if (token != address(0)) {
             decimal = IERC20Metadata(token).decimals();
