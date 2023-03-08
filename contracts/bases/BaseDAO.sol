@@ -248,6 +248,12 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     }
 
 
+    function getSupportedFlow() external view override returns (bytes32[] memory flows) {
+        flows = IProposalHandler(_proposalHandlerAddress).getSupportedFlow();
+    }
+
+
+
     function getBadge() external view returns (address badge) {
         badge = _badge;
     }

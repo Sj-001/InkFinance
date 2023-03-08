@@ -584,6 +584,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getSupportedFlow",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "flows",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",

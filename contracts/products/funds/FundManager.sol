@@ -498,14 +498,14 @@ contract FundManager is IFundManager, BaseUCVManager {
         }
     }
 
-    function allocateFundServiceFee(bytes32 fundID, address[] memory members, uint256[] memory fee) external override {
+    function allocateFundServiceFee(bytes32 fundID, address[] memory members, uint256[] memory fee, bytes memory data) external override {
 
         require(
             _isCommitteeOperator(0, msg.sender),
             "The user is not authorized"
         );
         
-        IFund(_funds[fundID]).assignFundServiceFee(members, fee);
+        IFund(_funds[fundID]).assignFundServiceFee(members, fee, data);
     }
 
 

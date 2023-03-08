@@ -236,4 +236,7 @@ interface IProposalHandler is IProposalInfo {
 
     function setFlowStep(FlowInfo memory flow) external;
 
+
+    function getSupportedFlow() external view returns (bytes32[] memory flows);
+
 }

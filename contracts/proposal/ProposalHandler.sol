@@ -97,19 +97,18 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
 
         _defaultFlowIDIndex = abi.decode(data_, (uint256));
         
-
         _dao = dao_;
 
         return callbackEvent;
     }
 
-    function setFlowStep(FlowInfo memory flow) external override {
+    function setFlowStep(FlowInfo memory flow) external override onlyDAO {
 
         _setFlowStep(flow);
     }
 
     function setupProposalFlow(bytes32 proposalID, bytes32[] memory agents)
-        external
+        external onlyDAO
     {
         _setupProposalFlow(proposalID, agents);
     }
@@ -568,8 +567,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             itemValue.data = proposal.metadata[i].data;
             p.metadata[proposal.metadata[i].key] = itemValue;
 
-            // console.log("key: ", proposal.metadata[i].key);
-            // console.logBytes(proposal.metadata[i].data);
         }
 
         p.kvData._init();
@@ -765,8 +762,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
 
     function _setFlowStep(FlowInfo memory flow) internal {
 
-        console.log("set flow step #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ");
-
         // _factoryAddress;
         require(flow.committees.length < MAX_STEP_NUM, "too many steps");
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[
@@ -775,14 +770,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
 
         // init sentinel.
         steps[_SENTINEL_ID].nextStep = flow.committees[0].step;
-
-        console.logBytes32(flow.flowID);
-        console.logBytes32(flow.committees[0].step);
-        
         if (flow.committees[0].step != 0x00) {
-
-            console.log("committee length:", flow.committees.length);
-
             for (uint256 j = 0; j < flow.committees.length; j++) {
                 CommitteeCreateInfo memory committeeInfo = flow.committees[j];
                 require(
@@ -803,10 +791,8 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
                     steps[committeeInfo.step].nextStep = flow
                         .committees[j + 1]
                         .step;
-                    console.log("next step 1");
                 } else {
 
-                    console.log("next step 0");
                     steps[committeeInfo.step].nextStep = bytes32(0x0);
                 }
             }
@@ -853,7 +839,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         );
     }
 
-    function getSupportedFlow() external view returns (bytes32[] memory flows) {
+    function getSupportedFlow() external view override returns (bytes32[] memory flows) {
         flows = new bytes32[](_defaultFlows.length - _defaultFlowIDIndex);
         uint256 startIndex = 0;
         for (uint256 i = _defaultFlowIDIndex; i < _defaultFlows.length; i++) {
@@ -861,6 +847,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             startIndex++;
         }
     }
+
 
     /// @inheritdoc IDeploy
     function getTypeID() external override returns (bytes32 typeID) {}

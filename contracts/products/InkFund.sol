@@ -35,7 +35,7 @@ error CertificatedClaimed();
 
 contract InkFund is IFundInfo, IFund, BaseUCV {
 
-    event FundManagementFeeDistribute(bytes32 fundID, address[] member, uint256[] fee);
+    event FundManagementFeeDistribute(bytes32 fundID, address[] member, uint256[] fee, bytes data);
 
     using EnumerableSet for EnumerableSet.UintSet;
 
@@ -382,7 +382,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         // }
     }
 
-    function assignFundServiceFee(address[] memory members, uint256[] memory fee) external override enableToExecute {
+    function assignFundServiceFee(address[] memory members, uint256[] memory fee, bytes memory data) external override enableToExecute {
         // calculate fee == serviceFee
         require(members.length == fee.length, "assign data error");
         uint256 totalAssign = 0;
@@ -405,7 +405,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         _frozened -= _serviceFee;
         _serviceFee = 0;
         
-        emit FundManagementFeeDistribute(_fundID, members, fee);
+        emit FundManagementFeeDistribute(_fundID, members, fee, data);
     }
 
     /// @inheritdoc IFund
