@@ -74,6 +74,13 @@ contract TheBoard is BaseCommittee {
         }
 
         _vote(identity, agree, count, true, feedback, data);
+
+        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
+
+        if (voteInfo.totalVotes == IDAO(getParentDAO()).getBoardMemberCount()) {
+            _tallyVotes(identity, data);
+        }
+
     }
 
     /// @inheritdoc IVoteHandler
@@ -95,20 +102,26 @@ contract TheBoard is BaseCommittee {
         external
         override
     {
+
+
         if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
+
+        _tallyVotes(identity, data);
+
+    }
+
+    function _tallyVotes(VoteIdentity memory identity, bytes memory data)
+        internal
+    {
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
-        // if (
-        //     IProcessHandler(getParentDAO()).getVoteExpirationTime(
-        //         identity.proposalID
-        //     ) > block.timestamp
-        // ) {
-        //     revert CannotTallyVote();
-        // }
+
+        // pass seats
+        uint256 basePassSeat = IDAO(getParentDAO()).getBoardProposalAgreeSeats();
 
         // @todo verify if it's expired.
-        bool passOrNot = _calculateVoteResults(identity, true);
+        bool passOrNot = _calculateVoteResults(identity, true, basePassSeat);
 
         VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
         if (passOrNot) {
@@ -117,9 +130,9 @@ contract TheBoard is BaseCommittee {
             voteInfo.status = VoteStatus.DENY;
         }
 
-        console.log("tally vote result", passOrNot);
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
+
 
     /// @inheritdoc IDeploy
     function getTypeID() external pure override returns (bytes32 typeID) {

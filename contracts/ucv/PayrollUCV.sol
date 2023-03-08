@@ -53,7 +53,6 @@ contract PayrollUCV is IUCV, BaseVerify {
 
     receive() external payable {
         // emit ChainTokenDeposited(msg.sender, msg.value);
-
         // console.log("receive eth");
     }
 

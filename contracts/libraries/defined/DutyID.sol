@@ -2,6 +2,10 @@
 pragma solidity ^0.8.0;
 
 library DutyID {
+    // keccak256("dutyID.DAO_ADMIN")
+    bytes32 internal constant DAO_ADMIN =
+        0x9a24e4691c3b94f933d79c9399cf44deede6c6ce75014cf86e82f2fee0c01f42;
+
     // keccak256("dutyID.PROPOSER")
     bytes32 internal constant PROPOSER =
         0x4575c11fbfaf5400e74dbe9f6f86279ce134d6214445926cc50dccd877e75fa2;

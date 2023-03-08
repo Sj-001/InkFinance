@@ -9,9 +9,9 @@
             "type": "address"
           },
           {
-            "internalType": "bytes32",
+            "internalType": "string",
             "name": "key",
-            "type": "bytes32"
+            "type": "string"
           },
           {
             "internalType": "bytes32",
@@ -24,7 +24,7 @@
             "type": "bytes"
           }
         ],
-        "internalType": "struct IIdentity.UserKV[]",
+        "internalType": "struct UserKV[]",
         "name": "kvs",
         "type": "tuple[]"
       }
@@ -42,9 +42,14 @@
         "type": "address"
       },
       {
-        "internalType": "bytes32",
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
         "name": "key",
-        "type": "bytes32"
+        "type": "string"
       }
     ],
     "name": "getUserKV",
@@ -60,7 +65,7 @@
         "type": "bytes"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {

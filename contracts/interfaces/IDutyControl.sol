@@ -4,8 +4,9 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IDutyControl {
-    event AddDAOMemberDuty(address account, bytes32 dutyID);
 
+    event AddDAOMemberDuty(address account, bytes32 dutyID);
+    
     /// Duty Related
     /// @dev add user-defined DutyID, !!! Agent call only
     /// @param dutyID user-defined dutyID, formed by keccak256
@@ -15,13 +16,13 @@ interface IDutyControl {
     /// @param dutyID user-defined dutyID, formed by keccak256
     function remmoveDuty(address account, bytes32 dutyID) external;
 
-    /// @dev add user into the DAO, !!! Agent call only
-    /// @param account target user
-    function addUser(address account) external;
+    // /// @dev add user into the DAO, !!! Agent call only
+    // /// @param account target user
+    // function addUser(address account) external;
 
-    /// @dev remove user from the DAO, !!! Agent call only
-    /// @param account target user
-    function removeUser(address account) external;
+    // /// @dev remove user from the DAO, !!! Agent call only
+    // /// @param account target user
+    // function removeUser(address account) external;
 
     /// @dev identity the account have the duty or not
     /// @param account the query account

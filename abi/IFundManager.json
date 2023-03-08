@@ -449,6 +449,29 @@
         "internalType": "bytes32",
         "name": "fundID",
         "type": "bytes32"
+      },
+      {
+        "internalType": "address[]",
+        "name": "members",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "fee",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "allocateFundServiceFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
       }
     ],
     "name": "claimFundCertificate",
@@ -718,6 +741,25 @@
       }
     ],
     "name": "getFundCertificate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "fundID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getFundDistributionAmount",
     "outputs": [
       {
         "internalType": "uint256",
