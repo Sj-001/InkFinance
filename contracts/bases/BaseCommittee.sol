@@ -144,6 +144,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         string memory feedback,
         bytes memory data
     ) internal {
+        
         if (!allowOperate(identity, _msgSender())) {
             revert NotAllowToOperate();
         }

@@ -103,7 +103,7 @@ interface IFundManager is IFundInfo {
         returns (FundDistribution[] memory);
 
 
-    function allocateFundServiceFee(bytes32 fundID, address[] memory members, uint256[] memory fee) external;
+    function allocateFundServiceFee(bytes32 fundID, address[] memory members, uint256[] memory fee, bytes memory data) external;
 
 
 }

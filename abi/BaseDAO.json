@@ -27,22 +27,6 @@
     "type": "error"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "flowIndex",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "wantedFlowID",
-        "type": "bytes32"
-      }
-    ],
-    "name": "FlowIsNotSupport",
-    "type": "error"
-  },
-  {
     "inputs": [],
     "name": "GenerateContractByKeyFailure",
     "type": "error"
@@ -67,11 +51,6 @@
       }
     ],
     "name": "MsgSenderIsNotCommittee",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "SystemError",
     "type": "error"
   },
   {
@@ -402,19 +381,6 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "MAX_STEP_NUM",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -588,6 +554,24 @@
     "inputs": [
       {
         "internalType": "bytes32",
+        "name": "agentID",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "proposalID",
+        "type": "bytes32"
+      }
+    ],
+    "name": "delegateExecuteAgent",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
         "name": "typeID",
         "type": "bytes32"
       },
@@ -607,6 +591,35 @@
       {
         "internalType": "address",
         "name": "deployedAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "deployKey",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "dutyIDBytes",
+        "type": "bytes"
+      }
+    ],
+    "name": "deployCommittees",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "committeeAddr",
         "type": "address"
       }
     ],
@@ -1662,6 +1675,53 @@
       }
     ],
     "name": "setAgentFlowID",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "flowID",
+            "type": "bytes32"
+          },
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "committeeName",
+                "type": "string"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "step",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "addressConfigKey",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes",
+                "name": "dutyIDs",
+                "type": "bytes"
+              }
+            ],
+            "internalType": "struct IProposalHandler.CommitteeCreateInfo[]",
+            "name": "committees",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct IProposalHandler.FlowInfo",
+        "name": "flow",
+        "type": "tuple"
+      }
+    ],
+    "name": "setFlowStep",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

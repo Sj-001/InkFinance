@@ -19,8 +19,7 @@ error AgentCannotBeExecute();
 interface IDAO is
     IProposalHandler,
     IDutyControl,
-    IAgentHandler,
-    IProcessHandler
+    IAgentHandler
 {
     event NewDAOCreated(
         address indexed owner,
@@ -64,11 +63,11 @@ interface IDAO is
 
     function getUCV() external view returns (address ucv);
 
-    /// @dev get flow steps
-    function getFlowSteps(bytes32 flowID)
-        external
-        view
-        returns (CommitteeInfo[] memory infos);
+    // /// @dev get flow steps
+    // function getFlowSteps(bytes32 flowID)
+    //     external
+    //     view
+    //     returns (CommitteeInfo[] memory infos);
 
     function getDAODeployFactory()
         external
@@ -107,6 +106,16 @@ interface IDAO is
     function isDAOAdmin(address user) external view returns(bool);
     
     function getBoardMemberCount() external view returns(uint256 count);
+
+
+    function deployCommittees (
+        string memory name,
+        bytes32 deployKey,
+        bytes memory dutyIDBytes
+    ) external returns (address committeeAddr);
+
+
+    function delegateExecuteAgent(bytes32 agentID, bytes32 proposalID) external;
 
     /// @notice
     /// function updateInfo(uint256 managerPledge, uint256 minimumVote, uint256 minimumWallet, bytes32 voteProcess, bytes memory addedMembers, bytes memory removedMembers) external;

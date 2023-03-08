@@ -37,7 +37,8 @@ abstract contract BaseUCV is IUCV, BaseVerify {
     bool private _ucvManagerEnable;
 
     address private _dao;
-
+    ///@dev BoardOnly=0, PublicAndBoard=1, Public Only=2
+    uint256 private _defaultFlowIDIndex = 0;
     mapping(address => EnumerableSet.UintSet) private ownedNFTs;
 
     /// @dev make sure msgSender is controller or manager, and manager has to be allow to do all the operation
