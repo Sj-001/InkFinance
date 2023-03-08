@@ -418,6 +418,12 @@
         "internalType": "uint256[]",
         "name": "fee",
         "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
       }
     ],
     "name": "FundManagementFeeDistribute",
@@ -741,6 +747,11 @@
         "internalType": "uint256[]",
         "name": "fee",
         "type": "uint256[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
       }
     ],
     "name": "assignFundServiceFee",

@@ -459,6 +459,11 @@
         "internalType": "uint256[]",
         "name": "fee",
         "type": "uint256[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
       }
     ],
     "name": "allocateFundServiceFee",
