@@ -41,10 +41,10 @@ contract ThePublic is BaseCommittee {
         (uint256 minIndividalVotes, uint256 maxIndividalVotes) = IDAO(
             getParentDAO()
         ).getVoteRequirement();
-        require(count >= minIndividalVotes, "vote too less votes");
+        require(count >= minIndividalVotes, "votes lower than minimum requirement");
 
         if (maxIndividalVotes != 0) {
-            require(count <= maxIndividalVotes, "vote too many votes");
+            require(count <= maxIndividalVotes, "votes higher than maximum requirement");
         }
 
         _vote(identity, agree, count, true, feedback, data);
