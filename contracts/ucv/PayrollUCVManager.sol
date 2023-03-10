@@ -339,8 +339,8 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                     .payees
                     .values();
                 for (uint256 i = 0; i < scheduleMembers.length; i++) {
-                    console.log("do pay --- :", scheduleMembers[i]);
-                    _transferSchedulePay(scheduleID, scheduleMembers[i]);
+                    /// @dev income-2 = Receiving direct transfer from other DAO
+                    _transferSchedulePay(scheduleID, scheduleMembers[i], "income-2");
                 }
             }
         }
@@ -410,7 +410,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         allSignerSigned = true;
     }
 
-    function _transferSchedulePay(uint256 scheduleID, address receiver)
+    function _transferSchedulePay(uint256 scheduleID, address receiver, bytes memory comment)
         internal
     {
         PayrollSchedule storage schedule = _schedules[scheduleID];
@@ -435,7 +435,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                 paymentInfo.tokenType,
                 paymentInfo.tokenID,
                 amount,
-                bytes("")
+                comment
             );
 
             emit PayrollClaimed(
@@ -456,7 +456,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
     /// @inheritdoc IPayrollManager
     function claimPayroll(uint256 scheduleID) external override {
         console.log("called????");
-        _transferSchedulePay(scheduleID, msg.sender);
+        _transferSchedulePay(scheduleID, msg.sender, "");
     }
 
     /// @inheritdoc IPayrollManager

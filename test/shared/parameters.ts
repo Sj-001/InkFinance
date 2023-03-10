@@ -290,7 +290,7 @@ export function buildFundInitData2(erc20Address:string, fundManager:string, risk
     
 
     var fixedFee = percentage2;
-    var fixedFeeShouldGoToTreasury = 0;
+    var fixedFeeShouldGoToTreasury = percentage3;
 
     var performanceFee = percentage2;
     var performanceFeeShouldGoToTreasury = 0;

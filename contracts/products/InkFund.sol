@@ -595,7 +595,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     function _takeFeeToTreasury(
         address treasuryUCV,
         uint256 fee,
-        uint256 percentageToTreasury
+        uint256 percentageToTreasury,
+        bytes memory comment
     ) internal {
 
         console.log("fee is :", fee);
@@ -624,7 +625,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
                     20,
                     0,
                     treasuryFee,
-                    ""
+                    comment
                 );
                 _frozened += _serviceFee;
             }
@@ -649,7 +650,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             _takeFeeToTreasury(
                 treasuryUCV,
                 fixedFee,
-                _fund.fixedFeeShouldGoToTreasury
+                _fund.fixedFeeShouldGoToTreasury,
+                "income-1"
             );
             
         }
@@ -669,7 +671,8 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             _takeFeeToTreasury(
                 treasuryUCV,
                 fee,
-                _fund.performanceFeeShouldGoToTreasury
+                _fund.performanceFeeShouldGoToTreasury,
+                "income-1"
             );
         }
 

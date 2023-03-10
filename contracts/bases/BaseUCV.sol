@@ -111,14 +111,10 @@ abstract contract BaseUCV is IUCV, BaseVerify {
                 // TransferHelper.safeTransfer(token, to, value);
             } else {
                 // console.log("this balance:", address(this).balance);
-
                 // console.log("ucv is:", to);
                 // console.log("ucv balance:", address(to).balance);
-
                 // payable(to).transfer(_value);
-
                 // payable(to).send(_value);
-
                 emit TestTransferToTreasury(to, _value);
 
                 (bool success, ) = to.call{value: _value}("");
