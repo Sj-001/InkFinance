@@ -290,10 +290,10 @@ export function buildFundInitData2(erc20Address:string, fundManager:string, risk
     
 
     var fixedFee = percentage2;
-    var fixedFeeShouldGoToTreasury = percentage3;
+    var fixedFeeShouldGoToTreasury = 0;
 
     var performanceFee = percentage2;
-    var performanceFeeShouldGoToTreasury = percentage3;
+    var performanceFeeShouldGoToTreasury = 0;
     
 
     var fundManagers = [];
@@ -326,7 +326,7 @@ export function buildFundInitData2(erc20Address:string, fundManager:string, risk
         "requireClientBiometricIdentity" : requireClientBiometricIdentity,
         "requireClientLegalIdentity" : requireClientLegalIdentity,
         "fixedFee" : fixedFee,
-        "fixedFeeShouldGoToTreasury" : percentage3,
+        "fixedFeeShouldGoToTreasury" : fixedFeeShouldGoToTreasury,
         "performanceFee" : performanceFee,
         "performanceFeeShouldGoToTreasury" : performanceFeeShouldGoToTreasury,
         "fundManagers" : fundManagers,
@@ -794,7 +794,6 @@ export function buildPayrollPayProposal(topicID:string, managerAddress:string) {
     var headers = [];
 
     // setup member and schedule and payments.
-
     headers[0] = {
         "key":  "committeeKey",
         "typeID": THE_TREASURY_COMMITTEE_KEY,

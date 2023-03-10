@@ -597,6 +597,10 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         uint256 fee,
         uint256 percentageToTreasury
     ) internal {
+
+        console.log("fee is :", fee);
+        console.log("percentage to treasury :", percentageToTreasury);
+
         if (percentageToTreasury == 0) {
             _serviceFee += fee;
             _frozened += fee;
@@ -640,12 +644,15 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         // uint8 decimal = _getTokenDecimal(_fund.fundToken);
         // uint256 fixedFee = (_fund.fixedFee * _totalRaised) / (1 * 10**decimal);
         uint256 fixedFee = calculateFee(_fund.fixedFee);
+        if (fixedFee > 0) {
 
-        _takeFeeToTreasury(
-            treasuryUCV,
-            fixedFee,
-            _fund.fixedFeeShouldGoToTreasury
-        );
+            _takeFeeToTreasury(
+                treasuryUCV,
+                fixedFee,
+                _fund.fixedFeeShouldGoToTreasury
+            );
+            
+        }
         _fixedFeeTransferTime = block.timestamp;
     }
 
@@ -656,7 +663,6 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         if (_investmentProfit > 0) {
 
             uint8 decimal = _getTokenDecimal(_fund.fundToken);
-
             uint256 fee = (_fund.performanceFee * _investmentProfit) /
                 (1 * 10**decimal);
 
