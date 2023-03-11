@@ -154,7 +154,7 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             return 0;
         }
 
-        voteCount = _proposalVoteDetail[voteID][!agree][voter].voteCount;
+        voteCount = _proposalVoteDetail[voteID][agree][voter].voteCount;
     }
 
 
@@ -196,6 +196,8 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             );
             addAccount = 1;
         }
+
+        console.log("now voted:::::::::::::", _proposalVoteDetail[voteID][agree][_msgSender()].voteCount);
 
         require(
             _proposalVoteDetail[voteID][!agree][_msgSender()].voteCount == 0,

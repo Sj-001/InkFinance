@@ -149,7 +149,7 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         // daoMembers[1] = "0xed561d037eA9fB2D9DB64639F78A0c393ab22BcF";
 
         var seats = 1;
-        var minIndividalVotes = 1;
+        var minIndividalVotes = 5;
         var maxIndividalVotes = 100;
 
         var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[], address[], address[], uint256, uint256, uint256)'];

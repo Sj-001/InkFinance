@@ -4,9 +4,15 @@ pragma solidity ^0.8.0;
 import "../interfaces/IProposalHandler.sol";
 import "../bases/BaseCommittee.sol";
 import "../libraries/defined/DutyID.sol";
+import "../libraries/LVoteIdentityHelper.sol";
+
 import "hardhat/console.sol";
 
 contract ThePublic is BaseCommittee {
+    
+    using LVoteIdentityHelper for VoteIdentity;
+
+
     function init(
         address dao_,
         address config_,
@@ -42,11 +48,12 @@ contract ThePublic is BaseCommittee {
         (uint256 minIndividalVotes, uint256 maxIndividalVotes) = IDAO(
             getParentDAO()
         ).getVoteRequirement();
-        require(count >= minIndividalVotes, "votes lower than minimum requirement");
 
+        (uint256 agreeVotes, uint256 denyVotes) = _getProposalAccountDetail(identity._getIdentityID(), _msgSender());
+
+        require(agreeVotes + count >= minIndividalVotes || denyVotes + count >= minIndividalVotes, "votes lower than minimum requirement");
         if (maxIndividalVotes != 0) {
-
-            require(count + _getUserVoted(identity, _msgSender(), agree) <= maxIndividalVotes, "votes higher than maximum requirement");
+            require(count + agreeVotes + denyVotes <= maxIndividalVotes, "votes higher than maximum requirement");
         
         }
 

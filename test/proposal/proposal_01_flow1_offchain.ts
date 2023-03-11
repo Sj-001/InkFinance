@@ -53,14 +53,14 @@ describe("proposal related test", function () {
         // console.log("proposal:", proposal);
 
         var theBoardAddress = await masterDAO.getDeployedContractByKey(THE_BOARD_COMMITTEE_KEY);
-        var theBoardFactory = await ethers.getContractFactory("TheBoard");
+        var theBoardFactory = await ethers.getContractFactory("ThePublic");
         // var theBoard = theBoardFactory.attach(flowSteps[0].committee);
         var theBoard = theBoardFactory.attach(theBoardAddress);
 
         await theBoard.newProposal(proposal, true, "0x00");
 
         console.log("committee infos:", await masterDAO.getDAOCommittees());
-
+        
         var proposalID = await masterDAO.getProposalIDByIndex(0);
     
 
