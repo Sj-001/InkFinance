@@ -34,6 +34,7 @@ contract ThePublic is BaseCommittee {
         string calldata feedback,
         bytes calldata data
     ) external override {
+        
         if (!_allowToVote(identity, _msgSender())) {
             revert NotAllowToOperate();
         }
@@ -44,7 +45,9 @@ contract ThePublic is BaseCommittee {
         require(count >= minIndividalVotes, "votes lower than minimum requirement");
 
         if (maxIndividalVotes != 0) {
-            require(count <= maxIndividalVotes, "votes higher than maximum requirement");
+
+            require(count + _getUserVoted(identity, _msgSender(), agree) <= maxIndividalVotes, "votes higher than maximum requirement");
+        
         }
 
         _vote(identity, agree, count, true, feedback, data);

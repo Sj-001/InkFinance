@@ -166,7 +166,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
             _fundID
         ) + _getAvailablePrincipal();
 
-        uint256 spend = _totalRaised + calculateFee(_fund.fixedFee);
+        uint256 spend = _totalRaised; // + calculateFee(_fund.fixedFee);
         if (income > spend) {
             profit = income - spend;
         } else {
