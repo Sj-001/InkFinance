@@ -198,7 +198,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         override
         returns (uint256 minIndividalVotes, uint256 maxIndividalVotes)
     {
-        minIndividalVotes = _minEffectiveVotes;
+        minIndividalVotes = minIndividalVotes;
         maxIndividalVotes = _maxIndividalVotes;
     }
 
