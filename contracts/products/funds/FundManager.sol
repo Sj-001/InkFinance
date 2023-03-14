@@ -55,6 +55,12 @@ contract FundManager is IFundManager, BaseUCVManager {
         _factoryManager = IDAO(_dao).getDAODeployFactory();
     }
 
+    function getDAO()
+        external view override
+        returns (address dao) {
+            dao = _dao;
+        }
+
     /// @inheritdoc IFundManager
     function isCommitteeOperator(uint256 roleType, address operator)
         external
@@ -332,7 +338,7 @@ contract FundManager is IFundManager, BaseUCVManager {
 
         bytes32 fundID = _newID();
         // valid fundManager & riskManager have been set in the InvestmentCommittee
-        bytes memory initData = abi.encode(address(this), fundID, fundInfo);
+        bytes memory initData = abi.encode(_dao, fundID, fundInfo);
 
         // valid treasury exist
         address fundAddress = _deployByFactoryKey(

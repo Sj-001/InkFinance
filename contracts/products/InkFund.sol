@@ -92,16 +92,19 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     NewFundInfo private _fund;
 
     function init(
-        address dao_,
+        address fundManager,
         address config_,
         bytes calldata data_
     ) external override returns (bytes memory callbackEvent) {
         // init fund manager here
         (
-            address fundManager,
+            address dao_,
             bytes32 fundID,
             NewFundInfo memory fundInitData
         ) = abi.decode(data_, (address, bytes32, NewFundInfo));
+
+
+        // address dao = IFundManager(_fundManager).getDAO();
 
         _init(dao_, config_, fundManager, address(0));
 

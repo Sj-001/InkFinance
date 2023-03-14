@@ -1197,7 +1197,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "dao_",
+        "name": "fundManager",
         "type": "address"
       },
       {

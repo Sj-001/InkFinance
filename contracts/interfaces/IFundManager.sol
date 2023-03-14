@@ -4,6 +4,11 @@ pragma solidity ^0.8.0;
 import "./IFundInfo.sol";
 
 interface IFundManager is IFundInfo {
+
+    function getDAO()
+        external view
+        returns (address dao);
+
     /**
         @dev create a fund (UCV) for taking user's investment 
         every create fund proposal would create a independent UCV

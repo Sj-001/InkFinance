@@ -714,6 +714,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getDAO",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "dao",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
