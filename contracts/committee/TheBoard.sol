@@ -73,6 +73,11 @@ contract TheBoard is BaseCommittee {
             revert OnlyAllowToVoteOne();
         }
 
+        (uint256 agreeVotes, uint256 denyVotes) = _getProposalAccountDetail(identity._getIdentityID(), _msgSender());
+        require(agreeVotes + denyVotes == 0, "already voted");
+
+        
+
         _vote(identity, agree, count, true, feedback, data);
 
         VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
