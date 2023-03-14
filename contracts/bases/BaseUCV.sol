@@ -129,13 +129,19 @@ abstract contract BaseUCV is IUCV, BaseVerify {
 
         if (Address.isContract(to)) {
             if (IUCV(to).supportsInterface(type(IUCV).interfaceId)) {
+
+                string memory itemName = "deposit";
+                if (data.length != 0) {
+                    itemName = string(data);
+                }
+
                 emit VaultDeposit(
                     _dao,
                     token,
                     to,
                     tokenType,
                     tokenID,
-                    "deposit",
+                    itemName,
                     _value,
                     address(this),
                     "",
