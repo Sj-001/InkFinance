@@ -184,6 +184,8 @@ const FUND_LIQUIDATOR_DUTYID = "0x8fddb24da2ad50c84cbc7274875caf404a835b89c66946
 console.log("FUND_AUDITOR_DUTYID=", keccak256(toUtf8Bytes("dutyID.FUND_AUDITOR")));
 const FUND_AUDITOR_DUTYID = "0xbec75964fc7b92f671de9c0fe87cc5194cb0c8193f09af9794c0140ec4585600";
 
+console.log("DAO_ADMIN=", keccak256(toUtf8Bytes("dutyID.DAO_ADMIN")));
+const DAO_ADMIN_DUTYID = "0x9a24e4691c3b94f933d79c9399cf44deede6c6ce75014cf86e82f2fee0c01f42";
 
 
 export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
@@ -406,8 +408,16 @@ export async function MockNFTFixture(_wallets: Wallet[], _mockProvider: MockProv
 export async function KYCVerifyFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
 
     const signers = await ethers.getSigners();
-    const verifier = await deployContract(signers[0], KYCVerifyManagerABI, []);
+
+    const verifier = await deployContract(signers[0], KYCVerifyManagerABI, ["0xf46B1E93aF2Bf497b07726108A539B478B31e64C"]);
     await verifier.deployed();
+
+
+    const identity = await deployContract(signers[0], IdentityManagerABI, [verifier.address]);
+    await identity.deployed();
+
+
+    await verifier.updateIdentityManager(identity.address);
 
     return {verifier};
 }

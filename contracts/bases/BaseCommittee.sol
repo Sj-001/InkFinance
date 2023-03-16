@@ -68,9 +68,9 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             data,
             (string, bytes)
         );
-        
+
         _committeeName = name;
-        
+
         bytes32[] memory dutyArray = abi.decode(duties, (bytes32[]));
         for (uint256 i = 0; i < dutyArray.length; i++) {
             _committeeDuties.add(dutyArray[i]);
@@ -135,6 +135,30 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
         );
     }
 
+
+    function _getUserVoted(VoteIdentity memory identity, address voter, bool agree) internal returns(uint256 voteCount) {
+        bytes32 voteID = identity._getIdentityID();
+        VoteInfo storage voteInfo = _voteInfos[voteID];
+        if (voteInfo.identity._getIdentityID() != voteID) {
+            voteInfo.identity = identity;
+        }
+        mapping(address => PersonVoteDetail)
+            storage detail = _proposalVoteDetail[voteID][agree];
+        PersonVoteDetail storage sentinel = detail[LChainLink.SENTINEL_ADDR];
+        if (sentinel.link._isEmpty()) {
+            sentinel.link._init();
+        }
+        
+        PersonVoteDetail storage voteDetail = detail[voter];
+        if (voteDetail.link._isEmpty()) {
+            return 0;
+        }
+
+        voteCount = _proposalVoteDetail[voteID][agree][voter].voteCount;
+    }
+
+
+
     /// @dev by default, vote require pledge
     function _vote(
         VoteIdentity memory identity,
@@ -172,6 +196,8 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
             );
             addAccount = 1;
         }
+
+        console.log("now voted:::::::::::::", _proposalVoteDetail[voteID][agree][_msgSender()].voteCount);
 
         require(
             _proposalVoteDetail[voteID][!agree][_msgSender()].voteCount == 0,
@@ -277,19 +303,18 @@ abstract contract BaseCommittee is IDeploy, ICommittee, BaseVerify {
 
     function _calculateVoteResults(
         VoteIdentity memory identity,
-        bool ignoreBaseRule
+        bool ignoreBaseRule,
+        uint256 baseAgreeSeat
     ) internal returns (bool _passedOrNot) {
         VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
-
         bool agree;
-        console.log("voteInfo.agreeVoterNum", voteInfo.agreeVoterNum);
-        if (voteInfo.agreeVoterNum > voteInfo.denyVoterNum) {
+
+        if (voteInfo.agreeVoterNum >= baseAgreeSeat) {
             agree = true;
         } else {
             agree = false;
         }
 
-        console.log("agree?", agree);
         if (agree) {
             voteInfo.status = VoteStatus.AGREE;
         } else {

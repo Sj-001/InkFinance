@@ -16,12 +16,7 @@ error SystemError();
 error NotAllowedToOperate();
 error AgentCannotBeExecute();
 
-interface IDAO is
-    IProposalHandler,
-    IDutyControl,
-    IAgentHandler,
-    IProcessHandler
-{
+interface IDAO is IProposalHandler, IDutyControl, IAgentHandler {
     event NewDAOCreated(
         address indexed owner,
         address indexed token,
@@ -62,13 +57,13 @@ interface IDAO is
     /// @dev after ucv manager created, call this method set ucv's manager
     function setupUCV(address ucv, address ucvManager) external;
 
-    function getUCV() external view returns(address ucv);
+    function getUCV() external view returns (address ucv);
 
-    /// @dev get flow steps
-    function getFlowSteps(bytes32 flowID)
-        external
-        view
-        returns (CommitteeInfo[] memory infos);
+    // /// @dev get flow steps
+    // function getFlowSteps(bytes32 flowID)
+    //     external
+    //     view
+    //     returns (CommitteeInfo[] memory infos);
 
     function getDAODeployFactory()
         external
@@ -99,6 +94,28 @@ interface IDAO is
         bytes memory dutyIDs
     ) external;
 
+    function getBoardProposalAgreeSeats()
+        external
+        view
+        returns (uint256 minSeats);
+
+    function getVoteRequirement()
+        external
+        view
+        returns (uint256 minIndividalVotes, uint256 maxIndividalVotes);
+
+    function isDAOAdmin(address user) external view returns (bool);
+
+    function getBoardMemberCount() external view returns (uint256 count);
+
+    function deployCommittees(
+        string memory name,
+        bytes32 deployKey,
+        bytes memory dutyIDBytes
+    ) external returns (address committeeAddr);
+
+    function delegateExecuteAgent(bytes32 agentID, bytes32 proposalID) external;
+
     /// @notice
-    // function updateInfo(uint256 managerPledge, uint256 minimumVote, uint256 minimumWallet, bytes32 voteProcess, bytes memory addedMembers, bytes memory removedMembers) external;
+    /// function updateInfo(uint256 managerPledge, uint256 minimumVote, uint256 minimumWallet, bytes32 voteProcess, bytes memory addedMembers, bytes memory removedMembers) external;
 }

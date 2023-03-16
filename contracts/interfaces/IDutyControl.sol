@@ -15,13 +15,13 @@ interface IDutyControl {
     /// @param dutyID user-defined dutyID, formed by keccak256
     function remmoveDuty(address account, bytes32 dutyID) external;
 
-    /// @dev add user into the DAO, !!! Agent call only
-    /// @param account target user
-    function addUser(address account) external;
+    // /// @dev add user into the DAO, !!! Agent call only
+    // /// @param account target user
+    // function addUser(address account) external;
 
-    /// @dev remove user from the DAO, !!! Agent call only
-    /// @param account target user
-    function removeUser(address account) external;
+    // /// @dev remove user from the DAO, !!! Agent call only
+    // /// @param account target user
+    // function removeUser(address account) external;
 
     /// @dev identity the account have the duty or not
     /// @param account the query account

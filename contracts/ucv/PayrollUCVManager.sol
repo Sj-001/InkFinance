@@ -74,8 +74,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         // console.log("block.timestamp", block.timestamp);
 
         uint256 latestID = getLatestPayID(scheduleID, block.timestamp);
-
-        console.log("lastest ID:", latestID);
         uint256 idLength = 0;
         if (latestID - startPayID >= 0) {
             idLength = latestID - startPayID + 1;
@@ -136,7 +134,6 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         _dao = dao_;
         // @dev init proposal
         (_treasurySetupProposal) = abi.decode(data_, (bytes32));
-
         console.log("payroll ucv manager has been initialized");
     }
 
@@ -300,7 +297,10 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
             // make sure it's contract
 
             // console.log("payee:", payee);
-            require(IUCV(payee).supportsInterface(type(IUCV).interfaceId), "Target address is not UCV");
+            require(
+                IUCV(payee).supportsInterface(type(IUCV).interfaceId),
+                "Target address is not UCV"
+            );
         }
     }
 
@@ -315,10 +315,17 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         _checkDirectPay(scheduleID);
 
         bool isLastSigner = _isPayIDSigned(scheduleID, payID);
-        
+
         uint256 lastSignerFlag = isLastSigner == true ? 1 : 0;
 
-        emit PayrollSign(_dao, scheduleID, payID, msg.sender, block.timestamp, lastSignerFlag);
+        emit PayrollSign(
+            _dao,
+            scheduleID,
+            payID,
+            msg.sender,
+            block.timestamp,
+            lastSignerFlag
+        );
     }
 
     function _checkDirectPay(uint256 scheduleID) internal {
@@ -329,8 +336,8 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                     .payees
                     .values();
                 for (uint256 i = 0; i < scheduleMembers.length; i++) {
-                    console.log("do pay --- :", scheduleMembers[i]);
-                    _transferSchedulePay(scheduleID, scheduleMembers[i]);
+                    /// @dev income-2 = Receiving direct transfer from other DAO
+                    _transferSchedulePay(scheduleID, scheduleMembers[i], "income-2");
                 }
             }
         }
@@ -342,28 +349,31 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         address signer
     ) internal {
         // require duty
-        if (!IDutyControl(_dao).hasDuty(signer, DutyID.SIGNER)) {
-            revert TheAccountIsNotAuthroized(signer);
-        }
+        require(IDutyControl(_dao).hasDuty(signer, DutyID.SIGNER), "The account is not authroized");
 
         uint256 latestAvailablePayID = getLatestPayID(
             scheduleID,
             block.timestamp
         );
-        if (payID <= 0 && payID > latestAvailablePayID) {
-            revert PayIDIsIllegal(payID, latestAvailablePayID);
-        }
+
+        require (payID > 0 && payID <= latestAvailablePayID, "PayID is illegal");
+        // if (payID <= 0 && payID > latestAvailablePayID) {
+        //     revert PayIDIsIllegal(payID, latestAvailablePayID);
+        // }
 
         PayrollSchedule storage schedule = _schedules[scheduleID];
-        if (schedule.paymentSigns[payID][signer] > 0) {
-            revert AlreadySigned();
-        }
+        require (schedule.paymentSigns[payID][signer] == 0, "Already signed");
+        
+        // {
+        //     revert AlreadySigned();
+        // }
 
         // make sure sign the payID time by time
         if (payID > FIRST_PAY_ID) {
             // check if the signer signed previous payID
             if (schedule.paymentSigns[payID - 1][signer] == 0) {
-                revert HaveToSignThePreviousPay();
+                require (false, "Have to sign the previous payment");
+                // revert HaveToSignThePreviousPay();
             }
         }
     }
@@ -400,7 +410,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
         allSignerSigned = true;
     }
 
-    function _transferSchedulePay(uint256 scheduleID, address receiver)
+    function _transferSchedulePay(uint256 scheduleID, address receiver, bytes memory comment)
         internal
     {
         PayrollSchedule storage schedule = _schedules[scheduleID];
@@ -425,7 +435,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
                 paymentInfo.tokenType,
                 paymentInfo.tokenID,
                 amount,
-                bytes("")
+                comment
             );
 
             emit PayrollClaimed(
@@ -445,8 +455,7 @@ contract PayrollUCVManager is IPayrollManager, BaseUCVManager {
 
     /// @inheritdoc IPayrollManager
     function claimPayroll(uint256 scheduleID) external override {
-        console.log("called????");
-        _transferSchedulePay(scheduleID, msg.sender);
+        _transferSchedulePay(scheduleID, msg.sender, "");
     }
 
     /// @inheritdoc IPayrollManager

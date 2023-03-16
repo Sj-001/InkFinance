@@ -37,7 +37,8 @@ abstract contract BaseUCV is IUCV, BaseVerify {
     bool private _ucvManagerEnable;
 
     address private _dao;
-
+    ///@dev BoardOnly=0, PublicAndBoard=1, Public Only=2
+    uint256 private _defaultFlowIDIndex = 0;
     mapping(address => EnumerableSet.UintSet) private ownedNFTs;
 
     /// @dev make sure msgSender is controller or manager, and manager has to be allow to do all the operation
@@ -92,8 +93,7 @@ abstract contract BaseUCV is IUCV, BaseVerify {
         return _transferTo(to, token, tokenType, tokenID, value, data);
     }
 
-
-    event TestTransferToTreasury(address to, uint256  transfer);
+    event TestTransferToTreasury(address to, uint256 transfer);
 
     function _transferTo(
         address to,
@@ -110,25 +110,18 @@ abstract contract BaseUCV is IUCV, BaseVerify {
                 IERC20(token).transfer(to, _value);
                 // TransferHelper.safeTransfer(token, to, value);
             } else {
-
                 // console.log("this balance:", address(this).balance);
-
                 // console.log("ucv is:", to);
                 // console.log("ucv balance:", address(to).balance);
-
-
                 // payable(to).transfer(_value);
-
                 // payable(to).send(_value);
-
                 emit TestTransferToTreasury(to, _value);
 
-                 (bool success,) = to.call{value: _value}("");
+                (bool success, ) = to.call{value: _value}("");
                 require(success, "Transfer failed.");
 
                 // console.log("this balance:", address(this).balance);
                 // console.log("ucv balance:", address(to).balance);
-            
             }
         } else {
             revert TokenTypeNotSupport(tokenType);
@@ -136,13 +129,22 @@ abstract contract BaseUCV is IUCV, BaseVerify {
 
         if (Address.isContract(to)) {
             if (IUCV(to).supportsInterface(type(IUCV).interfaceId)) {
+
+                string memory itemName = "deposit";
+                if (data.length != 0) {
+                    itemName = string(data);
+                }
+
+
+                console.log("########################################################################################################## deposit: ", itemName);
+
                 emit VaultDeposit(
                     _dao,
                     token,
                     to,
                     tokenType,
                     tokenID,
-                    "deposit",
+                    itemName,
                     _value,
                     address(this),
                     "",
@@ -154,15 +156,12 @@ abstract contract BaseUCV is IUCV, BaseVerify {
         return true;
     }
 
-
-    function getDAO() internal view returns(address dao) {
+    function getDAO() internal view returns (address dao) {
         dao = _dao;
     }
 
     function _depositeERC20(address token, uint256 amount) internal {
         if (token == address(0)) {
-        
-
             if (amount != msg.value) {
                 revert DepositeError();
             }
@@ -213,6 +212,10 @@ abstract contract BaseUCV is IUCV, BaseVerify {
 
     /// @inheritdoc IUCV
     function getManager() external view override returns (address ucvManager) {
+        ucvManager = _getManager();
+    }
+
+    function _getManager() internal view returns (address ucvManager) {
         ucvManager = _ucvManager;
     }
 

@@ -1,32 +1,6 @@
 [
   {
     "inputs": [],
-    "name": "AlreadySigned",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "HaveToSignThePreviousPay",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "inputPayID",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "availablePayID",
-        "type": "uint256"
-      }
-    ],
-    "name": "PayIDIsIllegal",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "StartPayIDWrong",
     "type": "error"
   },

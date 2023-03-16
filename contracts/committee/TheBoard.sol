@@ -73,7 +73,18 @@ contract TheBoard is BaseCommittee {
             revert OnlyAllowToVoteOne();
         }
 
+        (uint256 agreeVotes, uint256 denyVotes) = _getProposalAccountDetail(identity._getIdentityID(), _msgSender());
+        require(agreeVotes + denyVotes == 0, "already voted");
+
+        
+
         _vote(identity, agree, count, true, feedback, data);
+
+        VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
+
+        if (voteInfo.totalVotes == IDAO(getParentDAO()).getBoardMemberCount()) {
+            _tallyVotes(identity, data);
+        }
     }
 
     /// @inheritdoc IVoteHandler
@@ -98,17 +109,21 @@ contract TheBoard is BaseCommittee {
         if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
+
+        _tallyVotes(identity, data);
+    }
+
+    function _tallyVotes(VoteIdentity memory identity, bytes memory data)
+        internal
+    {
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
-        // if (
-        //     IProcessHandler(getParentDAO()).getVoteExpirationTime(
-        //         identity.proposalID
-        //     ) > block.timestamp
-        // ) {
-        //     revert CannotTallyVote();
-        // }
+
+        // pass seats
+        uint256 basePassSeat = IDAO(getParentDAO())
+            .getBoardProposalAgreeSeats();
 
         // @todo verify if it's expired.
-        bool passOrNot = _calculateVoteResults(identity, true);
+        bool passOrNot = _calculateVoteResults(identity, true, basePassSeat);
 
         VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
         if (passOrNot) {
@@ -117,7 +132,6 @@ contract TheBoard is BaseCommittee {
             voteInfo.status = VoteStatus.DENY;
         }
 
-        console.log("tally vote result", passOrNot);
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
 

@@ -31,35 +31,33 @@ module.exports = {
             gasPrice: 10000000070,
 
         }
-        
-        
-        // ,
-        // dev_avax: {
-        //     url: process.env.DEV_AVAX_RPC,
-        //     accounts: [process.env.DEV_AVAX_KEY]
-        // }
-        // ,
-        // dev_bsc: {
-        //     url: process.env.DEV_BSC_RPC,
-        //     accounts: [process.env.DEV_BSC_KEY]
-        // }
 
-        // ,
-        // dev_polygon: {
-        //     url: process.env.DEV_POLYGON_RPC,
-        //     accounts: [process.env.DEV_POLYGON_KEY]
-        // }
+        ,
+        dev_avax: {
+            url: process.env.DEV_AVAX_RPC,
+            accounts: [process.env.DEV_AVAX_KEY]
+        }
+        ,
+        dev_bsc: {
+            url: process.env.DEV_BSC_RPC,
+            accounts: [process.env.DEV_BSC_KEY]
+        }
+        ,
+        dev_polygon: {
+            url: process.env.DEV_POLYGON_RPC,
+            accounts: [process.env.DEV_POLYGON_KEY]
+        }
 
-        // ,
-        // dev_neon: {
-        //     url: process.env.DEV_NEON_RPC,
-        //     accounts: [process.env.DEV_NEON_KEY]
-        // }
-        // ,
-        // dev_goerli: {
-        //     url: process.env.DEV_GOERLI_RPC,
-        //     accounts: [process.env.DEV_GOERLI_KEY]
-        // }
+        ,
+        dev_neon: {
+            url: process.env.DEV_NEON_RPC,
+            accounts: [process.env.DEV_NEON_KEY]
+        }
+        ,
+        dev_goerli: {
+            url: process.env.DEV_GOERLI_RPC,
+            accounts: [process.env.DEV_GOERLI_KEY]
+        }
         
     },
 

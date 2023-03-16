@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 /// @dev Each fund is an extension of UCV
 interface IFund {
-
     /// @dev launch the fund (Only FundManager could execute)
     function launch() external;
 
@@ -27,38 +26,44 @@ interface IFund {
     function purchaseShare(uint256 amount) external payable;
 
     /// @dev get fund's status
-    /// @return status 
-    /// 0=not start yet(need to start fund) 
-    /// 1=failed(launch status is finished and raised fund not reach min raise tokens) 
+    /// @return status
+    /// 0=not start yet(need to start fund)
+    /// 1=failed(launch status is finished and raised fund not reach min raise tokens)
     /// 2=could start
     /// 3=started
     /// 9=finished(could claim the principal & profit of investment)
     function getFundStatus() external view returns (uint256 status);
 
     /// @dev calculate the profit and transfer to the treasury
-    function tallyUp() external;
+    function dissolve(address ucv) external;
 
     /// @dev get the fund raised progress
-    function getRaisedInfo() external returns (uint256 minRaise, uint256 maxRaise, uint256 currentRaised);
+    function getRaisedInfo()
+        external
+        returns (
+            uint256 minRaise,
+            uint256 maxRaise,
+            uint256 currentRaised
+        );
 
     /// @dev return how many purchased no matter the user withdraw the principal
-    function getOriginalInvested(address owner) external view returns (uint256 amount);
-
+    function getOriginalInvested(address owner)
+        external
+        view
+        returns (uint256 amount);
 
     /// @dev fund manager ask to pay for the fixed fee
     // function transferFixedFeeToUCV(address treasuryUCV) external;
 
-    function getLaunchTime() external view returns(uint256 start, uint256 end);
+    function getLaunchTime() external view returns (uint256 start, uint256 end);
 
-    function getFundTime() external view returns(uint256 start, uint256 end);
-
+    function getFundTime() external view returns (uint256 start, uint256 end);
 
     // function claimShare(address owner) external;
 
     /// @dev when launching is finished and can't raise enough token,
     /// the user could withdraw their principal
     // function withdrawPrincipal(address owner) external;
-
 
     /// @dev after Admin click tallyUp the fund and the profit is ready,
     /// then user could claim the principal and profit
@@ -69,33 +74,53 @@ interface IFund {
     /// @dev get how may fund token will get of the owner
     // function getShare(address owner) external view returns (uint256 amount);
 
-    function distribute(address owner, address token, uint256 amount) external;
-
+    function distribute(
+        address owner,
+        address token,
+        uint256 amount
+    ) external;
 
     function frozen(uint256 amount) external;
-    
 
     function hasRoleSetting(uint256 roleType) external view returns (bool has);
 
-
-    function isRoleAuthorized(uint256 roleType, address user) external view returns (bool authroized);
+    function isRoleAuthorized(uint256 roleType, address user)
+        external
+        view
+        returns (bool authroized);
 
     function claimCertificate(address investor) external;
+
     function claimInvestment(address investor) external;
 
-    function getClaimableInvestment(address investor) external view returns(uint256 amount);
-    function getClaimableCertificate(address investor) external view returns(uint256 amount);
+    function getClaimableInvestment(address investor)
+        external
+        view
+        returns (uint256 amount);
 
+    function getClaimableCertificate(address investor)
+        external
+        view
+        returns (uint256 amount);
 
-    function calculateClaimableAmount(address investor, uint256 total) external view returns(uint256 amount);
+    function calculateClaimableAmount(address investor, uint256 total)
+        external
+        view
+        returns (uint256 amount);
+
     // function test() external view;
 
-    
     function liquidate() external;
 
-    function isLiquidate() external view returns(bool);
+    function isLiquidate() external view returns (bool);
 
-    function getAvailablePrincipal() external view returns (uint256 left); 
-    
-    function getAdminServiceBalance() external view returns(uint256 fee);
+    function getAvailablePrincipal() external view returns (uint256 left);
+
+    function getAdminServiceBalance() external view returns (uint256 fee);
+
+    function assignFundServiceFee(
+        address[] memory members,
+        uint256[] memory fee,
+        bytes memory data
+    ) external;
 }
