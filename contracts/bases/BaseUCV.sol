@@ -135,6 +135,9 @@ abstract contract BaseUCV is IUCV, BaseVerify {
                     itemName = string(data);
                 }
 
+
+                console.log("########################################################################################################## deposit: ", itemName);
+
                 emit VaultDeposit(
                     _dao,
                     token,
