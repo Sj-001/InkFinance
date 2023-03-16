@@ -13,7 +13,6 @@ contract InkERC721 is ERC721 {
         string memory symbol,
         address addrReg
     ) ERC721(name, symbol) {
-
         creator = msg.sender;
     }
 

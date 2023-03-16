@@ -17,10 +17,10 @@ library AddressID {
 
     // keccak256("addressid.InkBadgeERC20Factory")
     bytes32 internal constant InkBadgeERC20Factory =
-      0x2abd799a8b295d39b3f061556093e19cb6777d7346a4a772b80c051d642f1725;
+        0x2abd799a8b295d39b3f061556093e19cb6777d7346a4a772b80c051d642f1725;
 
-    // ExecuteAgent 地址定义.
     // prefix = keccak256("addressid.ExecuteAgent")
     // agent = keccak256(abi.encode(prefix, agent name));
-    bytes32 internal constant EXECUTED_AGENT_PREFIX = 0x7647dfa40b7cac80f0613fa4077233e89aee989841380fad454b7f4367296a31;
+    bytes32 internal constant EXECUTED_AGENT_PREFIX =
+        0x7647dfa40b7cac80f0613fa4077233e89aee989841380fad454b7f4367296a31;
 }
