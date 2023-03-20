@@ -36,6 +36,9 @@ contract TreasuryManagerAgent is BaseAgent {
         // verify the treasury has been set up before
         bytes32 typeID;
         bytes memory dataBytes;
+        address[] memory members;
+        string[] memory kyc;
+
         console.log("pre exec TreasuryManagerAgent ");
 
         // valid related address，include operator ｜ multisigner ｜ auditor
@@ -44,25 +47,35 @@ contract TreasuryManagerAgent is BaseAgent {
             proposalID,
             "operators"
         );
-        address[] memory operators = abi.decode(dataBytes, (address[]));
+
+        console.log("start decode");
+
+        (members, kyc) = abi.decode(dataBytes, (address[], string[]));
+        // do check
+
+
+        console.log("decode end");
 
         (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
             proposalID,
             "signer"
         );
 
-        address[] memory signers = abi.decode(dataBytes, (address[]));
+        (members, kyc) = abi.decode(dataBytes, (address[],  string[]));
 
         (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
             proposalID,
             "auditor"
         );
-        address[] memory auditors = abi.decode(dataBytes, (address[]));
+        
+        (members, kyc) = abi.decode(dataBytes, (address[],  string[]));
 
         console.log(
-            "auditor address ::::::::::::::::::::::::::::::::: ",
-            auditors[0]
+            "verify finished ######  ",
+            members[0]
         );
+
+
 
         success = true;
     }
@@ -177,7 +190,7 @@ contract TreasuryManagerAgent is BaseAgent {
     function _setMemberDuties(bytes32 dutyID, bytes memory memberBytes)
         internal
     {
-        address[] memory members = abi.decode(memberBytes, (address[]));
+        (address[] memory members, string[] memory kyc) = abi.decode(memberBytes, (address[], string[]));
         for (uint256 i = 0; i < members.length; i++) {
             console.log("_setMemberDuties :", members[i]);
             IDAO(_dao).addDuty(members[i], dutyID);

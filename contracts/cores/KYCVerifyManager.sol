@@ -84,7 +84,7 @@ contract KYCVerifyManager {
             kvs[0].typeID = keccak256("account_info");
             kvs[0].data = abi.encode(accountType, account, data);
 
-            IIdentity(_identityManager).batchSetUserKVs(kvs);
+            IIdentity(_identityManager).batchSetUserKVs(zone, kvs);
 
             emit KYCVerified(zone, wallet, accountType, account, data);
         }

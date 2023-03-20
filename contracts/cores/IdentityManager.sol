@@ -11,7 +11,7 @@ import "hardhat/console.sol";
 contract IdentityManager is IIdentity {
     address public immutable _kycManager;
 
-    mapping(address => KVZone) private _zoneKeyValues;
+    mapping(string => KVZone) private _zoneKeyValues;
 
     constructor(address kycManager_) {
         _kycManager = kycManager_;
@@ -28,10 +28,10 @@ contract IdentityManager is IIdentity {
     }
 
     /// @inheritdoc IIdentity
-    function batchSetUserKVs(UserKV[] memory kvs) external override {
+    function batchSetUserKVs(string memory zone, UserKV[] memory kvs) external override {
         // must be KYCVerifier
         require(msg.sender == _kycManager, "Not allowed to set user info");
-        address zone = msg.sender;
+       
         KVZone storage kvZone = _zoneKeyValues[zone];
         for (uint256 i = 0; i < kvs.length; i++) {
             Value memory v;
@@ -43,7 +43,7 @@ contract IdentityManager is IIdentity {
 
     /// @inheritdoc IIdentity
     function getUserKV(
-        address zone,
+        string memory zone,
         address user,
         string memory key
     ) external view override returns (bytes32 typeID, bytes memory data) {

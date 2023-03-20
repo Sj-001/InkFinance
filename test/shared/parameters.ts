@@ -31,7 +31,7 @@ export function buildPayees(payee1:string, payee2:string, payee3:string, token:s
 }
 
 
-export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:number) {
+export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:number, identity:string) {
 
 
         /* 
@@ -152,11 +152,11 @@ export function buildMasterDAOInitData(erc20Address:string, defaultFlowIndex:num
         var minIndividalVotes = 5;
         var maxIndividalVotes = 100;
 
-        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[], address[], address[], uint256, uint256, uint256)'];
-        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, "0x0000000000000000000000000000000000000000", committesInfo, daoAdmin, [], seats, minIndividalVotes, maxIndividalVotes];
+        var tupleSting = ['tuple(string, string, bytes[], address, uint256, address, string, uint256, string, uint256, uint256, uint256, bytes32, uint256,' + flowTuple +'[], bytes32, bytes32, address, bytes[], address[], address[], uint256, uint256, uint256, address)'];
+        var tupleData = ["daoName","daoDescribe", mds, erc20Address, 100000, erc20Address, badgeName, badgeTotal, daoLogo, minPledgeRequired, minEffectiveVotes, minEffectiveVoteWallets, FACTORY_MANAGER_KEY, defaultFlowIndex, flows, PROPOSAL_HANDLER_KEY, INK_BADGE_KEY, "0x0000000000000000000000000000000000000000", committesInfo, daoAdmin, [], seats, minIndividalVotes, maxIndividalVotes, identity];
         var masterDAOInitialData = defaultAbiCoder.encode(tupleSting,
              [tupleData]);
-        
+
 
         return masterDAOInitialData;
         
@@ -439,27 +439,31 @@ export function buildTreasurySetupProposal(operator:string, signer:string, audit
     //     "desc": "0x0002",
     // };
     //kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
-
+    var kyc = []
+    kyc[0] = "ASTRA_BASE_KYC";
+    var kycBytes = web3.eth.abi.encodeParameter("string[]", kyc);
     var kvData = [];
     // different roles
     // treasury operator 
     var treasuryOperator = [];
     treasuryOperator[0] = operator;
 
-    var treasuryOperatorBytes = web3.eth.abi.encodeParameter("address[]", treasuryOperator);
+    var treasuryOperatorBytes = web3.eth.abi.encodeParameters(["address[]", "string[]"], [treasuryOperator, kyc]);
     // // treasury signer
     var treasurySigner = [];
     treasurySigner[0] = signer;
-    var treasurySignerBytes = web3.eth.abi.encodeParameter("address[]", treasurySigner);
+    var treasurySignerBytes = web3.eth.abi.encodeParameters(["address[]", "string[]"], [treasurySigner, kyc]);
     // treasury auditor
     var treasuryAuditor = [];
     treasuryAuditor[0] = auditor;
-    var treasuryAuditorBytes = web3.eth.abi.encodeParameter("address[]", treasuryAuditor);
-
+    var treasuryAuditorBytes = web3.eth.abi.encodeParameters(["address[]", "string[]"], [treasuryAuditor, kyc]);
 
     var investors = [];
     investors[0] = investor;
-    var investorsBytes = web3.eth.abi.encodeParameter("address[]", investors);
+    var investorsBytes = web3.eth.abi.encodeParameters(["address[]", "string[]"], [investors, kyc]);
+
+
+
 
     kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["operators", keccak256(toUtf8Bytes("address")), treasuryOperatorBytes]);
     kvData[1] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["signer", keccak256(toUtf8Bytes("address")), treasurySignerBytes]);

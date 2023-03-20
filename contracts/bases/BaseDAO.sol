@@ -9,6 +9,7 @@ import "../interfaces/IFactoryManager.sol";
 import "../interfaces/IAgent.sol";
 import "../interfaces/IUCV.sol";
 import "../interfaces/IPayrollManager.sol";
+import "../interfaces/IIdentity.sol";
 
 import "./BaseVerify.sol";
 import "../utils/BytesUtils.sol";
@@ -75,6 +76,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         uint256 agreeSeatsOfTheBoard;
         uint256 minIndividalVotes;
         uint256 maxIndividalVotes;
+        address identity;
     }
 
     // variables ////////////////////////////////////////////////////////////////////////
@@ -114,6 +116,8 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     address private _proposalHandlerAddress;
     uint256 private _minIndividalVotes;
     uint256 private _maxIndividalVotes;
+    
+    address private _identity;
 
     /// @dev key is dutyID
     /// find duty members according to dutyID,
@@ -144,7 +148,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
     modifier ensureGovEnough() {
         require(
             _govToken.balanceOf(_ownerAddress) > _govTokenAmountRequirement,
-            "admin's gov not enough"
+            "governance token is not enough"
         );
         _;
     }
@@ -345,6 +349,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         minEffectiveWallets = _minEffectiveVoteWallets;
     }
 
+
     function _init(
         address admin_,
         address config_,
@@ -367,6 +372,7 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
         _agreeSeatsOfTheBoard = initData.agreeSeatsOfTheBoard;
         _minIndividalVotes = initData.minIndividalVotes;
         _maxIndividalVotes = initData.maxIndividalVotes;
+        _identity = initData.identity;
 
         uint256 allMembers = initData.admins.length + initData.members.length;
         require(_agreeSeatsOfTheBoard <= allMembers, "seats set error(1)");
@@ -416,12 +422,14 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
 
         // initial dutyID
         for (uint256 m = 0; m < initData.admins.length; m++) {
+            // require(_isInkVerified(initData.admins[m]), "The admin is not verified");
             _addDuty(initData.admins[m], DutyID.DAO_ADMIN);
             _addDuty(initData.admins[m], DutyID.PROPOSER);
             _addDuty(initData.admins[m], DutyID.VOTER);
         }
 
         for (uint256 m = 0; m < initData.members.length; m++) {
+            // require(_isInkVerified(initData.admins[m]), "The DAO member is not verified");
             _addDuty(initData.members[m], DutyID.PROPOSER);
             _addDuty(initData.members[m], DutyID.VOTER);
         }
@@ -435,6 +443,11 @@ abstract contract BaseDAO is IDeploy, IDAO, BaseVerify {
             initData.daoLogo,
             block.timestamp
         );
+    }
+
+    function _isInkVerified(address account) internal view returns(bool verified) {
+        (bytes32 typeID, bytes memory data) = IIdentity(_identity).getUserKV("INK_FINANCE_KYC", account, "account_info");
+        verified = (data.length > 0);
     }
 
     /// @inheritdoc IDutyControl

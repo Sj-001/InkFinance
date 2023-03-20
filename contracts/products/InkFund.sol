@@ -495,7 +495,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     function dissolve(address ucv) external override {
 
         uint256 status = _getFundStatus();
-        require(status == 3, "Only started fund could tally up");
+        require(status == 3, "Only started fund could dissolve");
         require(
             block.timestamp >= _startFundDate + _fund.durationOfFund,
             "Need to wait until investment period finished"
