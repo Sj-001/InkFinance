@@ -100,7 +100,7 @@ contract FundManager is IFundManager, BaseUCVManager {
             _setupProposalID,
             roleKey
         );
-        address[] memory members = abi.decode(memberBytes, (address[]));
+        (address[] memory members, string[] memory kyc) = abi.decode(memberBytes, (address[], string[]));
 
         exist = false;
         for (uint256 i = 0; i < members.length; i++) {
