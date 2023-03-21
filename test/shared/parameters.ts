@@ -530,28 +530,31 @@ export function buildInvestmentSetupProposal(fundAdmin:string, fundManager:strin
     //     "desc": "0x0002",
     // };
     //kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["content", keccak256(toUtf8Bytes("content1")),"0x00"]);
+    var kyc = []
+    kyc[0] = "ASTRA_BASE_KYC";
+    var kycBytes = web3.eth.abi.encodeParameter("string[]", kyc);
+
 
     var kvData = [];
     var fundAdmins = [];
     fundAdmins[0] = fundAdmin;
-    var fundAdminBytes = web3.eth.abi.encodeParameter("address[]", fundAdmins);
+    var fundAdminBytes = web3.eth.abi.encodeParameters(["address[]", "string[]"], [fundAdmins, kyc]);
 
     var fundManagers = [];
     fundManagers[0] = fundManager;
-    var fundManagersBytes = web3.eth.abi.encodeParameter("address[]", fundManagers);
+    var fundManagersBytes = web3.eth.abi.encodeParameters(["address[]", "string[]"], [fundManagers, kyc]);
 
     var fundRiskManagers = [];
     fundRiskManagers[0] = fundRiskManager;
-    var fundRiskManagersBytes = web3.eth.abi.encodeParameter("address[]", fundRiskManagers);
+    var fundRiskManagersBytes = web3.eth.abi.encodeParameters(["address[]", "string[]"], [fundRiskManagers, kyc]);
 
     var fundLiquidators = [];
     fundLiquidators[0] = fundLiquidator;
-    var fundLiquidatorsBytes = web3.eth.abi.encodeParameter("address[]", fundLiquidators);
+    var fundLiquidatorsBytes = web3.eth.abi.encodeParameters(["address[]", "string[]"], [fundLiquidators, kyc]);
 
     var fundAuditors = [];
     fundAuditors[0] = fundAuditor;
-    var fundAuditorBytes = web3.eth.abi.encodeParameter("address[]", fundAuditors);
-
+    var fundAuditorBytes = web3.eth.abi.encodeParameters(["address[]", "string[]"], [fundAuditors, kyc]);
 
     kvData[0] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["fundAdmin", keccak256(toUtf8Bytes("address")), fundAdminBytes]);
     kvData[1] = web3.eth.abi.encodeParameters(["string","bytes32", "bytes"], ["fundManager", keccak256(toUtf8Bytes("address")), fundManagersBytes]);
