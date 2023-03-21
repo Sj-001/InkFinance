@@ -123,4 +123,10 @@ interface IFund {
         uint256[] memory fee,
         bytes memory data
     ) external;
+
+
+    function getKycRequirement()
+        external
+        view
+        returns (string[] memory);
 }

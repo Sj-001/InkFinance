@@ -330,7 +330,8 @@ export function buildFundInitData2(erc20Address:string, fundManager:string, risk
         "performanceFee" : performanceFee,
         "performanceFeeShouldGoToTreasury" : performanceFeeShouldGoToTreasury,
         "fundManagers" : fundManagers,
-        "riskManagers" : riskManagers
+        "riskManagers" : riskManagers,
+        "investorKYCs" : ["INK_FINANCE_KYC", "ASTRA_KYC"]
     }
 
 

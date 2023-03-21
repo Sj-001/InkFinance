@@ -6,12 +6,10 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../bases/BaseUCV.sol";
-
 import "../interfaces/IUCV.sol";
 import "../interfaces/IFundInfo.sol";
 import "../interfaces/IFund.sol";
 import "../interfaces/IFundManager.sol";
-
 import "../tokens/InkFundCertificateToken.sol";
 
 import "../utils/TransferHelper.sol";
@@ -680,6 +678,14 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
 
         _performanceFeeTransferTime = block.timestamp;
+    }
+
+    function getKycRequirement()
+        external
+        view
+        override 
+        returns (string[] memory kycs) {
+            kycs = _fund.investorKYCs;
     }
 
     function getAdminServiceBalance()

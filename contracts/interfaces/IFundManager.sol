@@ -109,6 +109,8 @@ interface IFundManager is IFundInfo {
         view
         returns (FundDistribution[] memory);
 
+
+
     function allocateFundServiceFee(
         bytes32 fundID,
         address[] memory members,
