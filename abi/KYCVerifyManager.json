@@ -118,5 +118,38 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "zone",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "accountType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "account",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "data",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "testWallet",
+        "type": "address"
+      }
+    ],
+    "name": "verifyUserXYZ",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ]

@@ -89,6 +89,38 @@ contract KYCVerifyManager {
         
     }
 
+
+    function verifyUserXYZ(
+        string memory zone,
+        string memory accountType,
+        string memory account,
+        string memory data, address testWallet
+    ) external {
+        address wallet = testWallet;
+        // wallet = 0x779a3944CFbFB32038726307E48658719efaC02f;
+        // wallet = testWallet;
+        bytes32 signData = keccak256(
+            abi.encodePacked(zone, accountType, account, wallet, data)
+        );
+        // address actualSigner = _getSigner(signature, signData);
+
+        // require(valiedSign[signData] == 0, "The user is already verified");
+        // require(actualSigner == _signer, "Signature is not corret");
+
+        valiedSign[signData] = 1;
+
+        UserKV[] memory kvs = new UserKV[](1);
+        kvs[0].key = "account_info";
+        kvs[0].user = wallet;
+        kvs[0].typeID = keccak256("account_info");
+        kvs[0].data = abi.encode(accountType, account, data);
+
+        IIdentity(_identityManager).batchSetUserKVs(zone, kvs);
+
+        emit KYCVerified(zone, wallet, accountType, account, data);
+        
+    }
+
     function _getSigner(bytes memory signature, bytes32 data)
         internal
         pure
