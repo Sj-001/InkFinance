@@ -54,6 +54,14 @@ describe("identity test", function () {
         var wallet = "0x779a3944CFbFB32038726307E48658719efaC02f"
 
 
+
+
+        var sign = "0xc39a9ea67bb29fd18d4241651fc5bcdf4732b3633a8c7ab6f4af7f04efdca4c41e601c1100da058baf3f86dc1fd23357cf85b15629ca31d9a80d41652817f78f1c";
+        var zone = "ASTRA_KYC"
+        var type = "base"
+        var accountID = "0x779a3944CFbFB32038726307E48658719efaC02f"
+        var data = ""
+        // var wallet = "0x779a3944CFbFB32038726307E48658719efaC02f"
         await verifier.verifyUser(sign, zone, type, accountID, data);
 
         const identity = await ethers.getContractAt("IIdentity", await verifier.getIdentityManager());

@@ -61,7 +61,7 @@ contract TheBoard is BaseCommittee {
         VoteIdentity calldata identity,
         bool agree,
         uint256 count,
-        string calldata feedback,
+    string calldata feedback,
         bytes calldata data
     ) external override {
         // check duty
@@ -73,6 +73,11 @@ contract TheBoard is BaseCommittee {
             revert OnlyAllowToVoteOne();
         }
 
+        (uint256 agreeVotes, uint256 denyVotes) = _getProposalAccountDetail(identity._getIdentityID(), _msgSender());
+        require(agreeVotes + denyVotes == 0, "already voted");
+
+        
+
         _vote(identity, agree, count, true, feedback, data);
 
         VoteInfo storage voteInfo = _voteInfos[identity._getIdentityID()];
@@ -80,7 +85,6 @@ contract TheBoard is BaseCommittee {
         if (voteInfo.totalVotes == IDAO(getParentDAO()).getBoardMemberCount()) {
             _tallyVotes(identity, data);
         }
-
     }
 
     /// @inheritdoc IVoteHandler
@@ -102,14 +106,11 @@ contract TheBoard is BaseCommittee {
         external
         override
     {
-
-
         if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
 
         _tallyVotes(identity, data);
-
     }
 
     function _tallyVotes(VoteIdentity memory identity, bytes memory data)
@@ -118,7 +119,8 @@ contract TheBoard is BaseCommittee {
         IProposalHandler proposalHandler = IProposalHandler(getParentDAO());
 
         // pass seats
-        uint256 basePassSeat = IDAO(getParentDAO()).getBoardProposalAgreeSeats();
+        uint256 basePassSeat = IDAO(getParentDAO())
+            .getBoardProposalAgreeSeats();
 
         // @todo verify if it's expired.
         bool passOrNot = _calculateVoteResults(identity, true, basePassSeat);
@@ -132,7 +134,6 @@ contract TheBoard is BaseCommittee {
 
         proposalHandler.decideProposal(identity.proposalID, passOrNot, data);
     }
-
 
     /// @inheritdoc IDeploy
     function getTypeID() external pure override returns (bytes32 typeID) {

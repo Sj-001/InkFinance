@@ -10,6 +10,11 @@
         "internalType": "uint256[]",
         "name": "fee",
         "type": "uint256[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
       }
     ],
     "name": "assignFundServiceFee",
@@ -68,7 +73,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "ucv",
+        "type": "address"
+      }
+    ],
     "name": "dissolve",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -200,6 +211,19 @@
         "internalType": "uint256",
         "name": "end",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getKycRequirement",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
       }
     ],
     "stateMutability": "view",

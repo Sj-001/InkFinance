@@ -18,20 +18,26 @@ async function deploy(){
   console.log("deploy InkFinance Governance Module V2 with this account: ", admin);
 
 
-  const kycFactory = await ethers.getContractFactory("KYCVerifyManager");
-  const kycVerifier = await kycFactory.deploy("0xf46B1E93aF2Bf497b07726108A539B478B31e64C");
-  await kycVerifier.deployed();
-  console.log("kycVerifier deployed..")
+  // const kycFactory = await ethers.getContractFactory("KYCVerifyManager");
+  // const kycVerifier = await kycFactory.deploy("0xf46B1E93aF2Bf497b07726108A539B478B31e64C");
+  // await kycVerifier.deployed();
+  // console.log("kycVerifier deployed..")
 
-  const identityManagerFactory = await ethers.getContractFactory("IdentityManager");
-  const identity = await identityManagerFactory.deploy(kycVerifier.address);
-  await identity.deployed();
+  // const identityManagerFactory = await ethers.getContractFactory("IdentityManager");
+  // const identity = await identityManagerFactory.deploy(kycVerifier.address);
+  // await identity.deployed();
 
-  await kycVerifier.updateIdentityManager(await identity.address);
+  // await kycVerifier.updateIdentityManager(await identity.address);
 
-  console.log("kycVerifier address:", kycVerifier.address);
-  console.log("identity address:", identity.address);
+  // console.log("kycVerifier address:", kycVerifier.address);
+  // console.log("identity address:", identity.address);
 
+
+  const astraFactory = await ethers.getContractFactory("MockAstraKYC");
+  const astraMock = await astraFactory.deploy();
+  await astraMock.deployed();
+
+  console.log("astra mock address:", astraMock.address)
 }
 
 deploy();

@@ -35,7 +35,7 @@ interface IFund {
     function getFundStatus() external view returns (uint256 status);
 
     /// @dev calculate the profit and transfer to the treasury
-    function dissolve() external;
+    function dissolve(address ucv) external;
 
     /// @dev get the fund raised progress
     function getRaisedInfo()
@@ -118,5 +118,15 @@ interface IFund {
 
     function getAdminServiceBalance() external view returns (uint256 fee);
 
-    function assignFundServiceFee(address[] memory members, uint256[] memory fee, bytes memory data) external;
+    function assignFundServiceFee(
+        address[] memory members,
+        uint256[] memory fee,
+        bytes memory data
+    ) external;
+
+
+    function getKycRequirement()
+        external
+        view
+        returns (string[] memory);
 }

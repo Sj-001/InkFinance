@@ -4,9 +4,15 @@ pragma solidity ^0.8.0;
 import "../interfaces/IProposalHandler.sol";
 import "../bases/BaseCommittee.sol";
 import "../libraries/defined/DutyID.sol";
+import "../libraries/LVoteIdentityHelper.sol";
+
 import "hardhat/console.sol";
 
 contract ThePublic is BaseCommittee {
+    
+    using LVoteIdentityHelper for VoteIdentity;
+
+
     function init(
         address dao_,
         address config_,
@@ -39,15 +45,19 @@ contract ThePublic is BaseCommittee {
             revert NotAllowToOperate();
         }
 
-        (uint256 minIndividalVotes, uint256 maxIndividalVotes) = IDAO(getParentDAO()).getVoteRequirement();
-        require(count >= minIndividalVotes, "vote too less votes"); 
+        (uint256 minIndividalVotes, uint256 maxIndividalVotes) = IDAO(
+            getParentDAO()
+        ).getVoteRequirement();
 
+        (uint256 agreeVotes, uint256 denyVotes) = _getProposalAccountDetail(identity._getIdentityID(), _msgSender());
+
+        require(agreeVotes + count >= minIndividalVotes || denyVotes + count >= minIndividalVotes, "votes lower than minimum requirement");
         if (maxIndividalVotes != 0) {
-            require(count <= maxIndividalVotes, "vote too many votes"); 
-        }
+            require(count + agreeVotes + denyVotes <= maxIndividalVotes, "votes higher than maximum requirement");
         
+        }
+
         _vote(identity, agree, count, true, feedback, data);
-    
     }
 
     function _allowToVote(VoteIdentity calldata identity, address voteUser)
@@ -80,12 +90,11 @@ contract ThePublic is BaseCommittee {
     function tallyVotes(VoteIdentity calldata identity, bytes memory data)
         public
         override
-    {   
-
+    {
         if (!_hasDutyToOperate(DutyID.PROPOSER, _msgSender())) {
             revert YouDoNotHaveDutyToOperate();
         }
-        
+
         _tallyVotes(identity, data, true);
     }
 

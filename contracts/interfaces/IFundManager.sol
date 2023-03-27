@@ -4,6 +4,11 @@ pragma solidity ^0.8.0;
 import "./IFundInfo.sol";
 
 interface IFundManager is IFundInfo {
+
+    function getDAO()
+        external view
+        returns (address dao);
+
     /**
         @dev create a fund (UCV) for taking user's investment 
         every create fund proposal would create a independent UCV
@@ -90,8 +95,10 @@ interface IFundManager is IFundInfo {
         address operator
     ) external view returns (bool authorized);
 
-
-    function getFundDistributionAmount(bytes32 fundID) external view returns(uint256 amount);
+    function getFundDistributionAmount(bytes32 fundID)
+        external
+        view
+        returns (uint256 amount);
 
     function claimFundCertificate(bytes32 fundID) external;
 
@@ -103,7 +110,11 @@ interface IFundManager is IFundInfo {
         returns (FundDistribution[] memory);
 
 
-    function allocateFundServiceFee(bytes32 fundID, address[] memory members, uint256[] memory fee, bytes memory data) external;
 
-
+    function allocateFundServiceFee(
+        bytes32 fundID,
+        address[] memory members,
+        uint256[] memory fee,
+        bytes memory data
+    ) external;
 }

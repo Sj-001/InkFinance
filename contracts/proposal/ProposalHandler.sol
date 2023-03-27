@@ -17,8 +17,6 @@ import "../libraries/defined/TypeID.sol";
 import "hardhat/console.sol";
 
 contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
-
-
     /// @notice store the connection between different committee in a flow
     struct StepLinkInfo {
         address committee;
@@ -64,7 +62,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
 
     uint256 private _defaultFlowIDIndex;
 
-        // process category flow ID => (stepID => step info)
+    // process category flow ID => (stepID => step info)
     mapping(bytes32 => mapping(bytes32 => StepLinkInfo)) internal _flowSteps;
 
     modifier onlyDAO() {
@@ -96,19 +94,19 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         );
 
         _defaultFlowIDIndex = abi.decode(data_, (uint256));
-        
+
         _dao = dao_;
 
         return callbackEvent;
     }
 
     function setFlowStep(FlowInfo memory flow) external override onlyDAO {
-
         _setFlowStep(flow);
     }
 
     function setupProposalFlow(bytes32 proposalID, bytes32[] memory agents)
-        external onlyDAO
+        external
+        onlyDAO
     {
         _setupProposalFlow(proposalID, agents);
     }
@@ -116,21 +114,10 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     function _setupProposalFlow(bytes32 proposalID, bytes32[] memory agents)
         internal
     {
-
-        console.log("_setupProposalFlow: ");
         bytes32 flowID = _getProposalFlow(proposalID);
-
-
-        console.logBytes32(flowID);
-
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[flowID];
-
         bytes32 firstStep = steps[_SENTINEL_ID].nextStep;
-
-        console.log("first step:");
-        console.logBytes32(firstStep);
-
-        require (firstStep != bytes32(0x0), "flow step error");
+        require(firstStep != bytes32(0x0), "flow step error");
 
         ProposalProgress storage info = _proposalInfo[proposalID];
         info.proposalID = proposalID;
@@ -142,15 +129,11 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         info.agents = agents;
     }
 
-
-
     function _getProposalFlow(bytes32 proposalID)
         internal
         view
         returns (bytes32 flowID)
     {
-
-
         bytes32 proposalFlowID = 0x0000000000000000000000000000000000000000000000000000000000000004;
 
         (bytes32 typeID, bytes memory voteFlow) = getProposalMetadata(
@@ -187,8 +170,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
                 }
             }
 
-
-            require (support, "Flow is not support");
+            require(support, "Flow is not support");
             // if (support) {
             //     flowID = proposalFlowID;
             // } else {
@@ -197,7 +179,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             // }
         }
     }
-
 
     /// @inheritdoc IProposalHandler
     function newProposal(
@@ -410,7 +391,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     {
         Proposal storage p = _proposals[proposalID];
 
-        require(p.proposalID == proposalID, "not exist");
+        require(p.proposalID == proposalID, "proposal is not exist");
         require(p.status == ProposalStatus.AGREE, "not succ proposal");
 
         Topic memory topic = _getTopicInfo(p.topicID);
@@ -566,7 +547,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             itemValue.typeID = proposal.metadata[i].typeID;
             itemValue.data = proposal.metadata[i].data;
             p.metadata[proposal.metadata[i].key] = itemValue;
-
         }
 
         p.kvData._init();
@@ -577,7 +557,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         totalProposal++;
         proposalID = keccak256(abi.encode(_msgSender(), totalProposal));
     }
-
 
     /// @dev verify if the committee is the next committee
     function _isNextCommittee(bytes32 proposalID, address committee)
@@ -607,7 +586,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         committeeInfo = info.nextCommittee;
     }
 
-
+    
     function getVoteCommitteeInfo(bytes32 proposalID)
         external
         view
@@ -618,7 +597,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         committee = info.nextCommittee.committee;
         step = info.nextCommittee.step;
     }
-
 
     function getVotedCommittee(bytes32 proposalID)
         external
@@ -635,7 +613,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         }
     }
 
-
     function _appendFinishStep(ProposalProgress storage info) internal {
         CommitteeInfo storage committeeInfo = info.committees.push();
         committeeInfo.committee = info.nextCommittee.committee;
@@ -649,10 +626,8 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         bool agree,
         bytes calldata data
     ) external override onlyDAO {
-
         _decideProposal(proposalID, agree, data);
     }
-
 
     function _decideProposal(
         bytes32 proposalID,
@@ -660,7 +635,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         bool agree,
         bytes memory data
     ) internal {
-
         ProposalProgress storage info = _proposalInfo[proposalID];
         require(info.proposalID == proposalID, "proposal err");
         // why need to verify the next committee...
@@ -669,11 +643,12 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         _appendFinishStep(info);
         _setNextStep(info, !agree);
 
-
         if (info.nextCommittee.committee == address(0x0)) {
-
             Proposal storage proposal = _proposals[proposalID];
-            require(proposal.status == ProposalStatus.PENDING, "The proposal is already decided");
+            require(
+                proposal.status == ProposalStatus.PENDING,
+                "The proposal is already decided"
+            );
 
             if (agree == false) {
                 proposal.status = ProposalStatus.DENY;
@@ -729,7 +704,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         return lastTime + expiration;
     }
 
-
     function getFlowSteps(bytes32 flowID)
         external
         view
@@ -761,7 +735,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     }
 
     function _setFlowStep(FlowInfo memory flow) internal {
-
         // _factoryAddress;
         require(flow.committees.length < MAX_STEP_NUM, "too many steps");
         mapping(bytes32 => StepLinkInfo) storage steps = _flowSteps[
@@ -792,16 +765,13 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
                         .committees[j + 1]
                         .step;
                 } else {
-
                     steps[committeeInfo.step].nextStep = bytes32(0x0);
                 }
             }
         }
     }
 
-    
     function _execFinish(ProposalProgress storage info, bool agree) internal {
-        
         require(info.nextCommittee.committee == address(0x0), "can't finish");
 
         if (agree == false) {
@@ -823,9 +793,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
                     agents[i] !=
                     0x0000000000000000000000000000000000000000000000000000000000000000
                 ) {
-
                     IDAO(_dao).delegateExecuteAgent(agents[i], info.proposalID);
-                
                 }
             }
         }
@@ -839,7 +807,12 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
         );
     }
 
-    function getSupportedFlow() external view override returns (bytes32[] memory flows) {
+    function getSupportedFlow()
+        external
+        view
+        override
+        returns (bytes32[] memory flows)
+    {
         flows = new bytes32[](_defaultFlows.length - _defaultFlowIDIndex);
         uint256 startIndex = 0;
         for (uint256 i = _defaultFlowIDIndex; i < _defaultFlows.length; i++) {
@@ -847,7 +820,6 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
             startIndex++;
         }
     }
-
 
     /// @inheritdoc IDeploy
     function getTypeID() external override returns (bytes32 typeID) {}

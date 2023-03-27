@@ -22,15 +22,15 @@ interface IIdentity is IERC165 {
     }
 
     struct KVZone {
-        address issue;
+        string issue;
         // user -> key -> value
         mapping(address => mapping(string => Value)) kvs;
     }
 
-    function batchSetUserKVs(UserKV[] memory kvs) external;
+    function batchSetUserKVs(string memory zone, UserKV[] memory kvs) external;
 
     function getUserKV(
-        address zone,
+        string memory zone,
         address user,
         string memory key
     ) external view returns (bytes32 typeID, bytes memory data);

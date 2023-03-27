@@ -60,7 +60,7 @@ describe("proposal related test", function () {
         proposal.metadata[4] = {
             "key":  "Expiration",
             "typeID": keccak256(toUtf8Bytes("type.UINT256")),
-            "data":  web3.eth.abi.encodeParameter("uint256", 1),
+            "data":  web3.eth.abi.encodeParameter("uint256", 3),
             "desc":  "0x0002",
         };
 
@@ -135,8 +135,12 @@ describe("proposal related test", function () {
 
         const theVoteCommittee = await ethers.getContractAt("ThePublic", thePublicAddress);
         var voteIdentity = {"proposalID":proposalID, "step": "0x0000000000000000000000000000000000000000000000000000000000000000"};
-        
-        await theVoteCommittee.connect(signers[1]).vote(voteIdentity, true, 1000, "", "0x00");
+        console.log("start to vote:1")
+        await theVoteCommittee.connect(signers[1]).vote(voteIdentity, true, 10, "", "0x00");
+        console.log("start to vote:2")
+        await theVoteCommittee.connect(signers[1]).vote(voteIdentity, true, 2, "", "0x00");
+        console.log("start to vote:3")
+        await theVoteCommittee.connect(signers[1]).vote(voteIdentity, true, 80, "", "0x00");
 
     }
 

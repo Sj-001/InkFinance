@@ -6,7 +6,7 @@ import { Fixture } from 'ethereum-waffle'
 import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
-import { FactoryManagerFixture, FUND_MANAGER_KEY, InkERC20Fixture } from '../shared/fixtures'; 
+import { FactoryManagerFixture, FUND_MANAGER_KEY, InkERC20Fixture, KYCVerifyFixture } from '../shared/fixtures'; 
 
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
 import { INVESTMENT_COMMITTEE_KEY, INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
@@ -30,8 +30,11 @@ describe("proposal related test", function () {
         const {inkERC20} = await loadFixture(InkERC20Fixture);        
         var erc20Address = inkERC20.address;
 
+        const {verifier} = await loadFixture(KYCVerifyFixture);        
+        var identity = await verifier.getIdentityManager();
+
         // create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0, identity);
         await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);
@@ -66,8 +69,6 @@ describe("proposal related test", function () {
         // once decide, 
         await tallyVotesByTheBoard(await masterDAO.address,  proposalID);
 
-
-        
         var proposal = buildInvestmentSetupProposal(signers[0].address, signers[0].address, signers[0].address, signers[0].address, signers[0].address);
 
         // var flowSteps = await masterDAO.getFlowSteps("0x0000000000000000000000000000000000000000000000000000000000000000");
@@ -121,7 +122,6 @@ describe("proposal related test", function () {
 
         await launchFund(fundManagerAddress);
 
-
         await purchaseFund(fundManagerAddress, erc20Address);
         
 
@@ -139,11 +139,10 @@ describe("proposal related test", function () {
         await claimShare(fundManagerAddress);
 
 
-
         // // user could claim principal and profit
         await tallyUp(fundManagerAddress);
 
-        // // // if fund raised failed, user should claim principal
+        // if fund raised failed, user should claim principal
         await claimInvestment(fundManagerAddress);
 
 
@@ -170,7 +169,7 @@ describe("proposal related test", function () {
 
         console.log("funds:", funds);
 
-        console.log("fund launch status:", await fundManager.getLaunchStatus(funds[0]));
+        // console.log("fund launch status:", await fundManager.getLaunchStatus(funds[0]));
 
     }
 
@@ -190,7 +189,7 @@ describe("proposal related test", function () {
         }
 
         // await fundManager.launchFund(funds[0]); // valid launch twice    
-        console.log("fund launch status:", await fundManager.makeDistribution(funds[0], "remark content", distributions));
+        await fundManager.makeDistribution(funds[0], "remark content", distributions);
         const signers = await ethers.getSigners();
 
         const buyer1 = signers[0];
@@ -224,7 +223,7 @@ describe("proposal related test", function () {
         var funds = await fundManager.getCreatedFunds();
 
         console.log("funds:", funds);
-        console.log("fund launch status:", await fundManager.getLaunchStatus(funds[0]));
+        // console.log("fund launch status:", await fundManager.getLaunchStatus(funds[0]));
         await fundManager.launchFund(funds[0]);
 
         // await fundManager.launchFund(funds[0]); // valid launch twice
@@ -267,8 +266,8 @@ describe("proposal related test", function () {
         console.log("balance of fund(before):",   await web3.eth.getBalance(fundAddress));
 
 
-        var buyer1PurchaseAmount = ethers.utils.parseEther("100");
-        var buyer2PurchaseAmount = ethers.utils.parseEther("100");
+        var buyer1PurchaseAmount = ethers.utils.parseEther("50");
+        var buyer2PurchaseAmount = ethers.utils.parseEther("50");
 
 
 
@@ -301,15 +300,18 @@ describe("proposal related test", function () {
         // get fund(ucv) address to purchase the share
         const fundAddress = fundManager.getFund(funds[0]);
         const fund = await ethers.getContractAt("InkFund", fundAddress);
-        
+        console.log("admin service fee(before):", await fund.getAdminServiceBalance());
         await fundManager.startFund(funds[0]);
-
+        console.log("admin service fee(after):", await fund.getAdminServiceBalance());
 
         console.log("available: ", await fund.getAvailablePrincipal());
     }
 
     async function tallyUp (fundManagerAddress:string) {
-        
+        const signers = await ethers.getSigners();
+        const buyer1 = signers[0];
+
+
         var fundManagerFactory = await ethers.getContractFactory("FundManager");
         var fundManager = await fundManagerFactory.attach(fundManagerAddress);
 
@@ -320,11 +322,31 @@ describe("proposal related test", function () {
         // get fund(ucv) address to purchase the share
         const fundAddress = fundManager.getFund(funds[0]);
         const fund = await ethers.getContractAt("InkFund", fundAddress);
-        
+        console.log("############################################################");
+        console.log("current available principal(before1):", await fund.getAvailablePrincipal());
+
+        // ## test transfer
+        // const signer = provider.getSigner(accounts[0]);
+        var tx = {
+            to: fundAddress,
+            value: ethers.utils.parseEther("21")
+        };
+        const transaction = await buyer1.sendTransaction(tx);
+
+        // ## 
         sleep(10000)
 
+
+        console.log("current available principal(before2):", await fund.getAvailablePrincipal());        
+        console.log("admin service fee(after):", await fund.getAdminServiceBalance());
         await fundManager.tallyUpFund(funds[0]);
 
+
+        console.log("get raise info:         :", await fund.getRaisedInfo());
+        console.log("get total distributed   :", await fundManager.getDistributed(funds[0]));
+        console.log("available princip(after):", await fund.getAvailablePrincipal());
+        console.log("admin service fee(after):", await fund.getAdminServiceBalance());
+        console.log("############################################################");
     }
 
     async function claimShare(fundManagerAddress:string) {

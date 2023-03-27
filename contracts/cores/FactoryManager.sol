@@ -18,6 +18,7 @@ import "../proxy/InkProxy.sol";
 
 import "hardhat/console.sol";
 
+// Wrong Type of 
 error WrongTypeOfTheFactoryKey();
 error TheFactoryKeyIsNotExist();
 error FailedToGenerateAddress(
@@ -140,7 +141,6 @@ contract FactoryManager is BaseVerify, IFactoryManager {
             return afterDeployedAddressPredict;
         }
 
-        // require(false, "here predict saved ");
 
         // valid typeID
         address implementAddress = addressBytes.toAddress();

@@ -55,6 +55,12 @@ contract FundManager is IFundManager, BaseUCVManager {
         _factoryManager = IDAO(_dao).getDAODeployFactory();
     }
 
+    function getDAO()
+        external view override
+        returns (address dao) {
+            dao = _dao;
+        }
+
     /// @inheritdoc IFundManager
     function isCommitteeOperator(uint256 roleType, address operator)
         external
@@ -94,7 +100,7 @@ contract FundManager is IFundManager, BaseUCVManager {
             _setupProposalID,
             roleKey
         );
-        address[] memory members = abi.decode(memberBytes, (address[]));
+        (address[] memory members, string[] memory kyc) = abi.decode(memberBytes, (address[], string[]));
 
         exist = false;
         for (uint256 i = 0; i < members.length; i++) {
@@ -143,7 +149,10 @@ contract FundManager is IFundManager, BaseUCVManager {
             revert TheMemberIsNotAuthorized(msg.sender);
         }
 
-        require (!IFund(_funds[fundID]).isLiquidate(), "The fund is liquidating");
+        require(
+            !IFund(_funds[fundID]).isLiquidate(),
+            "The fund is liquidating"
+        );
 
         // valid period & status
 
@@ -211,7 +220,12 @@ contract FundManager is IFundManager, BaseUCVManager {
         );
     }
 
-    function getFundDistributionAmount(bytes32 fundID) external override view returns(uint256 amount) {
+    function getFundDistributionAmount(bytes32 fundID)
+        external
+        view
+        override
+        returns (uint256 amount)
+    {
         for (uint256 i = 0; i < _fundDistributions[fundID].length; i++) {
             amount += _fundDistributions[fundID][i].amount;
         }
@@ -288,8 +302,6 @@ contract FundManager is IFundManager, BaseUCVManager {
         _claimDistribution(fundID);
     }
 
-
-
     function getDistributed(bytes32 fundID)
         external
         view
@@ -326,7 +338,7 @@ contract FundManager is IFundManager, BaseUCVManager {
 
         bytes32 fundID = _newID();
         // valid fundManager & riskManager have been set in the InvestmentCommittee
-        bytes memory initData = abi.encode(address(this), fundID, fundInfo);
+        bytes memory initData = abi.encode(_dao, fundID, fundInfo);
 
         // valid treasury exist
         address fundAddress = _deployByFactoryKey(
@@ -458,7 +470,10 @@ contract FundManager is IFundManager, BaseUCVManager {
             _isCommitteeOperator(0, msg.sender),
             "The user is not authorized"
         );
-        IFund(_funds[fundID]).dissolve();
+        
+        address treasuryUCV = IDAO(_dao).getUCV();
+
+        IFund(_funds[fundID]).dissolve(treasuryUCV);
     }
 
     /// @inheritdoc IFundManager
@@ -498,17 +513,19 @@ contract FundManager is IFundManager, BaseUCVManager {
         }
     }
 
-    function allocateFundServiceFee(bytes32 fundID, address[] memory members, uint256[] memory fee, bytes memory data) external override {
-
+    function allocateFundServiceFee(
+        bytes32 fundID,
+        address[] memory members,
+        uint256[] memory fee,
+        bytes memory data
+    ) external override {
         require(
             _isCommitteeOperator(0, msg.sender),
             "The user is not authorized"
         );
-        
+
         IFund(_funds[fundID]).assignFundServiceFee(members, fee, data);
     }
-
-
 
     /// @inheritdoc IFundManager
     function getFundLaunchTimeInfo(bytes32 fundID)
