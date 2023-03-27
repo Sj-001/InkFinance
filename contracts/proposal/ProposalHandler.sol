@@ -391,7 +391,7 @@ contract ProposalHandler is IProposalHandler, IDeploy, BaseVerify {
     {
         Proposal storage p = _proposals[proposalID];
 
-        require(p.proposalID == proposalID, "not exist");
+        require(p.proposalID == proposalID, "proposal is not exist");
         require(p.status == ProposalStatus.AGREE, "not succ proposal");
 
         Topic memory topic = _getTopicInfo(p.topicID);

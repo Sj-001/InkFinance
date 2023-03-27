@@ -284,6 +284,11 @@
             "internalType": "address[]",
             "name": "riskManagers",
             "type": "address[]"
+          },
+          {
+            "internalType": "string[]",
+            "name": "investorKYCs",
+            "type": "string[]"
           }
         ],
         "indexed": false,
@@ -635,6 +640,11 @@
             "internalType": "address[]",
             "name": "riskManagers",
             "type": "address[]"
+          },
+          {
+            "internalType": "string[]",
+            "name": "investorKYCs",
+            "type": "string[]"
           }
         ],
         "internalType": "struct IFundInfo.NewFundInfo",

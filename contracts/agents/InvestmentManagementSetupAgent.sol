@@ -40,6 +40,10 @@ contract InvestmentManagementSetupAgent is BaseAgent {
         // verify the treasury has been set up before
         bytes32 typeID;
         bytes memory dataBytes;
+        address[] memory members;
+        string[] memory kyc;
+
+
         console.log("pre exec InvestmentManagementSetupAgent ");
 
         // valid related address，include operator ｜ multisigner ｜ auditor
@@ -48,34 +52,47 @@ contract InvestmentManagementSetupAgent is BaseAgent {
             proposalID,
             FUND_ADMIN
         );
-        address[] memory fundAdmin = abi.decode(dataBytes, (address[]));
-
+        // address[] memory fundAdmin = abi.decode(dataBytes, (address[]));
+        (members, kyc) = abi.decode(dataBytes, (address[], string[]));
         console.log(
             "fundAdmin address ::::::::::::::::::::::::::::::::: ",
-            fundAdmin[0]
+            members[0]
         );
 
+
+        // Fund Manager
         (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
             proposalID,
             FUND_MANAGER
         );
+        (members, kyc) = abi.decode(dataBytes, (address[], string[]));
 
-        address[] memory fundManager = abi.decode(dataBytes, (address[]));
-        console.log(
-            "fundManager address ::::::::::::::::::::::::::::::::: ",
-            fundManager[0]
-        );
-
+        // Risk Manager
         (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
             proposalID,
             FUND_RISK_MANAGER
         );
-        address[] memory ristManager = abi.decode(dataBytes, (address[]));
-        console.log(
-            "auditor address ::::::::::::::::::::::::::::::::: ",
-            ristManager[0]
-        );
+        (members, kyc) = abi.decode(dataBytes, (address[], string[]));
 
+
+
+        // Auditor
+        (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
+            proposalID,
+            FUND_AUDITOR
+        );
+        (members, kyc) = abi.decode(dataBytes, (address[], string[]));
+
+
+        // Liquidator
+        (, dataBytes) = IProposalHandler(_dao).getProposalKvData(
+            proposalID,
+            FUND_LIQUIDATOR
+        );
+        (members, kyc) = abi.decode(dataBytes, (address[], string[]));
+
+
+        // result
         success = true;
     }
 

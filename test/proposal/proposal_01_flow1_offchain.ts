@@ -6,7 +6,7 @@ import { Fixture } from 'ethereum-waffle'
 import { waffle, ethers, web3, upgrades } from 'hardhat'
 import { FactoryManager } from '../../typechain/FactoryManager'
 import { ConfigManager } from '../../typechain/ConfigManager'
-import { FactoryManagerFixture, InkERC20Fixture } from '../shared/fixtures'; 
+import { FactoryManagerFixture, InkERC20Fixture, KYCVerifyFixture } from '../shared/fixtures'; 
 
 import { PROPOSER_DUTYID, VOTER_DUTYID } from '../shared/fixtures'; 
 import { INK_CONFIG_DOMAIN, THE_TREASURY_MANAGER_AGENT_KEY, FACTORY_MANAGER_KEY, MASTER_DAO_KEY, THE_BOARD_COMMITTEE_KEY, THE_PUBLIC_COMMITTEE_KEY, THE_TREASURY_COMMITTEE_KEY } from '../shared/fixtures'; 
@@ -35,10 +35,14 @@ describe("proposal related test", function () {
         
         const {factoryManager} = await loadFixture(FactoryManagerFixture);
         const {inkERC20} = await loadFixture(InkERC20Fixture);        
+
         var erc20Address = inkERC20.address;
 
+        const {verifier} = await loadFixture(KYCVerifyFixture);        
+        var identity = await verifier.getIdentityManager();
+
         // // select/create a DAO
-        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0);
+        var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0, identity);
         await factoryManager.deploy(true, DAOTypeID,MASTER_DAO_KEY,masterDAOInitialData);
 
         var firstDAOAddress = await factoryManager.getDeployedAddress(MASTER_DAO_KEY, 0);

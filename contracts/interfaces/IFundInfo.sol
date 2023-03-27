@@ -32,6 +32,7 @@ interface IFundInfo {
         uint256 performanceFeeShouldGoToTreasury;
         address[] fundManagers;
         address[] riskManagers;
+        string[] investorKYCs;
     }
 
     struct DistributionInfo {

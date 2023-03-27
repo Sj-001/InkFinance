@@ -61,7 +61,7 @@ contract TheBoard is BaseCommittee {
         VoteIdentity calldata identity,
         bool agree,
         uint256 count,
-        string calldata feedback,
+    string calldata feedback,
         bytes calldata data
     ) external override {
         // check duty

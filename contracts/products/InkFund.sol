@@ -6,12 +6,10 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../bases/BaseUCV.sol";
-
 import "../interfaces/IUCV.sol";
 import "../interfaces/IFundInfo.sol";
 import "../interfaces/IFund.sol";
 import "../interfaces/IFundManager.sol";
-
 import "../tokens/InkFundCertificateToken.sol";
 
 import "../utils/TransferHelper.sol";
@@ -495,7 +493,7 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
     function dissolve(address ucv) external override {
 
         uint256 status = _getFundStatus();
-        require(status == 3, "Only started fund could tally up");
+        require(status == 3, "Only started fund could dissolve");
         require(
             block.timestamp >= _startFundDate + _fund.durationOfFund,
             "Need to wait until investment period finished"
@@ -680,6 +678,14 @@ contract InkFund is IFundInfo, IFund, BaseUCV {
         }
 
         _performanceFeeTransferTime = block.timestamp;
+    }
+
+    function getKycRequirement()
+        external
+        view
+        override 
+        returns (string[] memory kycs) {
+            kycs = _fund.investorKYCs;
     }
 
     function getAdminServiceBalance()

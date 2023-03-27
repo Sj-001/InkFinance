@@ -2,6 +2,11 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "zone",
+        "type": "string"
+      },
+      {
         "components": [
           {
             "internalType": "address",
@@ -37,9 +42,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "string",
         "name": "zone",
-        "type": "address"
+        "type": "string"
       },
       {
         "internalType": "address",
