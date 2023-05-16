@@ -188,7 +188,7 @@ console.log("DAO_ADMIN=", keccak256(toUtf8Bytes("dutyID.DAO_ADMIN")));
 const DAO_ADMIN_DUTYID = "0x9a24e4691c3b94f933d79c9399cf44deede6c6ce75014cf86e82f2fee0c01f42";
 
 
-export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
+export async function FactoryManagerFixture() {
 
     const signers = await ethers.getSigners();
     // const configManager = await deployContract(signers[0], ConfigManagerABI);
@@ -386,13 +386,14 @@ export async function FactoryManagerFixture(_wallets: Wallet[], _mockProvider: M
 }
 
 
-export async function InkERC20Fixture(_wallets: Wallet[], _mockProvider: MockProvider) {
-
+export async function InkERC20Fixture() {
+    console.log("Here 1");
     const signers = await ethers.getSigners();
     const inkERC20 = await deployContract(signers[0], InkERC20ABI, []);
+    console.log("Here 2");
     await inkERC20.init("InkERC20", "InkERC20", 18)
     await inkERC20.deployed();
-
+    console.log("Here 3");
     return {inkERC20};
 }
 
@@ -407,20 +408,20 @@ export async function MockNFTFixture(_wallets: Wallet[], _mockProvider: MockProv
 }
 
 
-export async function KYCVerifyFixture(_wallets: Wallet[], _mockProvider: MockProvider) {
+export async function KYCVerifyFixture() {
 
     const signers = await ethers.getSigners();
-
+    console.log("here 1")
     const verifier = await deployContract(signers[0], KYCVerifyManagerABI, ["0xf46B1E93aF2Bf497b07726108A539B478B31e64C"]);
     await verifier.deployed();
 
-
+    console.log("here 2")
     const identity = await deployContract(signers[0], IdentityManagerABI, [verifier.address]);
     await identity.deployed();
 
-
+    console.log("here 3")
     await verifier.updateIdentityManager(identity.address);
-
+    console.log("here 4")
     return {verifier};
 }
 

@@ -30,19 +30,21 @@ import { expect } from "chai";
 const {loadFixture, deployContract} = waffle;
 
 describe("contract dao test", function () {
+  
 
     it("test create master dao", async function () {
 
         const signers = await ethers.getSigners();
 
-        const {factoryManager} = await loadFixture(FactoryManagerFixture);
-        const {inkERC20} = await loadFixture(InkERC20Fixture);        
+        const {factoryManager} = await FactoryManagerFixture();
+        const {inkERC20} = await InkERC20Fixture();        
         var erc20Address = inkERC20.address;
         console.log("working 1")
         // select/create a DAO
-        const {verifier} = await loadFixture(KYCVerifyFixture);        
-        var identity = await verifier.getIdentityManager();
+        const {verifier} = await KYCVerifyFixture();        
         console.log("working 2")
+        var identity = await verifier.getIdentityManager();
+       
         // select/create a DAO
         var masterDAOInitialData = buildMasterDAOInitData(erc20Address, 0, identity);
         var tx =  await factoryManager.deploy(true, DAOTypeID, MASTER_DAO_KEY,masterDAOInitialData);
